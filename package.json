@@ -1,22 +1,14 @@
-{
+{{
   "name": "ark-law-ai",
   "version": "1.0.0",
-  "main": "server.js",
-  "scripts": { "start": "node server.js" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
-    "express": "^4.18.0",
-    "node-fetch": "^2.6.7"
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }
-```
-Click **"Commit new file"**
-
----
-
-**File 2:** Name it `server.js` — paste the full code from the **server.js artifact** above. Click **"Commit new file"**
-
----
-
-**File 3:** Name it `Procfile` (no extension) — paste this:
-```
-web: node server.js
