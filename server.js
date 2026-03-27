@@ -2,6 +2,7 @@ const express = require("express");
 const fetch = require("node-fetch");
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ── Serve the frontend ──────────────────────────────────────────
 app.get("/", (req, res) => res.send(`<!DOCTYPE html>
@@ -168,4 +169,4 @@ app.post("/api/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`ARK Law AI running on port ${PORT}`));
+app.listen(PORT, "0.0.0.0", () => console.log(`ARK Law AI running on port ${PORT}`));
