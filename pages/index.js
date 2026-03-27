@@ -11,6 +11,52 @@ const TEXT_MUTED = "#6E8099";
 const ACCENT_PK = "#3EB489";
 const ACCENT_US = "#5B8DD9";
 
+function ArkLogo({ size = 44 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="sc2">
+          <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z"/>
+        </clipPath>
+      </defs>
+      <ellipse cx="100" cy="108" rx="88" ry="95" fill="none" stroke="#C9A84C" strokeWidth="0.8" opacity="0.3"/>
+      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A"/>
+      <rect x="25" y="8" width="75" height="200" fill="#01411C" clipPath="url(#sc2)"/>
+      <rect x="100" y="8" width="75" height="200" fill="#B22234" clipPath="url(#sc2)"/>
+      <rect x="100" y="32" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="52" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="72" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="132" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)"/>
+      <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clipPath="url(#sc2)"/>
+      <circle cx="108" cy="20" r="2.5" fill="white"/>
+      <circle cx="120" cy="20" r="2.5" fill="white"/>
+      <circle cx="132" cy="20" r="2.5" fill="white"/>
+      <circle cx="108" cy="34" r="2.5" fill="white"/>
+      <circle cx="120" cy="34" r="2.5" fill="white"/>
+      <circle cx="132" cy="34" r="2.5" fill="white"/>
+      <circle cx="62" cy="108" r="22" fill="none" stroke="white" strokeWidth="2" clipPath="url(#sc2)"/>
+      <circle cx="70" cy="108" r="16" fill="#01411C" clipPath="url(#sc2)"/>
+      <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clipPath="url(#sc2)"/>
+      <line x1="100" y1="9" x2="100" y2="203" stroke="#C9A84C" strokeWidth="1.2" opacity="0.9"/>
+      <g transform="translate(100,118)">
+        <line x1="-32" y1="0" x2="32" y2="0" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="0" y1="-22" x2="0" y2="12" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="0" cy="-25" r="3" fill="#C9A84C"/>
+        <line x1="-32" y1="0" x2="-27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round"/>
+        <line x1="-32" y1="0" x2="-37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round"/>
+        <line x1="-39" y1="14" x2="-25" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round"/>
+        <line x1="32" y1="0" x2="27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round"/>
+        <line x1="32" y1="0" x2="37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round"/>
+        <line x1="25" y1="14" x2="39" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round"/>
+      </g>
+      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="none" stroke="#C9A84C" strokeWidth="2"/>
+      <text x="100" y="218" textAnchor="middle" fontFamily="Georgia,serif" fontSize="14" fontWeight="700" fill="#C9A84C" letterSpacing="4">ARK</text>
+    </svg>
+  );
+}
+
 const CONTENT = {
   en: {
     title: "ARK Law AI",
