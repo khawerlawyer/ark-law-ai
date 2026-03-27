@@ -60,12 +60,12 @@ function ArkLogo({ size = 44 }) {
 const CONTENT = {
   en: {
     title: "ARK Law AI",
-    subtitle: "Legal Intelligence Platform",
+    subtitle: "Khawer Rabbani's Legal Intelligence Platform",
     disclaimer: "For research & reference only — not a substitute for legal counsel",
     footer: "ARK Law AI — Justice S. A. Rabbani Law",
     placeholder: "Ask about Pakistani or US law — statutes, procedures, case law, drafting...",
     send: "SEND",
-    thinking: "ARK is thinking...",
+    thinking: "ARK is thinking & fetching your answer...",
     welcome_title: "Welcome to ARK Law AI",
     welcome_desc: "AI-powered legal research for Pakistani and US law.",
     welcome_hint: "Tap ☰ for practice areas & quick queries",
