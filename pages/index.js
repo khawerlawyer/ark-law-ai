@@ -60,12 +60,12 @@ function ArkLogo({ size = 44 }) {
 const CONTENT = {
   en: {
     title: "ARK Law AI",
-    subtitle: "Khawer Rabbani's Legal Intelligence Platform",
+    subtitle: "Legal Intelligence Platform",
     disclaimer: "For research & reference only — not a substitute for legal counsel",
     footer: "ARK Law AI — Justice S. A. Rabbani Law",
     placeholder: "Ask about Pakistani or US law — statutes, procedures, case law, drafting...",
     send: "SEND",
-    thinking: "ARK is thinking & fetching your answer...",
+    thinking: "ARK is thinking...",
     welcome_title: "Welcome to ARK Law AI",
     welcome_desc: "AI-powered legal research for Pakistani and US law.",
     welcome_hint: "Tap ☰ for practice areas & quick queries",
@@ -237,6 +237,7 @@ export default function App() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [greeted, setGreeted] = useState(false);
   const messagesEndRef = useRef(null);
   const historyRef = useRef([]);
   const c = CONTENT[lang];
@@ -245,6 +246,19 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  // Auto-greet on first load
+  useEffect(() => {
+    if (!greeted) {
+      setGreeted(true);
+      const greeting = lang === "ur"
+        ? "اے آر کے لاء اے آئی میں خوش آمدید! شروع کرنے سے پہلے، کیا میں آپ کا نام جان سکتا ہوں؟"
+        : "Welcome to ARK Law AI! Before we begin, may I know your name?";
+      const aiMsg = { role: "assistant", content: greeting };
+      historyRef.current = [aiMsg];
+      setMessages([{ type: "ai", text: greeting, jur: "both" }]);
+    }
+  }, []);
 
   const jurConfig = {
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)" },
