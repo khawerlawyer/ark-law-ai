@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import Head from "next/head";
 
 var GOLD = "#C9A84C";
 var NAVY = "#0D1B2A";
@@ -270,6 +271,13 @@ export default function App() {
 
   return (
     <div>
+      <Head>
+        <title>ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani</title>
+        <meta name="description" content="ARK LAW AI — The Legal Intelligence Engine for Pakistani and US law by Attorney and AI Innovator Khawer Rabbani." />
+        <meta property="og:title" content="ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani" />
+        <meta property="og:description" content="AI-powered legal research for Pakistani and US law." />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <style>{[
         "* { box-sizing: border-box; margin: 0; padding: 0; }",
         "html, body { height: 100%; background: #0D1B2A; }",
