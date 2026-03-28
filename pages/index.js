@@ -275,4 +275,69 @@ export default function App() {
             <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
             {quick.map(function(q, i) {
               return (
-                <button key={i} className="qbtn" onClick={function() { send(q); setSidebarOpen(false); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{
+                <button key={i} className="qbtn" onClick={function() { send(q); setSidebarOpen(false); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{q}</button>
+              );
+            })}
+          </aside>
+
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
+              {jurConfig[jur].banner}
+            </div>
+
+            <div style={{ flex: 1, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 12 }}>
+              {messages.map(function(msg, i) {
+                var isUser = msg.type === "user";
+                var isError = msg.type === "error";
+                return (
+                  <div key={i} style={{ display: "flex", flexDirection: isUser ? "row-reverse" : "row", gap: 8, maxWidth: 760, marginLeft: isUser ? "auto" : 0 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: isUser ? NAVY_SURFACE : "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: isUser ? "1px solid " + NAVY_BORDER : "none", color: isUser ? TEXT_SECONDARY : NAVY, fontSize: isUser ? 13 : 9, fontWeight: 700, fontFamily: "Georgia,serif" }}>
+                      {isUser ? "👤" : "ARK"}
+                    </div>
+                    <div style={{ padding: "10px 14px", borderRadius: isUser ? "12px 4px 12px 12px" : "4px 12px 12px 12px", background: isUser ? "rgba(91,141,217,0.1)" : isError ? "rgba(224,85,85,0.1)" : NAVY_SURFACE, border: "1px solid " + (isUser ? "rgba(91,141,217,0.2)" : isError ? "rgba(224,85,85,0.3)" : NAVY_BORDER), fontSize: 13, lineHeight: 1.8, color: TEXT_PRIMARY, maxWidth: 640 }}
+                      dangerouslySetInnerHTML={{ __html: isUser ? msg.text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : fmt(msg.text) }}
+                    />
+                  </div>
+                );
+              })}
+
+              {loading && (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: NAVY, fontFamily: "Georgia,serif", flexShrink: 0 }}>ARK</div>
+                  <div style={{ padding: "10px 14px", borderRadius: "4px 12px 12px 12px", background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, display: "flex", gap: 4, alignItems: "center" }}>
+                    {[0, 0.2, 0.4].map(function(d, i) {
+                      return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />;
+                    })}
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEnd} />
+            </div>
+
+            <div style={{ padding: "10px 12px 12px", borderTop: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: NAVY_SURFACE, border: "1px solid " + GOLD, borderRadius: 10, padding: "6px 10px" }}>
+                <input
+                  value={input}
+                  onChange={function(e) { setInput(e.target.value); }}
+                  onKeyDown={function(e) { if (e.key === "Enter") { e.preventDefault(); send(); } }}
+                  placeholder={isUrdu ? "پاکستانی یا امریکی قانون کے بارے میں سوال کریں..." : "Ask about Pakistani or US law..."}
+                  dir={isUrdu ? "rtl" : "ltr"}
+                  style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 13, height: 34 }}
+                />
+                <button onClick={function() { send(); }} style={{ background: GOLD, border: "none", borderRadius: 8, padding: "6px 18px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer", height: 34, flexShrink: 0 }}>
+                  {isUrdu ? "بھیجیں" : "SEND"}
+                </button>
+              </div>
+              <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
+                {isUrdu ? "⚠️ صرف تحقیق و حوالہ کے لیے — قانونی مشورے کا متبادل نہیں" : "⚠️ For research & reference only — not a substitute for legal counsel"}
+                &nbsp;|&nbsp;
+                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Justice S. A. Rabbani Law"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
