@@ -415,7 +415,7 @@ export default function App() {
               <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
                 {isUrdu ? "⚠️ صرف تحقیق و حوالہ کے لیے — قانونی مشورے کا متبادل نہیں" : "⚠️ For research & reference only — not a substitute for legal counsel"}
                 &nbsp;|&nbsp;
-                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Justice S. A. Rabbani Law"}</span>
+                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Dedicated to Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan"}</span>
               </div>
             </div>
           </div>
