@@ -30,7 +30,34 @@ var DEFAULT_NEWS = [
   { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
 ];
 
-var AREAS_EN = [
+var conductItems = [
+  { text: "Maintain absolute honesty and integrity in all dealings with the court.", pk: true },
+  { text: "Preserve client confidentiality at all times without exception.", pk: true },
+  { text: "Avoid conflicts of interest and disclose any potential conflicts promptly.", pk: true },
+  { text: "Charge only fair and reasonable fees commensurate with services rendered.", pk: true },
+  { text: "Never mislead the court through false statements or suppression of facts.", pk: true },
+  { text: "Uphold the dignity and decorum of the legal profession at all times.", pk: true },
+  { text: "Provide competent and diligent representation to every client.", pk: true },
+  { text: "Respect opposing counsel and maintain courteous professional conduct.", pk: true },
+  { text: "Withdraw from representation if instructed to act dishonestly.", pk: true },
+  { text: "Comply fully with the Pakistan Bar Council rules and regulations.", pk: true },
+  { text: "Never take on a case without adequate competence or preparation.", pk: true },
+  { text: "Protect client funds held in trust and maintain separate accounts.", pk: true },
+  { text: "Advocate zealously for clients within the bounds of the law.", pk: false },
+  { text: "Maintain candor toward the tribunal — never make false statements.", pk: false },
+  { text: "Preserve confidentiality of client information under ABA Model Rules.", pk: false },
+  { text: "Avoid conflicts of interest between current and former clients.", pk: false },
+  { text: "Communicate promptly and keep clients reasonably informed.", pk: false },
+  { text: "Charge reasonable fees and explain billing arrangements clearly.", pk: false },
+  { text: "Provide competent representation with relevant legal knowledge and skill.", pk: false },
+  { text: "Never obstruct opposing party's access to evidence.", pk: false },
+  { text: "Maintain independence of professional judgment at all times.", pk: false },
+  { text: "Comply with all state bar rules and continuing legal education requirements.", pk: false },
+  { text: "Safeguard client property and funds held in trust accounts.", pk: false },
+  { text: "Respect the rights of third persons and avoid harassment or threats.", pk: false },
+];
+
+
   { id: "general", label: "General Legal", icon: "⚖️" },
   { id: "criminal", label: "Criminal Law", icon: "🔒" },
   { id: "corporate", label: "Corporate & Business", icon: "🏢" },
@@ -256,6 +283,8 @@ export default function App() {
         ".abtn:hover { background: #1E2D40 !important; color: #C9A84C !important; }",
         "#news-ticker { animation: tickerScroll 80s linear infinite; }",
         "#news-ticker:hover { animation-play-state: paused; }",
+        "#conduct-ticker { animation: tickerScroll 70s linear infinite; }",
+        "#conduct-ticker:hover { animation-play-state: paused; }",
       ].join(" ")}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI', sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
@@ -295,7 +324,64 @@ export default function App() {
         {/* BODY */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* CHAT — left */}
+          {/* LEFT BAR — Code of Conduct */}
+          <div style={{ width: 270, flexShrink: 0, borderRight: "1px solid " + NAVY_BORDER, background: NAVY_MID, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+            {/* Portraits */}
+            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px", background: "#1a3a2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="26" cy="26" r="26" fill="#0a2a1a"/>
+                    <ellipse cx="26" cy="22" rx="9" ry="10" fill="#c8a882"/>
+                    <ellipse cx="26" cy="38" rx="14" ry="10" fill="#2d5a3d"/>
+                    <rect x="17" y="14" width="18" height="6" rx="3" fill="#1a3a20"/>
+                    <ellipse cx="26" cy="20" rx="9" ry="2" fill="#1a3a20"/>
+                    <line x1="22" y1="16" x2="30" y2="16" stroke="#c9a84c" strokeWidth="1"/>
+                  </svg>
+                </div>
+                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600, letterSpacing: ".04em" }}>QUAID-E-AZAM</div>
+                <div style={{ fontSize: 8, color: TEXT_MUTED }}>M. A. Jinnah</div>
+              </div>
+              <div style={{ fontSize: 11, color: GOLD, fontWeight: 700, fontFamily: "Georgia,serif" }}>⚖</div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px", background: "#1a2a3a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="26" cy="26" r="26" fill="#0a1a2a"/>
+                    <ellipse cx="26" cy="22" rx="9" ry="10" fill="#d4a574"/>
+                    <ellipse cx="26" cy="38" rx="14" ry="10" fill="#1a2a5a"/>
+                    <ellipse cx="18" cy="22" rx="4" ry="6" fill="#e8d5b0"/>
+                    <ellipse cx="34" cy="22" rx="4" ry="6" fill="#e8d5b0"/>
+                    <rect x="20" y="12" width="12" height="4" rx="2" fill="#2a3a6a"/>
+                  </svg>
+                </div>
+                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600, letterSpacing: ".04em" }}>FOUNDING FATHER</div>
+                <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
+              </div>
+            </div>
+
+            {/* Title */}
+            <div style={{ padding: "6px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, textAlign: "center" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase" }}>Attorney Code of Conduct</div>
+            </div>
+
+            {/* Scrolling conduct items */}
+            <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+              <div id="conduct-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+                {conductItems.concat(conductItems).map(function(item, i) {
+                  return (
+                    <div key={i} style={{ padding: "7px 12px", borderBottom: "1px solid rgba(43,63,87,0.5)", display: "flex", gap: 7, alignItems: "flex-start" }}>
+                      <span style={{ color: item.pk ? ACCENT_PK : ACCENT_US, fontSize: 10, flexShrink: 0, marginTop: 1 }}>
+                        {item.pk ? "🇵🇰" : "🇺🇸"}
+                      </span>
+                      <span style={{ fontSize: 11, color: TEXT_SECONDARY, lineHeight: 1.5 }}>{item.text}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
