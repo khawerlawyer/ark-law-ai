@@ -229,7 +229,6 @@ export default function App() {
 
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 8 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button onClick={function() { setSidebarOpen(function(v) { return !v; }); }} style={{ background: "transparent", border: "none", color: GOLD, fontSize: 20, cursor: "pointer", padding: "4px 6px" }}>☰</button>
             <ArkLogo size={42} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>{isUrdu ? "اے آر کے لاء اے آئی" : "ARK Law AI"}</div>
@@ -260,9 +259,8 @@ export default function App() {
         </header>
 
         <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
-          {sidebarOpen && <div onClick={function() { setSidebarOpen(false); }} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 10 }} />}
 
-          <aside style={{ position: "absolute", top: 0, left: 0, bottom: 0, zIndex: 20, width: 230, background: NAVY_MID, borderRight: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflowY: "auto", transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform .25s" }}>
+          <aside style={{ width: 230, flexShrink: 0, background: NAVY_MID, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflowY: "auto", order: 2 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
             {areas.map(function(a) {
               return (
@@ -280,7 +278,7 @@ export default function App() {
             })}
           </aside>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", order: 1 }}>
             <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
               {jurConfig[jur].banner}
