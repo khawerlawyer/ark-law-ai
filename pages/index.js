@@ -11,53 +11,34 @@ var TEXT_MUTED = "#6E8099";
 var ACCENT_PK = "#3EB489";
 var ACCENT_US = "#5B8DD9";
 
-var DEFAULT_NEWS = [
-  { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
-  { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
-  { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
-  { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
-  { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
-  { text: "Federal court upholds new US immigration processing reforms", pk: false },
-  { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
-  { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
-  { text: "Islamabad High Court rules on constitutional right to information", pk: true },
-  { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
-  { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
-  { text: "Supreme Court of US decides major intellectual property case", pk: false },
-  { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
-  { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
-  { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
-  { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
-];
-
-var conductItems = [
-  { text: "Maintain absolute honesty and integrity in all dealings with the court.", pk: true },
+var CONDUCT = [
+  { text: "Maintain absolute honesty and integrity in all court dealings.", pk: true },
   { text: "Preserve client confidentiality at all times without exception.", pk: true },
-  { text: "Avoid conflicts of interest and disclose any potential conflicts promptly.", pk: true },
-  { text: "Charge only fair and reasonable fees commensurate with services rendered.", pk: true },
-  { text: "Never mislead the court through false statements or suppression of facts.", pk: true },
-  { text: "Uphold the dignity and decorum of the legal profession at all times.", pk: true },
+  { text: "Disclose any conflicts of interest promptly to the client.", pk: true },
+  { text: "Charge only fair and reasonable fees for services rendered.", pk: true },
+  { text: "Never mislead the court through false statements or omissions.", pk: true },
+  { text: "Uphold the dignity and decorum of the legal profession always.", pk: true },
   { text: "Provide competent and diligent representation to every client.", pk: true },
-  { text: "Respect opposing counsel and maintain courteous professional conduct.", pk: true },
+  { text: "Respect opposing counsel and maintain courteous conduct.", pk: true },
   { text: "Withdraw from representation if instructed to act dishonestly.", pk: true },
-  { text: "Comply fully with the Pakistan Bar Council rules and regulations.", pk: true },
-  { text: "Never take on a case without adequate competence or preparation.", pk: true },
-  { text: "Protect client funds held in trust and maintain separate accounts.", pk: true },
+  { text: "Comply fully with Pakistan Bar Council rules and regulations.", pk: true },
+  { text: "Never accept a case without adequate competence or preparation.", pk: true },
+  { text: "Protect client funds in trust and maintain separate accounts.", pk: true },
   { text: "Advocate zealously for clients within the bounds of the law.", pk: false },
   { text: "Maintain candor toward the tribunal — never make false statements.", pk: false },
-  { text: "Preserve confidentiality of client information under ABA Model Rules.", pk: false },
+  { text: "Preserve client confidentiality under ABA Model Rules.", pk: false },
   { text: "Avoid conflicts of interest between current and former clients.", pk: false },
   { text: "Communicate promptly and keep clients reasonably informed.", pk: false },
   { text: "Charge reasonable fees and explain billing arrangements clearly.", pk: false },
-  { text: "Provide competent representation with relevant legal knowledge and skill.", pk: false },
-  { text: "Never obstruct opposing party's access to evidence.", pk: false },
+  { text: "Provide competent representation with relevant legal knowledge.", pk: false },
+  { text: "Never obstruct opposing party access to evidence.", pk: false },
   { text: "Maintain independence of professional judgment at all times.", pk: false },
-  { text: "Comply with all state bar rules and continuing legal education requirements.", pk: false },
+  { text: "Comply with state bar rules and continuing legal education.", pk: false },
   { text: "Safeguard client property and funds held in trust accounts.", pk: false },
-  { text: "Respect the rights of third persons and avoid harassment or threats.", pk: false },
+  { text: "Respect rights of third persons and avoid harassment or threats.", pk: false },
 ];
 
-
+var AREAS_EN = [
   { id: "general", label: "General Legal", icon: "⚖️" },
   { id: "criminal", label: "Criminal Law", icon: "🔒" },
   { id: "corporate", label: "Corporate & Business", icon: "🏢" },
@@ -122,6 +103,25 @@ var AREA_LABELS_UR = {
   ip: "دانشورانہ ملکیت اور ٹیکنالوجی کا قانون",
   immigration: "امیگریشن اور شہریت کا قانون",
 };
+
+var DEFAULT_NEWS = [
+  { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
+  { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
+  { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
+  { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
+  { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
+  { text: "Federal court upholds new US immigration processing reforms", pk: false },
+  { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
+  { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
+  { text: "Islamabad High Court rules on constitutional right to information", pk: true },
+  { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
+  { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
+  { text: "Supreme Court of US decides major intellectual property case", pk: false },
+  { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
+  { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
+  { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
+  { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
+];
 
 function buildSystem(area, jur, lang) {
   var areaLabel = lang === "ur" ? AREA_LABELS_UR[area] : AREA_LABELS_EN[area];
@@ -191,6 +191,39 @@ function ArkLogo(props) {
   );
 }
 
+function JinnahPortrait() {
+  return (
+    <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="26" cy="26" r="26" fill="#0a2218"/>
+      <ellipse cx="26" cy="21" rx="9" ry="10" fill="#c8a882"/>
+      <ellipse cx="26" cy="42" rx="15" ry="12" fill="#2d5a3d"/>
+      <ellipse cx="26" cy="19" rx="9" ry="3" fill="#1a3a20"/>
+      <rect x="18" y="13" width="16" height="5" rx="2.5" fill="#1a3a20"/>
+      <line x1="21" y1="15" x2="31" y2="15" stroke="#c9a84c" strokeWidth="1"/>
+      <ellipse cx="26" cy="24" rx="4" ry="2" fill="#b8906a"/>
+      <circle cx="22" cy="19" r="1.2" fill="#6b4a2a"/>
+      <circle cx="30" cy="19" r="1.2" fill="#6b4a2a"/>
+    </svg>
+  );
+}
+
+function WashingtonPortrait() {
+  return (
+    <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="26" cy="26" r="26" fill="#0a1525"/>
+      <ellipse cx="26" cy="21" rx="9" ry="10" fill="#d4a574"/>
+      <ellipse cx="26" cy="42" rx="15" ry="12" fill="#1a2a5a"/>
+      <ellipse cx="17" cy="21" rx="4" ry="7" fill="#e8d5b0"/>
+      <ellipse cx="35" cy="21" rx="4" ry="7" fill="#e8d5b0"/>
+      <rect x="19" y="11" width="14" height="5" rx="2.5" fill="#2a3a6a"/>
+      <ellipse cx="26" cy="24" rx="4" ry="2" fill="#b8805a"/>
+      <circle cx="22" cy="19" r="1.2" fill="#4a3a2a"/>
+      <circle cx="30" cy="19" r="1.2" fill="#4a3a2a"/>
+      <ellipse cx="26" cy="13" rx="6" ry="2" fill="#e8d5b0"/>
+    </svg>
+  );
+}
+
 export default function App() {
   var langS = useState("en"); var lang = langS[0]; var setLang = langS[1];
   var jurS = useState("both"); var jur = jurS[0]; var setJur = jurS[1];
@@ -205,6 +238,7 @@ export default function App() {
   var isUrdu = lang === "ur";
   var areas = isUrdu ? AREAS_UR : AREAS_EN;
   var quick = isUrdu ? QUICK_UR : QUICK_EN;
+  var conductDouble = CONDUCT.concat(CONDUCT);
 
   var jurConfig = {
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: isUrdu ? "پاکستانی قانون کے تحت جواب" : "Answering under Pakistani law" },
@@ -236,9 +270,7 @@ export default function App() {
         try {
           var clean = data.reply.replace(/```json/g, "").replace(/```/g, "").trim();
           var items = JSON.parse(clean);
-          if (Array.isArray(items) && items.length > 0) {
-            setNewsItems(items.concat(items));
-          }
+          if (Array.isArray(items) && items.length > 0) setNewsItems(items.concat(items));
         } catch(e) {}
       })
       .catch(function() {});
@@ -330,32 +362,18 @@ export default function App() {
             {/* Portraits */}
             <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px", background: "#1a3a2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="26" cy="26" r="26" fill="#0a2a1a"/>
-                    <ellipse cx="26" cy="22" rx="9" ry="10" fill="#c8a882"/>
-                    <ellipse cx="26" cy="38" rx="14" ry="10" fill="#2d5a3d"/>
-                    <rect x="17" y="14" width="18" height="6" rx="3" fill="#1a3a20"/>
-                    <ellipse cx="26" cy="20" rx="9" ry="2" fill="#1a3a20"/>
-                    <line x1="22" y1="16" x2="30" y2="16" stroke="#c9a84c" strokeWidth="1"/>
-                  </svg>
+                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
+                  <JinnahPortrait />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600, letterSpacing: ".04em" }}>QUAID-E-AZAM</div>
+                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>QUAID-E-AZAM</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>M. A. Jinnah</div>
               </div>
-              <div style={{ fontSize: 11, color: GOLD, fontWeight: 700, fontFamily: "Georgia,serif" }}>⚖</div>
+              <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ width: 52, height: 52, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px", background: "#1a2a3a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="26" cy="26" r="26" fill="#0a1a2a"/>
-                    <ellipse cx="26" cy="22" rx="9" ry="10" fill="#d4a574"/>
-                    <ellipse cx="26" cy="38" rx="14" ry="10" fill="#1a2a5a"/>
-                    <ellipse cx="18" cy="22" rx="4" ry="6" fill="#e8d5b0"/>
-                    <ellipse cx="34" cy="22" rx="4" ry="6" fill="#e8d5b0"/>
-                    <rect x="20" y="12" width="12" height="4" rx="2" fill="#2a3a6a"/>
-                  </svg>
+                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
+                  <WashingtonPortrait />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600, letterSpacing: ".04em" }}>FOUNDING FATHER</div>
+                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>FOUNDING FATHER</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
               </div>
             </div>
@@ -365,23 +383,22 @@ export default function App() {
               <div style={{ fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase" }}>Attorney Code of Conduct</div>
             </div>
 
-            {/* Scrolling conduct items */}
+            {/* Scrolling items */}
             <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
               <div id="conduct-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
-                {conductItems.concat(conductItems).map(function(item, i) {
+                {conductDouble.map(function(item, i) {
                   return (
                     <div key={i} style={{ padding: "7px 12px", borderBottom: "1px solid rgba(43,63,87,0.5)", display: "flex", gap: 7, alignItems: "flex-start" }}>
-                      <span style={{ color: item.pk ? ACCENT_PK : ACCENT_US, fontSize: 10, flexShrink: 0, marginTop: 1 }}>
-                        {item.pk ? "🇵🇰" : "🇺🇸"}
-                      </span>
+                      <span style={{ fontSize: 11, flexShrink: 0, marginTop: 1 }}>{item.pk ? "🇵🇰" : "🇺🇸"}</span>
                       <span style={{ fontSize: 11, color: TEXT_SECONDARY, lineHeight: 1.5 }}>{item.text}</span>
                     </div>
                   );
                 })}
               </div>
             </div>
-
           </div>
+
+          {/* CHAT — centre */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
@@ -436,8 +453,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* SIDEBAR — right */}
-          <div style={{ width: 230, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "row", overflow: "hidden" }}>
+          {/* RIGHT SIDEBAR */}
+          <div style={{ width: 270, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "row", overflow: "hidden" }}>
 
             {/* MENU */}
             <div style={{ flex: 1, background: NAVY_MID, display: "flex", flexDirection: "column", overflowY: "auto" }}>
@@ -460,7 +477,7 @@ export default function App() {
 
             {/* NEWS TICKER */}
             <div style={{ width: 40, flexShrink: 0, background: NAVY, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              <div style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase", padding: "8px 0", textAlign: "center", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, writingMode: "vertical-rl" }}>LEGAL NEWS</div>
+              <div style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase", padding: "8px 2px", textAlign: "center", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, writingMode: "vertical-rl" }}>LEGAL NEWS</div>
               <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
                 <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
                   {newsItems.map(function(item, i) {
@@ -469,7 +486,7 @@ export default function App() {
                         onClick={function() { send("Tell me more about this legal news: " + item.text); }}
                         title={item.text}
                         style={{ padding: "10px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer", userSelect: "none" }}>
-                        {(item.pk ? "🇵🇰 " : "🇺🇸 ") + (item.text.length > 55 ? item.text.slice(0, 55) + "…" : item.text)}
+                        {(item.pk ? "🇵🇰 " : "🇺🇸 ") + (item.text.length > 55 ? item.text.slice(0, 55) + "..." : item.text)}
                       </div>
                     );
                   })}
