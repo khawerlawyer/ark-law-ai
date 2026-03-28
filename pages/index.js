@@ -191,39 +191,6 @@ function ArkLogo(props) {
   );
 }
 
-function JinnahPortrait() {
-  return (
-    <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="26" cy="26" r="26" fill="#0a2218"/>
-      <ellipse cx="26" cy="21" rx="9" ry="10" fill="#c8a882"/>
-      <ellipse cx="26" cy="42" rx="15" ry="12" fill="#2d5a3d"/>
-      <ellipse cx="26" cy="19" rx="9" ry="3" fill="#1a3a20"/>
-      <rect x="18" y="13" width="16" height="5" rx="2.5" fill="#1a3a20"/>
-      <line x1="21" y1="15" x2="31" y2="15" stroke="#c9a84c" strokeWidth="1"/>
-      <ellipse cx="26" cy="24" rx="4" ry="2" fill="#b8906a"/>
-      <circle cx="22" cy="19" r="1.2" fill="#6b4a2a"/>
-      <circle cx="30" cy="19" r="1.2" fill="#6b4a2a"/>
-    </svg>
-  );
-}
-
-function WashingtonPortrait() {
-  return (
-    <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="26" cy="26" r="26" fill="#0a1525"/>
-      <ellipse cx="26" cy="21" rx="9" ry="10" fill="#d4a574"/>
-      <ellipse cx="26" cy="42" rx="15" ry="12" fill="#1a2a5a"/>
-      <ellipse cx="17" cy="21" rx="4" ry="7" fill="#e8d5b0"/>
-      <ellipse cx="35" cy="21" rx="4" ry="7" fill="#e8d5b0"/>
-      <rect x="19" y="11" width="14" height="5" rx="2.5" fill="#2a3a6a"/>
-      <ellipse cx="26" cy="24" rx="4" ry="2" fill="#b8805a"/>
-      <circle cx="22" cy="19" r="1.2" fill="#4a3a2a"/>
-      <circle cx="30" cy="19" r="1.2" fill="#4a3a2a"/>
-      <ellipse cx="26" cy="13" rx="6" ry="2" fill="#e8d5b0"/>
-    </svg>
-  );
-}
-
 export default function App() {
   var langS = useState("en"); var lang = langS[0]; var setLang = langS[1];
   var jurS = useState("both"); var jur = jurS[0]; var setJur = jurS[1];
@@ -363,7 +330,7 @@ export default function App() {
             <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <JinnahPortrait />
+                  <img src="/jinnah.jpg" alt="Muhammad Ali Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
                 <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>QUAID-E-AZAM</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>M. A. Jinnah</div>
@@ -371,7 +338,7 @@ export default function App() {
               <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
               <div style={{ textAlign: "center" }}>
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <WashingtonPortrait />
+                  <img src="/washington.jpg" alt="George Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
                 <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>FOUNDING FATHER</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
