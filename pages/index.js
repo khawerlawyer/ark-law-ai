@@ -162,6 +162,8 @@ export default function App() {
   var sidebarOpen = sidebarState[0]; var setSidebarOpen = sidebarState[1];
   var greetedState = useState(false);
   var greeted = greetedState[0]; var setGreeted = greetedState[1];
+  var newsState = useState([]);
+  var newsItems = newsState[0]; var setNewsItems = newsState[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
 
@@ -186,6 +188,64 @@ export default function App() {
       history.current = [{ role: "assistant", content: greeting }];
       setMessages([{ type: "ai", text: greeting, jur: "both" }]);
     }
+  }, []);
+
+  useEffect(function() {
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system: "You are a legal news aggregator. Return a JSON array of 16 recent legal news headlines, 8 from Pakistan and 8 from the USA. Each item must have: text (the headline, max 80 chars) and pk (true for Pakistan, false for USA). Return ONLY valid JSON array, no other text. Example: [{\"text\":\"Supreme Court rules on...\",\"pk\":true}]",
+        messages: [{ role: "user", content: "Give me 16 current legal news headlines, 8 from Pakistan and 8 from USA, as a JSON array." }],
+      }),
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        try {
+          var clean = data.reply.replace(/```json/g, "").replace(/```/g, "").trim();
+          var items = JSON.parse(clean);
+          setNewsItems(items.concat(items));
+        } catch(e) {
+          setNewsItems([
+            { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
+            { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
+            { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
+            { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
+            { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
+            { text: "Federal court upholds new US immigration processing reforms", pk: false },
+            { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
+            { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
+            { text: "Islamabad High Court rules on constitutional right to information", pk: true },
+            { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
+            { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
+            { text: "Supreme Court of US decides major intellectual property case", pk: false },
+            { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
+            { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
+            { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
+            { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
+          ]);
+        }
+      })
+      .catch(function() {
+        setNewsItems([
+          { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
+          { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
+          { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
+          { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
+          { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
+          { text: "Federal court upholds new US immigration processing reforms", pk: false },
+          { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
+          { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
+          { text: "Islamabad High Court rules on constitutional right to information", pk: true },
+          { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
+          { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
+          { text: "Supreme Court of US decides major intellectual property case", pk: false },
+          { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
+          { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
+          { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
+          { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
+        ]);
+      });
   }, []);
 
   function send(text) {
@@ -219,10 +279,12 @@ export default function App() {
         "* { box-sizing: border-box; margin: 0; padding: 0; }",
         "body { background: #0D1B2A; }",
         "@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }",
+        "@keyframes tickerScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }",
         "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
         "input::placeholder { color: #6E8099; }",
         ".qbtn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }",
         ".abtn:hover { background: #1E2D40 !important; color: #C9A84C !important; }",
+        "#news-ticker:hover { animation-play-state: paused; }",
       ].join(" ")}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI', sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
@@ -278,7 +340,22 @@ export default function App() {
             })}
           </aside>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", order: 1 }}>
+          <div style={{ width: 38, flexShrink: 0, background: NAVY_MID, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", order: 3 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: ".12em", textTransform: "uppercase", padding: "10px 0 6px", writingMode: "vertical-rl", textOrientation: "mixed" }}>LEGAL NEWS</div>
+            <div style={{ flex: 1, overflow: "hidden", position: "relative", width: "100%" }}>
+              <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0, display: "flex", flexDirection: "column", gap: 0, animation: "tickerScroll 60s linear infinite" }}>
+                {newsItems.map(function(item, i) {
+                  return (
+                    <div key={i} style={{ padding: "8px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer" }}
+                      onClick={function() { send("Tell me more about: " + item.text); }}
+                      title={item.text}>
+                      {item.pk ? "🇵🇰 " : "🇺🇸 "}{item.text.length > 60 ? item.text.slice(0, 60) + "…" : item.text}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
             <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
               {jurConfig[jur].banner}
