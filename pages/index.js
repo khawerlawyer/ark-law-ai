@@ -293,8 +293,9 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <ArkLogo size={42} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>{isUrdu ? "اے آر کے لاء اے آئی" : "ARK Law AI"}</div>
-              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".1em" }}>{isUrdu ? "قانونی ذہانت کا پلیٹ فارم" : "Legal Intelligence Platform"}</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>{isUrdu ? "اے آر کے لاء اے آئی" : "ARK LAW AI"}</div>
+              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".05em" }}>{isUrdu ? "قانونی ذہانت کا پلیٹ فارم" : "The Legal Intelligence Engine"}</div>
+              <div style={{ fontSize: 9, color: ACCENT_PK, letterSpacing: ".03em" }}>{isUrdu ? "خاور ربانی" : "by Attorney & AI Innovator Khawer Rabbani"}</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -415,7 +416,7 @@ export default function App() {
               <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
                 {isUrdu ? "⚠️ صرف تحقیق و حوالہ کے لیے — قانونی مشورے کا متبادل نہیں" : "⚠️ For research & reference only — not a substitute for legal counsel"}
                 &nbsp;|&nbsp;
-                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Dedicated to Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan"}</span>
+                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Justice S. A. Rabbani Law"}</span>
               </div>
             </div>
           </div>
