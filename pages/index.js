@@ -330,7 +330,7 @@ export default function App() {
             <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/jinnah.jpg" alt="Muhammad Ali Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                  <img src="/jinnah.jpeg" alt="Muhammad Ali Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
                 <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>QUAID-E-AZAM</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>M. A. Jinnah</div>
@@ -338,7 +338,7 @@ export default function App() {
               <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
               <div style={{ textAlign: "center" }}>
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/washington.jpg" alt="George Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                  <img src="/washington.jpeg" alt="George Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
                 <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>FOUNDING FATHER</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
