@@ -1,60 +1,34 @@
 import { useState, useRef, useEffect } from "react";
 
-const GOLD = "#C9A84C";
-const NAVY = "#0D1B2A";
-const NAVY_MID = "#162032";
-const NAVY_SURFACE = "#1E2D40";
-const NAVY_BORDER = "#2B3F57";
-const TEXT_PRIMARY = "#FAF6EE";
-const TEXT_SECONDARY = "#B8C4D0";
-const TEXT_MUTED = "#6E8099";
-const ACCENT_PK = "#3EB489";
-const ACCENT_US = "#5B8DD9";
+var GOLD = "#C9A84C";
+var NAVY = "#0D1B2A";
+var NAVY_MID = "#162032";
+var NAVY_SURFACE = "#1E2D40";
+var NAVY_BORDER = "#2B3F57";
+var TEXT_PRIMARY = "#FAF6EE";
+var TEXT_SECONDARY = "#B8C4D0";
+var TEXT_MUTED = "#6E8099";
+var ACCENT_PK = "#3EB489";
+var ACCENT_US = "#5B8DD9";
 
-function ArkLogo({ size }) {
-  var s = size || 44;
-  return (
-    <svg width={s} height={s} viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="sc2">
-          <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" />
-        </clipPath>
-      </defs>
-      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A" />
-      <rect x="25" y="8" width="75" height="200" fill="#01411C" clipPath="url(#sc2)" />
-      <rect x="100" y="8" width="75" height="200" fill="#B22234" clipPath="url(#sc2)" />
-      <rect x="100" y="32" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="52" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="72" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clipPath="url(#sc2)" />
-      <circle cx="108" cy="20" r="2.5" fill="white" />
-      <circle cx="120" cy="20" r="2.5" fill="white" />
-      <circle cx="132" cy="20" r="2.5" fill="white" />
-      <circle cx="108" cy="34" r="2.5" fill="white" />
-      <circle cx="120" cy="34" r="2.5" fill="white" />
-      <circle cx="132" cy="34" r="2.5" fill="white" />
-      <circle cx="62" cy="108" r="22" fill="none" stroke="white" strokeWidth="2" clipPath="url(#sc2)" />
-      <circle cx="70" cy="108" r="16" fill="#01411C" clipPath="url(#sc2)" />
-      <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clipPath="url(#sc2)" />
-      <line x1="100" y1="9" x2="100" y2="203" stroke="#C9A84C" strokeWidth="1.2" opacity="0.9" />
-      <g transform="translate(100,118)">
-        <line x1="-32" y1="0" x2="32" y2="0" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
-        <line x1="0" y1="-22" x2="0" y2="12" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="0" cy="-25" r="3" fill="#C9A84C" />
-        <line x1="-32" y1="0" x2="-27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="-32" y1="0" x2="-37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="-39" y1="14" x2="-25" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
-        <line x1="32" y1="0" x2="27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="32" y1="0" x2="37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="25" y1="14" x2="39" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
-      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="none" stroke="#C9A84C" strokeWidth="2" />
-      <text x="100" y="218" textAnchor="middle" fontFamily="Georgia,serif" fontSize="14" fontWeight="700" fill="#C9A84C" letterSpacing="4">ARK</text>
-    </svg>
-  );
-}
+var DEFAULT_NEWS = [
+  { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
+  { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
+  { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
+  { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
+  { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
+  { text: "Federal court upholds new US immigration processing reforms", pk: false },
+  { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
+  { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
+  { text: "Islamabad High Court rules on constitutional right to information", pk: true },
+  { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
+  { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
+  { text: "Supreme Court of US decides major intellectual property case", pk: false },
+  { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
+  { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
+  { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
+  { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
+];
 
 var AREAS_EN = [
   { id: "general", label: "General Legal", icon: "⚖️" },
@@ -145,28 +119,62 @@ function fmt(text) {
     .replace(/\n/g, "<br/>");
 }
 
+function ArkLogo(props) {
+  var s = props.size || 44;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="sc2">
+          <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" />
+        </clipPath>
+      </defs>
+      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A" />
+      <rect x="25" y="8" width="75" height="200" fill="#01411C" clipPath="url(#sc2)" />
+      <rect x="100" y="8" width="75" height="200" fill="#B22234" clipPath="url(#sc2)" />
+      <rect x="100" y="32" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
+      <rect x="100" y="52" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
+      <rect x="100" y="72" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
+      <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
+      <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
+      <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clipPath="url(#sc2)" />
+      <circle cx="108" cy="20" r="2.5" fill="white" />
+      <circle cx="120" cy="20" r="2.5" fill="white" />
+      <circle cx="132" cy="20" r="2.5" fill="white" />
+      <circle cx="108" cy="34" r="2.5" fill="white" />
+      <circle cx="120" cy="34" r="2.5" fill="white" />
+      <circle cx="132" cy="34" r="2.5" fill="white" />
+      <circle cx="62" cy="108" r="22" fill="none" stroke="white" strokeWidth="2" clipPath="url(#sc2)" />
+      <circle cx="70" cy="108" r="16" fill="#01411C" clipPath="url(#sc2)" />
+      <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clipPath="url(#sc2)" />
+      <line x1="100" y1="9" x2="100" y2="203" stroke="#C9A84C" strokeWidth="1.2" opacity="0.9" />
+      <g transform="translate(100,118)">
+        <line x1="-32" y1="0" x2="32" y2="0" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
+        <line x1="0" y1="-22" x2="0" y2="12" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="0" cy="-25" r="3" fill="#C9A84C" />
+        <line x1="-32" y1="0" x2="-27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="-32" y1="0" x2="-37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="-39" y1="14" x2="-25" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
+        <line x1="32" y1="0" x2="27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="32" y1="0" x2="37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="25" y1="14" x2="39" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
+      </g>
+      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="none" stroke="#C9A84C" strokeWidth="2" />
+      <text x="100" y="218" textAnchor="middle" fontFamily="Georgia,serif" fontSize="14" fontWeight="700" fill="#C9A84C" letterSpacing="4">ARK</text>
+    </svg>
+  );
+}
+
 export default function App() {
-  var langState = useState("en");
-  var lang = langState[0]; var setLang = langState[1];
-  var jurState = useState("both");
-  var jur = jurState[0]; var setJur = jurState[1];
-  var areaState = useState("general");
-  var area = areaState[0]; var setArea = areaState[1];
-  var msgState = useState([]);
-  var messages = msgState[0]; var setMessages = msgState[1];
-  var inputState = useState("");
-  var input = inputState[0]; var setInput = inputState[1];
-  var loadingState = useState(false);
-  var loading = loadingState[0]; var setLoading = loadingState[1];
-  var sidebarState = useState(false);
-  var sidebarOpen = sidebarState[0]; var setSidebarOpen = sidebarState[1];
-  var greetedState = useState(false);
-  var greeted = greetedState[0]; var setGreeted = greetedState[1];
-  var newsState = useState([]);
-  var newsItems = newsState[0]; var setNewsItems = newsState[1];
+  var langS = useState("en"); var lang = langS[0]; var setLang = langS[1];
+  var jurS = useState("both"); var jur = jurS[0]; var setJur = jurS[1];
+  var areaS = useState("general"); var area = areaS[0]; var setArea = areaS[1];
+  var msgS = useState([]); var messages = msgS[0]; var setMessages = msgS[1];
+  var inpS = useState(""); var input = inpS[0]; var setInput = inpS[1];
+  var loadS = useState(false); var loading = loadS[0]; var setLoading = loadS[1];
+  var greetS = useState(false); var greeted = greetS[0]; var setGreeted = greetS[1];
+  var newsS = useState(DEFAULT_NEWS.concat(DEFAULT_NEWS)); var newsItems = newsS[0]; var setNewsItems = newsS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
-
   var isUrdu = lang === "ur";
   var areas = isUrdu ? AREAS_UR : AREAS_EN;
   var quick = isUrdu ? QUICK_UR : QUICK_EN;
@@ -188,15 +196,12 @@ export default function App() {
       history.current = [{ role: "assistant", content: greeting }];
       setMessages([{ type: "ai", text: greeting, jur: "both" }]);
     }
-  }, []);
-
-  useEffect(function() {
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system: "You are a legal news aggregator. Return a JSON array of 16 recent legal news headlines, 8 from Pakistan and 8 from the USA. Each item must have: text (the headline, max 80 chars) and pk (true for Pakistan, false for USA). Return ONLY valid JSON array, no other text. Example: [{\"text\":\"Supreme Court rules on...\",\"pk\":true}]",
-        messages: [{ role: "user", content: "Give me 16 current legal news headlines, 8 from Pakistan and 8 from USA, as a JSON array." }],
+        system: "You are a legal news aggregator. Return ONLY a JSON array of 16 legal news headlines, 8 from Pakistan and 8 from the USA. Each item: {\"text\":\"headline max 80 chars\",\"pk\":true or false}. No other text, just the JSON array.",
+        messages: [{ role: "user", content: "Give me 16 current legal news headlines as JSON array." }],
       }),
     })
       .then(function(r) { return r.json(); })
@@ -204,48 +209,12 @@ export default function App() {
         try {
           var clean = data.reply.replace(/```json/g, "").replace(/```/g, "").trim();
           var items = JSON.parse(clean);
-          setNewsItems(items.concat(items));
-        } catch(e) {
-          setNewsItems([
-            { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
-            { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
-            { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
-            { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
-            { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
-            { text: "Federal court upholds new US immigration processing reforms", pk: false },
-            { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
-            { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
-            { text: "Islamabad High Court rules on constitutional right to information", pk: true },
-            { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
-            { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
-            { text: "Supreme Court of US decides major intellectual property case", pk: false },
-            { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
-            { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
-            { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
-            { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
-          ]);
-        }
+          if (Array.isArray(items) && items.length > 0) {
+            setNewsItems(items.concat(items));
+          }
+        } catch(e) {}
       })
-      .catch(function() {
-        setNewsItems([
-          { text: "Pakistan Supreme Court issues landmark ruling on digital privacy rights", pk: true },
-          { text: "US Supreme Court reviews AI liability in landmark tech case", pk: false },
-          { text: "Lahore High Court strengthens tenants rights in property disputes", pk: true },
-          { text: "US Congress passes new cybersecurity legislation for financial sector", pk: false },
-          { text: "Pakistan enacts amendments to Companies Act improving corporate governance", pk: true },
-          { text: "Federal court upholds new US immigration processing reforms", pk: false },
-          { text: "Pakistan Federal Shariat Court reviews family law inheritance provisions", pk: true },
-          { text: "US Department of Justice announces major antitrust enforcement action", pk: false },
-          { text: "Islamabad High Court rules on constitutional right to information", pk: true },
-          { text: "US Senate passes bipartisan criminal justice reform legislation", pk: false },
-          { text: "Pakistan Labour Court strengthens worker protections in tech sector", pk: true },
-          { text: "Supreme Court of US decides major intellectual property case", pk: false },
-          { text: "Pakistan Securities Commission issues new fintech regulatory framework", pk: true },
-          { text: "US courts expand protections for whistleblowers in corporate cases", pk: false },
-          { text: "Pakistan bar councils push for legal aid expansion nationwide", pk: true },
-          { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
-        ]);
-      });
+      .catch(function() {});
   }, []);
 
   function send(text) {
@@ -274,21 +243,24 @@ export default function App() {
   }
 
   return (
-    <>
+    <div>
       <style>{[
         "* { box-sizing: border-box; margin: 0; padding: 0; }",
-        "body { background: #0D1B2A; }",
+        "html, body { height: 100%; background: #0D1B2A; }",
+        "#__next { height: 100%; }",
         "@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }",
         "@keyframes tickerScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }",
         "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
         "input::placeholder { color: #6E8099; }",
         ".qbtn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }",
         ".abtn:hover { background: #1E2D40 !important; color: #C9A84C !important; }",
+        "#news-ticker { animation: tickerScroll 80s linear infinite; }",
         "#news-ticker:hover { animation-play-state: paused; }",
       ].join(" ")}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI', sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
 
+        {/* HEADER */}
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 8 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <ArkLogo size={42} />
@@ -320,47 +292,15 @@ export default function App() {
           </div>
         </header>
 
-        <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
+        {/* BODY */}
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          <aside style={{ width: 230, flexShrink: 0, background: NAVY_MID, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflowY: "auto", order: 2 }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
-            {areas.map(function(a) {
-              return (
-                <button key={a.id} className="abtn" onClick={function() { setArea(a.id); setSidebarOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", border: "none", textAlign: "left", background: area === a.id ? NAVY_SURFACE : "transparent", color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 13, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontWeight: area === a.id ? 600 : 400 }}>
-                  <span>{a.icon}</span>{a.label}
-                </button>
-              );
-            })}
-            <div style={{ height: 1, background: NAVY_BORDER, margin: "8px 10px" }} />
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
-            {quick.map(function(q, i) {
-              return (
-                <button key={i} className="qbtn" onClick={function() { send(q); setSidebarOpen(false); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{q}</button>
-              );
-            })}
-          </aside>
-
-          <div style={{ width: 38, flexShrink: 0, background: NAVY_MID, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", order: 3 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: ".12em", textTransform: "uppercase", padding: "10px 0 6px", writingMode: "vertical-rl", textOrientation: "mixed" }}>LEGAL NEWS</div>
-            <div style={{ flex: 1, overflow: "hidden", position: "relative", width: "100%" }}>
-              <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0, display: "flex", flexDirection: "column", gap: 0, animation: "tickerScroll 60s linear infinite" }}>
-                {newsItems.map(function(item, i) {
-                  return (
-                    <div key={i} style={{ padding: "8px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer" }}
-                      onClick={function() { send("Tell me more about: " + item.text); }}
-                      title={item.text}>
-                      {item.pk ? "🇵🇰 " : "🇺🇸 "}{item.text.length > 60 ? item.text.slice(0, 60) + "…" : item.text}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          {/* CHAT — left */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
               {jurConfig[jur].banner}
             </div>
-
             <div style={{ flex: 1, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map(function(msg, i) {
                 var isUser = msg.type === "user";
@@ -376,7 +316,6 @@ export default function App() {
                   </div>
                 );
               })}
-
               {loading && (
                 <div style={{ display: "flex", gap: 8 }}>
                   <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: NAVY, fontFamily: "Georgia,serif", flexShrink: 0 }}>ARK</div>
@@ -389,7 +328,6 @@ export default function App() {
               )}
               <div ref={messagesEnd} />
             </div>
-
             <div style={{ padding: "10px 12px 12px", borderTop: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, background: NAVY_SURFACE, border: "1px solid " + GOLD, borderRadius: 10, padding: "6px 10px" }}>
                 <input
@@ -411,8 +349,51 @@ export default function App() {
               </div>
             </div>
           </div>
+
+          {/* SIDEBAR — right */}
+          <div style={{ width: 230, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "row", overflow: "hidden" }}>
+
+            {/* MENU */}
+            <div style={{ flex: 1, background: NAVY_MID, display: "flex", flexDirection: "column", overflowY: "auto" }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
+              {areas.map(function(a) {
+                return (
+                  <button key={a.id} className="abtn" onClick={function() { setArea(a.id); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", border: "none", textAlign: "left", background: area === a.id ? NAVY_SURFACE : "transparent", color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 13, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontWeight: area === a.id ? 600 : 400 }}>
+                    <span>{a.icon}</span>{a.label}
+                  </button>
+                );
+              })}
+              <div style={{ height: 1, background: NAVY_BORDER, margin: "8px 10px" }} />
+              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
+              {quick.map(function(q, i) {
+                return (
+                  <button key={i} className="qbtn" onClick={function() { send(q); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{q}</button>
+                );
+              })}
+            </div>
+
+            {/* NEWS TICKER */}
+            <div style={{ width: 40, flexShrink: 0, background: NAVY, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+              <div style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase", padding: "8px 0", textAlign: "center", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, writingMode: "vertical-rl" }}>LEGAL NEWS</div>
+              <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+                <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+                  {newsItems.map(function(item, i) {
+                    return (
+                      <div key={i}
+                        onClick={function() { send("Tell me more about this legal news: " + item.text); }}
+                        title={item.text}
+                        style={{ padding: "10px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer", userSelect: "none" }}>
+                        {(item.pk ? "🇵🇰 " : "🇺🇸 ") + (item.text.length > 55 ? item.text.slice(0, 55) + "…" : item.text)}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
