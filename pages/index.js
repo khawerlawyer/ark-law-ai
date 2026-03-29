@@ -205,6 +205,25 @@ export default function App() {
   var newsS = useState(DEFAULT_NEWS.concat(DEFAULT_NEWS)); var newsItems = newsS[0]; var setNewsItems = newsS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
+  var popupS = useState(false); var showPopup = popupS[0]; var setShowPopup = popupS[1];
+  var codeS = useState(""); var codeInput = codeS[0]; var setCodeInput = codeS[1];
+  var codeMsgS = useState(""); var codeMsg = codeMsgS[0]; var setCodeMsg = codeMsgS[1];
+
+  function submitCode() {
+    if (codeInput.trim().toUpperCase() === "JUSTICESARABBANI") {
+      var newStart = Date.now() - (180 * 60 * 1000) + (24 * 60 * 60 * 1000);
+      document.cookie = "ark_guest_start=" + (Date.now() - (24 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000)) + "; path=/; max-age=86400";
+      // Reset to fresh 24 hours
+      var freshStart = Date.now();
+      document.cookie = "ark_guest_start=" + freshStart + "; path=/; max-age=86400";
+      setGuestMinsLeft(1440);
+      setCodeMsg("success");
+      setTimeout(function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }, 2000);
+    } else {
+      setCodeMsg("error");
+    }
+  }
+
   var timerS = useState(180); var guestMinsLeft = timerS[0]; var setGuestMinsLeft = timerS[1];
 
   var isUrdu = lang === "ur";
@@ -342,9 +361,12 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {!user && (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ background: guestMinsLeft > 10 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 10 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: guestMinsLeft > 10 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                  {"⏱ " + guestMinsLeft + " min free"}
+                <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
+                  {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft % 60) + "m" : guestMinsLeft + " min") + " free"}
                 </div>
+                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 12px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  ✨ Need more time?
+                </button>
                 <button onClick={function() { window.location.href = "/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                   ⭐ FREE TRIAL
                 </button>
@@ -523,6 +545,62 @@ export default function App() {
           </div>
 
         </div>
+        {/* CODE POPUP */}
+        {showPopup && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ background: NAVY_MID, border: "1px solid " + GOLD, borderRadius: 16, padding: "32px 28px", maxWidth: 420, width: "90%", textAlign: "center", boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}>
+
+              {/* Logo */}
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                <ArkLogo size={64} />
+              </div>
+
+              {/* Title */}
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD, marginBottom: 4 }}>ARK LAW AI</div>
+              <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 20 }}>The Legal Intelligence Engine</div>
+
+              {/* Instructions */}
+              <div style={{ fontSize: 13, color: TEXT_SECONDARY, lineHeight: 1.7, marginBottom: 8 }}>
+                To verify you are human and extend your free access to <strong style={{ color: GOLD }}>24 hours</strong>, enter the code below:
+              </div>
+
+              {/* The code hint */}
+              <div style={{ background: NAVY, border: "1px solid " + GOLD, borderRadius: 10, padding: "10px 16px", marginBottom: 16, fontSize: 16, fontWeight: 700, color: GOLD, letterSpacing: ".15em" }}>
+                JUSTICESARABBANI
+              </div>
+
+              {/* Input */}
+              <input
+                type="text"
+                value={codeInput}
+                onChange={function(e) { setCodeInput(e.target.value); setCodeMsg(""); }}
+                onKeyDown={function(e) { if (e.key === "Enter") submitCode(); }}
+                placeholder="Type the code here..."
+                style={{ width: "100%", background: NAVY_SURFACE, border: "1px solid " + (codeMsg === "error" ? "#E05555" : codeMsg === "success" ? ACCENT_PK : NAVY_BORDER), borderRadius: 8, padding: "10px 14px", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 14, outline: "none", marginBottom: 8, textAlign: "center", letterSpacing: ".1em" }}
+              />
+
+              {/* Feedback message */}
+              {codeMsg === "error" && (
+                <div style={{ fontSize: 12, color: "#E05555", marginBottom: 10 }}>❌ Incorrect code. Please try again.</div>
+              )}
+              {codeMsg === "success" && (
+                <div style={{ fontSize: 12, color: ACCENT_PK, marginBottom: 10 }}>✅ Code accepted! Your session has been extended to 24 hours.</div>
+              )}
+
+              {/* Buttons */}
+              <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 8 }}>
+                <button onClick={submitCode} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 8, padding: "9px 24px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                  Submit Code
+                </button>
+                <button onClick={function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 8, padding: "9px 24px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
+                  Cancel
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
