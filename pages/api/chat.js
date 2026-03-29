@@ -4,20 +4,46 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   var auth = getAuth(req);
-  if (!auth.userId) return res.status(401).json({ error: "Please sign in to use ARK Law AI." });
+  var userId = auth.userId;
 
-  var createdAt = auth.sessionClaims && auth.sessionClaims.createdAt
-    ? new Date(auth.sessionClaims.createdAt)
-    : null;
+  // ── Guest access: 30-minute free window ──────────────────────
+  if (!userId) {
+    var now = Date.now();
+    var cookieHeader = req.headers.cookie || "";
+    var match = cookieHeader.match(/ark_guest_start=(\d+)/);
+    var guestStart = match ? parseInt(match[1]) : null;
 
-  if (createdAt) {
-    var msPerDay = 1000 * 60 * 60 * 24;
-    var daysSince = Math.floor((Date.now() - createdAt.getTime()) / msPerDay);
-    if (daysSince > 7) {
-      return res.status(403).json({ error: "Your 7-day free trial has expired. Please upgrade to continue using ARK Law AI." });
+    if (!guestStart) {
+      // First visit — set the timer cookie
+      res.setHeader("Set-Cookie", "ark_guest_start=" + now + "; Path=/; Max-Age=3600; SameSite=Lax");
+      guestStart = now;
+    }
+
+    var minutesUsed = (now - guestStart) / 60000;
+    if (minutesUsed > 30) {
+      return res.status(403).json({
+        error: "Your 30-minute free session has ended. Please sign up for a free 7-day trial to continue using ARK Law AI."
+      });
     }
   }
 
+  // ── Signed-in users: check 7-day trial ───────────────────────
+  if (userId) {
+    var createdAt = auth.sessionClaims && auth.sessionClaims.createdAt
+      ? new Date(auth.sessionClaims.createdAt)
+      : null;
+    if (createdAt) {
+      var msPerDay = 1000 * 60 * 60 * 24;
+      var daysSince = Math.floor((Date.now() - createdAt.getTime()) / msPerDay);
+      if (daysSince > 7) {
+        return res.status(403).json({
+          error: "Your 7-day free trial has expired. Please upgrade to continue using ARK Law AI."
+        });
+      }
+    }
+  }
+
+  // ── Call Anthropic API ────────────────────────────────────────
   var messages = req.body.messages;
   var system = req.body.system;
 
