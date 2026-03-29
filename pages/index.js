@@ -466,8 +466,8 @@ export default function App() {
                 var isError = msg.type === "error";
                 return (
                   <div key={i} style={{ display: "flex", flexDirection: isUser ? "row-reverse" : "row", gap: 8, maxWidth: 760, marginLeft: isUser ? "auto" : 0 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: isUser ? NAVY_SURFACE : "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: isUser ? "1px solid " + NAVY_BORDER : "none", color: isUser ? TEXT_SECONDARY : NAVY, fontSize: isUser ? 13 : 9, fontWeight: 700, fontFamily: "Georgia,serif" }}>
-                      {isUser ? "👤" : "ARK"}
+                    <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, overflow: "hidden", border: "1px solid " + GOLD }}>
+                      <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                     </div>
                     <div style={{ padding: "10px 14px", borderRadius: isUser ? "12px 4px 12px 12px" : "4px 12px 12px 12px", background: isUser ? "rgba(91,141,217,0.1)" : isError ? "rgba(224,85,85,0.1)" : NAVY_SURFACE, border: "1px solid " + (isUser ? "rgba(91,141,217,0.2)" : isError ? "rgba(224,85,85,0.3)" : NAVY_BORDER), fontSize: 13, lineHeight: 1.8, color: TEXT_PRIMARY, maxWidth: 640 }}
                       dangerouslySetInnerHTML={{ __html: isUser ? msg.text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : fmt(msg.text) }}
@@ -477,7 +477,9 @@ export default function App() {
               })}
               {loading && (
                 <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: NAVY, fontFamily: "Georgia,serif", flexShrink: 0 }}>ARK</div>
+                  <div style={{ width: 30, height: 30, borderRadius: "50%", overflow: "hidden", border: "1px solid " + GOLD, flexShrink: 0 }}>
+                    <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                  </div>
                   <div style={{ padding: "10px 14px", borderRadius: "4px 12px 12px 12px", background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, display: "flex", gap: 4, alignItems: "center" }}>
                     {[0, 0.2, 0.4].map(function(d, i) {
                       return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />;
