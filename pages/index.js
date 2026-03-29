@@ -505,7 +505,8 @@ export default function App() {
               </div>
               <div style={{ textAlign:"center", marginTop:5, fontSize:10, color:TEXT_MUTED }}>
                 ⚠️ {isUrdu?"صرف تحقیق کے لیے":"For research only — not a substitute for legal counsel"}
-                &nbsp;|&nbsp;<span style={{ color:GOLD, opacity:0.7 }}>ARK Law AI — Justice S. A. Rabbani Law</span>
+                <br/>
+                <span style={{ color:GOLD, opacity:0.8, fontSize:9 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
               </div>
             </div>
           </div>
