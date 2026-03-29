@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
+import { useUser, useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 
 var GOLD = "#C9A84C";
 var NAVY = "#0D1B2A";
@@ -207,6 +209,16 @@ export default function App() {
   var areas = isUrdu ? AREAS_UR : AREAS_EN;
   var quick = isUrdu ? QUICK_UR : QUICK_EN;
   var conductDouble = CONDUCT.concat(CONDUCT);
+  var userInfo = useUser();
+  var clerk = useClerk();
+  var router = useRouter();
+  var user = userInfo.user;
+  var trialDaysLeft = 7;
+  if (user && user.createdAt) {
+    var msPerDay = 1000 * 60 * 60 * 24;
+    var daysSince = Math.floor((Date.now() - new Date(user.createdAt).getTime()) / msPerDay);
+    trialDaysLeft = Math.max(0, 7 - daysSince);
+  }
 
   var jurConfig = {
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: isUrdu ? "پاکستانی قانون کے تحت جواب" : "Answering under Pakistani law" },
@@ -306,7 +318,31 @@ export default function App() {
               <div style={{ fontSize: 9, color: ACCENT_PK, letterSpacing: ".03em" }}>{isUrdu ? "خاور ربانی" : "by Attorney & AI Innovator Khawer Rabbani"}</div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {!user && (
+              <>
+                <button onClick={function() { router.push("/sign-up"); }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: "#0D1B2A", fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                  ⭐ FREE TRIAL
+                </button>
+                <button onClick={function() { router.push("/sign-in"); }} style={{ background: "transparent", border: "1px solid #2B3F57", borderRadius: 20, padding: "6px 14px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
+                  🔑 Login
+                </button>
+              </>
+            )}
+            {user && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
+                  {trialDaysLeft > 0 ? "⭐ Trial: " + trialDaysLeft + " days left" : "⚠️ Trial expired"}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 12px", fontSize: 11, color: TEXT_SECONDARY }}>
+                  👤 {user.firstName || user.emailAddresses[0].emailAddress.split("@")[0]}
+                </div>
+                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid #2B3F57", borderRadius: 20, padding: "5px 12px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
               {["en", "ur"].map(function(l) {
                 return (
