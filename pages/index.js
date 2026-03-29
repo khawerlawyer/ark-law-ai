@@ -134,30 +134,23 @@ function buildSystem(area, jur, lang) {
     both: "You are answering under BOTH Pakistani and US law with clear sections for each jurisdiction and comparative analysis.",
   };
   var langText = lang === "ur" ? "IMPORTANT: Respond entirely in Urdu. Use formal legal Urdu terminology." : "Respond in English.";
-  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE CLARIFYING QUESTION: Ask a maximum of ONE clarifying question per topic, then give a full detailed answer. Never ask more than one clarifying question before answering.\n4. FOCUSED ANSWERS: After at most one clarifying question, give a complete, helpful answer. Cite specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
+  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE CLARIFYING QUESTION: Ask a maximum of ONE clarifying question per topic, then give a full detailed answer.\n4. FOCUSED ANSWERS: After at most one clarifying question, give a complete helpful answer. Cite specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
 }
 
 function fmt(text) {
   return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong style=\"color:#C9A84C\">$1</strong>")
     .replace(/^#{1,3} (.+)$/gm, "<div style=\"color:#C9A84C;font-weight:600;margin:10px 0 5px\">$1</div>")
     .replace(/^- (.+)$/gm, "<div style=\"display:flex;gap:8px;margin:3px 0\"><span style=\"color:#C9A84C\">&#8226;</span><span>$1</span></div>")
-    .replace(/\n\n/g, "<br/>")
-    .replace(/\n/g, "<br/>");
+    .replace(/\n\n/g, "<br/>").replace(/\n/g, "<br/>");
 }
 
 function ArkLogo(props) {
   var s = props.size || 44;
   return (
     <svg width={s} height={s} viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="sc2">
-          <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" />
-        </clipPath>
-      </defs>
+      <defs><clipPath id="sc2"><path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" /></clipPath></defs>
       <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A" />
       <rect x="25" y="8" width="75" height="200" fill="#01411C" clipPath="url(#sc2)" />
       <rect x="100" y="8" width="75" height="200" fill="#B22234" clipPath="url(#sc2)" />
@@ -167,12 +160,8 @@ function ArkLogo(props) {
       <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
       <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
       <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clipPath="url(#sc2)" />
-      <circle cx="108" cy="20" r="2.5" fill="white" />
-      <circle cx="120" cy="20" r="2.5" fill="white" />
-      <circle cx="132" cy="20" r="2.5" fill="white" />
-      <circle cx="108" cy="34" r="2.5" fill="white" />
-      <circle cx="120" cy="34" r="2.5" fill="white" />
-      <circle cx="132" cy="34" r="2.5" fill="white" />
+      <circle cx="108" cy="20" r="2.5" fill="white" /><circle cx="120" cy="20" r="2.5" fill="white" /><circle cx="132" cy="20" r="2.5" fill="white" />
+      <circle cx="108" cy="34" r="2.5" fill="white" /><circle cx="120" cy="34" r="2.5" fill="white" /><circle cx="132" cy="34" r="2.5" fill="white" />
       <circle cx="62" cy="108" r="22" fill="none" stroke="white" strokeWidth="2" clipPath="url(#sc2)" />
       <circle cx="70" cy="108" r="16" fill="#01411C" clipPath="url(#sc2)" />
       <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clipPath="url(#sc2)" />
@@ -203,37 +192,21 @@ export default function App() {
   var loadS = useState(false); var loading = loadS[0]; var setLoading = loadS[1];
   var greetS = useState(false); var greeted = greetS[0]; var setGreeted = greetS[1];
   var newsS = useState(DEFAULT_NEWS.concat(DEFAULT_NEWS)); var newsItems = newsS[0]; var setNewsItems = newsS[1];
-  var messagesEnd = useRef(null);
-  var history = useRef([]);
+  var leftS = useState(false); var showLeft = leftS[0]; var setShowLeft = leftS[1];
+  var rightS = useState(false); var showRight = rightS[0]; var setShowRight = rightS[1];
   var popupS = useState(false); var showPopup = popupS[0]; var setShowPopup = popupS[1];
   var codeS = useState(""); var codeInput = codeS[0]; var setCodeInput = codeS[1];
   var codeMsgS = useState(""); var codeMsg = codeMsgS[0]; var setCodeMsg = codeMsgS[1];
-
-  function submitCode() {
-    if (codeInput.trim().toUpperCase() === "JUSTICESARABBANI") {
-      var newStart = Date.now() - (180 * 60 * 1000) + (24 * 60 * 60 * 1000);
-      document.cookie = "ark_guest_start=" + (Date.now() - (24 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000)) + "; path=/; max-age=86400";
-      // Reset to fresh 24 hours
-      var freshStart = Date.now();
-      document.cookie = "ark_guest_start=" + freshStart + "; path=/; max-age=86400";
-      setGuestMinsLeft(1440);
-      setCodeMsg("success");
-      setTimeout(function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }, 2000);
-    } else {
-      setCodeMsg("error");
-    }
-  }
-
   var timerS = useState(180); var guestMinsLeft = timerS[0]; var setGuestMinsLeft = timerS[1];
-
+  var messagesEnd = useRef(null);
+  var history = useRef([]);
+  var userInfo = useUser(); var user = userInfo.user;
+  var clerk = useClerk();
+  var router = useRouter();
   var isUrdu = lang === "ur";
   var areas = isUrdu ? AREAS_UR : AREAS_EN;
   var quick = isUrdu ? QUICK_UR : QUICK_EN;
   var conductDouble = CONDUCT.concat(CONDUCT);
-  var userInfo = useUser();
-  var clerk = useClerk();
-  var router = useRouter();
-  var user = userInfo.user;
   var trialDaysLeft = 7;
   if (user && user.createdAt) {
     var msPerDay = 1000 * 60 * 60 * 24;
@@ -247,24 +220,27 @@ export default function App() {
     both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: isUrdu ? "پاکستانی اور امریکی دونوں قوانین کے تحت جواب" : "Answering under both Pakistani and US law" },
   };
 
-  // Guest countdown timer
-  useEffect(function() {
-    if (user) return;
-    var cookieMatch = document.cookie.match(/ark_guest_start=(\d+)/);
-    var start = cookieMatch ? parseInt(cookieMatch[1]) : Date.now();
-    if (!cookieMatch) {
-      document.cookie = "ark_guest_start=" + start + "; path=/; max-age=3600";
-    }
-    var interval = setInterval(function() {
-      var mins = Math.max(0, 180 - Math.floor((Date.now() - start) / 60000));
-      setGuestMinsLeft(mins);
-    }, 10000);
-    return function() { clearInterval(interval); };
-  }, [user]);
-
   useEffect(function() {
     if (messagesEnd.current) messagesEnd.current.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(function() {
+    if (user) return;
+    var now = Date.now();
+    var cookieMatch = document.cookie.match(/ark_guest_start=(\d+)/);
+    var start;
+    if (cookieMatch) {
+      start = parseInt(cookieMatch[1]);
+      if (now - start > 180 * 60 * 1000) { start = now; document.cookie = "ark_guest_start=" + start + "; path=/; max-age=14400"; }
+    } else {
+      start = now; document.cookie = "ark_guest_start=" + start + "; path=/; max-age=14400";
+    }
+    setGuestMinsLeft(Math.max(0, 180 - Math.floor((now - start) / 60000)));
+    var interval = setInterval(function() {
+      setGuestMinsLeft(Math.max(0, 180 - Math.floor((Date.now() - start) / 60000)));
+    }, 10000);
+    return function() { clearInterval(interval); };
+  }, [user]);
 
   useEffect(function() {
     if (!greeted) {
@@ -274,23 +250,29 @@ export default function App() {
       setMessages([{ type: "ai", text: greeting, jur: "both" }]);
     }
     fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system: "You are a legal news aggregator. Return ONLY a JSON array of 16 legal news headlines, 8 from Pakistan and 8 from the USA. Each item: {\"text\":\"headline max 80 chars\",\"pk\":true or false}. No other text, just the JSON array.",
+        system: "You are a legal news aggregator. Return ONLY a JSON array of 16 legal news headlines, 8 from Pakistan and 8 from USA. Each: {\"text\":\"headline max 80 chars\",\"pk\":true or false}. Just the JSON array.",
         messages: [{ role: "user", content: "Give me 16 current legal news headlines as JSON array." }],
       }),
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        try {
-          var clean = data.reply.replace(/```json/g, "").replace(/```/g, "").trim();
-          var items = JSON.parse(clean);
-          if (Array.isArray(items) && items.length > 0) setNewsItems(items.concat(items));
-        } catch(e) {}
-      })
-      .catch(function() {});
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      try {
+        var clean = data.reply.replace(/```json/g, "").replace(/```/g, "").trim();
+        var items = JSON.parse(clean);
+        if (Array.isArray(items) && items.length > 0) setNewsItems(items.concat(items));
+      } catch(e) {}
+    }).catch(function() {});
   }, []);
+
+  function submitCode() {
+    if (codeInput.trim().toUpperCase() === "JUSTICESARABBANI") {
+      var freshStart = Date.now();
+      document.cookie = "ark_guest_start=" + freshStart + "; path=/; max-age=86400";
+      setGuestMinsLeft(1440);
+      setCodeMsg("success");
+      setTimeout(function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }, 2000);
+    } else { setCodeMsg("error"); }
+  }
 
   function send(text) {
     var msg = (text || input).trim();
@@ -300,30 +282,25 @@ export default function App() {
     setMessages(function(prev) { return prev.concat([{ type: "user", text: msg }]); });
     setLoading(true);
     fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ system: buildSystem(area, jur, lang), messages: history.current }),
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.error) throw new Error(data.error);
-        history.current = history.current.concat([{ role: "assistant", content: data.reply }]);
-        setMessages(function(prev) { return prev.concat([{ type: "ai", text: data.reply, jur: jur }]); });
-      })
-      .catch(function(err) {
-        history.current = history.current.slice(0, -1);
-        setMessages(function(prev) { return prev.concat([{ type: "error", text: "Error: " + err.message }]); });
-      })
-      .finally(function() { setLoading(false); });
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.error) throw new Error(data.error);
+      history.current = history.current.concat([{ role: "assistant", content: data.reply }]);
+      setMessages(function(prev) { return prev.concat([{ type: "ai", text: data.reply, jur: jur }]); });
+    }).catch(function(err) {
+      history.current = history.current.slice(0, -1);
+      setMessages(function(prev) { return prev.concat([{ type: "error", text: "Error: " + err.message }]); });
+    }).finally(function() { setLoading(false); });
   }
 
   return (
     <div>
       <Head>
         <title>ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani</title>
-        <meta name="description" content="ARK LAW AI — The Legal Intelligence Engine for Pakistani and US law by Attorney and AI Innovator Khawer Rabbani." />
+        <meta name="description" content="ARK LAW AI — The Legal Intelligence Engine for Pakistani and US law." />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta property="og:title" content="ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani" />
-        <meta property="og:description" content="AI-powered legal research for Pakistani and US law." />
       </Head>
 
       <style>{[
@@ -331,122 +308,145 @@ export default function App() {
         "html, body { height: 100%; background: #0D1B2A; }",
         "#__next { height: 100%; }",
         "@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }",
-        "@keyframes tickerScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }",
+        "@keyframes tickerScroll { 0%{transform:translateY(0)} 100%{transform:translateY(-50%)} }",
         "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
-        "input::placeholder { color: #6E8099; }",
-        ".qbtn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }",
-        ".abtn:hover { background: #1E2D40 !important; color: #C9A84C !important; }",
-        "#news-ticker { animation: tickerScroll 80s linear infinite; }",
-        "#news-ticker:hover { animation-play-state: paused; }",
-        "#conduct-ticker { animation: tickerScroll 70s linear infinite; }",
-        "#conduct-ticker:hover { animation-play-state: paused; }",
+        "input::placeholder{color:#6E8099}",
+        ".qbtn:hover{border-color:#C9A84C!important;color:#C9A84C!important}",
+        ".abtn:hover{background:#1E2D40!important;color:#C9A84C!important}",
+        "#news-ticker{animation:tickerScroll 80s linear infinite}",
+        "#news-ticker:hover{animation-play-state:paused}",
+        "#conduct-ticker{animation:tickerScroll 70s linear infinite}",
+        "#conduct-ticker:hover{animation-play-state:paused}",
+        ".left-panel{display:flex} .right-panel{display:flex}",
+        "@media(max-width:768px){",
+        ".left-panel{display:none!important}",
+        ".right-panel{display:none!important}",
+        ".desktop-auth{display:none!important}",
+        ".mobile-menu-bar{display:flex!important}",
+        ".header-title div:nth-child(3){display:none}",
+        "}",
+        ".mobile-menu-bar{display:none}",
+        ".mobile-drawer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(0,0,0,0.7)}",
+        ".mobile-panel{position:fixed;bottom:0;left:0;right:0;background:#162032;border-top:1px solid #2B3F57;border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;padding:16px}",
       ].join(" ")}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI', sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI',sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
 
         {/* HEADER */}
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 8 }}>
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 6 }}>
 
-          {/* LEFT: Logo + Title */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <ArkLogo size={42} />
-            <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
-              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".05em" }}>The Legal Intelligence Engine</div>
-              <div style={{ fontSize: 9, color: ACCENT_PK }}>by Attorney & AI Innovator Khawer Rabbani</div>
+          {/* Logo + Title */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }} className="header-title">
+            <ArkLogo size={36} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 15, fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>ARK LAW AI</div>
+              <div style={{ fontSize: 8, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em", whiteSpace: "nowrap" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 8, color: ACCENT_PK, whiteSpace: "nowrap" }}>by Atty. & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
 
-          {/* CENTRE: Auth buttons */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* Desktop auth — hidden on mobile */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }} className="desktop-auth">
             {!user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                  {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft % 60) + "m" : guestMinsLeft + " min") + " free"}
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600, whiteSpace: "nowrap" }}>
+                  {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft%60) + "m" : guestMinsLeft + "m")}
                 </div>
-                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 12px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
-                  ✨ Need more time?
-                </button>
-                <button onClick={function() { window.location.href = "/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                  ⭐ FREE TRIAL
-                </button>
-                <button onClick={function() { window.location.href = "/sign-in"; }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "6px 14px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
-                  🔑 Login
-                </button>
+                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>✨ More time?</button>
+                <button onClick={function() { window.location.href="/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>⭐ Free Trial</button>
+                <button onClick={function() { window.location.href="/sign-in"; }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "5px 10px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>🔑 Login</button>
               </div>
             )}
             {user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                  {trialDaysLeft > 0 ? "⭐ Trial: " + trialDaysLeft + " days left" : "⚠️ Trial expired"}
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
+                  {trialDaysLeft > 0 ? "⭐ " + trialDaysLeft + "d left" : "⚠️ Expired"}
                 </div>
-                <div style={{ background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 12px", fontSize: 11, color: TEXT_SECONDARY }}>
+                <div style={{ background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", fontSize: 10, color: TEXT_SECONDARY }}>
                   {"👤 " + (user.firstName || user.emailAddresses[0].emailAddress.split("@")[0])}
                 </div>
-                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "5px 12px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
-                  Sign out
-                </button>
+                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>Out</button>
               </div>
             )}
           </div>
 
-          {/* RIGHT: Language + Jurisdiction */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              {["en", "ur"].map(function(l) {
-                return (
-                  <button key={l} onClick={function() { setLang(l); }} style={{ border: "none", borderRadius: 30, padding: "3px 10px", fontSize: 11, cursor: "pointer", background: lang === l ? "rgba(201,168,76,0.2)" : "transparent", color: lang === l ? GOLD : TEXT_MUTED, fontFamily: "inherit", fontWeight: 500 }}>
-                    {l === "en" ? "EN" : "اردو"}
-                  </button>
-                );
+          {/* Language + Jurisdiction */}
+          <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 2 }}>
+              {["en","ur"].map(function(l) {
+                return <button key={l} onClick={function(){setLang(l);}} style={{ border:"none", borderRadius:30, padding:"3px 8px", fontSize:10, cursor:"pointer", background:lang===l?"rgba(201,168,76,0.2)":"transparent", color:lang===l?GOLD:TEXT_MUTED, fontFamily:"inherit", fontWeight:500 }}>{l==="en"?"EN":"اردو"}</button>;
               })}
             </div>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              {[["pk", "🇵🇰 PK"], ["both", "⚖ Both"], ["us", "🇺🇸 US"]].map(function(item) {
-                var j = item[0]; var lbl = item[1];
-                return (
-                  <button key={j} onClick={function() { setJur(j); }} style={{ border: "none", borderRadius: 30, padding: "3px 10px", fontSize: 11, cursor: "pointer", background: jur === j ? (j === "pk" ? "rgba(62,180,137,0.15)" : j === "us" ? "rgba(91,141,217,0.15)" : "rgba(201,168,76,0.15)") : "transparent", color: jur === j ? jurConfig[j].color : TEXT_MUTED, fontFamily: "inherit", fontWeight: 500 }}>
-                    {lbl}
-                  </button>
-                );
+            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 2 }}>
+              {[["pk","🇵🇰"],["both","⚖"],["us","🇺🇸"]].map(function(item) {
+                var j=item[0]; var lbl=item[1];
+                return <button key={j} onClick={function(){setJur(j);}} style={{ border:"none", borderRadius:30, padding:"3px 7px", fontSize:11, cursor:"pointer", background:jur===j?(j==="pk"?"rgba(62,180,137,0.15)":j==="us"?"rgba(91,141,217,0.15)":"rgba(201,168,76,0.15)"):"transparent", color:jur===j?jurConfig[j].color:TEXT_MUTED, fontFamily:"inherit" }}>{lbl}</button>;
               })}
             </div>
           </div>
-
         </header>
 
-        {/* BODY */}
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* MOBILE MENU BAR */}
+        <div className="mobile-menu-bar" style={{ background: NAVY_MID, borderBottom: "1px solid " + NAVY_BORDER, padding: "6px 12px", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          {!user && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, flexWrap: "wrap" }}>
+              <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
+                {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft%60) + "m" : guestMinsLeft + "m") + " free"}
+              </div>
+              <button onClick={function(){setShowPopup(true);}} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:20, padding:"4px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>✨ More time?</button>
+              <button onClick={function(){window.location.href="/sign-up";}} style={{ background:"linear-gradient(135deg,#C9A84C,#a07830)", border:"none", borderRadius:20, padding:"4px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>⭐ Free Trial</button>
+              <button onClick={function(){window.location.href="/sign-in";}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", color:TEXT_SECONDARY, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔑 Login</button>
+            </div>
+          )}
+          {user && (
+            <div style={{ display:"flex", alignItems:"center", gap:6, flex:1 }}>
+              <div style={{ background:trialDaysLeft>0?"rgba(62,180,137,0.15)":"rgba(224,85,85,0.15)", border:"1px solid "+(trialDaysLeft>0?ACCENT_PK:"#E05555"), borderRadius:20, padding:"4px 10px", fontSize:10, color:trialDaysLeft>0?ACCENT_PK:"#E05555", fontWeight:600 }}>
+                {trialDaysLeft>0?"⭐ "+trialDaysLeft+"d left":"⚠️ Expired"}
+              </div>
+              <div style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", fontSize:10, color:TEXT_SECONDARY }}>
+                {"👤 "+(user.firstName||user.emailAddresses[0].emailAddress.split("@")[0])}
+              </div>
+              <button onClick={function(){clerk.signOut();}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>Sign out</button>
+            </div>
+          )}
+          <div style={{ display:"flex", gap:8 }}>
+            <button onClick={function(){setShowLeft(true);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px 10px", color:GOLD, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>📜 Conduct</button>
+            <button onClick={function(){setShowRight(true);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px 10px", color:GOLD, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>⚖️ Menu</button>
+          </div>
+        </div>
 
-          {/* LEFT BAR — Code of Conduct */}
-          <div style={{ width: 270, flexShrink: 0, borderRight: "1px solid " + NAVY_BORDER, background: NAVY_MID, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/jinnah.jpeg" alt="Muhammad Ali Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+        {/* BODY */}
+        <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
+
+          {/* LEFT BAR — desktop only */}
+          <div className="left-panel" style={{ width:270, flexShrink:0, borderRight:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexDirection:"column", overflow:"hidden" }}>
+            <div style={{ display:"flex", justifyContent:"space-around", alignItems:"center", padding:"10px 8px 8px", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, background:NAVY }}>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ width:54, height:54, borderRadius:"50%", border:"2px solid "+ACCENT_PK, overflow:"hidden", margin:"0 auto 4px" }}>
+                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>FOUNDER OF PAKISTAN</div>
-                <div style={{ fontSize: 8, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
+                <div style={{ fontSize:9, color:ACCENT_PK, fontWeight:600 }}>FOUNDER OF PAKISTAN</div>
+                <div style={{ fontSize:8, color:TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
               </div>
-              <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/washington.jpeg" alt="George Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+              <div style={{ fontSize:14, color:GOLD, fontWeight:700 }}>⚖</div>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ width:54, height:54, borderRadius:"50%", border:"2px solid "+ACCENT_US, overflow:"hidden", margin:"0 auto 4px" }}>
+                  <img src="/washington.jpeg" alt="Washington" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>USA — FOUNDING FATHER</div>
-                <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
+                <div style={{ fontSize:9, color:ACCENT_US, fontWeight:600 }}>USA — FOUNDING FATHER</div>
+                <div style={{ fontSize:8, color:TEXT_MUTED }}>G. Washington</div>
               </div>
             </div>
-            <div style={{ padding: "6px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, textAlign: "center" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase" }}>Attorney Code of Conduct</div>
+            <div style={{ padding:"6px 10px", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, textAlign:"center" }}>
+              <div style={{ fontSize:10, fontWeight:700, color:GOLD, letterSpacing:".1em", textTransform:"uppercase" }}>Attorney Code of Conduct</div>
             </div>
-            <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-              <div id="conduct-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
-                {conductDouble.map(function(item, i) {
+            <div style={{ flex:1, overflow:"hidden", position:"relative" }}>
+              <div id="conduct-ticker" style={{ position:"absolute", top:0, left:0, right:0 }}>
+                {conductDouble.map(function(item,i) {
                   return (
-                    <div key={i} style={{ padding: "7px 12px", borderBottom: "1px solid rgba(43,63,87,0.5)", display: "flex", gap: 7, alignItems: "flex-start" }}>
-                      <span style={{ fontSize: 11, flexShrink: 0, marginTop: 1 }}>{item.pk ? "🇵🇰" : "🇺🇸"}</span>
-                      <span style={{ fontSize: 11, color: TEXT_SECONDARY, lineHeight: 1.5 }}>{item.text}</span>
+                    <div key={i} style={{ padding:"7px 12px", borderBottom:"1px solid rgba(43,63,87,0.5)", display:"flex", gap:7, alignItems:"flex-start" }}>
+                      <span style={{ fontSize:11, flexShrink:0, marginTop:1 }}>{item.pk?"🇵🇰":"🇺🇸"}</span>
+                      <span style={{ fontSize:11, color:TEXT_SECONDARY, lineHeight:1.5 }}>{item.text}</span>
                     </div>
                   );
                 })}
@@ -454,151 +454,164 @@ export default function App() {
             </div>
           </div>
 
-          {/* CHAT — centre */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
+          {/* CHAT */}
+          <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+            <div style={{ padding:"6px 16px", fontSize:12, fontWeight:500, borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, background:jurConfig[jur].bg, color:jurConfig[jur].color, display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:7, height:7, borderRadius:"50%", background:jurConfig[jur].color, flexShrink:0 }} />
               {jurConfig[jur].banner}
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 12 }}>
-              {messages.map(function(msg, i) {
-                var isUser = msg.type === "user";
-                var isError = msg.type === "error";
+            <div style={{ flex:1, overflowY:"auto", padding:"1rem", display:"flex", flexDirection:"column", gap:12 }}>
+              {messages.map(function(msg,i) {
+                var isUser=msg.type==="user"; var isError=msg.type==="error";
                 return (
-                  <div key={i} style={{ display: "flex", flexDirection: isUser ? "row-reverse" : "row", gap: 8, maxWidth: 760, marginLeft: isUser ? "auto" : 0 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, overflow: "hidden", border: "1px solid " + GOLD }}>
-                      <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                  <div key={i} style={{ display:"flex", flexDirection:isUser?"row-reverse":"row", gap:8, maxWidth:760, marginLeft:isUser?"auto":0 }}>
+                    <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0, overflow:"hidden", border:"1px solid "+(isUser?NAVY_BORDER:GOLD) }}>
+                      {isUser
+                        ? <div style={{ width:"100%", height:"100%", background:NAVY_SURFACE, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>👤</div>
+                        : <img src="/khawer.jpeg" alt="ARK" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                      }
                     </div>
-                    <div style={{ padding: "10px 14px", borderRadius: isUser ? "12px 4px 12px 12px" : "4px 12px 12px 12px", background: isUser ? "rgba(91,141,217,0.1)" : isError ? "rgba(224,85,85,0.1)" : NAVY_SURFACE, border: "1px solid " + (isUser ? "rgba(91,141,217,0.2)" : isError ? "rgba(224,85,85,0.3)" : NAVY_BORDER), fontSize: 13, lineHeight: 1.8, color: TEXT_PRIMARY, maxWidth: 640 }}
-                      dangerouslySetInnerHTML={{ __html: isUser ? msg.text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : fmt(msg.text) }}
+                    <div style={{ padding:"10px 14px", borderRadius:isUser?"12px 4px 12px 12px":"4px 12px 12px 12px", background:isUser?"rgba(91,141,217,0.1)":isError?"rgba(224,85,85,0.1)":NAVY_SURFACE, border:"1px solid "+(isUser?"rgba(91,141,217,0.2)":isError?"rgba(224,85,85,0.3)":NAVY_BORDER), fontSize:13, lineHeight:1.8, color:TEXT_PRIMARY, maxWidth:640 }}
+                      dangerouslySetInnerHTML={{ __html:isUser?msg.text.replace(/&/g,"&amp;").replace(/</g,"&lt;"):fmt(msg.text) }}
                     />
                   </div>
                 );
               })}
               {loading && (
-                <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{ width: 30, height: 30, borderRadius: "50%", overflow: "hidden", border: "1px solid " + GOLD, flexShrink: 0 }}>
-                    <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                <div style={{ display:"flex", gap:8 }}>
+                  <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0, overflow:"hidden", border:"1px solid "+GOLD }}>
+                    <img src="/khawer.jpeg" alt="ARK" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                   </div>
-                  <div style={{ padding: "10px 14px", borderRadius: "4px 12px 12px 12px", background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, display: "flex", gap: 4, alignItems: "center" }}>
-                    {[0, 0.2, 0.4].map(function(d, i) {
-                      return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />;
-                    })}
+                  <div style={{ padding:"10px 14px", borderRadius:"4px 12px 12px 12px", background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, display:"flex", gap:4, alignItems:"center" }}>
+                    {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7, height:7, borderRadius:"50%", background:GOLD, animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
                   </div>
                 </div>
               )}
               <div ref={messagesEnd} />
             </div>
-            <div style={{ padding: "10px 12px 12px", borderTop: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, background: NAVY_SURFACE, border: "1px solid " + GOLD, borderRadius: 10, padding: "6px 10px" }}>
-                <input
-                  value={input}
-                  onChange={function(e) { setInput(e.target.value); }}
-                  onKeyDown={function(e) { if (e.key === "Enter") { e.preventDefault(); send(); } }}
-                  placeholder={isUrdu ? "پاکستانی یا امریکی قانون کے بارے میں سوال کریں..." : "Ask about Pakistani or US law..."}
-                  dir={isUrdu ? "rtl" : "ltr"}
-                  style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 13, height: 34 }}
+            <div style={{ padding:"10px 12px 12px", borderTop:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexShrink:0 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, background:NAVY_SURFACE, border:"1px solid "+GOLD, borderRadius:10, padding:"6px 10px" }}>
+                <input value={input} onChange={function(e){setInput(e.target.value);}} onKeyDown={function(e){if(e.key==="Enter"){e.preventDefault();send();}}}
+                  placeholder={isUrdu?"پاکستانی یا امریکی قانون کے بارے میں سوال کریں...":"Ask about Pakistani or US law..."}
+                  dir={isUrdu?"rtl":"ltr"}
+                  style={{ flex:1, background:"transparent", border:"none", outline:"none", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:13, height:34 }}
                 />
-                <button onClick={function() { send(); }} style={{ background: GOLD, border: "none", borderRadius: 8, padding: "6px 18px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer", height: 34, flexShrink: 0 }}>
-                  {isUrdu ? "بھیجیں" : "SEND"}
+                <button onClick={function(){send();}} style={{ background:GOLD, border:"none", borderRadius:8, padding:"6px 18px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer", height:34, flexShrink:0 }}>
+                  {isUrdu?"بھیجیں":"SEND"}
                 </button>
               </div>
-              <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
-                {isUrdu ? "⚠️ صرف تحقیق و حوالہ کے لیے — قانونی مشورے کا متبادل نہیں" : "⚠️ For research & reference only — not a substitute for legal counsel"}
-                &nbsp;|&nbsp;
-                <span style={{ color: GOLD, opacity: 0.7 }}>{isUrdu ? "اے آر کے لاء اے آئی — جسٹس ایس اے ربانی لاء" : "ARK Law AI — Justice S. A. Rabbani Law"}</span>
+              <div style={{ textAlign:"center", marginTop:5, fontSize:10, color:TEXT_MUTED }}>
+                ⚠️ {isUrdu?"صرف تحقیق کے لیے":"For research only — not a substitute for legal counsel"}
+                &nbsp;|&nbsp;<span style={{ color:GOLD, opacity:0.7 }}>ARK Law AI — Justice S. A. Rabbani Law</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
-          <div style={{ width: 270, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "row", overflow: "hidden" }}>
-            <div style={{ flex: 1, background: NAVY_MID, display: "flex", flexDirection: "column", overflowY: "auto" }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
+          {/* RIGHT SIDEBAR — desktop only */}
+          <div className="right-panel" style={{ width:270, flexShrink:0, borderLeft:"1px solid "+NAVY_BORDER, flexDirection:"row", overflow:"hidden" }}>
+            <div style={{ flex:1, background:NAVY_MID, display:"flex", flexDirection:"column", overflowY:"auto" }}>
+              <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"14px 12px 6px" }}>{isUrdu?"پریکٹس ایریاز":"PRACTICE AREAS"}</div>
               {areas.map(function(a) {
-                return (
-                  <button key={a.id} className="abtn" onClick={function() { setArea(a.id); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", border: "none", textAlign: "left", background: area === a.id ? NAVY_SURFACE : "transparent", color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 13, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontWeight: area === a.id ? 600 : 400 }}>
-                    <span>{a.icon}</span>{a.label}
-                  </button>
-                );
+                return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:8, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:13, padding:"7px 10px", borderRadius:7, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span>{a.icon}</span>{a.label}</button>;
               })}
-              <div style={{ height: 1, background: NAVY_BORDER, margin: "8px 10px" }} />
-              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
-              {quick.map(function(q, i) {
-                return (
-                  <button key={i} className="qbtn" onClick={function() { send(q); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{q}</button>
-                );
+              <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
+              <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"6px 12px" }}>{isUrdu?"فوری سوالات":"QUICK QUERIES"}</div>
+              {quick.map(function(q,i) {
+                return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
               })}
             </div>
-            <div style={{ width: 40, flexShrink: 0, background: NAVY, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              <div style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase", padding: "8px 2px", textAlign: "center", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, writingMode: "vertical-rl" }}>LEGAL NEWS</div>
-              <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-                <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
-                  {newsItems.map(function(item, i) {
-                    return (
-                      <div key={i} onClick={function() { send("Tell me more about this legal news: " + item.text); }} title={item.text} style={{ padding: "10px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer", userSelect: "none" }}>
-                        {(item.pk ? "🇵🇰 " : "🇺🇸 ") + (item.text.length > 55 ? item.text.slice(0, 55) + "..." : item.text)}
-                      </div>
-                    );
+            <div style={{ width:40, flexShrink:0, background:NAVY, borderLeft:"1px solid "+NAVY_BORDER, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+              <div style={{ fontSize:8, fontWeight:700, color:GOLD, letterSpacing:".1em", textTransform:"uppercase", padding:"8px 2px", textAlign:"center", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, writingMode:"vertical-rl" }}>LEGAL NEWS</div>
+              <div style={{ flex:1, overflow:"hidden", position:"relative" }}>
+                <div id="news-ticker" style={{ position:"absolute", top:0, left:0, right:0 }}>
+                  {newsItems.map(function(item,i) {
+                    return <div key={i} onClick={function(){send("Tell me more about: "+item.text);}} title={item.text} style={{ padding:"10px 4px", borderBottom:"1px solid "+NAVY_BORDER, writingMode:"vertical-rl", textOrientation:"mixed", fontSize:10, color:item.pk?ACCENT_PK:ACCENT_US, lineHeight:1.4, cursor:"pointer", userSelect:"none" }}>{(item.pk?"🇵🇰 ":"🇺🇸 ")+(item.text.length>55?item.text.slice(0,55)+"...":item.text)}</div>;
                   })}
                 </div>
               </div>
             </div>
           </div>
-
         </div>
+
+        {/* MOBILE DRAWER — Left (Conduct) */}
+        {showLeft && (
+          <div className="mobile-drawer" onClick={function(){setShowLeft(false);}}>
+            <div className="mobile-panel" onClick={function(e){e.stopPropagation();}}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:GOLD }}>Attorney Code of Conduct</div>
+                <button onClick={function(){setShowLeft(false);}} style={{ background:"transparent", border:"none", color:TEXT_MUTED, fontSize:20, cursor:"pointer" }}>✕</button>
+              </div>
+              <div style={{ display:"flex", justifyContent:"space-around", marginBottom:12 }}>
+                <div style={{ textAlign:"center" }}>
+                  <div style={{ width:44, height:44, borderRadius:"50%", border:"2px solid "+ACCENT_PK, overflow:"hidden", margin:"0 auto 3px" }}>
+                    <img src="/jinnah.jpeg" alt="Jinnah" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                  </div>
+                  <div style={{ fontSize:8, color:ACCENT_PK, fontWeight:600 }}>FOUNDER OF PAKISTAN</div>
+                </div>
+                <div style={{ textAlign:"center" }}>
+                  <div style={{ width:44, height:44, borderRadius:"50%", border:"2px solid "+ACCENT_US, overflow:"hidden", margin:"0 auto 3px" }}>
+                    <img src="/washington.jpeg" alt="Washington" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                  </div>
+                  <div style={{ fontSize:8, color:ACCENT_US, fontWeight:600 }}>USA — FOUNDING FATHER</div>
+                </div>
+              </div>
+              {CONDUCT.map(function(item,i) {
+                return (
+                  <div key={i} style={{ padding:"8px 0", borderBottom:"1px solid rgba(43,63,87,0.5)", display:"flex", gap:8, alignItems:"flex-start" }}>
+                    <span style={{ fontSize:12, flexShrink:0 }}>{item.pk?"🇵🇰":"🇺🇸"}</span>
+                    <span style={{ fontSize:12, color:TEXT_SECONDARY, lineHeight:1.5 }}>{item.text}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* MOBILE DRAWER — Right (Menu) */}
+        {showRight && (
+          <div className="mobile-drawer" onClick={function(){setShowRight(false);}}>
+            <div className="mobile-panel" onClick={function(e){e.stopPropagation();}}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:GOLD }}>Practice Areas & Quick Queries</div>
+                <button onClick={function(){setShowRight(false);}} style={{ background:"transparent", border:"none", color:TEXT_MUTED, fontSize:20, cursor:"pointer" }}>✕</button>
+              </div>
+              <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", marginBottom:8 }}>PRACTICE AREAS</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginBottom:14 }}>
+                {areas.map(function(a) {
+                  return <button key={a.id} onClick={function(){setArea(a.id);setShowRight(false);}} style={{ display:"flex", alignItems:"center", gap:6, background:area===a.id?NAVY_SURFACE:NAVY, border:"1px solid "+(area===a.id?GOLD:NAVY_BORDER), color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:12, padding:"8px 10px", borderRadius:8, cursor:"pointer", textAlign:"left" }}><span>{a.icon}</span>{a.label}</button>;
+                })}
+              </div>
+              <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", marginBottom:8 }}>QUICK QUERIES</div>
+              {quick.map(function(q,i) {
+                return <button key={i} onClick={function(){send(q);setShowRight(false);}} style={{ display:"block", width:"100%", marginBottom:6, background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:12, padding:"8px 10px", borderRadius:8, cursor:"pointer", textAlign:"left", lineHeight:1.5 }}>{q}</button>;
+              })}
+            </div>
+          </div>
+        )}
+
         {/* CODE POPUP */}
         {showPopup && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ background: NAVY_MID, border: "1px solid " + GOLD, borderRadius: 16, padding: "32px 28px", maxWidth: 420, width: "90%", textAlign: "center", boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}>
-
-              {/* Logo */}
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-                <ArkLogo size={64} />
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:999, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 16px" }}>
+            <div style={{ background:NAVY_MID, border:"1px solid "+GOLD, borderRadius:16, padding:"28px 24px", maxWidth:420, width:"100%", textAlign:"center", boxShadow:"0 0 40px rgba(201,168,76,0.2)" }}>
+              <div style={{ display:"flex", justifyContent:"center", marginBottom:12 }}><ArkLogo size={56} /></div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:GOLD, marginBottom:4 }}>ARK LAW AI</div>
+              <div style={{ fontSize:11, color:TEXT_MUTED, marginBottom:18 }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize:13, color:TEXT_SECONDARY, lineHeight:1.7, marginBottom:10 }}>
+                To verify you are human and extend your free access to <strong style={{ color:GOLD }}>24 hours</strong>, enter the code below:
               </div>
-
-              {/* Title */}
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD, marginBottom: 4 }}>ARK LAW AI</div>
-              <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 20 }}>The Legal Intelligence Engine</div>
-
-              {/* Instructions */}
-              <div style={{ fontSize: 13, color: TEXT_SECONDARY, lineHeight: 1.7, marginBottom: 8 }}>
-                To verify you are human and extend your free access to <strong style={{ color: GOLD }}>24 hours</strong>, enter the code below:
-              </div>
-
-              {/* The code hint */}
-              <div style={{ background: NAVY, border: "1px solid " + GOLD, borderRadius: 10, padding: "10px 16px", marginBottom: 16, fontSize: 16, fontWeight: 700, color: GOLD, letterSpacing: ".15em" }}>
+              <div style={{ background:NAVY, border:"1px solid "+GOLD, borderRadius:10, padding:"10px 16px", marginBottom:14, fontSize:16, fontWeight:700, color:GOLD, letterSpacing:".15em" }}>
                 JUSTICESARABBANI
               </div>
-
-              {/* Input */}
-              <input
-                type="text"
-                value={codeInput}
-                onChange={function(e) { setCodeInput(e.target.value); setCodeMsg(""); }}
-                onKeyDown={function(e) { if (e.key === "Enter") submitCode(); }}
+              <input type="text" value={codeInput} onChange={function(e){setCodeInput(e.target.value);setCodeMsg("");}} onKeyDown={function(e){if(e.key==="Enter")submitCode();}}
                 placeholder="Type the code here..."
-                style={{ width: "100%", background: NAVY_SURFACE, border: "1px solid " + (codeMsg === "error" ? "#E05555" : codeMsg === "success" ? ACCENT_PK : NAVY_BORDER), borderRadius: 8, padding: "10px 14px", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 14, outline: "none", marginBottom: 8, textAlign: "center", letterSpacing: ".1em" }}
+                style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(codeMsg==="error"?"#E05555":codeMsg==="success"?ACCENT_PK:NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:14, outline:"none", marginBottom:8, textAlign:"center", letterSpacing:".1em" }}
               />
-
-              {/* Feedback message */}
-              {codeMsg === "error" && (
-                <div style={{ fontSize: 12, color: "#E05555", marginBottom: 10 }}>❌ Incorrect code. Please try again.</div>
-              )}
-              {codeMsg === "success" && (
-                <div style={{ fontSize: 12, color: ACCENT_PK, marginBottom: 10 }}>✅ Code accepted! Your session has been extended to 24 hours.</div>
-              )}
-
-              {/* Buttons */}
-              <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 8 }}>
-                <button onClick={submitCode} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 8, padding: "9px 24px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-                  Submit Code
-                </button>
-                <button onClick={function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 8, padding: "9px 24px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
-                  Cancel
-                </button>
+              {codeMsg==="error" && <div style={{ fontSize:12, color:"#E05555", marginBottom:8 }}>❌ Incorrect code. Please try again.</div>}
+              {codeMsg==="success" && <div style={{ fontSize:12, color:ACCENT_PK, marginBottom:8 }}>✅ Code accepted! Session extended to 24 hours.</div>}
+              <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:8 }}>
+                <button onClick={submitCode} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"9px 24px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer" }}>Submit Code</button>
+                <button onClick={function(){setShowPopup(false);setCodeInput("");setCodeMsg("");}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"9px 24px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:13, cursor:"pointer" }}>Cancel</button>
               </div>
-
             </div>
           </div>
         )}
