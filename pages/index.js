@@ -288,8 +288,8 @@ export default function App() {
         <meta name="description" content="ARK LAW AI — The Legal Intelligence Engine for Pakistani and US law by Attorney and AI Innovator Khawer Rabbani." />
         <meta property="og:title" content="ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani" />
         <meta property="og:description" content="AI-powered legal research for Pakistani and US law." />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <style>{[
         "* { box-sizing: border-box; margin: 0; padding: 0; }",
         "html, body { height: 100%; background: #0D1B2A; }",
@@ -310,39 +310,46 @@ export default function App() {
 
         {/* HEADER */}
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 8 }}>
+
+          {/* LEFT: Logo + Title */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <ArkLogo size={42} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>{isUrdu ? "اے آر کے لاء اے آئی" : "ARK LAW AI"}</div>
-              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".05em" }}>{isUrdu ? "قانونی ذہانت کا پلیٹ فارم" : "The Legal Intelligence Engine"}</div>
-              <div style={{ fontSize: 9, color: ACCENT_PK, letterSpacing: ".03em" }}>{isUrdu ? "خاور ربانی" : "by Attorney & AI Innovator Khawer Rabbani"}</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
+              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".05em" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: ACCENT_PK }}>by Attorney & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
+
+          {/* CENTRE: Auth buttons */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {!user && (
-              <>
-                <button onClick={function() { router.push("/sign-up"); }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: "#0D1B2A", fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={function() { router.push("/sign-up"); }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                   ⭐ FREE TRIAL
                 </button>
-                <button onClick={function() { router.push("/sign-in"); }} style={{ background: "transparent", border: "1px solid #2B3F57", borderRadius: 20, padding: "6px 14px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
+                <button onClick={function() { router.push("/sign-in"); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "6px 14px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
                   🔑 Login
                 </button>
-              </>
+              </div>
             )}
             {user && (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
                   {trialDaysLeft > 0 ? "⭐ Trial: " + trialDaysLeft + " days left" : "⚠️ Trial expired"}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 12px", fontSize: 11, color: TEXT_SECONDARY }}>
-                  👤 {user.firstName || user.emailAddresses[0].emailAddress.split("@")[0]}
+                <div style={{ background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 12px", fontSize: 11, color: TEXT_SECONDARY }}>
+                  {"👤 " + (user.firstName || user.emailAddresses[0].emailAddress.split("@")[0])}
                 </div>
-                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid #2B3F57", borderRadius: 20, padding: "5px 12px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
+                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "5px 12px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, cursor: "pointer" }}>
                   Sign out
                 </button>
               </div>
             )}
           </div>
+
+          {/* RIGHT: Language + Jurisdiction */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
               {["en", "ur"].map(function(l) {
                 return (
@@ -363,6 +370,7 @@ export default function App() {
               })}
             </div>
           </div>
+
         </header>
 
         {/* BODY */}
@@ -370,8 +378,6 @@ export default function App() {
 
           {/* LEFT BAR — Code of Conduct */}
           <div style={{ width: 270, flexShrink: 0, borderRight: "1px solid " + NAVY_BORDER, background: NAVY_MID, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-            {/* Portraits */}
             <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
@@ -389,13 +395,9 @@ export default function App() {
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
               </div>
             </div>
-
-            {/* Title */}
             <div style={{ padding: "6px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, textAlign: "center" }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase" }}>Attorney Code of Conduct</div>
             </div>
-
-            {/* Scrolling items */}
             <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
               <div id="conduct-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
                 {conductDouble.map(function(item, i) {
@@ -467,8 +469,6 @@ export default function App() {
 
           {/* RIGHT SIDEBAR */}
           <div style={{ width: 270, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "row", overflow: "hidden" }}>
-
-            {/* MENU */}
             <div style={{ flex: 1, background: NAVY_MID, display: "flex", flexDirection: "column", overflowY: "auto" }}>
               <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
               {areas.map(function(a) {
@@ -486,18 +486,13 @@ export default function App() {
                 );
               })}
             </div>
-
-            {/* NEWS TICKER */}
             <div style={{ width: 40, flexShrink: 0, background: NAVY, borderLeft: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflow: "hidden" }}>
               <div style={{ fontSize: 8, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase", padding: "8px 2px", textAlign: "center", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, writingMode: "vertical-rl" }}>LEGAL NEWS</div>
               <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
                 <div id="news-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
                   {newsItems.map(function(item, i) {
                     return (
-                      <div key={i}
-                        onClick={function() { send("Tell me more about this legal news: " + item.text); }}
-                        title={item.text}
-                        style={{ padding: "10px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer", userSelect: "none" }}>
+                      <div key={i} onClick={function() { send("Tell me more about this legal news: " + item.text); }} title={item.text} style={{ padding: "10px 4px", borderBottom: "1px solid " + NAVY_BORDER, writingMode: "vertical-rl", textOrientation: "mixed", fontSize: 10, color: item.pk ? ACCENT_PK : ACCENT_US, lineHeight: 1.4, cursor: "pointer", userSelect: "none" }}>
                         {(item.pk ? "🇵🇰 " : "🇺🇸 ") + (item.text.length > 55 ? item.text.slice(0, 55) + "..." : item.text)}
                       </div>
                     );
@@ -505,8 +500,8 @@ export default function App() {
                 </div>
               </div>
             </div>
-
           </div>
+
         </div>
       </div>
     </div>
