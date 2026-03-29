@@ -205,6 +205,8 @@ export default function App() {
   var newsS = useState(DEFAULT_NEWS.concat(DEFAULT_NEWS)); var newsItems = newsS[0]; var setNewsItems = newsS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
+  var timerS = useState(30); var guestMinsLeft = timerS[0]; var setGuestMinsLeft = timerS[1];
+
   var isUrdu = lang === "ur";
   var areas = isUrdu ? AREAS_UR : AREAS_EN;
   var quick = isUrdu ? QUICK_UR : QUICK_EN;
@@ -225,6 +227,21 @@ export default function App() {
     us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: isUrdu ? "امریکی قانون کے تحت جواب" : "Answering under US law" },
     both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: isUrdu ? "پاکستانی اور امریکی دونوں قوانین کے تحت جواب" : "Answering under both Pakistani and US law" },
   };
+
+  // Guest countdown timer
+  useEffect(function() {
+    if (user) return;
+    var cookieMatch = document.cookie.match(/ark_guest_start=(\d+)/);
+    var start = cookieMatch ? parseInt(cookieMatch[1]) : Date.now();
+    if (!cookieMatch) {
+      document.cookie = "ark_guest_start=" + start + "; path=/; max-age=3600";
+    }
+    var interval = setInterval(function() {
+      var mins = Math.max(0, 30 - Math.floor((Date.now() - start) / 60000));
+      setGuestMinsLeft(mins);
+    }, 10000);
+    return function() { clearInterval(interval); };
+  }, [user]);
 
   useEffect(function() {
     if (messagesEnd.current) messagesEnd.current.scrollIntoView({ behavior: "smooth" });
@@ -324,7 +341,10 @@ export default function App() {
           {/* CENTRE: Auth buttons */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {!user && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ background: guestMinsLeft > 10 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 10 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 12px", fontSize: 11, color: guestMinsLeft > 10 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
+                  {"⏱ " + guestMinsLeft + " min free"}
+                </div>
                 <button onClick={function() { router.push("/sign-up"); }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "6px 14px", color: NAVY, fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                   ⭐ FREE TRIAL
                 </button>
