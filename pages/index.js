@@ -197,6 +197,7 @@ export default function App() {
   var popupS = useState(false); var showPopup = popupS[0]; var setShowPopup = popupS[1];
   var codeS = useState(""); var codeInput = codeS[0]; var setCodeInput = codeS[1];
   var codeMsgS = useState(""); var codeMsg = codeMsgS[0]; var setCodeMsg = codeMsgS[1];
+  var successS = useState(false); var showSuccess = successS[0]; var setShowSuccess = successS[1];
   var timerS = useState(180); var guestMinsLeft = timerS[0]; var setGuestMinsLeft = timerS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
@@ -269,8 +270,10 @@ export default function App() {
       var freshStart = Date.now();
       document.cookie = "ark_guest_start=" + freshStart + "; path=/; max-age=86400";
       setGuestMinsLeft(1440);
-      setCodeMsg("success");
-      setTimeout(function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }, 2000);
+      setShowPopup(false);
+      setCodeInput("");
+      setCodeMsg("");
+      setShowSuccess(true);
     } else { setCodeMsg("error"); }
   }
 
@@ -585,6 +588,47 @@ export default function App() {
               {quick.map(function(q,i) {
                 return <button key={i} onClick={function(){send(q);setShowRight(false);}} style={{ display:"block", width:"100%", marginBottom:6, background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:12, padding:"8px 10px", borderRadius:8, cursor:"pointer", textAlign:"left", lineHeight:1.5 }}>{q}</button>;
               })}
+            </div>
+          </div>
+        )}
+
+        {/* SUCCESS POPUP */}
+        {showSuccess && (
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 16px" }}>
+            <div style={{ background:NAVY_MID, border:"2px solid "+GOLD, borderRadius:18, padding:"32px 28px", maxWidth:440, width:"100%", textAlign:"center", boxShadow:"0 0 60px rgba(201,168,76,0.3)" }}>
+
+              {/* Logo */}
+              <div style={{ display:"flex", justifyContent:"center", marginBottom:14 }}>
+                <ArkLogo size={64} />
+              </div>
+
+              {/* Checkmark */}
+              <div style={{ width:54, height:54, borderRadius:"50%", background:"rgba(62,180,137,0.15)", border:"2px solid "+ACCENT_PK, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px", fontSize:26 }}>✅</div>
+
+              {/* Title */}
+              <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:GOLD, marginBottom:6 }}>Magic Code Accepted!</div>
+
+              {/* Divider */}
+              <div style={{ height:1, background:"linear-gradient(to right, transparent, "+GOLD+", transparent)", margin:"10px 0 16px" }} />
+
+              {/* Message */}
+              <div style={{ fontSize:13, color:TEXT_SECONDARY, lineHeight:1.8, marginBottom:24 }}>
+                You have entered the correct magic code dedicated to{" "}
+                <strong style={{ color:GOLD }}>Honorable Justice S. A. Rabbani</strong>,{" "}
+                legendary jurist of Pakistan.
+                <br/><br/>
+                Now you are able to utilize this{" "}
+                <strong style={{ color:GOLD }}>AI Legal Assistant for 24 hours</strong>{" "}
+                without even signing up for a 7-day free trial.
+              </div>
+
+              {/* OK Button */}
+              <button
+                onClick={function() { setShowSuccess(false); }}
+                style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:10, padding:"12px 48px", color:NAVY, fontFamily:"inherit", fontSize:14, fontWeight:700, cursor:"pointer", letterSpacing:".05em" }}>
+                OK — Let's Go! ⚖️
+              </button>
+
             </div>
           </div>
         )}
