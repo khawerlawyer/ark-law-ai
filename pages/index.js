@@ -433,7 +433,7 @@ export default function App() {
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
                   <img src="/washington.jpeg" alt="George Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>FOUNDING FATHER</div>
+                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>USA — FOUNDING FATHER</div>
                 <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
               </div>
             </div>
