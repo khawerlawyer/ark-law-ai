@@ -425,8 +425,8 @@ export default function App() {
                 <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
                   <img src="/jinnah.jpeg" alt="Muhammad Ali Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>QUAID-E-AZAM</div>
-                <div style={{ fontSize: 8, color: TEXT_MUTED }}>M. A. Jinnah</div>
+                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>FOUNDER OF PAKISTAN</div>
+                <div style={{ fontSize: 8, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
               </div>
               <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
               <div style={{ textAlign: "center" }}>
