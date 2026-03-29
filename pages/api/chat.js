@@ -15,14 +15,14 @@ export default async function handler(req, res) {
 
     if (!guestStart) {
       // First visit — set the timer cookie
-      res.setHeader("Set-Cookie", "ark_guest_start=" + now + "; Path=/; Max-Age=3600; SameSite=Lax");
+      res.setHeader("Set-Cookie", "ark_guest_start=" + now + "; Path=/; Max-Age=14400; SameSite=Lax");
       guestStart = now;
     }
 
     var minutesUsed = (now - guestStart) / 60000;
-    if (minutesUsed > 30) {
+    if (minutesUsed > 180) {
       return res.status(403).json({
-        error: "Your 30-minute free session has ended. Please sign up for a free 7-day trial to continue using ARK Law AI."
+        error: "Your 3-hour free session has ended. Please sign up for a free 7-day trial to continue using ARK Law AI."
       });
     }
   }
