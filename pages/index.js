@@ -421,17 +421,15 @@ export default function App() {
 
         {/* HORIZONTAL NEWS TICKER */}
         <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, padding: "5px 0", overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
-          <div style={{ background: GOLD, color: NAVY, fontSize: 10, fontWeight: 700, padding: "3px 10px", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</div>
-          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div id="news-ticker" style={{ display: "flex", whiteSpace: "nowrap", gap: 0 }}>
+          <div style={{ background: GOLD, color: NAVY, fontSize: 10, fontWeight: 700, padding: "4px 12px", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap", zIndex: 2 }}>⚖ LEGAL NEWS</div>
+          <div style={{ flex: 1, overflow: "hidden" }}>
+            <div id="news-ticker">
               {newsItems.map(function(item, i) {
                 return (
                   <span key={i}
                     onClick={function() { send("Tell me more about this legal news: " + item.text); }}
-                    title={item.text}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 20px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", borderRight: "1px solid " + NAVY_BORDER }}>
-                    {item.pk ? "🇵🇰" : "🇺🇸"} {item.text}
-                    <span style={{ color: NAVY_BORDER, marginLeft: 8 }}>◆</span>
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 24px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap" }}>
+                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER }}>◆</span>
                   </span>
                 );
               })}
