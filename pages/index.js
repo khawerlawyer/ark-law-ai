@@ -134,7 +134,7 @@ function buildSystem(area, jur, lang) {
     both: "You are answering under BOTH Pakistani and US law with clear sections for each jurisdiction and comparative analysis.",
   };
   var langText = lang === "ur" ? "IMPORTANT: Respond entirely in Urdu. Use formal legal Urdu terminology." : "Respond in English.";
-  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE CLARIFYING QUESTION: Ask a maximum of ONE clarifying question per topic, then give a full detailed answer.\n4. FOCUSED ANSWERS: After at most one clarifying question, give a complete helpful answer. Cite specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
+  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else. Keep it to one line.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE QUICK QUESTION: Ask maximum ONE very short one-line clarifying question, then immediately give a full detailed answer. Never delay with multiple questions.\n4. FOCUSED ANSWERS: Give complete, well-cited answers with specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
 }
 
 function fmt(text) {
@@ -215,7 +215,28 @@ export default function App() {
     trialDaysLeft = Math.max(0, 7 - daysSince);
   }
 
-  var jurConfig = {
+  var newsPopupS = useState(null); var newsPopup = newsPopupS[0]; var setNewsPopup = newsPopupS[1];
+  var newsAnswerS = useState(""); var newsAnswer = newsAnswerS[0]; var setNewsAnswer = newsAnswerS[1];
+  var newsLoadingS = useState(false); var newsLoading = newsLoadingS[0]; var setNewsLoading = newsLoadingS[1];
+
+  function openNewsPopup(item) {
+    setNewsPopup(item);
+    setNewsAnswer("");
+    setNewsLoading(true);
+    fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system: "You are ARK Law AI, a professional legal news analyst. When given a legal news headline, provide a clear, detailed explanation of the legal significance, relevant laws, and implications. Cite specific statutes or cases where relevant. Be informative and accessible. End with: This is for research only and not a substitute for legal counsel.",
+        messages: [{ role: "user", content: "Please explain this legal news in detail: " + item.text }],
+      }),
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      setNewsAnswer(data.reply || "Unable to load details.");
+      setNewsLoading(false);
+    }).catch(function() {
+      setNewsAnswer("Unable to load details. Please try again.");
+      setNewsLoading(false);
+    });
+  }
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: isUrdu ? "پاکستانی قانون کے تحت جواب" : "Answering under Pakistani law" },
     us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: isUrdu ? "امریکی قانون کے تحت جواب" : "Answering under US law" },
     both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: isUrdu ? "پاکستانی اور امریکی دونوں قوانین کے تحت جواب" : "Answering under both Pakistani and US law" },
@@ -388,7 +409,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", height: "100%", animation: "tickerScrollH 480s linear infinite", width: "max-content" }}>
               {newsItems.concat(newsItems).map(function(item, i) {
                 return (
-                  <span key={i} onClick={function() { send("Tell me more about: " + item.text); }}
+                  <span key={i} onClick={function() { openNewsPopup(item); }}
                     style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0 32px", fontSize: 13, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                     {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER, fontSize: 9 }}>◆</span>
                   </span>
@@ -587,6 +608,58 @@ export default function App() {
               {quick.map(function(q, i) {
                 return <button key={i} onClick={function() { send(q); setShowRight(false); }} style={{ display: "block", width: "100%", marginBottom: 6, background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 12, padding: "8px 10px", borderRadius: 8, cursor: "pointer", textAlign: "left", lineHeight: 1.5 }}>{q}</button>;
               })}
+            </div>
+          </div>
+        )}
+
+        {/* NEWS DETAIL POPUP */}
+        {newsPopup && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+            <div style={{ background: NAVY_MID, border: "1px solid " + NAVY_BORDER, borderRadius: 16, width: "100%", maxWidth: 680, maxHeight: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 0 40px rgba(0,0,0,0.5)" }}>
+
+              {/* Popup Header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", borderBottom: "1px solid " + NAVY_BORDER, background: NAVY, borderRadius: "16px 16px 0 0", flexShrink: 0 }}>
+                <ArkLogo size={36} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 13, fontWeight: 700, color: GOLD }}>ARK LAW AI — Legal News</div>
+                  <div style={{ fontSize: 11, color: newsPopup.pk ? ACCENT_PK : ACCENT_US, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {newsPopup.pk ? "🇵🇰 Pakistan" : "🇺🇸 USA"} — {newsPopup.text}
+                  </div>
+                </div>
+                <button onClick={function() { setNewsPopup(null); setNewsAnswer(""); }} style={{ background: "rgba(224,85,85,0.15)", border: "1px solid rgba(224,85,85,0.4)", borderRadius: 8, padding: "6px 14px", color: "#E05555", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
+                  ✕ Close
+                </button>
+              </div>
+
+              {/* Headline */}
+              <div style={{ padding: "14px 20px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: TEXT_PRIMARY, lineHeight: 1.5 }}>{newsPopup.text}</div>
+              </div>
+
+              {/* Content */}
+              <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+                {newsLoading ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, color: TEXT_MUTED, fontSize: 13 }}>
+                    <div style={{ display: "flex", gap: 4 }}>
+                      {[0, 0.2, 0.4].map(function(d, i) { return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />; })}
+                    </div>
+                    ARK Law AI is analysing this news...
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 13, lineHeight: 1.8, color: TEXT_SECONDARY }}
+                    dangerouslySetInnerHTML={{ __html: fmt(newsAnswer) }}
+                  />
+                )}
+              </div>
+
+              {/* Footer */}
+              <div style={{ padding: "12px 20px", borderTop: "1px solid " + NAVY_BORDER, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ fontSize: 10, color: TEXT_MUTED }}>⚠️ For research only — not a substitute for legal counsel</div>
+                <button onClick={function() { setNewsPopup(null); setNewsAnswer(""); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 8, padding: "8px 20px", color: NAVY, fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                  ✕ Close Window
+                </button>
+              </div>
+
             </div>
           </div>
         )}
