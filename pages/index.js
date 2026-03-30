@@ -422,13 +422,13 @@ export default function App() {
         {/* HORIZONTAL NEWS TICKER */}
         <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, height: 28, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
           <div style={{ background: GOLD, color: NAVY, fontSize: 10, fontWeight: 700, padding: "0 12px", height: "100%", display: "flex", alignItems: "center", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</div>
-          <div style={{ flex: 1, overflow: "hidden", height: "100%", position: "relative" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, height: "100%", display: "flex", alignItems: "center", animation: "tickerScrollH 160s linear infinite", whiteSpace: "nowrap" }}>
-              {newsItems.map(function(item, i) {
+          <div style={{ flex: 1, overflow: "hidden", height: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", height: "100%", animation: "tickerScrollH 240s linear infinite", width: "max-content" }}>
+              {newsItems.concat(newsItems).map(function(item, i) {
                 return (
                   <span key={i} onClick={function() { send("Tell me more about this legal news: " + item.text); }}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 24px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER }}>◆</span>
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 28px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER, fontSize: 8 }}>◆</span>
                   </span>
                 );
               })}
