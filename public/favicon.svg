@@ -1,0 +1,40 @@
+<svg width="64" height="64" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="sc">
+      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z"/>
+    </clipPath>
+  </defs>
+  <rect width="200" height="220" fill="#0D1B2A"/>
+  <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A"/>
+  <rect x="25" y="8" width="75" height="200" fill="#01411C" clip-path="url(#sc)"/>
+  <rect x="100" y="8" width="75" height="200" fill="#B22234" clip-path="url(#sc)"/>
+  <rect x="100" y="32" width="75" height="10" fill="white" opacity="0.85" clip-path="url(#sc)"/>
+  <rect x="100" y="52" width="75" height="10" fill="white" opacity="0.85" clip-path="url(#sc)"/>
+  <rect x="100" y="72" width="75" height="10" fill="white" opacity="0.85" clip-path="url(#sc)"/>
+  <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clip-path="url(#sc)"/>
+  <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clip-path="url(#sc)"/>
+  <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clip-path="url(#sc)"/>
+  <circle cx="108" cy="20" r="2.5" fill="white"/>
+  <circle cx="120" cy="20" r="2.5" fill="white"/>
+  <circle cx="132" cy="20" r="2.5" fill="white"/>
+  <circle cx="108" cy="34" r="2.5" fill="white"/>
+  <circle cx="120" cy="34" r="2.5" fill="white"/>
+  <circle cx="132" cy="34" r="2.5" fill="white"/>
+  <circle cx="62" cy="108" r="22" fill="none" stroke="white" stroke-width="2" clip-path="url(#sc)"/>
+  <circle cx="70" cy="108" r="16" fill="#01411C" clip-path="url(#sc)"/>
+  <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clip-path="url(#sc)"/>
+  <line x1="100" y1="9" x2="100" y2="203" stroke="#C9A84C" stroke-width="1.2" opacity="0.9"/>
+  <g transform="translate(100,118)">
+    <line x1="-32" y1="0" x2="32" y2="0" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="-22" x2="0" y2="12" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="-25" r="3" fill="#C9A84C"/>
+    <line x1="-32" y1="0" x2="-27" y2="14" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-32" y1="0" x2="-37" y2="14" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-39" y1="14" x2="-25" y2="14" stroke="#C9A84C" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="32" y1="0" x2="27" y2="14" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="32" y1="0" x2="37" y2="14" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="25" y1="14" x2="39" y2="14" stroke="#C9A84C" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="none" stroke="#C9A84C" stroke-width="2"/>
+  <text x="100" y="218" text-anchor="middle" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#C9A84C" letter-spacing="4">ARK</text>
+</svg>
