@@ -181,7 +181,112 @@ export default function App() {
     trialDaysLeft = Math.max(0, 7 - daysSince);
   }
 
-  var jurConfig = {
+  var docS = useState(null); var docFile = docS[0]; var setDocFile = docS[1];
+  var docTextS = useState(""); var docText = docTextS[0]; var setDocText = docTextS[1];
+  var docLoadingS = useState(false); var docLoading = docLoadingS[0]; var setDocLoading = docLoadingS[1];
+  var docResultS = useState(""); var docResult = docResultS[0]; var setDocResult = docResultS[1];
+  var docErrorS = useState(""); var docError = docErrorS[0]; var setDocError = docErrorS[1];
+  var docStepS = useState("upload"); var docStep = docStepS[0]; var setDocStep = docStepS[1];
+
+  function handleDocUpload(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    setDocFile(file);
+    setDocResult("");
+    setDocError("");
+    setDocStep("reading");
+    var ext = file.name.split(".").pop().toLowerCase();
+    if (ext === "pdf") {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        // Extract text from PDF using basic extraction
+        var text = "";
+        try {
+          var arr = new Uint8Array(ev.target.result);
+          var str = "";
+          for (var i = 0; i < arr.length; i++) { str += String.fromCharCode(arr[i]); }
+          // Extract readable text between stream markers
+          var matches = str.match(/BT[\s\S]*?ET/g) || [];
+          matches.forEach(function(m) {
+            var t = m.match(/\(([^)]+)\)/g) || [];
+            t.forEach(function(s) { text += s.replace(/[()]/g, "") + " "; });
+          });
+          if (text.trim().length < 50) {
+            // Fallback: extract any printable ASCII
+            text = str.replace(/[^\x20-\x7E\n]/g, " ").replace(/\s+/g, " ").trim();
+            text = text.slice(0, 8000);
+          }
+        } catch(err) { text = "Could not extract PDF text."; }
+        setDocText(text || "PDF text extraction limited. Please try a DOCX file for better results.");
+        setDocStep("ready");
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (ext === "docx" || ext === "doc") {
+      var script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
+      script.onload = function() {
+        var reader2 = new FileReader();
+        reader2.onload = function(ev2) {
+          window.mammoth.extractRawText({ arrayBuffer: ev2.target.result })
+            .then(function(result) {
+              setDocText(result.value || "Could not extract text.");
+              setDocStep("ready");
+            }).catch(function() {
+              setDocText("Could not read document.");
+              setDocStep("ready");
+            });
+        };
+        reader2.readAsArrayBuffer(file);
+      };
+      document.head.appendChild(script);
+    } else {
+      setDocError("Please upload a PDF, DOCX or DOC file.");
+      setDocStep("upload");
+    }
+  }
+
+  function analyzeDoc() {
+    if (!docText.trim()) return;
+    setDocLoading(true);
+    setDocResult("");
+    setDocError("");
+    setDocStep("analyzing");
+    var system = "You are ARK Law AI, an expert legal document analyst. Analyze the provided document under " + (jur === "pk" ? "Pakistani law (PPC, CrPC, Constitution 1973, Companies Act 2017, MFLO 1961)" : jur === "us" ? "US law (federal legislation, UCC, US Constitution)" : "both Pakistani and US law") + ". Provide: 1) Document summary, 2) Legal issues or risks identified, 3) Specific improvement suggestions with legal citations, 4) Revised/improved clauses where applicable. Format clearly with headings. End with a disclaimer that this is for research only.";
+    fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system: system,
+        messages: [{ role: "user", content: "Please analyze this legal document and provide detailed suggestions:" }],
+        docContent: docText,
+      }),
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.error) throw new Error(data.error);
+      setDocResult(data.reply);
+      setDocStep("done");
+      setDocLoading(false);
+    }).catch(function(err) {
+      setDocError("Error: " + err.message);
+      setDocLoading(false);
+      setDocStep("ready");
+    });
+  }
+
+  function downloadResult() {
+    var content = "ARK LAW AI — LEGAL DOCUMENT ANALYSIS\n";
+    content += "=====================================\n";
+    content += "Document: " + (docFile ? docFile.name : "Unknown") + "\n";
+    content += "Date: " + new Date().toLocaleDateString() + "\n";
+    content += "Jurisdiction: " + (jur === "pk" ? "Pakistan" : jur === "us" ? "USA" : "Pakistan & USA") + "\n\n";
+    content += docResult.replace(/<[^>]+>/g, "").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">") + "\n\n";
+    content += "=====================================\n";
+    content += "This analysis is for research only and not a substitute for qualified legal counsel.\n";
+    content += "ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani\n";
+    var blob = new Blob([content], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "ARK_Legal_Analysis_" + new Date().toISOString().slice(0,10) + ".txt";
+    a.click(); URL.revokeObjectURL(url);
+  }
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: "Answering under Pakistani law" },
     us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: "Answering under US law" },
     both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: "Answering under both Pakistani and US law" },
@@ -507,6 +612,96 @@ export default function App() {
             {QUICK_EN.map(function(q,i) {
               return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
             })}
+
+            {/* DOCUMENT ANALYSIS BOX */}
+            <div style={{ margin:"12px 8px 8px", background:"linear-gradient(135deg,rgba(201,168,76,0.08),rgba(91,141,217,0.08))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden" }}>
+              {/* Box Header */}
+              <div style={{ background:"linear-gradient(135deg,#1a2a1a,#1a1a2a)", padding:"10px 12px", borderBottom:"1px solid rgba(201,168,76,0.3)" }}>
+                <div style={{ fontSize:12, fontWeight:700, color:GOLD, letterSpacing:".05em" }}>📄 Legal Document Analyzer</div>
+                <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:2 }}>Upload • Analyze • Download</div>
+              </div>
+
+              <div style={{ padding:"10px 12px" }}>
+                {/* Step indicators */}
+                <div style={{ display:"flex", gap:4, marginBottom:10 }}>
+                  {["upload","ready","analyzing","done"].map(function(step, i) {
+                    var active = docStep === step || (step === "upload" && docStep === "reading");
+                    var done = (["upload","ready","analyzing","done"].indexOf(docStep) > i);
+                    return <div key={step} style={{ flex:1, height:3, borderRadius:2, background: done ? GOLD : active ? ACCENT_US : NAVY_BORDER, transition:"background .3s" }} />;
+                  })}
+                </div>
+
+                {/* Upload area */}
+                {(docStep === "upload" || docStep === "reading") && (
+                  <div>
+                    <label style={{ display:"block", cursor:"pointer" }}>
+                      <div style={{ border:"2px dashed "+(docStep==="reading"?GOLD:NAVY_BORDER), borderRadius:10, padding:"16px 8px", textAlign:"center", transition:"border .2s", background:"rgba(0,0,0,0.2)" }}
+                        onDragOver={function(e){e.preventDefault();}}
+                        onDrop={function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f){handleDocUpload({target:{files:[f]}});}}}
+                      >
+                        {docStep === "reading" ? (
+                          <div style={{ color:GOLD, fontSize:12 }}>⏳ Reading document...</div>
+                        ) : (
+                          <>
+                            <div style={{ fontSize:24, marginBottom:6 }}>📂</div>
+                            <div style={{ fontSize:12, color:TEXT_SECONDARY, marginBottom:4 }}>Drop file here or click to browse</div>
+                            <div style={{ fontSize:10, color:TEXT_MUTED }}>PDF • DOCX • DOC</div>
+                          </>
+                        )}
+                      </div>
+                      <input type="file" accept=".pdf,.docx,.doc" onChange={handleDocUpload} style={{ display:"none" }} />
+                    </label>
+                    {docError && <div style={{ fontSize:11, color:"#E05555", marginTop:6, textAlign:"center" }}>{docError}</div>}
+                  </div>
+                )}
+
+                {/* Ready to analyze */}
+                {docStep === "ready" && (
+                  <div>
+                    <div style={{ background:NAVY, border:"1px solid "+ACCENT_PK, borderRadius:8, padding:"8px 10px", marginBottom:8, display:"flex", alignItems:"center", gap:8 }}>
+                      <span style={{ fontSize:16 }}>✅</span>
+                      <div>
+                        <div style={{ fontSize:11, color:ACCENT_PK, fontWeight:600 }}>{docFile && docFile.name}</div>
+                        <div style={{ fontSize:10, color:TEXT_MUTED }}>{docText.length} characters extracted</div>
+                      </div>
+                    </div>
+                    <button onClick={analyzeDoc} style={{ width:"100%", background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"9px", color:NAVY, fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:6 }}>
+                      ⚖️ Analyze with ARK Law AI
+                    </button>
+                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"6px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>
+                      🔄 Upload different file
+                    </button>
+                  </div>
+                )}
+
+                {/* Analyzing */}
+                {docStep === "analyzing" && (
+                  <div style={{ textAlign:"center", padding:"12px 0" }}>
+                    <div style={{ display:"flex", justifyContent:"center", gap:4, marginBottom:8 }}>
+                      {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:8,height:8,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
+                    </div>
+                    <div style={{ fontSize:12, color:TEXT_SECONDARY }}>Analyzing document...</div>
+                    <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:4 }}>This may take 15-30 seconds</div>
+                  </div>
+                )}
+
+                {/* Done */}
+                {docStep === "done" && docResult && (
+                  <div>
+                    <div style={{ background:"rgba(62,180,137,0.1)", border:"1px solid "+ACCENT_PK, borderRadius:8, padding:"8px 10px", marginBottom:8 }}>
+                      <div style={{ fontSize:11, color:ACCENT_PK, fontWeight:600 }}>✅ Analysis Complete!</div>
+                      <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:2 }}>{docFile && docFile.name}</div>
+                    </div>
+                    <button onClick={downloadResult} style={{ width:"100%", background:"linear-gradient(135deg,#3EB489,#2a7a5a)", border:"none", borderRadius:8, padding:"9px", color:"white", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:6 }}>
+                      ⬇️ Download Analysis Report
+                    </button>
+                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");setDocResult("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"6px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>
+                      🔄 Analyze another document
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
