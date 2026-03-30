@@ -53,18 +53,6 @@ var AREAS_EN = [
   { id: "immigration", label: "Immigration", icon: "✈️" },
 ];
 
-var AREAS_UR = [
-  { id: "general", label: "عمومی قانون", icon: "⚖️" },
-  { id: "criminal", label: "فوجداری قانون", icon: "🔒" },
-  { id: "corporate", label: "کارپوریٹ و کاروبار", icon: "🏢" },
-  { id: "family", label: "خاندانی قانون", icon: "👨‍👩‍👧" },
-  { id: "property", label: "جائیداد و رئیل اسٹیٹ", icon: "🏠" },
-  { id: "labour", label: "محنت و روزگار", icon: "👷" },
-  { id: "constitutional", label: "آئینی قانون", icon: "📜" },
-  { id: "ip", label: "دانشورانہ ملکیت", icon: "💡" },
-  { id: "immigration", label: "امیگریشن", icon: "✈️" },
-];
-
 var QUICK_EN = [
   "Criminal procedure differences: Pakistan vs USA?",
   "Bail laws: Pakistan CrPC vs US federal law?",
@@ -72,15 +60,6 @@ var QUICK_EN = [
   "Draft an NDA clause valid in both Pakistan and USA.",
   "IP registration: IPO-Pakistan vs USPTO?",
   "Rights of accused: Article 10-A vs US 5th and 6th Amendments?",
-];
-
-var QUICK_UR = [
-  "پاکستان اور امریکہ میں فوجداری طریقہ کار کا فرق؟",
-  "پاکستانی ضابطہ فوجداری اور امریکی وفاقی ضمانت قوانین؟",
-  "پاکستانی اور امریکی خاندانی قانون میں طلاق کی بنیادیں؟",
-  "پاکستان اور امریکہ دونوں میں NDA شق تیار کریں۔",
-  "IPO پاکستان بمقابلہ USPTO رجسٹریشن؟",
-  "آرٹیکل 10-A بمقابلہ 5th اور 6th ترمیم — ملزم کے حقوق؟",
 ];
 
 var AREA_LABELS_EN = {
@@ -93,18 +72,6 @@ var AREA_LABELS_EN = {
   constitutional: "constitutional law and fundamental rights",
   ip: "intellectual property and technology law",
   immigration: "immigration and nationality law",
-};
-
-var AREA_LABELS_UR = {
-  general: "عمومی قانونی معاملات",
-  criminal: "فوجداری قانون اور طریقہ کار",
-  corporate: "کارپوریٹ، کاروبار اور تجارتی قانون",
-  family: "خاندانی قانون، ازدواجی قانون اور جانشینی",
-  property: "جائیداد کا قانون، رئیل اسٹیٹ اور زمین کا حصول",
-  labour: "محنت کا قانون اور روزگار کا قانون",
-  constitutional: "آئینی قانون اور بنیادی حقوق",
-  ip: "دانشورانہ ملکیت اور ٹیکنالوجی کا قانون",
-  immigration: "امیگریشن اور شہریت کا قانون",
 };
 
 var DEFAULT_NEWS = [
@@ -126,15 +93,14 @@ var DEFAULT_NEWS = [
   { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
 ];
 
-function buildSystem(area, jur, lang) {
-  var areaLabel = lang === "ur" ? AREA_LABELS_UR[area] : AREA_LABELS_EN[area];
+function buildSystem(area, jur) {
+  var areaLabel = AREA_LABELS_EN[area];
   var jurMap = {
     pk: "You are answering ONLY under Pakistani law. Cite Pakistani legislation (PPC, CrPC, CPC, MFLO 1961, Companies Act 2017, Constitution 1973) and court precedents.",
     us: "You are answering ONLY under US law. Cite federal legislation, FRCP, FRCRP, UCC, US Constitution and court precedents.",
     both: "You are answering under BOTH Pakistani and US law with clear sections for each jurisdiction and comparative analysis.",
   };
-  var langText = lang === "ur" ? "IMPORTANT: Respond entirely in Urdu. Use formal legal Urdu terminology." : "Respond in English.";
-  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else. Keep it to one line.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE QUICK QUESTION: Ask maximum ONE very short one-line clarifying question, then immediately give a full detailed answer. Never delay with multiple questions.\n4. FOCUSED ANSWERS: Give complete, well-cited answers with specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
+  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name in one line.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. ONE QUICK QUESTION: Ask maximum ONE very short one-line clarifying question, then immediately give a full detailed answer.\n4. FOCUSED ANSWERS: Give complete well-cited answers with specific statutes and case law.\n5. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n6. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
 }
 
 function fmt(text) {
@@ -184,7 +150,7 @@ function ArkLogo(props) {
 }
 
 export default function App() {
-  var langS = useState("en"); var lang = langS[0]; var setLang = langS[1];
+  var langS = useState("en"); var lang = langS[0];
   var jurS = useState("both"); var jur = jurS[0]; var setJur = jurS[1];
   var areaS = useState("general"); var area = areaS[0]; var setArea = areaS[1];
   var msgS = useState([]); var messages = msgS[0]; var setMessages = msgS[1];
@@ -199,14 +165,14 @@ export default function App() {
   var codeMsgS = useState(""); var codeMsg = codeMsgS[0]; var setCodeMsg = codeMsgS[1];
   var successS = useState(false); var showSuccess = successS[0]; var setShowSuccess = successS[1];
   var timerS = useState(180); var guestMinsLeft = timerS[0]; var setGuestMinsLeft = timerS[1];
+  var newsPopupS = useState(null); var newsPopup = newsPopupS[0]; var setNewsPopup = newsPopupS[1];
+  var newsAnswerS = useState(""); var newsAnswer = newsAnswerS[0]; var setNewsAnswer = newsAnswerS[1];
+  var newsLoadingS = useState(false); var newsLoading = newsLoadingS[0]; var setNewsLoading = newsLoadingS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
   var userInfo = useUser(); var user = userInfo.user;
   var clerk = useClerk();
   var router = useRouter();
-  var isUrdu = lang === "ur";
-  var areas = isUrdu ? AREAS_UR : AREAS_EN;
-  var quick = isUrdu ? QUICK_UR : QUICK_EN;
   var conductDouble = CONDUCT.concat(CONDUCT);
   var trialDaysLeft = 7;
   if (user && user.createdAt) {
@@ -215,31 +181,10 @@ export default function App() {
     trialDaysLeft = Math.max(0, 7 - daysSince);
   }
 
-  var newsPopupS = useState(null); var newsPopup = newsPopupS[0]; var setNewsPopup = newsPopupS[1];
-  var newsAnswerS = useState(""); var newsAnswer = newsAnswerS[0]; var setNewsAnswer = newsAnswerS[1];
-  var newsLoadingS = useState(false); var newsLoading = newsLoadingS[0]; var setNewsLoading = newsLoadingS[1];
-
-  function openNewsPopup(item) {
-    setNewsPopup(item);
-    setNewsAnswer("");
-    setNewsLoading(true);
-    fetch("/api/chat", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system: "You are ARK Law AI, a professional legal news analyst. When given a legal news headline, provide a clear, detailed explanation of the legal significance, relevant laws, and implications. Cite specific statutes or cases where relevant. Be informative and accessible. End with: This is for research only and not a substitute for legal counsel.",
-        messages: [{ role: "user", content: "Please explain this legal news in detail: " + item.text }],
-      }),
-    }).then(function(r) { return r.json(); }).then(function(data) {
-      setNewsAnswer(data.reply || "Unable to load details.");
-      setNewsLoading(false);
-    }).catch(function() {
-      setNewsAnswer("Unable to load details. Please try again.");
-      setNewsLoading(false);
-    });
-  }
-    pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: isUrdu ? "پاکستانی قانون کے تحت جواب" : "Answering under Pakistani law" },
-    us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: isUrdu ? "امریکی قانون کے تحت جواب" : "Answering under US law" },
-    both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: isUrdu ? "پاکستانی اور امریکی دونوں قوانین کے تحت جواب" : "Answering under both Pakistani and US law" },
+  var jurConfig = {
+    pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: "Answering under Pakistani law" },
+    us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: "Answering under US law" },
+    both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: "Answering under both Pakistani and US law" },
   };
 
   useEffect(function() {
@@ -286,14 +231,30 @@ export default function App() {
     }).catch(function() {});
   }, []);
 
+  function openNewsPopup(item) {
+    setNewsPopup(item);
+    setNewsAnswer("");
+    setNewsLoading(true);
+    fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system: "You are ARK Law AI, a professional legal news analyst. Explain the legal significance, relevant laws, and implications of the given headline. Cite specific statutes or cases. Be informative and accessible. End with: This is for research only and not a substitute for legal counsel.",
+        messages: [{ role: "user", content: "Explain this legal news: " + item.text }],
+      }),
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      setNewsAnswer(data.reply || "Unable to load details.");
+      setNewsLoading(false);
+    }).catch(function() {
+      setNewsAnswer("Unable to load details. Please try again.");
+      setNewsLoading(false);
+    });
+  }
+
   function submitCode() {
     if (codeInput.trim().toUpperCase() === "JUSTICESARABBANI") {
-      var freshStart = Date.now();
-      document.cookie = "ark_guest_start=" + freshStart + "; path=/; max-age=86400";
+      document.cookie = "ark_guest_start=" + Date.now() + "; path=/; max-age=86400";
       setGuestMinsLeft(1440);
-      setShowPopup(false);
-      setCodeInput("");
-      setCodeMsg("");
+      setShowPopup(false); setCodeInput(""); setCodeMsg("");
       setShowSuccess(true);
     } else { setCodeMsg("error"); }
   }
@@ -307,7 +268,7 @@ export default function App() {
     setLoading(true);
     fetch("/api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ system: buildSystem(area, jur, lang), messages: history.current }),
+      body: JSON.stringify({ system: buildSystem(area, jur), messages: history.current }),
     }).then(function(r) { return r.json(); }).then(function(data) {
       if (data.error) throw new Error(data.error);
       history.current = history.current.concat([{ role: "assistant", content: data.reply }]);
@@ -349,28 +310,27 @@ export default function App() {
         ".mobile-panel{position:fixed;bottom:0;left:0;right:0;background:#162032;border-top:1px solid #2B3F57;border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;padding:16px}",
       ].join(" ")}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI',sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "'Segoe UI',sans-serif" }}>
 
         {/* HEADER */}
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 76, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
             <ArkLogo size={54} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>ARK LAW AI</div>
-              <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em", whiteSpace: "nowrap" }}>The Legal Intelligence Engine</div>
-              <div style={{ fontSize: 10, color: ACCENT_PK, whiteSpace: "nowrap" }}>by Atty. & AI Innovator Khawer Rabbani</div>
+            <div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
+              <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 10, color: ACCENT_PK }}>by Atty. & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
 
-          {/* Desktop auth */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }} className="desktop-auth">
             {!user && (
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600, whiteSpace: "nowrap" }}>
                   {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft%60) + "m" : guestMinsLeft + "m")}
                 </div>
-                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>✨ More time?</button>
-                <button onClick={function() { window.location.href="/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>⭐ Free Trial</button>
+                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>✨ More time?</button>
+                <button onClick={function() { window.location.href="/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>⭐ Free Trial</button>
                 <button onClick={function() { window.location.href="/sign-in"; }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "5px 10px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>🔑 Login</button>
               </div>
             )}
@@ -387,22 +347,21 @@ export default function App() {
             )}
           </div>
 
-          {/* Language + Jurisdiction */}
           <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              <button style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"default", background:"rgba(201,168,76,0.2)", color:GOLD, fontFamily:"inherit", fontWeight:500 }}>EN</button>
-              <button disabled style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"not-allowed", background:"transparent", color:TEXT_MUTED, fontFamily:"inherit", fontWeight:500, opacity:0.4 }} title="Urdu — Coming Soon">اردو</button>
+              <button style={{ border: "none", borderRadius: 30, padding: "4px 12px", fontSize: 12, cursor: "default", background: "rgba(201,168,76,0.2)", color: GOLD, fontFamily: "inherit", fontWeight: 500 }}>EN</button>
+              <button disabled style={{ border: "none", borderRadius: 30, padding: "4px 12px", fontSize: 12, cursor: "not-allowed", background: "transparent", color: TEXT_MUTED, fontFamily: "inherit", fontWeight: 500, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
             </div>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
               {[["pk","🇵🇰 PK"],["both","⚖ Both"],["us","🇺🇸 US"]].map(function(item) {
-                var j=item[0]; var lbl=item[1];
+                var j = item[0]; var lbl = item[1];
                 return <button key={j} onClick={function(){setJur(j);}} style={{ border:"none", borderRadius:30, padding:"4px 10px", fontSize:12, cursor:"pointer", background:jur===j?(j==="pk"?"rgba(62,180,137,0.15)":j==="us"?"rgba(91,141,217,0.15)":"rgba(201,168,76,0.15)"):"transparent", color:jur===j?jurConfig[j].color:TEXT_MUTED, fontFamily:"inherit" }}>{lbl}</button>;
               })}
             </div>
           </div>
         </header>
 
-        {/* HORIZONTAL NEWS TICKER — one instance only */}
+        {/* HORIZONTAL NEWS TICKER */}
         <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, height: 36, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
           <div style={{ background: GOLD, color: NAVY, fontSize: 12, fontWeight: 700, padding: "0 16px", height: "100%", display: "flex", alignItems: "center", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ NEWS</div>
           <div style={{ flex: 1, overflow: "hidden", height: "100%" }}>
@@ -451,7 +410,7 @@ export default function App() {
         {/* BODY */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* LEFT BAR — Code of Conduct */}
+          {/* LEFT BAR */}
           <div className="left-panel" style={{ width: 270, flexShrink: 0, borderRight: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexDirection: "column", overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
               <div style={{ textAlign: "center" }}>
@@ -516,7 +475,7 @@ export default function App() {
                     <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                   </div>
                   <div style={{ padding: "10px 14px", borderRadius: "4px 12px 12px 12px", background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, display: "flex", gap: 4, alignItems: "center" }}>
-                    {[0, 0.2, 0.4].map(function(d, i) { return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />; })}
+                    {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
                   </div>
                 </div>
               )}
@@ -524,18 +483,14 @@ export default function App() {
             </div>
             <div style={{ padding: "10px 12px 12px", borderTop: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, background: NAVY_SURFACE, border: "1px solid " + GOLD, borderRadius: 10, padding: "6px 10px" }}>
-                <input value={input} onChange={function(e) { setInput(e.target.value); }} onKeyDown={function(e) { if (e.key === "Enter") { e.preventDefault(); send(); } }}
-                  placeholder={isUrdu ? "پاکستانی یا امریکی قانون کے بارے میں سوال کریں..." : "Ask about Pakistani or US law..."}
-                  dir={isUrdu ? "rtl" : "ltr"}
-                  style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 13, height: 34 }}
+                <input value={input} onChange={function(e){setInput(e.target.value);}} onKeyDown={function(e){if(e.key==="Enter"){e.preventDefault();send();}}}
+                  placeholder="Ask about Pakistani or US law..."
+                  style={{ flex:1, background:"transparent", border:"none", outline:"none", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:13, height:34 }}
                 />
-                <button onClick={function() { send(); }} style={{ background: GOLD, border: "none", borderRadius: 8, padding: "6px 18px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer", height: 34, flexShrink: 0 }}>
-                  {isUrdu ? "بھیجیں" : "SEND"}
-                </button>
+                <button onClick={function(){send();}} style={{ background:GOLD, border:"none", borderRadius:8, padding:"6px 18px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer", height:34, flexShrink:0 }}>SEND</button>
               </div>
               <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
-                ⚠️ {isUrdu ? "صرف تحقیق کے لیے" : "For research only — not a substitute for legal counsel"}
-                <br />
+                ⚠️ For research only — not a substitute for legal counsel<br />
                 <span style={{ color: GOLD, opacity: 0.8, fontSize: 9 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
               </div>
             </div>
@@ -543,70 +498,46 @@ export default function App() {
 
           {/* RIGHT SIDEBAR */}
           <div className="right-panel" style={{ width: 230, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexDirection: "column", overflowY: "auto" }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
-            {areas.map(function(a) {
-              return <button key={a.id} className="abtn" onClick={function() { setArea(a.id); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", border: "none", textAlign: "left", background: area === a.id ? NAVY_SURFACE : "transparent", color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 13, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontWeight: area === a.id ? 600 : 400 }}><span>{a.icon}</span>{a.label}</button>;
+            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>PRACTICE AREAS</div>
+            {AREAS_EN.map(function(a) {
+              return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:8, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:13, padding:"7px 10px", borderRadius:7, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span>{a.icon}</span>{a.label}</button>;
             })}
-            <div style={{ height: 1, background: NAVY_BORDER, margin: "8px 10px" }} />
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
-            {quick.map(function(q, i) {
-              return <button key={i} className="qbtn" onClick={function() { send(q); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{q}</button>;
+            <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
+            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"6px 12px" }}>QUICK QUERIES</div>
+            {QUICK_EN.map(function(q,i) {
+              return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
             })}
           </div>
-
         </div>
 
-        {/* MOBILE DRAWER — Left Conduct */}
+        {/* MOBILE DRAWERS */}
         {showLeft && (
-          <div className="mobile-drawer" onClick={function() { setShowLeft(false); }}>
-            <div className="mobile-panel" onClick={function(e) { e.stopPropagation(); }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>Attorney Code of Conduct</div>
-                <button onClick={function() { setShowLeft(false); }} style={{ background: "transparent", border: "none", color: TEXT_MUTED, fontSize: 20, cursor: "pointer" }}>✕</button>
+          <div className="mobile-drawer" onClick={function(){setShowLeft(false);}}>
+            <div className="mobile-panel" onClick={function(e){e.stopPropagation();}}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:GOLD }}>Attorney Code of Conduct</div>
+                <button onClick={function(){setShowLeft(false);}} style={{ background:"transparent", border:"none", color:TEXT_MUTED, fontSize:20, cursor:"pointer" }}>✕</button>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 12 }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 3px" }}>
-                    <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
-                  </div>
-                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600 }}>FOUNDER OF PAKISTAN</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 3px" }}>
-                    <img src="/washington.jpeg" alt="Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
-                  </div>
-                  <div style={{ fontSize: 8, color: ACCENT_US, fontWeight: 600 }}>USA — FOUNDING FATHER</div>
-                </div>
-              </div>
-              {CONDUCT.map(function(item, i) {
-                return (
-                  <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid rgba(43,63,87,0.5)", display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 12, flexShrink: 0 }}>{item.pk ? "🇵🇰" : "🇺🇸"}</span>
-                    <span style={{ fontSize: 12, color: TEXT_SECONDARY, lineHeight: 1.5 }}>{item.text}</span>
-                  </div>
-                );
+              {CONDUCT.map(function(item,i) {
+                return <div key={i} style={{ padding:"8px 0", borderBottom:"1px solid rgba(43,63,87,0.5)", display:"flex", gap:8 }}><span style={{ fontSize:12, flexShrink:0 }}>{item.pk?"🇵🇰":"🇺🇸"}</span><span style={{ fontSize:12, color:TEXT_SECONDARY, lineHeight:1.5 }}>{item.text}</span></div>;
               })}
             </div>
           </div>
         )}
-
-        {/* MOBILE DRAWER — Right Menu */}
         {showRight && (
-          <div className="mobile-drawer" onClick={function() { setShowRight(false); }}>
-            <div className="mobile-panel" onClick={function(e) { e.stopPropagation(); }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>Practice Areas & Quick Queries</div>
-                <button onClick={function() { setShowRight(false); }} style={{ background: "transparent", border: "none", color: TEXT_MUTED, fontSize: 20, cursor: "pointer" }}>✕</button>
+          <div className="mobile-drawer" onClick={function(){setShowRight(false);}}>
+            <div className="mobile-panel" onClick={function(e){e.stopPropagation();}}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:GOLD }}>Practice Areas & Quick Queries</div>
+                <button onClick={function(){setShowRight(false);}} style={{ background:"transparent", border:"none", color:TEXT_MUTED, fontSize:20, cursor:"pointer" }}>✕</button>
               </div>
-              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>PRACTICE AREAS</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
-                {areas.map(function(a) {
-                  return <button key={a.id} onClick={function() { setArea(a.id); setShowRight(false); }} style={{ display: "flex", alignItems: "center", gap: 6, background: area === a.id ? NAVY_SURFACE : NAVY, border: "1px solid " + (area === a.id ? GOLD : NAVY_BORDER), color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 12, padding: "8px 10px", borderRadius: 8, cursor: "pointer", textAlign: "left" }}><span>{a.icon}</span>{a.label}</button>;
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginBottom:14 }}>
+                {AREAS_EN.map(function(a) {
+                  return <button key={a.id} onClick={function(){setArea(a.id);setShowRight(false);}} style={{ display:"flex", alignItems:"center", gap:6, background:area===a.id?NAVY_SURFACE:NAVY, border:"1px solid "+(area===a.id?GOLD:NAVY_BORDER), color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:12, padding:"8px 10px", borderRadius:8, cursor:"pointer" }}><span>{a.icon}</span>{a.label}</button>;
                 })}
               </div>
-              <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>QUICK QUERIES</div>
-              {quick.map(function(q, i) {
-                return <button key={i} onClick={function() { send(q); setShowRight(false); }} style={{ display: "block", width: "100%", marginBottom: 6, background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 12, padding: "8px 10px", borderRadius: 8, cursor: "pointer", textAlign: "left", lineHeight: 1.5 }}>{q}</button>;
+              {QUICK_EN.map(function(q,i) {
+                return <button key={i} onClick={function(){send(q);setShowRight(false);}} style={{ display:"block", width:"100%", marginBottom:6, background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:12, padding:"8px 10px", borderRadius:8, cursor:"pointer", textAlign:"left", lineHeight:1.5 }}>{q}</button>;
               })}
             </div>
           </div>
@@ -614,96 +545,77 @@ export default function App() {
 
         {/* NEWS DETAIL POPUP */}
         {newsPopup && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-            <div style={{ background: NAVY_MID, border: "1px solid " + NAVY_BORDER, borderRadius: 16, width: "100%", maxWidth: 680, maxHeight: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 0 40px rgba(0,0,0,0.5)" }}>
-
-              {/* Popup Header */}
-              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", borderBottom: "1px solid " + NAVY_BORDER, background: NAVY, borderRadius: "16px 16px 0 0", flexShrink: 0 }}>
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:998, display:"flex", alignItems:"center", justifyContent:"center", padding:"16px" }}>
+            <div style={{ background:NAVY_MID, border:"1px solid "+NAVY_BORDER, borderRadius:16, width:"100%", maxWidth:680, maxHeight:"85vh", display:"flex", flexDirection:"column", boxShadow:"0 0 40px rgba(0,0,0,0.5)" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 20px", borderBottom:"1px solid "+NAVY_BORDER, background:NAVY, borderRadius:"16px 16px 0 0", flexShrink:0 }}>
                 <ArkLogo size={36} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 13, fontWeight: 700, color: GOLD }}>ARK LAW AI — Legal News</div>
-                  <div style={{ fontSize: 11, color: newsPopup.pk ? ACCENT_PK : ACCENT_US, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {newsPopup.pk ? "🇵🇰 Pakistan" : "🇺🇸 USA"} — {newsPopup.text}
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontFamily:"Georgia,serif", fontSize:13, fontWeight:700, color:GOLD }}>ARK LAW AI — Legal News</div>
+                  <div style={{ fontSize:11, color:newsPopup.pk?ACCENT_PK:ACCENT_US, marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                    {newsPopup.pk?"🇵🇰 Pakistan":"🇺🇸 USA"} — {newsPopup.text}
                   </div>
                 </div>
-                <button onClick={function() { setNewsPopup(null); setNewsAnswer(""); }} style={{ background: "rgba(224,85,85,0.15)", border: "1px solid rgba(224,85,85,0.4)", borderRadius: 8, padding: "6px 14px", color: "#E05555", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
-                  ✕ Close
-                </button>
+                <button onClick={function(){setNewsPopup(null);setNewsAnswer("");}} style={{ background:"rgba(224,85,85,0.15)", border:"1px solid rgba(224,85,85,0.4)", borderRadius:8, padding:"6px 14px", color:"#E05555", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>✕ Close</button>
               </div>
-
-              {/* Headline */}
-              <div style={{ padding: "14px 20px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: TEXT_PRIMARY, lineHeight: 1.5 }}>{newsPopup.text}</div>
+              <div style={{ padding:"14px 20px 10px", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0 }}>
+                <div style={{ fontSize:15, fontWeight:700, color:TEXT_PRIMARY, lineHeight:1.5 }}>{newsPopup.text}</div>
               </div>
-
-              {/* Content */}
-              <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
+              <div style={{ flex:1, overflowY:"auto", padding:"16px 20px" }}>
                 {newsLoading ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, color: TEXT_MUTED, fontSize: 13 }}>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {[0, 0.2, 0.4].map(function(d, i) { return <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, animation: "bounce 1.2s " + d + "s infinite ease-in-out" }} />; })}
+                  <div style={{ display:"flex", alignItems:"center", gap:10, color:TEXT_MUTED, fontSize:13 }}>
+                    <div style={{ display:"flex", gap:4 }}>
+                      {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
                     </div>
                     ARK Law AI is analysing this news...
                   </div>
                 ) : (
-                  <div style={{ fontSize: 13, lineHeight: 1.8, color: TEXT_SECONDARY }}
-                    dangerouslySetInnerHTML={{ __html: fmt(newsAnswer) }}
-                  />
+                  <div style={{ fontSize:13, lineHeight:1.8, color:TEXT_SECONDARY }} dangerouslySetInnerHTML={{ __html:fmt(newsAnswer) }} />
                 )}
               </div>
-
-              {/* Footer */}
-              <div style={{ padding: "12px 20px", borderTop: "1px solid " + NAVY_BORDER, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ fontSize: 10, color: TEXT_MUTED }}>⚠️ For research only — not a substitute for legal counsel</div>
-                <button onClick={function() { setNewsPopup(null); setNewsAnswer(""); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 8, padding: "8px 20px", color: NAVY, fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                  ✕ Close Window
-                </button>
+              <div style={{ padding:"12px 20px", borderTop:"1px solid "+NAVY_BORDER, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div style={{ fontSize:10, color:TEXT_MUTED }}>⚠️ For research only — not a substitute for legal counsel</div>
+                <button onClick={function(){setNewsPopup(null);setNewsAnswer("");}} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"8px 20px", color:NAVY, fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer" }}>✕ Close Window</button>
               </div>
-
             </div>
           </div>
         )}
 
         {/* SUCCESS POPUP */}
         {showSuccess && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px" }}>
-            <div style={{ background: NAVY_MID, border: "2px solid " + GOLD, borderRadius: 18, padding: "32px 28px", maxWidth: 440, width: "100%", textAlign: "center", boxShadow: "0 0 60px rgba(201,168,76,0.3)" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}><ArkLogo size={64} /></div>
-              <div style={{ width: 54, height: 54, borderRadius: "50%", background: "rgba(62,180,137,0.15)", border: "2px solid " + ACCENT_PK, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 26 }}>✅</div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD, marginBottom: 6 }}>Magic Code Accepted!</div>
-              <div style={{ height: 1, background: "linear-gradient(to right, transparent, " + GOLD + ", transparent)", margin: "10px 0 16px" }} />
-              <div style={{ fontSize: 13, color: TEXT_SECONDARY, lineHeight: 1.8, marginBottom: 24 }}>
-                You have entered the correct magic code dedicated to <strong style={{ color: GOLD }}>Honorable Justice S. A. Rabbani</strong>, legendary jurist of Pakistan.<br /><br />
-                Now you are able to utilize this <strong style={{ color: GOLD }}>AI Legal Assistant for 24 hours</strong> without even signing up for a 7-day free trial.
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 16px" }}>
+            <div style={{ background:NAVY_MID, border:"2px solid "+GOLD, borderRadius:18, padding:"32px 28px", maxWidth:440, width:"100%", textAlign:"center" }}>
+              <div style={{ display:"flex", justifyContent:"center", marginBottom:14 }}><ArkLogo size={64} /></div>
+              <div style={{ width:54, height:54, borderRadius:"50%", background:"rgba(62,180,137,0.15)", border:"2px solid "+ACCENT_PK, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px", fontSize:26 }}>✅</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:GOLD, marginBottom:6 }}>Magic Code Accepted!</div>
+              <div style={{ height:1, background:"linear-gradient(to right,transparent,"+GOLD+",transparent)", margin:"10px 0 16px" }} />
+              <div style={{ fontSize:13, color:TEXT_SECONDARY, lineHeight:1.8, marginBottom:24 }}>
+                You have entered the correct magic code dedicated to <strong style={{ color:GOLD }}>Honorable Justice S. A. Rabbani</strong>, legendary jurist of Pakistan.<br /><br />
+                Now you are able to utilize this <strong style={{ color:GOLD }}>AI Legal Assistant for 24 hours</strong> without even signing up for a 7-day free trial.
               </div>
-              <button onClick={function() { setShowSuccess(false); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 10, padding: "12px 48px", color: NAVY, fontFamily: "inherit", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-                OK — Let's Go! ⚖️
-              </button>
+              <button onClick={function(){setShowSuccess(false);}} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:10, padding:"12px 48px", color:NAVY, fontFamily:"inherit", fontSize:14, fontWeight:700, cursor:"pointer" }}>OK — Let's Go! ⚖️</button>
             </div>
           </div>
         )}
 
         {/* CODE POPUP */}
         {showPopup && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px" }}>
-            <div style={{ background: NAVY_MID, border: "1px solid " + GOLD, borderRadius: 16, padding: "28px 24px", maxWidth: 420, width: "100%", textAlign: "center", boxShadow: "0 0 40px rgba(201,168,76,0.2)" }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><ArkLogo size={56} /></div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD, marginBottom: 4 }}>ARK LAW AI</div>
-              <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 18 }}>The Legal Intelligence Engine</div>
-              <div style={{ fontSize: 13, color: TEXT_SECONDARY, lineHeight: 1.7, marginBottom: 10 }}>
-                To verify you are human and extend your free access to <strong style={{ color: GOLD }}>24 hours</strong>, enter the code below:
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:999, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 16px" }}>
+            <div style={{ background:NAVY_MID, border:"1px solid "+GOLD, borderRadius:16, padding:"28px 24px", maxWidth:420, width:"100%", textAlign:"center" }}>
+              <div style={{ display:"flex", justifyContent:"center", marginBottom:12 }}><ArkLogo size={56} /></div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:GOLD, marginBottom:4 }}>ARK LAW AI</div>
+              <div style={{ fontSize:11, color:TEXT_MUTED, marginBottom:18 }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize:13, color:TEXT_SECONDARY, lineHeight:1.7, marginBottom:10 }}>
+                To verify you are human and extend your free access to <strong style={{ color:GOLD }}>24 hours</strong>, enter the code below:
               </div>
-              <div style={{ background: NAVY, border: "1px solid " + GOLD, borderRadius: 10, padding: "10px 16px", marginBottom: 14, fontSize: 16, fontWeight: 700, color: GOLD, letterSpacing: ".15em" }}>
-                JUSTICESARABBANI
-              </div>
-              <input type="text" value={codeInput} onChange={function(e) { setCodeInput(e.target.value); setCodeMsg(""); }} onKeyDown={function(e) { if (e.key === "Enter") submitCode(); }}
+              <div style={{ background:NAVY, border:"1px solid "+GOLD, borderRadius:10, padding:"10px 16px", marginBottom:14, fontSize:16, fontWeight:700, color:GOLD, letterSpacing:".15em" }}>JUSTICESARABBANI</div>
+              <input type="text" value={codeInput} onChange={function(e){setCodeInput(e.target.value);setCodeMsg("");}} onKeyDown={function(e){if(e.key==="Enter")submitCode();}}
                 placeholder="Type the code here..."
-                style={{ width: "100%", background: NAVY_SURFACE, border: "1px solid " + (codeMsg === "error" ? "#E05555" : NAVY_BORDER), borderRadius: 8, padding: "10px 14px", color: TEXT_PRIMARY, fontFamily: "inherit", fontSize: 14, outline: "none", marginBottom: 8, textAlign: "center", letterSpacing: ".1em" }}
+                style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(codeMsg==="error"?"#E05555":NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:14, outline:"none", marginBottom:8, textAlign:"center", letterSpacing:".1em" }}
               />
-              {codeMsg === "error" && <div style={{ fontSize: 12, color: "#E05555", marginBottom: 8 }}>❌ Incorrect code. Please try again.</div>}
-              <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 8 }}>
-                <button onClick={submitCode} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 8, padding: "9px 24px", color: NAVY, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Submit Code</button>
-                <button onClick={function() { setShowPopup(false); setCodeInput(""); setCodeMsg(""); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 8, padding: "9px 24px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              {codeMsg==="error" && <div style={{ fontSize:12, color:"#E05555", marginBottom:8 }}>❌ Incorrect code. Please try again.</div>}
+              <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:8 }}>
+                <button onClick={submitCode} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"9px 24px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer" }}>Submit Code</button>
+                <button onClick={function(){setShowPopup(false);setCodeInput("");setCodeMsg("");}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"9px 24px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:13, cursor:"pointer" }}>Cancel</button>
               </div>
             </div>
           </div>
