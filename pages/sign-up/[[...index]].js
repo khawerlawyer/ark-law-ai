@@ -20,7 +20,7 @@ export default function SignUpPage() {
         path="/sign-up"
         routing="path"
         signInUrl="/sign-in"
-        afterSignUpUrl="/"
+        afterSignUpUrl="/onboarding"
         appearance={{
           variables: {
             colorPrimary: "#C9A84C",
