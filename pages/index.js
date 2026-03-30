@@ -304,6 +304,8 @@ export default function App() {
         <meta name="description" content="ARK LAW AI — The Legal Intelligence Engine for Pakistani and US law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta property="og:title" content="ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
       <style>{[
