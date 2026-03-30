@@ -361,14 +361,14 @@ export default function App() {
               </div>
             )}
             {user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                  {trialDaysLeft > 0 ? "⭐ " + trialDaysLeft + "d left" : "⚠️ Expired"}
+              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <div style={{ background:trialDaysLeft>0?"rgba(62,180,137,0.15)":"rgba(224,85,85,0.15)", border:"1px solid "+(trialDaysLeft>0?ACCENT_PK:"#E05555"), borderRadius:20, padding:"4px 10px", fontSize:10, color:trialDaysLeft>0?ACCENT_PK:"#E05555", fontWeight:600 }}>
+                  {trialDaysLeft>0?"⭐ "+trialDaysLeft+"d left":"⚠️ Expired"}
                 </div>
-                <div style={{ background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", fontSize: 10, color: TEXT_SECONDARY }}>
-                  {"👤 " + (user.firstName || user.emailAddresses[0].emailAddress.split("@")[0])}
+                <div style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", fontSize:10, color:TEXT_SECONDARY }}>
+                  {"👤 "+ (user.unsafeMetadata && user.unsafeMetadata.fullName ? user.unsafeMetadata.fullName : (user.firstName || user.emailAddresses[0].emailAddress.split("@")[0]))}
                 </div>
-                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>Out</button>
+                <button onClick={function(){clerk.signOut();}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>Out</button>
               </div>
             )}
           </div>
