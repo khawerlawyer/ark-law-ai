@@ -312,6 +312,7 @@ export default function App() {
         "#__next { height: 100%; }",
         "@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }",
         "@keyframes tickerScroll { 0%{transform:translateY(0)} 100%{transform:translateY(-50%)} }",
+        "@keyframes tickerScrollH { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }",
         "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
         "input::placeholder{color:#6E8099}",
         ".qbtn:hover{border-color:#C9A84C!important;color:#C9A84C!important}",
@@ -415,6 +416,26 @@ export default function App() {
           <div style={{ display:"flex", gap:8 }}>
             <button onClick={function(){setShowLeft(true);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px 10px", color:GOLD, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>📜 Conduct</button>
             <button onClick={function(){setShowRight(true);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px 10px", color:GOLD, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>⚖️ Menu</button>
+          </div>
+        </div>
+
+        {/* HORIZONTAL NEWS TICKER */}
+        <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, padding: "5px 0", overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
+          <div style={{ background: GOLD, color: NAVY, fontSize: 10, fontWeight: 700, padding: "3px 10px", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</div>
+          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+            <div id="news-ticker" style={{ display: "flex", whiteSpace: "nowrap", gap: 0 }}>
+              {newsItems.map(function(item, i) {
+                return (
+                  <span key={i}
+                    onClick={function() { send("Tell me more about this legal news: " + item.text); }}
+                    title={item.text}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 20px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", borderRight: "1px solid " + NAVY_BORDER }}>
+                    {item.pk ? "🇵🇰" : "🇺🇸"} {item.text}
+                    <span style={{ color: NAVY_BORDER, marginLeft: 8 }}>◆</span>
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </div>
 
