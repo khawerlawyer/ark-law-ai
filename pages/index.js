@@ -367,9 +367,8 @@ export default function App() {
           {/* Language + Jurisdiction */}
           <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              {["en","ur"].map(function(l) {
-                return <button key={l} onClick={function(){setLang(l);}} style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"pointer", background:lang===l?"rgba(201,168,76,0.2)":"transparent", color:lang===l?GOLD:TEXT_MUTED, fontFamily:"inherit", fontWeight:500 }}>{l==="en"?"EN":"اردو"}</button>;
-              })}
+              <button style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"default", background:"rgba(201,168,76,0.2)", color:GOLD, fontFamily:"inherit", fontWeight:500 }}>EN</button>
+              <button disabled style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"not-allowed", background:"transparent", color:TEXT_MUTED, fontFamily:"inherit", fontWeight:500, opacity:0.4 }} title="Urdu — Coming Soon">اردو</button>
             </div>
             <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
               {[["pk","🇵🇰 PK"],["both","⚖ Both"],["us","🇺🇸 US"]].map(function(item) {
