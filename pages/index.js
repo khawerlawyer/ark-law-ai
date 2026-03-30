@@ -329,13 +329,13 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI',sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
 
         {/* HEADER */}
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 6 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-            <ArkLogo size={36} />
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 76, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <ArkLogo size={54} />
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 15, fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>ARK LAW AI</div>
-              <div style={{ fontSize: 8, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em", whiteSpace: "nowrap" }}>The Legal Intelligence Engine</div>
-              <div style={{ fontSize: 8, color: ACCENT_PK, whiteSpace: "nowrap" }}>by Atty. & AI Innovator Khawer Rabbani</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>ARK LAW AI</div>
+              <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em", whiteSpace: "nowrap" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 10, color: ACCENT_PK, whiteSpace: "nowrap" }}>by Atty. & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
 
@@ -366,30 +366,30 @@ export default function App() {
 
           {/* Language + Jurisdiction */}
           <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 2 }}>
+            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
               {["en","ur"].map(function(l) {
-                return <button key={l} onClick={function(){setLang(l);}} style={{ border:"none", borderRadius:30, padding:"3px 8px", fontSize:10, cursor:"pointer", background:lang===l?"rgba(201,168,76,0.2)":"transparent", color:lang===l?GOLD:TEXT_MUTED, fontFamily:"inherit", fontWeight:500 }}>{l==="en"?"EN":"اردو"}</button>;
+                return <button key={l} onClick={function(){setLang(l);}} style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"pointer", background:lang===l?"rgba(201,168,76,0.2)":"transparent", color:lang===l?GOLD:TEXT_MUTED, fontFamily:"inherit", fontWeight:500 }}>{l==="en"?"EN":"اردو"}</button>;
               })}
             </div>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 2 }}>
-              {[["pk","🇵🇰"],["both","⚖"],["us","🇺🇸"]].map(function(item) {
+            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
+              {[["pk","🇵🇰 PK"],["both","⚖ Both"],["us","🇺🇸 US"]].map(function(item) {
                 var j=item[0]; var lbl=item[1];
-                return <button key={j} onClick={function(){setJur(j);}} style={{ border:"none", borderRadius:30, padding:"3px 7px", fontSize:11, cursor:"pointer", background:jur===j?(j==="pk"?"rgba(62,180,137,0.15)":j==="us"?"rgba(91,141,217,0.15)":"rgba(201,168,76,0.15)"):"transparent", color:jur===j?jurConfig[j].color:TEXT_MUTED, fontFamily:"inherit" }}>{lbl}</button>;
+                return <button key={j} onClick={function(){setJur(j);}} style={{ border:"none", borderRadius:30, padding:"4px 10px", fontSize:12, cursor:"pointer", background:jur===j?(j==="pk"?"rgba(62,180,137,0.15)":j==="us"?"rgba(91,141,217,0.15)":"rgba(201,168,76,0.15)"):"transparent", color:jur===j?jurConfig[j].color:TEXT_MUTED, fontFamily:"inherit" }}>{lbl}</button>;
               })}
             </div>
           </div>
         </header>
 
         {/* HORIZONTAL NEWS TICKER — one instance only */}
-        <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, height: 28, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
-          <div style={{ background: GOLD, color: NAVY, fontSize: 10, fontWeight: 700, padding: "0 12px", height: "100%", display: "flex", alignItems: "center", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ NEWS</div>
+        <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, height: 36, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
+          <div style={{ background: GOLD, color: NAVY, fontSize: 12, fontWeight: 700, padding: "0 16px", height: "100%", display: "flex", alignItems: "center", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ NEWS</div>
           <div style={{ flex: 1, overflow: "hidden", height: "100%" }}>
-            <div style={{ display: "flex", alignItems: "center", height: "100%", animation: "tickerScrollH 240s linear infinite", width: "max-content" }}>
+            <div style={{ display: "flex", alignItems: "center", height: "100%", animation: "tickerScrollH 480s linear infinite", width: "max-content" }}>
               {newsItems.concat(newsItems).map(function(item, i) {
                 return (
                   <span key={i} onClick={function() { send("Tell me more about: " + item.text); }}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0 28px", fontSize: 11, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER, fontSize: 8 }}>◆</span>
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0 32px", fontSize: 13, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER, fontSize: 9 }}>◆</span>
                   </span>
                 );
               })}
