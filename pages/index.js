@@ -1,3 +1,4 @@
+// ARK LAW AI — index.js  v1.1  (right-sidebar spacing fix)
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { useUser, useClerk } from "@clerk/nextjs";
@@ -607,41 +608,43 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
+          {/* ── RIGHT SIDEBAR v1.1 — tighter spacing so drafting + analyzer fit on screen ── */}
           <div className="right-panel" style={{ width:240, flexShrink:0, borderLeft:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexDirection:"column", overflowY:"auto", display:"flex" }}>
-            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"14px 12px 6px" }}>PRACTICE AREAS</div>
+
+            {/* PRACTICE AREAS */}
+            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"8px 12px 3px" }}>PRACTICE AREAS</div>
             {AREAS_EN.map(function(a) {
-              return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:8, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:13, padding:"7px 10px", borderRadius:7, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span>{a.icon}</span>{a.label}</button>;
+              return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:6, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:12, padding:"4px 10px", borderRadius:6, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span style={{ fontSize:13 }}>{a.icon}</span>{a.label}</button>;
             })}
 
-            <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
+            <div style={{ height:1, background:NAVY_BORDER, margin:"5px 10px" }} />
 
             {/* DOCUMENT DRAFTING BUTTON */}
-            <div style={{ margin:"4px 8px 4px" }}>
-              <button onClick={function(){setShowDraft(true);}} style={{ width:"100%", background:"linear-gradient(135deg,#1a2a4a,#2a1a4a)", border:"1px solid "+ACCENT_US, borderRadius:12, padding:"12px", cursor:"pointer", textAlign:"left" }}
+            <div style={{ margin:"2px 8px 2px" }}>
+              <button onClick={function(){setShowDraft(true);}} style={{ width:"100%", background:"linear-gradient(135deg,#1a2a4a,#2a1a4a)", border:"1px solid "+ACCENT_US, borderRadius:10, padding:"8px 10px", cursor:"pointer", textAlign:"left" }}
                 onMouseOver={function(e){e.currentTarget.style.borderColor=GOLD;}}
                 onMouseOut={function(e){e.currentTarget.style.borderColor=ACCENT_US;}}>
-                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-                  <span style={{ fontSize:18 }}>✍️</span>
-                  <div style={{ fontSize:12, fontWeight:700, color:GOLD }}>Legal Document Drafting</div>
+                <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:3 }}>
+                  <span style={{ fontSize:15 }}>✍️</span>
+                  <div style={{ fontSize:11, fontWeight:700, color:GOLD }}>Legal Document Drafting</div>
                 </div>
-                <div style={{ fontSize:10, color:TEXT_MUTED, lineHeight:1.5 }}>Create & download legal documents with AI assistance</div>
-                <div style={{ marginTop:7, display:"flex", gap:4 }}>
+                <div style={{ fontSize:10, color:TEXT_MUTED, lineHeight:1.4, marginBottom:5 }}>Create & download legal documents with AI</div>
+                <div style={{ display:"flex", gap:4 }}>
                   {["📄 DOC","📋 PDF","📝 DOCX"].map(function(f) {
-                    return <span key={f} style={{ fontSize:9, color:ACCENT_US, background:"rgba(91,141,217,0.1)", border:"1px solid rgba(91,141,217,0.3)", borderRadius:4, padding:"2px 6px" }}>{f}</span>;
+                    return <span key={f} style={{ fontSize:9, color:ACCENT_US, background:"rgba(91,141,217,0.1)", border:"1px solid rgba(91,141,217,0.3)", borderRadius:4, padding:"2px 5px" }}>{f}</span>;
                   })}
                 </div>
               </button>
             </div>
 
             {/* DOCUMENT ANALYZER */}
-            <div style={{ margin:"4px 8px 4px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden", flexShrink:0 }}>
-              <div style={{ background:"linear-gradient(135deg,rgba(201,168,76,0.2),rgba(62,180,137,0.2))", padding:"10px 12px", borderBottom:"1px solid rgba(201,168,76,0.3)" }}>
-                <div style={{ fontSize:12, fontWeight:700, color:GOLD }}>📄 Legal Document Analyzer</div>
-                <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:2 }}>Upload • Analyze • Download Report</div>
+            <div style={{ margin:"2px 8px 4px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:10, overflow:"hidden", flexShrink:0 }}>
+              <div style={{ background:"linear-gradient(135deg,rgba(201,168,76,0.2),rgba(62,180,137,0.2))", padding:"7px 10px", borderBottom:"1px solid rgba(201,168,76,0.3)" }}>
+                <div style={{ fontSize:11, fontWeight:700, color:GOLD }}>📄 Legal Document Analyzer</div>
+                <div style={{ fontSize:9, color:TEXT_MUTED, marginTop:1 }}>Upload • Analyze • Download Report</div>
               </div>
-              <div style={{ padding:"10px 12px" }}>
-                <div style={{ display:"flex", gap:3, marginBottom:10 }}>
+              <div style={{ padding:"8px 10px" }}>
+                <div style={{ display:"flex", gap:3, marginBottom:8 }}>
                   {["upload","ready","analyzing","done"].map(function(step,i) {
                     var steps=["upload","ready","analyzing","done"]; var cur=steps.indexOf(docStep==="reading"?"upload":docStep);
                     return <div key={step} style={{ flex:1, height:3, borderRadius:2, background:cur>i?GOLD:cur===i?ACCENT_US:NAVY_BORDER, transition:"background .3s" }} />;
@@ -649,53 +652,55 @@ export default function App() {
                 </div>
                 {(docStep==="upload"||docStep==="reading") && (
                   <label style={{ display:"block", cursor:"pointer" }}>
-                    <div style={{ border:"2px dashed "+(docStep==="reading"?GOLD:NAVY_BORDER), borderRadius:10, padding:"14px 8px", textAlign:"center", background:"rgba(0,0,0,0.2)" }}>
-                      {docStep==="reading" ? <div style={{ color:GOLD, fontSize:12 }}>⏳ Reading document...</div> : <>
-                        <div style={{ fontSize:22, marginBottom:4 }}>📂</div>
-                        <div style={{ fontSize:11, color:TEXT_SECONDARY, marginBottom:3 }}>Drop file here or click to browse</div>
-                        <div style={{ fontSize:10, color:TEXT_MUTED }}>PDF • DOCX • DOC</div>
+                    <div style={{ border:"2px dashed "+(docStep==="reading"?GOLD:NAVY_BORDER), borderRadius:8, padding:"10px 6px", textAlign:"center", background:"rgba(0,0,0,0.2)" }}>
+                      {docStep==="reading" ? <div style={{ color:GOLD, fontSize:11 }}>⏳ Reading document...</div> : <>
+                        <div style={{ fontSize:18, marginBottom:3 }}>📂</div>
+                        <div style={{ fontSize:10, color:TEXT_SECONDARY, marginBottom:2 }}>Drop file or click to browse</div>
+                        <div style={{ fontSize:9, color:TEXT_MUTED }}>PDF • DOCX • DOC</div>
                       </>}
                     </div>
                     <input type="file" accept=".pdf,.docx,.doc" onChange={handleDocUpload} style={{ display:"none" }} />
-                    {docError && <div style={{ fontSize:11, color:"#E05555", marginTop:6, textAlign:"center" }}>{docError}</div>}
+                    {docError && <div style={{ fontSize:10, color:"#E05555", marginTop:5, textAlign:"center" }}>{docError}</div>}
                   </label>
                 )}
                 {docStep==="ready" && (
                   <div>
-                    <div style={{ background:NAVY, border:"1px solid "+ACCENT_PK, borderRadius:8, padding:"7px 10px", marginBottom:8, display:"flex", alignItems:"center", gap:7 }}>
-                      <span style={{ fontSize:14 }}>✅</span>
+                    <div style={{ background:NAVY, border:"1px solid "+ACCENT_PK, borderRadius:7, padding:"6px 8px", marginBottom:7, display:"flex", alignItems:"center", gap:6 }}>
+                      <span style={{ fontSize:12 }}>✅</span>
                       <div><div style={{ fontSize:10, color:ACCENT_PK, fontWeight:600 }}>{docFile&&docFile.name}</div><div style={{ fontSize:9, color:TEXT_MUTED }}>{docText.length} chars extracted</div></div>
                     </div>
-                    <button onClick={analyzeDoc} style={{ width:"100%", background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"8px", color:NAVY, fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:5 }}>⚖️ Analyze with ARK Law AI</button>
-                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Upload different file</button>
+                    <button onClick={analyzeDoc} style={{ width:"100%", background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:7, padding:"7px", color:NAVY, fontFamily:"inherit", fontSize:11, fontWeight:700, cursor:"pointer", marginBottom:4 }}>⚖️ Analyze with ARK Law AI</button>
+                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:7, padding:"4px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Upload different file</button>
                   </div>
                 )}
                 {docStep==="analyzing" && (
-                  <div style={{ textAlign:"center", padding:"10px 0" }}>
-                    <div style={{ display:"flex", justifyContent:"center", gap:4, marginBottom:6 }}>{[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}</div>
-                    <div style={{ fontSize:11, color:TEXT_SECONDARY }}>Analyzing document...</div>
-                    <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:3 }}>15–30 seconds</div>
+                  <div style={{ textAlign:"center", padding:"8px 0" }}>
+                    <div style={{ display:"flex", justifyContent:"center", gap:4, marginBottom:5 }}>{[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:6,height:6,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}</div>
+                    <div style={{ fontSize:10, color:TEXT_SECONDARY }}>Analyzing document...</div>
+                    <div style={{ fontSize:9, color:TEXT_MUTED, marginTop:2 }}>15–30 seconds</div>
                   </div>
                 )}
                 {docStep==="done" && docResult && (
                   <div>
-                    <div style={{ background:"rgba(62,180,137,0.1)", border:"1px solid "+ACCENT_PK, borderRadius:8, padding:"7px 10px", marginBottom:7 }}>
-                      <div style={{ fontSize:11, color:ACCENT_PK, fontWeight:600 }}>✅ Analysis Complete!</div>
-                      <div style={{ fontSize:9, color:TEXT_MUTED, marginTop:2 }}>{docFile&&docFile.name}</div>
+                    <div style={{ background:"rgba(62,180,137,0.1)", border:"1px solid "+ACCENT_PK, borderRadius:7, padding:"6px 8px", marginBottom:6 }}>
+                      <div style={{ fontSize:10, color:ACCENT_PK, fontWeight:600 }}>✅ Analysis Complete!</div>
+                      <div style={{ fontSize:9, color:TEXT_MUTED, marginTop:1 }}>{docFile&&docFile.name}</div>
                     </div>
-                    <button onClick={downloadDocResult} style={{ width:"100%", background:"linear-gradient(135deg,#3EB489,#2a7a5a)", border:"none", borderRadius:8, padding:"8px", color:"white", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:5 }}>⬇️ Download Analysis Report</button>
-                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");setDocResult("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Analyze another document</button>
+                    <button onClick={downloadDocResult} style={{ width:"100%", background:"linear-gradient(135deg,#3EB489,#2a7a5a)", border:"none", borderRadius:7, padding:"7px", color:"white", fontFamily:"inherit", fontSize:11, fontWeight:700, cursor:"pointer", marginBottom:4 }}>⬇️ Download Analysis Report</button>
+                    <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");setDocResult("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:7, padding:"4px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Analyze another document</button>
                   </div>
                 )}
               </div>
             </div>
 
-            <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
-            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"6px 12px" }}>QUICK QUERIES</div>
+            <div style={{ height:1, background:NAVY_BORDER, margin:"4px 10px" }} />
+            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"4px 12px" }}>QUICK QUERIES</div>
             {QUICK_EN.map(function(q,i) {
-              return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
+              return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 3px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"5px 8px", borderRadius:6, cursor:"pointer", textAlign:"left", lineHeight:1.5 }}>{q}</button>;
             })}
           </div>
+          {/* ── end RIGHT SIDEBAR v1.1 ── */}
+
         </div>
 
         {/* MOBILE DRAWERS */}
