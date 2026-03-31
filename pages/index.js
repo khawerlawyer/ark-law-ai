@@ -93,6 +93,13 @@ var DEFAULT_NEWS = [
   { text: "New US federal rules on AI-generated evidence in court proceedings", pk: false },
 ];
 
+var DOC_TYPES = [
+  "Contract","Non-Disclosure Agreement","Employment Agreement","Sale Agreement",
+  "Lease Agreement","Power of Attorney","Affidavit","Legal Notice",
+  "Partnership Deed","Memorandum of Understanding","Will & Testament",
+  "Settlement Agreement","Loan Agreement","Service Agreement"
+];
+
 function buildSystem(area, jur) {
   var areaLabel = AREA_LABELS_EN[area];
   var jurMap = {
@@ -169,12 +176,17 @@ export default function App() {
   var newsLoadingS = useState(false); var newsLoading = newsLoadingS[0]; var setNewsLoading = newsLoadingS[1];
   var docFileS = useState(null); var docFile = docFileS[0]; var setDocFile = docFileS[1];
   var docTextS = useState(""); var docText = docTextS[0]; var setDocText = docTextS[1];
-  var docLoadingS = useState(false); var docLoading = docLoadingS[0]; var setDocLoading = docLoadingS[1];
   var docResultS = useState(""); var docResult = docResultS[0]; var setDocResult = docResultS[1];
   var docErrorS = useState(""); var docError = docErrorS[0]; var setDocError = docErrorS[1];
   var docStepS = useState("upload"); var docStep = docStepS[0]; var setDocStep = docStepS[1];
+  var showDraftS = useState(false); var showDraft = showDraftS[0]; var setShowDraft = showDraftS[1];
+  var draftTitleS = useState(""); var draftTitle = draftTitleS[0]; var setDraftTitle = draftTitleS[1];
+  var draftBodyS = useState(""); var draftBody = draftBodyS[0]; var setDraftBody = draftBodyS[1];
+  var draftTypeS = useState("Contract"); var draftType = draftTypeS[0]; var setDraftType = draftTypeS[1];
+  var draftLoadingS = useState(false); var draftLoading = draftLoadingS[0]; var setDraftLoading = draftLoadingS[1];
   var messagesEnd = useRef(null);
   var history = useRef([]);
+  var draftAreaRef = useRef(null);
   var userInfo = useUser(); var user = userInfo.user;
   var clerk = useClerk();
   var router = useRouter();
@@ -186,88 +198,7 @@ export default function App() {
     trialDaysLeft = Math.max(0, 7 - daysSince);
   }
 
-  var draftS = useState(false); var showDraft = draftS[0]; var setShowDraft = draftS[1];
-  var draftTitleS = useState(""); var draftTitle = draftTitleS[0]; var setDraftTitle = draftTitleS[1];
-  var draftBodyS = useState(""); var draftBody = draftBodyS[0]; var setDraftBody = draftBodyS[1];
-  var draftTypeS = useState("Contract"); var draftType = draftTypeS[0]; var setDraftType = draftTypeS[1];
-  var draftLoadingS = useState(false); var draftLoading = draftLoadingS[0]; var setDraftLoading = draftLoadingS[1];
-  var draftAreaRef = useRef(null);
-
-  function applyFormat(tag) {
-    var ta = draftAreaRef.current;
-    if (!ta) return;
-    var start = ta.selectionStart; var end = ta.selectionEnd;
-    var sel = draftBody.slice(start, end);
-    var before = draftBody.slice(0, start); var after = draftBody.slice(end);
-    var result = "";
-    if (tag === "bold") result = before + "**" + sel + "**" + after;
-    else if (tag === "h1") result = before + "\n# " + sel + "\n" + after;
-    else if (tag === "h2") result = before + "\n## " + sel + "\n" + after;
-    else if (tag === "bullet") result = before + "\n- " + sel + after;
-    else if (tag === "upper") result = before + sel.toUpperCase() + after;
-    else if (tag === "clear") result = before + sel.replace(/\*\*|#+ |^- /gm, "") + after;
-    setDraftBody(result);
-  }
-
-  function aiDraftAssist() {
-    if (!draftTitle.trim()) return;
-    setDraftLoading(true);
-    var sys = "You are ARK Law AI, an expert legal document drafter. Draft a professional legal document under " +
-      (jur === "pk" ? "Pakistani law" : jur === "us" ? "US law" : "both Pakistani and US law") +
-      ". Use proper legal language, structure, and formatting. Include all necessary clauses. End with signature blocks.";
-    fetch("/api/chat", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system: sys,
-        messages: [{ role: "user", content: "Draft a complete " + draftType + " titled: " + draftTitle + (draftBody.trim() ? "\n\nAdditional instructions/existing content:\n" + draftBody : "") }],
-      }),
-    }).then(function(r) { return r.json(); }).then(function(data) {
-      if (data.reply) setDraftBody(data.reply.replace(/<[^>]+>/g, "").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">"));
-      setDraftLoading(false);
-    }).catch(function() { setDraftLoading(false); });
-  }
-
-  function downloadDraft(format) {
-    var content = draftTitle + "\n" + "=".repeat(draftTitle.length) + "\n\n" + draftBody;
-    if (format === "txt") {
-      var blob = new Blob([content], { type: "text/plain" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a"); a.href = url;
-      a.download = draftTitle.replace(/\s+/g,"_") + ".txt";
-      a.click(); URL.revokeObjectURL(url);
-    } else if (format === "doc") {
-      var html = "<html><head><meta charset='utf-8'><style>body{font-family:Times New Roman,serif;font-size:12pt;margin:2cm;line-height:1.6}h1{font-size:16pt;text-align:center}h2{font-size:14pt}strong{font-weight:bold}</style></head><body>";
-      html += "<h1>" + draftTitle + "</h1>";
-      html += "<p><em>Document Type: " + draftType + " | Jurisdiction: " + (jur==="pk"?"Pakistan":jur==="us"?"USA":"Pakistan & USA") + " | Date: " + new Date().toLocaleDateString() + "</em></p><hr>";
-      html += "<p>" + draftBody
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-        .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-        .replace(/^- (.+)$/gm, "<li>$1</li>")
-        .replace(/\n/g, "<br>") + "</p>";
-      html += "<p style='margin-top:40px;font-size:9pt;color:#666'>Generated by ARK LAW AI — The Legal Intelligence Engine | For research only — not a substitute for legal counsel</p></body></html>";
-      var blob2 = new Blob([html], { type: "application/msword" });
-      var url2 = URL.createObjectURL(blob2);
-      var a2 = document.createElement("a"); a2.href = url2;
-      a2.download = draftTitle.replace(/\s+/g,"_") + ".doc";
-      a2.click(); URL.revokeObjectURL(url2);
-    } else if (format === "pdf") {
-      var win = window.open("", "_blank");
-      win.document.write("<html><head><title>" + draftTitle + "</title><style>body{font-family:Times New Roman,serif;font-size:12pt;margin:2cm;line-height:1.8}h1{font-size:16pt;text-align:center;margin-bottom:6pt}h2{font-size:13pt;margin-top:14pt}strong{font-weight:bold}.footer{margin-top:40px;font-size:8pt;color:#888;border-top:1px solid #ccc;padding-top:8pt}</style></head><body>");
-      win.document.write("<h1>" + draftTitle + "</h1>");
-      win.document.write("<p style='text-align:center;color:#666;font-size:10pt'>" + draftType + " | " + (jur==="pk"?"Pakistan Law":jur==="us"?"US Law":"Pakistan & US Law") + " | " + new Date().toLocaleDateString() + "</p><hr style='margin:16pt 0'>");
-      win.document.write("<div>" + draftBody
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-        .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-        .replace(/^- (.+)$/gm, "<li>$1</li>")
-        .replace(/\n/g, "<br>") + "</div>");
-      win.document.write("<div class='footer'>Generated by ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani | For research only — not a substitute for legal counsel</div>");
-      win.document.write("</body></html>");
-      win.document.close();
-      setTimeout(function() { win.print(); }, 500);
-    }
-  }
+  var jurConfig = {
     pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: "Answering under Pakistani law" },
     us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: "Answering under US law" },
     both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: "Answering under both Pakistani and US law" },
@@ -318,50 +249,35 @@ export default function App() {
   }, []);
 
   function openNewsPopup(item) {
-    setNewsPopup(item);
-    setNewsAnswer("");
-    setNewsLoading(true);
+    setNewsPopup(item); setNewsAnswer(""); setNewsLoading(true);
     fetch("/api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system: "You are ARK Law AI, a professional legal news analyst. Explain the legal significance, relevant laws, and implications of the given headline. Cite specific statutes or cases. Be informative and accessible. End with: This is for research only and not a substitute for legal counsel.",
+        system: "You are ARK Law AI, a professional legal news analyst. Explain the legal significance, relevant laws, and implications of the given headline. Cite specific statutes or cases. End with: This is for research only and not a substitute for legal counsel.",
         messages: [{ role: "user", content: "Explain this legal news: " + item.text }],
       }),
     }).then(function(r) { return r.json(); }).then(function(data) {
-      setNewsAnswer(data.reply || "Unable to load details.");
-      setNewsLoading(false);
-    }).catch(function() {
-      setNewsAnswer("Unable to load details. Please try again.");
-      setNewsLoading(false);
-    });
+      setNewsAnswer(data.reply || "Unable to load."); setNewsLoading(false);
+    }).catch(function() { setNewsAnswer("Unable to load."); setNewsLoading(false); });
   }
 
   function handleDocUpload(e) {
     var file = e.target.files[0];
     if (!file) return;
-    setDocFile(file);
-    setDocResult(""); setDocError("");
-    setDocStep("reading");
+    setDocFile(file); setDocResult(""); setDocError(""); setDocStep("reading");
     var ext = file.name.split(".").pop().toLowerCase();
     if (ext === "pdf") {
       var reader = new FileReader();
       reader.onload = function(ev) {
         var text = "";
         try {
-          var arr = new Uint8Array(ev.target.result);
-          var str = "";
+          var arr = new Uint8Array(ev.target.result); var str = "";
           for (var i = 0; i < arr.length; i++) str += String.fromCharCode(arr[i]);
           var matches = str.match(/BT[\s\S]*?ET/g) || [];
-          matches.forEach(function(m) {
-            var t = m.match(/\(([^)]+)\)/g) || [];
-            t.forEach(function(s) { text += s.replace(/[()]/g, "") + " "; });
-          });
-          if (text.trim().length < 50) {
-            text = str.replace(/[^\x20-\x7E\n]/g, " ").replace(/\s+/g, " ").trim().slice(0, 8000);
-          }
+          matches.forEach(function(m) { var t = m.match(/\(([^)]+)\)/g) || []; t.forEach(function(s) { text += s.replace(/[()]/g, "") + " "; }); });
+          if (text.trim().length < 50) text = str.replace(/[^\x20-\x7E\n]/g, " ").replace(/\s+/g, " ").trim().slice(0, 8000);
         } catch(err) { text = "Could not extract PDF text."; }
-        setDocText(text || "PDF text extraction limited. Try a DOCX for better results.");
-        setDocStep("ready");
+        setDocText(text || "PDF extraction limited. Try DOCX for better results."); setDocStep("ready");
       };
       reader.readAsArrayBuffer(file);
     } else if (ext === "docx" || ext === "doc") {
@@ -377,59 +293,92 @@ export default function App() {
         reader2.readAsArrayBuffer(file);
       };
       document.head.appendChild(script);
-    } else {
-      setDocError("Please upload a PDF, DOCX or DOC file.");
-      setDocStep("upload");
-    }
+    } else { setDocError("Please upload a PDF, DOCX or DOC file."); setDocStep("upload"); }
   }
 
   function analyzeDoc() {
     if (!docText.trim()) return;
-    setDocLoading(true); setDocResult(""); setDocError("");
     setDocStep("analyzing");
     var sysDoc = "You are ARK Law AI, an expert legal document analyst. Analyze the provided document under " +
-      (jur === "pk" ? "Pakistani law (PPC, CrPC, Constitution 1973, Companies Act 2017, MFLO 1961)" :
-       jur === "us" ? "US law (federal legislation, UCC, US Constitution)" :
-       "both Pakistani and US law") +
-      ". Provide: 1) Document summary, 2) Legal issues or risks identified, 3) Specific improvement suggestions with legal citations, 4) Revised/improved clauses where applicable. Format clearly with headings. End with a disclaimer that this is for research only.";
+      (jur === "pk" ? "Pakistani law (PPC, CrPC, Constitution 1973, Companies Act 2017, MFLO 1961)" : jur === "us" ? "US law (federal legislation, UCC, US Constitution)" : "both Pakistani and US law") +
+      ". Provide: 1) Document summary, 2) Legal issues or risks, 3) Improvement suggestions with citations, 4) Revised clauses where applicable. End with a research-only disclaimer.";
+    fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ system: sysDoc, messages: [{ role: "user", content: "Analyze this legal document:\n\n" + docText.slice(0, 8000) }] }),
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.error) throw new Error(data.error);
+      setDocResult(data.reply); setDocStep("done");
+    }).catch(function(err) { setDocError("Error: " + err.message); setDocStep("ready"); });
+  }
+
+  function downloadDocResult() {
+    var content = "ARK LAW AI — LEGAL DOCUMENT ANALYSIS\n=====================================\n";
+    content += "Document: " + (docFile ? docFile.name : "Unknown") + "\nDate: " + new Date().toLocaleDateString() + "\nJurisdiction: " + (jur === "pk" ? "Pakistan" : jur === "us" ? "USA" : "Pakistan & USA") + "\n\n";
+    content += docResult.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") + "\n\n";
+    content += "=====================================\nFor research only — not a substitute for qualified legal counsel.\nARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani\n";
+    var blob = new Blob([content], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a"); a.href = url; a.download = "ARK_Legal_Analysis_" + new Date().toISOString().slice(0, 10) + ".txt"; a.click(); URL.revokeObjectURL(url);
+  }
+
+  function applyFormat(tag) {
+    var ta = draftAreaRef.current; if (!ta) return;
+    var start = ta.selectionStart; var end = ta.selectionEnd;
+    var sel = draftBody.slice(start, end);
+    var before = draftBody.slice(0, start); var after = draftBody.slice(end);
+    var result = draftBody;
+    if (tag === "bold") result = before + "**" + sel + "**" + after;
+    else if (tag === "h1") result = before + "\n# " + sel + "\n" + after;
+    else if (tag === "h2") result = before + "\n## " + sel + "\n" + after;
+    else if (tag === "bullet") result = before + "\n- " + sel + after;
+    else if (tag === "upper") result = before + sel.toUpperCase() + after;
+    else if (tag === "clear") result = before + sel.replace(/\*\*|#+ |^- /gm, "") + after;
+    setDraftBody(result);
+  }
+
+  function aiDraftAssist() {
+    if (!draftTitle.trim()) return;
+    setDraftLoading(true);
+    var sys = "You are ARK Law AI, an expert legal document drafter. Draft a complete professional legal document under " +
+      (jur === "pk" ? "Pakistani law" : jur === "us" ? "US law" : "both Pakistani and US law") +
+      ". Use proper legal language, structure, and formatting. Include all necessary clauses, definitions, and signature blocks.";
     fetch("/api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system: sysDoc,
-        messages: [{ role: "user", content: "Please analyze this legal document and provide detailed suggestions:\n\n" + docText.slice(0, 8000) }],
+        system: sys,
+        messages: [{ role: "user", content: "Draft a complete " + draftType + " titled: " + draftTitle + (draftBody.trim() ? "\n\nAdditional instructions:\n" + draftBody : "") }],
       }),
     }).then(function(r) { return r.json(); }).then(function(data) {
-      if (data.error) throw new Error(data.error);
-      setDocResult(data.reply);
-      setDocStep("done");
-      setDocLoading(false);
-    }).catch(function(err) {
-      setDocError("Error: " + err.message);
-      setDocLoading(false);
-      setDocStep("ready");
-    });
+      if (data.reply) setDraftBody(data.reply.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"));
+      setDraftLoading(false);
+    }).catch(function() { setDraftLoading(false); });
   }
 
-  function downloadResult() {
-    var content = "ARK LAW AI — LEGAL DOCUMENT ANALYSIS\n=====================================\n";
-    content += "Document: " + (docFile ? docFile.name : "Unknown") + "\n";
-    content += "Date: " + new Date().toLocaleDateString() + "\n";
-    content += "Jurisdiction: " + (jur === "pk" ? "Pakistan" : jur === "us" ? "USA" : "Pakistan & USA") + "\n\n";
-    content += docResult.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") + "\n\n";
-    content += "=====================================\nThis analysis is for research only and not a substitute for qualified legal counsel.\nARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani\n";
-    var blob = new Blob([content], { type: "text/plain" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url; a.download = "ARK_Legal_Analysis_" + new Date().toISOString().slice(0, 10) + ".txt";
-    a.click(); URL.revokeObjectURL(url);
+  function downloadDraft(format) {
+    var content = draftTitle + "\n" + "=".repeat(Math.min(draftTitle.length, 60)) + "\n\n" + draftBody;
+    if (format === "doc" || format === "docx") {
+      var html = "<html><head><meta charset='utf-8'><style>body{font-family:Times New Roman,serif;font-size:12pt;margin:2cm;line-height:1.6}h1{font-size:16pt;text-align:center}h2{font-size:14pt}strong{font-weight:bold}</style></head><body>";
+      html += "<h1>" + draftTitle + "</h1>";
+      html += "<p><em>" + draftType + " | " + (jur==="pk"?"Pakistan":jur==="us"?"USA":"Pakistan & USA") + " | " + new Date().toLocaleDateString() + "</em></p><hr>";
+      html += "<div>" + draftBody.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/^# (.+)$/gm,"<h1>$1</h1>").replace(/^## (.+)$/gm,"<h2>$1</h2>").replace(/^- (.+)$/gm,"<li>$1</li>").replace(/\n/g,"<br>") + "</div>";
+      html += "<p style='margin-top:40px;font-size:9pt;color:#666'>Generated by ARK LAW AI | For research only — not a substitute for legal counsel</p></body></html>";
+      var blob = new Blob([html], { type: "application/msword" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a"); a.href = url; a.download = draftTitle.replace(/\s+/g,"_") + "." + format; a.click(); URL.revokeObjectURL(url);
+    } else if (format === "pdf") {
+      var win = window.open("", "_blank");
+      win.document.write("<html><head><title>" + draftTitle + "</title><style>body{font-family:Times New Roman,serif;font-size:12pt;margin:2cm;line-height:1.8}h1{font-size:16pt;text-align:center}h2{font-size:13pt}strong{font-weight:bold}.footer{margin-top:40px;font-size:8pt;color:#888;border-top:1px solid #ccc;padding-top:8pt}@media print{.footer{position:fixed;bottom:0}}</style></head><body>");
+      win.document.write("<h1>" + draftTitle + "</h1><p style='text-align:center;color:#666;font-size:10pt'>" + draftType + " | " + (jur==="pk"?"Pakistan Law":jur==="us"?"US Law":"Pakistan & US Law") + " | " + new Date().toLocaleDateString() + "</p><hr style='margin:16pt 0'>");
+      win.document.write("<div>" + draftBody.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/^# (.+)$/gm,"<h1>$1</h1>").replace(/^## (.+)$/gm,"<h2>$1</h2>").replace(/^- (.+)$/gm,"<li>$1</li>").replace(/\n/g,"<br>") + "</div>");
+      win.document.write("<div class='footer'>Generated by ARK LAW AI — The Legal Intelligence Engine by Attorney & AI Innovator Khawer Rabbani | For research only — not a substitute for legal counsel</div></body></html>");
+      win.document.close(); setTimeout(function() { win.print(); }, 500);
+    }
   }
 
   function submitCode() {
     if (codeInput.trim().toUpperCase() === "JUSTICESARABBANI") {
       document.cookie = "ark_guest_start=" + Date.now() + "; path=/; max-age=86400";
-      setGuestMinsLeft(1440);
-      setShowPopup(false); setCodeInput(""); setCodeMsg("");
-      setShowSuccess(true);
+      setGuestMinsLeft(1440); setShowPopup(false); setCodeInput(""); setCodeMsg(""); setShowSuccess(true);
     } else { setCodeMsg("error"); }
   }
 
@@ -471,7 +420,7 @@ export default function App() {
         "@keyframes tickerScrollH { 0%{ transform: translateX(0); } 100%{ transform: translateX(-50%); } }",
         "@keyframes tickerScroll { 0%{transform:translateY(0)} 100%{transform:translateY(-50%)} }",
         "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
-        "input::placeholder{color:#6E8099}",
+        "input::placeholder{color:#6E8099} textarea::placeholder{color:#6E8099}",
         ".qbtn:hover{border-color:#C9A84C!important;color:#C9A84C!important}",
         ".abtn:hover{background:#1E2D40!important;color:#C9A84C!important}",
         "#conduct-ticker{animation:tickerScroll 70s linear infinite}",
@@ -483,78 +432,73 @@ export default function App() {
         ".mobile-panel{position:fixed;bottom:0;left:0;right:0;background:#162032;border-top:1px solid #2B3F57;border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;padding:16px}",
       ].join(" ")}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "'Segoe UI',sans-serif" }}>
+      <div style={{ display:"flex", flexDirection:"column", height:"100vh", background:NAVY, color:TEXT_PRIMARY, fontFamily:"'Segoe UI',sans-serif" }}>
 
         {/* HEADER */}
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 76, borderBottom: "1px solid " + NAVY_BORDER, background: "#1E3A5F", flexShrink: 0, gap: 6 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <header style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 10px", height:76, borderBottom:"1px solid "+NAVY_BORDER, background:"#1E3A5F", flexShrink:0, gap:6 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8, minWidth:0 }}>
             <ArkLogo size={54} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
-              <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".04em" }}>The Legal Intelligence Engine</div>
-              <div style={{ fontSize: 10, color: ACCENT_PK }}>by Atty. & AI Innovator Khawer Rabbani</div>
+              <div style={{ fontFamily:"Georgia,serif", fontSize:20, fontWeight:700, color:GOLD }}>ARK LAW AI</div>
+              <div style={{ fontSize:10, color:TEXT_MUTED, textTransform:"uppercase", letterSpacing:".04em" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize:10, color:ACCENT_PK }}>by Atty. & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }} className="desktop-auth">
+          <div style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0 }} className="desktop-auth">
             {!user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600, whiteSpace: "nowrap" }}>
-                  {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft%60) + "m" : guestMinsLeft + "m")}
+              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <div style={{ background:guestMinsLeft>60?"rgba(62,180,137,0.1)":"rgba(224,85,85,0.1)", border:"1px solid "+(guestMinsLeft>60?ACCENT_PK:"#E05555"), borderRadius:20, padding:"4px 10px", fontSize:10, color:guestMinsLeft>60?ACCENT_PK:"#E05555", fontWeight:600, whiteSpace:"nowrap" }}>
+                  {"⏱ "+(guestMinsLeft>=60?Math.floor(guestMinsLeft/60)+"h "+(guestMinsLeft%60)+"m":guestMinsLeft+"m")}
                 </div>
-                <button onClick={function() { setShowPopup(true); }} style={{ background: "linear-gradient(135deg,#C9A84C,#8A6A1F)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>✨ More time?</button>
-                <button onClick={function() { window.location.href="/sign-up"; }} style={{ background: "linear-gradient(135deg,#C9A84C,#a07830)", border: "none", borderRadius: 20, padding: "5px 10px", color: NAVY, fontFamily: "inherit", fontSize: 10, fontWeight: 700, cursor: "pointer" }}>⭐ Free Trial</button>
-                <button onClick={function() { window.location.href="/sign-in"; }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "5px 10px", color: TEXT_SECONDARY, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>🔑 Login</button>
+                <button onClick={function(){setShowPopup(true);}} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:20, padding:"5px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>✨ More time?</button>
+                <button onClick={function(){window.location.href="/sign-up";}} style={{ background:"linear-gradient(135deg,#C9A84C,#a07830)", border:"none", borderRadius:20, padding:"5px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>⭐ Free Trial</button>
+                <button onClick={function(){window.location.href="/sign-in";}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"5px 10px", color:TEXT_SECONDARY, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔑 Login</button>
               </div>
             )}
             {user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ background: trialDaysLeft > 0 ? "rgba(62,180,137,0.15)" : "rgba(224,85,85,0.15)", border: "1px solid " + (trialDaysLeft > 0 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: trialDaysLeft > 0 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                  {trialDaysLeft > 0 ? "⭐ " + trialDaysLeft + "d left" : "⚠️ Expired"}
+              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <div style={{ background:trialDaysLeft>0?"rgba(62,180,137,0.15)":"rgba(224,85,85,0.15)", border:"1px solid "+(trialDaysLeft>0?ACCENT_PK:"#E05555"), borderRadius:20, padding:"4px 10px", fontSize:10, color:trialDaysLeft>0?ACCENT_PK:"#E05555", fontWeight:600 }}>
+                  {trialDaysLeft>0?"⭐ "+trialDaysLeft+"d left":"⚠️ Expired"}
                 </div>
-                <div style={{ background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", fontSize: 10, color: TEXT_SECONDARY }}>
-                  {"👤 " + (user.unsafeMetadata && user.unsafeMetadata.fullName ? user.unsafeMetadata.fullName : (user.firstName || user.emailAddresses[0].emailAddress.split("@")[0]))}
+                <div style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", fontSize:10, color:TEXT_SECONDARY }}>
+                  {"👤 "+(user.unsafeMetadata&&user.unsafeMetadata.fullName?user.unsafeMetadata.fullName:(user.firstName||user.emailAddresses[0].emailAddress.split("@")[0]))}
                 </div>
-                <button onClick={function() { clerk.signOut(); }} style={{ background: "transparent", border: "1px solid " + NAVY_BORDER, borderRadius: 20, padding: "4px 10px", color: TEXT_MUTED, fontFamily: "inherit", fontSize: 10, cursor: "pointer" }}>Out</button>
+                <button onClick={function(){clerk.signOut();}} style={{ background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:20, padding:"4px 10px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>Out</button>
               </div>
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              <button style={{ border: "none", borderRadius: 30, padding: "4px 12px", fontSize: 12, cursor: "default", background: "rgba(201,168,76,0.2)", color: GOLD, fontFamily: "inherit", fontWeight: 500 }}>EN</button>
-              <button disabled style={{ border: "none", borderRadius: 30, padding: "4px 12px", fontSize: 12, cursor: "not-allowed", background: "transparent", color: TEXT_MUTED, fontFamily: "inherit", fontWeight: 500, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
+          <div style={{ display:"flex", alignItems:"center", gap:4, flexShrink:0 }}>
+            <div style={{ display:"flex", gap:2, background:NAVY, border:"1px solid "+NAVY_BORDER, borderRadius:30, padding:3 }}>
+              <button style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"default", background:"rgba(201,168,76,0.2)", color:GOLD, fontFamily:"inherit", fontWeight:500 }}>EN</button>
+              <button disabled style={{ border:"none", borderRadius:30, padding:"4px 12px", fontSize:12, cursor:"not-allowed", background:"transparent", color:TEXT_MUTED, fontFamily:"inherit", fontWeight:500, opacity:0.4 }} title="Urdu — Coming Soon">اردو</button>
             </div>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
+            <div style={{ display:"flex", gap:2, background:NAVY, border:"1px solid "+NAVY_BORDER, borderRadius:30, padding:3 }}>
               {[["pk","🇵🇰 PK"],["both","⚖ Both"],["us","🇺🇸 US"]].map(function(item) {
-                var j = item[0]; var lbl = item[1];
+                var j=item[0]; var lbl=item[1];
                 return <button key={j} onClick={function(){setJur(j);}} style={{ border:"none", borderRadius:30, padding:"4px 10px", fontSize:12, cursor:"pointer", background:jur===j?(j==="pk"?"rgba(62,180,137,0.15)":j==="us"?"rgba(91,141,217,0.15)":"rgba(201,168,76,0.15)"):"transparent", color:jur===j?jurConfig[j].color:TEXT_MUTED, fontFamily:"inherit" }}>{lbl}</button>;
               })}
             </div>
           </div>
         </header>
 
-        {/* HORIZONTAL NEWS TICKER */}
-        <div style={{ background: NAVY, borderBottom: "1px solid " + NAVY_BORDER, height: 36, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center" }}>
-          <div style={{ background: GOLD, color: NAVY, fontSize: 12, fontWeight: 700, padding: "0 16px", height: "100%", display: "flex", alignItems: "center", flexShrink: 0, letterSpacing: ".06em", whiteSpace: "nowrap" }}>⚖ NEWS</div>
-          <div style={{ flex: 1, overflow: "hidden", height: "100%" }}>
-            <div style={{ display: "flex", alignItems: "center", height: "100%", animation: "tickerScrollH 480s linear infinite", width: "max-content" }}>
-              {newsItems.concat(newsItems).map(function(item, i) {
-                return (
-                  <span key={i} onClick={function() { openNewsPopup(item); }}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0 32px", fontSize: 13, color: item.pk ? ACCENT_PK : ACCENT_US, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    {item.pk ? "🇵🇰" : "🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color: NAVY_BORDER, fontSize: 9 }}>◆</span>
-                  </span>
-                );
+        {/* NEWS TICKER */}
+        <div style={{ background:NAVY, borderBottom:"1px solid "+NAVY_BORDER, height:36, overflow:"hidden", flexShrink:0, display:"flex", alignItems:"center" }}>
+          <div style={{ background:GOLD, color:NAVY, fontSize:12, fontWeight:700, padding:"0 16px", height:"100%", display:"flex", alignItems:"center", flexShrink:0, letterSpacing:".06em", whiteSpace:"nowrap" }}>⚖ NEWS</div>
+          <div style={{ flex:1, overflow:"hidden", height:"100%" }}>
+            <div style={{ display:"flex", alignItems:"center", height:"100%", animation:"tickerScrollH 480s linear infinite", width:"max-content" }}>
+              {newsItems.concat(newsItems).map(function(item,i) {
+                return <span key={i} onClick={function(){openNewsPopup(item);}} style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"0 32px", fontSize:13, color:item.pk?ACCENT_PK:ACCENT_US, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>{item.pk?"🇵🇰":"🇺🇸"}&nbsp;{item.text}&nbsp;<span style={{ color:NAVY_BORDER, fontSize:9 }}>◆</span></span>;
               })}
             </div>
           </div>
         </div>
 
         {/* MOBILE MENU BAR */}
-        <div className="mobile-menu-bar" style={{ background: NAVY_MID, borderBottom: "1px solid " + NAVY_BORDER, padding: "6px 12px", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <div className="mobile-menu-bar" style={{ background:NAVY_MID, borderBottom:"1px solid "+NAVY_BORDER, padding:"6px 12px", gap:8, alignItems:"center", flexWrap:"wrap" }}>
           {!user && (
-            <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, flexWrap: "wrap" }}>
-              <div style={{ background: guestMinsLeft > 60 ? "rgba(62,180,137,0.1)" : "rgba(224,85,85,0.1)", border: "1px solid " + (guestMinsLeft > 60 ? ACCENT_PK : "#E05555"), borderRadius: 20, padding: "4px 10px", fontSize: 10, color: guestMinsLeft > 60 ? ACCENT_PK : "#E05555", fontWeight: 600 }}>
-                {"⏱ " + (guestMinsLeft >= 60 ? Math.floor(guestMinsLeft/60) + "h " + (guestMinsLeft%60) + "m" : guestMinsLeft + "m") + " free"}
+            <div style={{ display:"flex", alignItems:"center", gap:6, flex:1, flexWrap:"wrap" }}>
+              <div style={{ background:guestMinsLeft>60?"rgba(62,180,137,0.1)":"rgba(224,85,85,0.1)", border:"1px solid "+(guestMinsLeft>60?ACCENT_PK:"#E05555"), borderRadius:20, padding:"4px 10px", fontSize:10, color:guestMinsLeft>60?ACCENT_PK:"#E05555", fontWeight:600 }}>
+                {"⏱ "+(guestMinsLeft>=60?Math.floor(guestMinsLeft/60)+"h "+(guestMinsLeft%60)+"m":guestMinsLeft+"m")+" free"}
               </div>
               <button onClick={function(){setShowPopup(true);}} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:20, padding:"4px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>✨ More time?</button>
               <button onClick={function(){window.location.href="/sign-up";}} style={{ background:"linear-gradient(135deg,#C9A84C,#a07830)", border:"none", borderRadius:20, padding:"4px 10px", color:NAVY, fontFamily:"inherit", fontSize:10, fontWeight:700, cursor:"pointer" }}>⭐ Free Trial</button>
@@ -579,37 +523,37 @@ export default function App() {
         </div>
 
         {/* BODY */}
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
 
           {/* LEFT BAR */}
-          <div className="left-panel" style={{ width: 270, flexShrink: 0, borderRight: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "10px 8px 8px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: NAVY }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_PK, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+          <div className="left-panel" style={{ width:270, flexShrink:0, borderRight:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexDirection:"column", overflow:"hidden" }}>
+            <div style={{ display:"flex", justifyContent:"space-around", alignItems:"center", padding:"10px 8px 8px", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, background:NAVY }}>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ width:54, height:54, borderRadius:"50%", border:"2px solid "+ACCENT_PK, overflow:"hidden", margin:"0 auto 4px" }}>
+                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 600 }}>FOUNDER OF PAKISTAN</div>
-                <div style={{ fontSize: 8, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
+                <div style={{ fontSize:9, color:ACCENT_PK, fontWeight:600 }}>FOUNDER OF PAKISTAN</div>
+                <div style={{ fontSize:8, color:TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
               </div>
-              <div style={{ fontSize: 14, color: GOLD, fontWeight: 700 }}>⚖</div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid " + ACCENT_US, overflow: "hidden", margin: "0 auto 4px" }}>
-                  <img src="/washington.jpeg" alt="Washington" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+              <div style={{ fontSize:14, color:GOLD, fontWeight:700 }}>⚖</div>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ width:54, height:54, borderRadius:"50%", border:"2px solid "+ACCENT_US, overflow:"hidden", margin:"0 auto 4px" }}>
+                  <img src="/washington.jpeg" alt="Washington" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                 </div>
-                <div style={{ fontSize: 9, color: ACCENT_US, fontWeight: 600 }}>USA — FOUNDING FATHER</div>
-                <div style={{ fontSize: 8, color: TEXT_MUTED }}>G. Washington</div>
+                <div style={{ fontSize:9, color:ACCENT_US, fontWeight:600 }}>USA — FOUNDING FATHER</div>
+                <div style={{ fontSize:8, color:TEXT_MUTED }}>G. Washington</div>
               </div>
             </div>
-            <div style={{ padding: "6px 10px", borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, textAlign: "center" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: ".1em", textTransform: "uppercase" }}>Attorney Code of Conduct</div>
+            <div style={{ padding:"6px 10px", borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, textAlign:"center" }}>
+              <div style={{ fontSize:10, fontWeight:700, color:GOLD, letterSpacing:".1em", textTransform:"uppercase" }}>Attorney Code of Conduct</div>
             </div>
-            <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-              <div id="conduct-ticker" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
-                {conductDouble.map(function(item, i) {
+            <div style={{ flex:1, overflow:"hidden", position:"relative" }}>
+              <div id="conduct-ticker" style={{ position:"absolute", top:0, left:0, right:0 }}>
+                {conductDouble.map(function(item,i) {
                   return (
-                    <div key={i} style={{ padding: "7px 12px", borderBottom: "1px solid rgba(43,63,87,0.5)", display: "flex", gap: 7, alignItems: "flex-start" }}>
-                      <span style={{ fontSize: 11, flexShrink: 0, marginTop: 1 }}>{item.pk ? "🇵🇰" : "🇺🇸"}</span>
-                      <span style={{ fontSize: 11, color: TEXT_SECONDARY, lineHeight: 1.5 }}>{item.text}</span>
+                    <div key={i} style={{ padding:"7px 12px", borderBottom:"1px solid rgba(43,63,87,0.5)", display:"flex", gap:7, alignItems:"flex-start" }}>
+                      <span style={{ fontSize:11, flexShrink:0, marginTop:1 }}>{item.pk?"🇵🇰":"🇺🇸"}</span>
+                      <span style={{ fontSize:11, color:TEXT_SECONDARY, lineHeight:1.5 }}>{item.text}</span>
                     </div>
                   );
                 })}
@@ -618,76 +562,71 @@ export default function App() {
           </div>
 
           {/* CHAT */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ padding: "6px 16px", fontSize: 12, fontWeight: 500, borderBottom: "1px solid " + NAVY_BORDER, flexShrink: 0, background: jurConfig[jur].bg, color: jurConfig[jur].color, display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: jurConfig[jur].color, flexShrink: 0 }} />
+          <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+            <div style={{ padding:"6px 16px", fontSize:12, fontWeight:500, borderBottom:"1px solid "+NAVY_BORDER, flexShrink:0, background:jurConfig[jur].bg, color:jurConfig[jur].color, display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:7, height:7, borderRadius:"50%", background:jurConfig[jur].color, flexShrink:0 }} />
               {jurConfig[jur].banner}
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 12 }}>
-              {messages.map(function(msg, i) {
-                var isUser = msg.type === "user"; var isError = msg.type === "error";
+            <div style={{ flex:1, overflowY:"auto", padding:"1rem", display:"flex", flexDirection:"column", gap:12 }}>
+              {messages.map(function(msg,i) {
+                var isUser=msg.type==="user"; var isError=msg.type==="error";
                 return (
-                  <div key={i} style={{ display: "flex", flexDirection: isUser ? "row-reverse" : "row", gap: 8, maxWidth: 760, marginLeft: isUser ? "auto" : 0 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, overflow: "hidden", border: "1px solid " + (isUser ? NAVY_BORDER : GOLD) }}>
-                      {isUser
-                        ? <div style={{ width: "100%", height: "100%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div>
-                        : <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
-                      }
+                  <div key={i} style={{ display:"flex", flexDirection:isUser?"row-reverse":"row", gap:8, maxWidth:760, marginLeft:isUser?"auto":0 }}>
+                    <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0, overflow:"hidden", border:"1px solid "+(isUser?NAVY_BORDER:GOLD) }}>
+                      {isUser ? <div style={{ width:"100%", height:"100%", background:NAVY_SURFACE, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>👤</div>
+                        : <img src="/khawer.jpeg" alt="ARK" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />}
                     </div>
-                    <div style={{ padding: "10px 14px", borderRadius: isUser ? "12px 4px 12px 12px" : "4px 12px 12px 12px", background: isUser ? "rgba(91,141,217,0.1)" : isError ? "rgba(224,85,85,0.1)" : NAVY_SURFACE, border: "1px solid " + (isUser ? "rgba(91,141,217,0.2)" : isError ? "rgba(224,85,85,0.3)" : NAVY_BORDER), fontSize: 13, lineHeight: 1.8, color: TEXT_PRIMARY, maxWidth: 640 }}
-                      dangerouslySetInnerHTML={{ __html: isUser ? msg.text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : fmt(msg.text) }}
-                    />
+                    <div style={{ padding:"10px 14px", borderRadius:isUser?"12px 4px 12px 12px":"4px 12px 12px 12px", background:isUser?"rgba(91,141,217,0.1)":isError?"rgba(224,85,85,0.1)":NAVY_SURFACE, border:"1px solid "+(isUser?"rgba(91,141,217,0.2)":isError?"rgba(224,85,85,0.3)":NAVY_BORDER), fontSize:13, lineHeight:1.8, color:TEXT_PRIMARY, maxWidth:640 }}
+                      dangerouslySetInnerHTML={{ __html:isUser?msg.text.replace(/&/g,"&amp;").replace(/</g,"&lt;"):fmt(msg.text) }} />
                   </div>
                 );
               })}
               {loading && (
-                <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, overflow: "hidden", border: "1px solid " + GOLD }}>
-                    <img src="/khawer.jpeg" alt="ARK" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                <div style={{ display:"flex", gap:8 }}>
+                  <div style={{ width:30, height:30, borderRadius:"50%", flexShrink:0, overflow:"hidden", border:"1px solid "+GOLD }}>
+                    <img src="/khawer.jpeg" alt="ARK" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                   </div>
-                  <div style={{ padding: "10px 14px", borderRadius: "4px 12px 12px 12px", background: NAVY_SURFACE, border: "1px solid " + NAVY_BORDER, display: "flex", gap: 4, alignItems: "center" }}>
+                  <div style={{ padding:"10px 14px", borderRadius:"4px 12px 12px 12px", background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, display:"flex", gap:4, alignItems:"center" }}>
                     {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
                   </div>
                 </div>
               )}
               <div ref={messagesEnd} />
             </div>
-            <div style={{ padding: "10px 12px 12px", borderTop: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, background: NAVY_SURFACE, border: "1px solid " + GOLD, borderRadius: 10, padding: "6px 10px" }}>
+            <div style={{ padding:"10px 12px 12px", borderTop:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexShrink:0 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, background:NAVY_SURFACE, border:"1px solid "+GOLD, borderRadius:10, padding:"6px 10px" }}>
                 <input value={input} onChange={function(e){setInput(e.target.value);}} onKeyDown={function(e){if(e.key==="Enter"){e.preventDefault();send();}}}
                   placeholder="Ask about Pakistani or US law..."
-                  style={{ flex:1, background:"transparent", border:"none", outline:"none", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:13, height:34 }}
-                />
+                  style={{ flex:1, background:"transparent", border:"none", outline:"none", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:13, height:34 }} />
                 <button onClick={function(){send();}} style={{ background:GOLD, border:"none", borderRadius:8, padding:"6px 18px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer", height:34, flexShrink:0 }}>SEND</button>
               </div>
-              <div style={{ textAlign: "center", marginTop: 5, fontSize: 10, color: TEXT_MUTED }}>
+              <div style={{ textAlign:"center", marginTop:5, fontSize:10, color:TEXT_MUTED }}>
                 ⚠️ For research only — not a substitute for legal counsel<br />
-                <span style={{ color: GOLD, opacity: 0.8, fontSize: 9 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
+                <span style={{ color:GOLD, opacity:0.8, fontSize:9 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
               </div>
             </div>
           </div>
 
           {/* RIGHT SIDEBAR */}
-          <div className="right-panel" style={{ width: 240, flexShrink: 0, borderLeft: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexDirection: "column", overflowY: "auto", display: "flex" }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>PRACTICE AREAS</div>
+          <div className="right-panel" style={{ width:240, flexShrink:0, borderLeft:"1px solid "+NAVY_BORDER, background:NAVY_MID, flexDirection:"column", overflowY:"auto", display:"flex" }}>
+            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"14px 12px 6px" }}>PRACTICE AREAS</div>
             {AREAS_EN.map(function(a) {
               return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:8, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:13, padding:"7px 10px", borderRadius:7, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span>{a.icon}</span>{a.label}</button>;
             })}
-            <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
 
             <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
 
             {/* DOCUMENT DRAFTING BUTTON */}
-            <div style={{ margin:"8px 8px 4px" }}>
-              <button onClick={function(){setShowDraft(true);}} style={{ width:"100%", background:"linear-gradient(135deg,#1a2a4a,#2a1a4a)", border:"1px solid "+ACCENT_US, borderRadius:12, padding:"12px", cursor:"pointer", textAlign:"left", transition:"all .2s" }}
-                onMouseOver={function(e){e.currentTarget.style.border="1px solid "+GOLD;}}
-                onMouseOut={function(e){e.currentTarget.style.border="1px solid "+ACCENT_US;}}>
+            <div style={{ margin:"4px 8px 4px" }}>
+              <button onClick={function(){setShowDraft(true);}} style={{ width:"100%", background:"linear-gradient(135deg,#1a2a4a,#2a1a4a)", border:"1px solid "+ACCENT_US, borderRadius:12, padding:"12px", cursor:"pointer", textAlign:"left" }}
+                onMouseOver={function(e){e.currentTarget.style.borderColor=GOLD;}}
+                onMouseOut={function(e){e.currentTarget.style.borderColor=ACCENT_US;}}>
                 <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-                  <span style={{ fontSize:20 }}>✍️</span>
+                  <span style={{ fontSize:18 }}>✍️</span>
                   <div style={{ fontSize:12, fontWeight:700, color:GOLD }}>Legal Document Drafting</div>
                 </div>
-                <div style={{ fontSize:10, color:TEXT_MUTED, lineHeight:1.5 }}>Create, edit & download legal documents in DOC, PDF or DOCX format with AI assistance</div>
-                <div style={{ marginTop:8, display:"flex", gap:4 }}>
+                <div style={{ fontSize:10, color:TEXT_MUTED, lineHeight:1.5 }}>Create & download legal documents with AI assistance</div>
+                <div style={{ marginTop:7, display:"flex", gap:4 }}>
                   {["📄 DOC","📋 PDF","📝 DOCX"].map(function(f) {
                     return <span key={f} style={{ fontSize:9, color:ACCENT_US, background:"rgba(91,141,217,0.1)", border:"1px solid rgba(91,141,217,0.3)", borderRadius:4, padding:"2px 6px" }}>{f}</span>;
                   })}
@@ -696,7 +635,7 @@ export default function App() {
             </div>
 
             {/* DOCUMENT ANALYZER */}
-            <div style={{ margin:"8px 8px 4px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden", flexShrink:0 }}>
+            <div style={{ margin:"4px 8px 4px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden", flexShrink:0 }}>
               <div style={{ background:"linear-gradient(135deg,rgba(201,168,76,0.2),rgba(62,180,137,0.2))", padding:"10px 12px", borderBottom:"1px solid rgba(201,168,76,0.3)" }}>
                 <div style={{ fontSize:12, fontWeight:700, color:GOLD }}>📄 Legal Document Analyzer</div>
                 <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:2 }}>Upload • Analyze • Download Report</div>
@@ -704,38 +643,28 @@ export default function App() {
               <div style={{ padding:"10px 12px" }}>
                 <div style={{ display:"flex", gap:3, marginBottom:10 }}>
                   {["upload","ready","analyzing","done"].map(function(step,i) {
-                    var steps = ["upload","ready","analyzing","done"];
-                    var cur = steps.indexOf(docStep === "reading" ? "upload" : docStep);
-                    return <div key={step} style={{ flex:1, height:3, borderRadius:2, background: cur > i ? GOLD : cur === i ? ACCENT_US : NAVY_BORDER, transition:"background .3s" }} />;
+                    var steps=["upload","ready","analyzing","done"]; var cur=steps.indexOf(docStep==="reading"?"upload":docStep);
+                    return <div key={step} style={{ flex:1, height:3, borderRadius:2, background:cur>i?GOLD:cur===i?ACCENT_US:NAVY_BORDER, transition:"background .3s" }} />;
                   })}
                 </div>
-                {(docStep === "upload" || docStep === "reading") && (
-                  <div>
-                    <label style={{ display:"block", cursor:"pointer" }}>
-                      <div style={{ border:"2px dashed "+(docStep==="reading"?GOLD:NAVY_BORDER), borderRadius:10, padding:"14px 8px", textAlign:"center", background:"rgba(0,0,0,0.2)" }}>
-                        {docStep==="reading" ? (
-                          <div style={{ color:GOLD, fontSize:12 }}>⏳ Reading document...</div>
-                        ) : (
-                          <>
-                            <div style={{ fontSize:22, marginBottom:4 }}>📂</div>
-                            <div style={{ fontSize:11, color:TEXT_SECONDARY, marginBottom:3 }}>Drop file here or click to browse</div>
-                            <div style={{ fontSize:10, color:TEXT_MUTED }}>PDF • DOCX • DOC</div>
-                          </>
-                        )}
-                      </div>
-                      <input type="file" accept=".pdf,.docx,.doc" onChange={handleDocUpload} style={{ display:"none" }} />
-                    </label>
+                {(docStep==="upload"||docStep==="reading") && (
+                  <label style={{ display:"block", cursor:"pointer" }}>
+                    <div style={{ border:"2px dashed "+(docStep==="reading"?GOLD:NAVY_BORDER), borderRadius:10, padding:"14px 8px", textAlign:"center", background:"rgba(0,0,0,0.2)" }}>
+                      {docStep==="reading" ? <div style={{ color:GOLD, fontSize:12 }}>⏳ Reading document...</div> : <>
+                        <div style={{ fontSize:22, marginBottom:4 }}>📂</div>
+                        <div style={{ fontSize:11, color:TEXT_SECONDARY, marginBottom:3 }}>Drop file here or click to browse</div>
+                        <div style={{ fontSize:10, color:TEXT_MUTED }}>PDF • DOCX • DOC</div>
+                      </>}
+                    </div>
+                    <input type="file" accept=".pdf,.docx,.doc" onChange={handleDocUpload} style={{ display:"none" }} />
                     {docError && <div style={{ fontSize:11, color:"#E05555", marginTop:6, textAlign:"center" }}>{docError}</div>}
-                  </div>
+                  </label>
                 )}
                 {docStep==="ready" && (
                   <div>
                     <div style={{ background:NAVY, border:"1px solid "+ACCENT_PK, borderRadius:8, padding:"7px 10px", marginBottom:8, display:"flex", alignItems:"center", gap:7 }}>
                       <span style={{ fontSize:14 }}>✅</span>
-                      <div>
-                        <div style={{ fontSize:10, color:ACCENT_PK, fontWeight:600 }}>{docFile&&docFile.name}</div>
-                        <div style={{ fontSize:9, color:TEXT_MUTED }}>{docText.length} chars extracted</div>
-                      </div>
+                      <div><div style={{ fontSize:10, color:ACCENT_PK, fontWeight:600 }}>{docFile&&docFile.name}</div><div style={{ fontSize:9, color:TEXT_MUTED }}>{docText.length} chars extracted</div></div>
                     </div>
                     <button onClick={analyzeDoc} style={{ width:"100%", background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"8px", color:NAVY, fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:5 }}>⚖️ Analyze with ARK Law AI</button>
                     <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Upload different file</button>
@@ -743,9 +672,7 @@ export default function App() {
                 )}
                 {docStep==="analyzing" && (
                   <div style={{ textAlign:"center", padding:"10px 0" }}>
-                    <div style={{ display:"flex", justifyContent:"center", gap:4, marginBottom:6 }}>
-                      {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
-                    </div>
+                    <div style={{ display:"flex", justifyContent:"center", gap:4, marginBottom:6 }}>{[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}</div>
                     <div style={{ fontSize:11, color:TEXT_SECONDARY }}>Analyzing document...</div>
                     <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:3 }}>15–30 seconds</div>
                   </div>
@@ -756,7 +683,7 @@ export default function App() {
                       <div style={{ fontSize:11, color:ACCENT_PK, fontWeight:600 }}>✅ Analysis Complete!</div>
                       <div style={{ fontSize:9, color:TEXT_MUTED, marginTop:2 }}>{docFile&&docFile.name}</div>
                     </div>
-                    <button onClick={downloadResult} style={{ width:"100%", background:"linear-gradient(135deg,#3EB489,#2a7a5a)", border:"none", borderRadius:8, padding:"8px", color:"white", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:5 }}>⬇️ Download Analysis Report</button>
+                    <button onClick={downloadDocResult} style={{ width:"100%", background:"linear-gradient(135deg,#3EB489,#2a7a5a)", border:"none", borderRadius:8, padding:"8px", color:"white", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer", marginBottom:5 }}>⬇️ Download Analysis Report</button>
                     <button onClick={function(){setDocStep("upload");setDocFile(null);setDocText("");setDocResult("");}} style={{ width:"100%", background:"transparent", border:"1px solid "+NAVY_BORDER, borderRadius:8, padding:"5px", color:TEXT_MUTED, fontFamily:"inherit", fontSize:10, cursor:"pointer" }}>🔄 Analyze another document</button>
                   </div>
                 )}
@@ -808,8 +735,6 @@ export default function App() {
         {showDraft && (
           <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.9)", zIndex:997, display:"flex", alignItems:"center", justifyContent:"center", padding:"12px" }}>
             <div style={{ background:NAVY_MID, border:"1px solid "+NAVY_BORDER, borderRadius:16, width:"100%", maxWidth:820, height:"90vh", display:"flex", flexDirection:"column" }}>
-
-              {/* Header */}
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderBottom:"1px solid "+NAVY_BORDER, background:"linear-gradient(135deg,#1a2a4a,#1a1a3a)", borderRadius:"16px 16px 0 0", flexShrink:0 }}>
                 <ArkLogo size={32} />
                 <div style={{ flex:1 }}>
@@ -818,71 +743,50 @@ export default function App() {
                 </div>
                 <button onClick={function(){setShowDraft(false);}} style={{ background:"rgba(224,85,85,0.15)", border:"1px solid rgba(224,85,85,0.4)", borderRadius:8, padding:"5px 12px", color:"#E05555", fontFamily:"inherit", fontSize:12, fontWeight:700, cursor:"pointer" }}>✕ Close</button>
               </div>
-
-              {/* Toolbar */}
               <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderBottom:"1px solid "+NAVY_BORDER, background:NAVY, flexShrink:0, flexWrap:"wrap" }}>
-                {/* Document type */}
                 <select value={draftType} onChange={function(e){setDraftType(e.target.value);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:6, padding:"4px 8px", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>
-                  {["Contract","Non-Disclosure Agreement","Employment Agreement","Sale Agreement","Lease Agreement","Power of Attorney","Affidavit","Legal Notice","Partnership Deed","Memorandum of Understanding","Will & Testament","Settlement Agreement","Loan Agreement","Service Agreement"].map(function(t) {
-                    return <option key={t} value={t}>{t}</option>;
-                  })}
+                  {DOC_TYPES.map(function(t){ return <option key={t} value={t}>{t}</option>; })}
                 </select>
                 <div style={{ width:1, height:20, background:NAVY_BORDER }} />
-                {/* Format buttons */}
-                {[["B","bold","font-weight:700"],["H1","h1",""],["H2","h2",""],["•","bullet",""],["↑","upper",""],["✕","clear",""]].map(function(item) {
-                  return <button key={item[0]} onClick={function(){applyFormat(item[1]);}} title={item[1]} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:5, padding:"3px 8px", color:TEXT_SECONDARY, fontFamily:"inherit", fontSize:11, cursor:"pointer", fontStyle:item[0]==="B"?"normal":"normal" }}>{item[0]}</button>;
+                {[["B","bold"],["H1","h1"],["H2","h2"],["•","bullet"],["↑","upper"],["✕","clear"]].map(function(item) {
+                  return <button key={item[0]} onClick={function(){applyFormat(item[1]);}} style={{ background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:5, padding:"3px 8px", color:TEXT_SECONDARY, fontFamily:"inherit", fontSize:11, cursor:"pointer" }}>{item[0]}</button>;
                 })}
                 <div style={{ width:1, height:20, background:NAVY_BORDER }} />
-                {/* AI Draft button */}
                 <button onClick={aiDraftAssist} disabled={draftLoading||!draftTitle.trim()} style={{ background:draftLoading||!draftTitle.trim()?"rgba(201,168,76,0.2)":"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:6, padding:"4px 12px", color:draftLoading||!draftTitle.trim()?GOLD:NAVY, fontFamily:"inherit", fontSize:11, fontWeight:700, cursor:draftLoading||!draftTitle.trim()?"not-allowed":"pointer" }}>
-                  {draftLoading ? "⏳ Drafting..." : "✨ AI Draft"}
+                  {draftLoading?"⏳ Drafting...":"✨ AI Draft"}
                 </button>
                 <div style={{ flex:1 }} />
-                {/* Download buttons */}
-                {[["DOC","doc","#5B8DD9"],["PDF","pdf","#E05555"],["DOCX","doc","#3EB489"]].map(function(item) {
+                {[["DOC","doc",ACCENT_US],["PDF","pdf","#E05555"],["DOCX","docx",ACCENT_PK]].map(function(item) {
                   return <button key={item[0]} onClick={function(){downloadDraft(item[1]);}} disabled={!draftBody.trim()} style={{ background:"transparent", border:"1px solid "+item[2], borderRadius:6, padding:"4px 10px", color:item[2], fontFamily:"inherit", fontSize:11, fontWeight:600, cursor:draftBody.trim()?"pointer":"not-allowed", opacity:draftBody.trim()?1:0.4 }}>⬇️ {item[0]}</button>;
                 })}
               </div>
-
-              {/* Title input */}
               <div style={{ padding:"10px 16px 0", flexShrink:0 }}>
                 <input value={draftTitle} onChange={function(e){setDraftTitle(e.target.value);}} placeholder="Document Title (e.g. Non-Disclosure Agreement between XYZ and ABC)"
-                  style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(draftTitle?GOLD:NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"Georgia,serif", fontSize:15, fontWeight:600, outline:"none", transition:"border .2s" }} />
+                  style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(draftTitle?GOLD:NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"Georgia,serif", fontSize:15, fontWeight:600, outline:"none" }} />
               </div>
-
-              {/* Document meta */}
-              <div style={{ display:"flex", gap:10, padding:"8px 16px", flexShrink:0 }}>
-                <div style={{ fontSize:10, color:TEXT_MUTED }}>📋 Type: <span style={{ color:ACCENT_US }}>{draftType}</span></div>
-                <div style={{ fontSize:10, color:TEXT_MUTED }}>⚖️ Jurisdiction: <span style={{ color:GOLD }}>{jur==="pk"?"Pakistan Law":jur==="us"?"US Law":"Pakistan & US Law"}</span></div>
+              <div style={{ display:"flex", gap:10, padding:"6px 16px", flexShrink:0 }}>
+                <div style={{ fontSize:10, color:TEXT_MUTED }}>📋 <span style={{ color:ACCENT_US }}>{draftType}</span></div>
+                <div style={{ fontSize:10, color:TEXT_MUTED }}>⚖️ <span style={{ color:GOLD }}>{jur==="pk"?"Pakistan Law":jur==="us"?"US Law":"Pakistan & US Law"}</span></div>
                 <div style={{ fontSize:10, color:TEXT_MUTED }}>📅 {new Date().toLocaleDateString()}</div>
               </div>
-
-              {/* Editor area */}
               <div style={{ flex:1, padding:"0 16px 10px", overflow:"hidden", display:"flex", flexDirection:"column" }}>
                 {draftLoading ? (
                   <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:12 }}>
-                    <div style={{ display:"flex", gap:5 }}>
-                      {[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:10,height:10,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}
-                    </div>
+                    <div style={{ display:"flex", gap:5 }}>{[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:10,height:10,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}</div>
                     <div style={{ fontSize:13, color:TEXT_SECONDARY }}>ARK Law AI is drafting your document...</div>
                     <div style={{ fontSize:11, color:TEXT_MUTED }}>This may take 15–30 seconds</div>
                   </div>
                 ) : (
                   <textarea ref={draftAreaRef} value={draftBody} onChange={function(e){setDraftBody(e.target.value);}}
-                    placeholder={"Start typing your document here...\n\nOr fill in the title above and click '✨ AI Draft' to let ARK Law AI generate a complete " + draftType + " for you automatically.\n\nTips:\n• Select text and click B for bold\n• Click H1 or H2 for headings\n• Click • for bullet points\n• Use the jurisdiction toggle in the header to set Pakistani or US law context"}
-                    style={{ flex:1, width:"100%", background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:10, padding:"16px", color:TEXT_PRIMARY, fontFamily:"'Courier New',monospace", fontSize:12, lineHeight:1.8, resize:"none", outline:"none", height:"100%" }}
+                    placeholder={"Start typing here...\n\nOr fill in the title above and click '✨ AI Draft' to generate a complete "+draftType+" automatically.\n\nTips:\n• Select text and click B for bold\n• H1 / H2 for headings\n• • for bullet points"}
+                    style={{ flex:1, width:"100%", background:NAVY_SURFACE, border:"1px solid "+NAVY_BORDER, borderRadius:10, padding:"16px", color:TEXT_PRIMARY, fontFamily:"'Courier New',monospace", fontSize:12, lineHeight:1.8, resize:"none", outline:"none" }}
                   />
                 )}
               </div>
-
-              {/* Footer */}
               <div style={{ padding:"8px 16px", borderTop:"1px solid "+NAVY_BORDER, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center", background:NAVY }}>
-                <div style={{ fontSize:10, color:TEXT_MUTED }}>
-                  {draftBody.trim() ? draftBody.trim().split(/\s+/).length + " words | " + draftBody.length + " characters" : "Start typing or use AI Draft"}
-                </div>
+                <div style={{ fontSize:10, color:TEXT_MUTED }}>{draftBody.trim()?draftBody.trim().split(/\s+/).length+" words | "+draftBody.length+" chars":"Start typing or use AI Draft"}</div>
                 <div style={{ fontSize:10, color:TEXT_MUTED }}>⚠️ For research only — not a substitute for legal counsel</div>
               </div>
-
             </div>
           </div>
         )}
@@ -908,9 +812,7 @@ export default function App() {
                     <div style={{ display:"flex", gap:4 }}>{[0,0.2,0.4].map(function(d,i){ return <div key={i} style={{ width:7,height:7,borderRadius:"50%",background:GOLD,animation:"bounce 1.2s "+d+"s infinite ease-in-out" }} />; })}</div>
                     ARK Law AI is analysing this news...
                   </div>
-                ) : (
-                  <div style={{ fontSize:13, lineHeight:1.8, color:TEXT_SECONDARY }} dangerouslySetInnerHTML={{ __html:fmt(newsAnswer) }} />
-                )}
+                ) : <div style={{ fontSize:13, lineHeight:1.8, color:TEXT_SECONDARY }} dangerouslySetInnerHTML={{ __html:fmt(newsAnswer) }} />}
               </div>
               <div style={{ padding:"12px 20px", borderTop:"1px solid "+NAVY_BORDER, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <div style={{ fontSize:10, color:TEXT_MUTED }}>⚠️ For research only — not a substitute for legal counsel</div>
@@ -948,8 +850,7 @@ export default function App() {
               <div style={{ background:NAVY, border:"1px solid "+GOLD, borderRadius:10, padding:"10px 16px", marginBottom:14, fontSize:16, fontWeight:700, color:GOLD, letterSpacing:".15em" }}>JUSTICESARABBANI</div>
               <input type="text" value={codeInput} onChange={function(e){setCodeInput(e.target.value);setCodeMsg("");}} onKeyDown={function(e){if(e.key==="Enter")submitCode();}}
                 placeholder="Type the code here..."
-                style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(codeMsg==="error"?"#E05555":NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:14, outline:"none", marginBottom:8, textAlign:"center", letterSpacing:".1em" }}
-              />
+                style={{ width:"100%", background:NAVY_SURFACE, border:"1px solid "+(codeMsg==="error"?"#E05555":NAVY_BORDER), borderRadius:8, padding:"10px 14px", color:TEXT_PRIMARY, fontFamily:"inherit", fontSize:14, outline:"none", marginBottom:8, textAlign:"center", letterSpacing:".1em" }} />
               {codeMsg==="error" && <div style={{ fontSize:12, color:"#E05555", marginBottom:8 }}>❌ Incorrect code. Please try again.</div>}
               <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:8 }}>
                 <button onClick={submitCode} style={{ background:"linear-gradient(135deg,#C9A84C,#8A6A1F)", border:"none", borderRadius:8, padding:"9px 24px", color:NAVY, fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer" }}>Submit Code</button>
