@@ -593,13 +593,9 @@ export default function App() {
               return <button key={a.id} className="abtn" onClick={function(){setArea(a.id);}} style={{ display:"flex", alignItems:"center", gap:8, width:"100%", border:"none", textAlign:"left", background:area===a.id?NAVY_SURFACE:"transparent", color:area===a.id?GOLD:TEXT_SECONDARY, fontFamily:"inherit", fontSize:13, padding:"7px 10px", borderRadius:7, cursor:"pointer", fontWeight:area===a.id?600:400 }}><span>{a.icon}</span>{a.label}</button>;
             })}
             <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
-            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"6px 12px" }}>QUICK QUERIES</div>
-            {QUICK_EN.map(function(q,i) {
-              return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
-            })}
 
             {/* DOCUMENT ANALYZER */}
-            <div style={{ margin:"12px 8px 12px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden", flexShrink:0 }}>
+            <div style={{ margin:"8px 8px 4px", background:"linear-gradient(135deg,rgba(201,168,76,0.06),rgba(91,141,217,0.06))", border:"1px solid "+GOLD, borderRadius:12, overflow:"hidden", flexShrink:0 }}>
               <div style={{ background:"linear-gradient(135deg,rgba(201,168,76,0.2),rgba(62,180,137,0.2))", padding:"10px 12px", borderBottom:"1px solid rgba(201,168,76,0.3)" }}>
                 <div style={{ fontSize:12, fontWeight:700, color:GOLD }}>📄 Legal Document Analyzer</div>
                 <div style={{ fontSize:10, color:TEXT_MUTED, marginTop:2 }}>Upload • Analyze • Download Report</div>
@@ -665,6 +661,12 @@ export default function App() {
                 )}
               </div>
             </div>
+
+            <div style={{ height:1, background:NAVY_BORDER, margin:"8px 10px" }} />
+            <div style={{ fontSize:10, fontWeight:600, color:TEXT_MUTED, letterSpacing:".1em", textTransform:"uppercase", margin:"6px 12px" }}>QUICK QUERIES</div>
+            {QUICK_EN.map(function(q,i) {
+              return <button key={i} className="qbtn" onClick={function(){send(q);}} style={{ display:"block", width:"calc(100% - 16px)", margin:"0 8px 4px", background:"transparent", border:"1px solid "+NAVY_BORDER, color:TEXT_MUTED, fontFamily:"inherit", fontSize:11, padding:"6px 8px", borderRadius:7, cursor:"pointer", textAlign:"left", lineHeight:1.6 }}>{q}</button>;
+            })}
           </div>
         </div>
 
