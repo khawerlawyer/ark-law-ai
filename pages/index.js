@@ -405,7 +405,7 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "'Segoe UI',sans-serif" }}>
 
         {/* HEADER */}
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 76, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 6 }}>
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 10px", height: 76, borderBottom: "1px solid " + NAVY_BORDER, background: "#1E3A5F", flexShrink: 0, gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
             <ArkLogo size={54} />
             <div>
