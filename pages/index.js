@@ -376,7 +376,7 @@ export default function App() {
       </head>
       <body>
         <div class="header">
-          <img src="/favicon.svg" alt="ARK" width="40" height="40" />
+          <img src="/ark-logo.png" alt="ARK" width="40" height="40" />
           <h1>ARK Law AI - Link Viewer</h1>
         </div>
         <div class="toolbar">
@@ -464,7 +464,7 @@ export default function App() {
         <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <img src="/favicon.svg" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
               <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
@@ -510,20 +510,15 @@ export default function App() {
           </div>
         </header>
 
-        {/* NEWS TICKER - REDUCED HEIGHT */}
-        <div style={{ background: NAVY_MID, padding: "5px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", width: "100%" }}>
+        {/* NEWS TICKER - CONTINUOUS SCROLLING */}
+        <div style={{ background: NAVY_MID, padding: "5px 0px 5px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", width: "100%" }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12 }}>⚖ LEGAL NEWS</span>
-          <div style={{ flex: 1, overflow: "hidden", marginLeft: "20px" }}>
-            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 120s linear infinite", width: "fit-content" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
+          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 180s linear infinite", width: "fit-content" }}>
               {newsItems.length > 0 ? (
                 <>
-                  {newsItems.map((item, i) => (
+                  {newsItems.concat(newsItems).concat(newsItems).map((item, i) => (
                     <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none" }}>
-                      {item}
-                    </button>
-                  ))}
-                  {newsItems.map((item, i) => (
-                    <button key={`dup-${i}`} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none" }}>
                       {item}
                     </button>
                   ))}
@@ -550,11 +545,11 @@ export default function App() {
                 </div>
                 <div style={{ textAlign: "center" }}>
                   <img src="/rabbani.jpeg" alt="Justice Rabbani" style={{ width: "50px", height: "50px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div style={{ fontSize: 7, color: TEXT_PRIMARY, fontWeight: 600, marginTop: "3px" }}>Honorable Justice</div>
-                  <div style={{ fontSize: 7, color: TEXT_PRIMARY, fontWeight: 600 }}>S. A. Rabbani</div>
-                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>Fmr. Judge, Superior</div>
-                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>Courts of Pakistan</div>
-                  <div style={{ fontSize: 6, color: ACCENT_PK, marginTop: "2px" }}>Inspiration for ARK LAW AI</div>
+                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600, marginTop: "3px" }}>HONORABLE</div>
+                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600 }}>JUSTICE</div>
+                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>S. A. Rabbani</div>
+                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>Fmr. Judge, Superior Courts</div>
+                  <div style={{ fontSize: 6, color: ACCENT_PK, marginTop: "2px", fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
                 </div>
               </div>
               <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct Points for Attorneys in Pakistan</div>
@@ -680,7 +675,7 @@ export default function App() {
       {showCodePopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: POPUP_DARK, padding: "40px", borderRadius: "12px", border: `2px solid ${GOLD}`, maxWidth: "400px", textAlign: "center", boxShadow: `0 0 30px rgba(201,168,76,0.3)` }}>
-            <img src="/favicon.svg" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 20px" }} />
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 20px" }} />
             <h2 style={{ color: GOLD, fontSize: 18, marginBottom: "15px" }}>Extend Your Access</h2>
             <p style={{ color: TEXT_SECONDARY, fontSize: 12, marginBottom: "20px" }}>Enter the magic code to extend your session to 24 hours</p>
             <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "20px", textAlign: "center", border: `1px solid ${GOLD}` }}>
@@ -724,7 +719,7 @@ export default function App() {
             {/* POPUP HEADER */}
             <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/favicon.svg" alt="ARK" style={{ width: "40px", height: "40px" }} />
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
                 <div>
                   <div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div>
                   <div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div>
