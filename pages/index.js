@@ -329,20 +329,35 @@ export default function App() {
     setComparisonResult("");
 
     try {
-      // Read both documents
-      const readFile = (file) => {
+      // Read files as base64 for API
+      const readFileAsBase64 = (file) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
+          reader.onload = (e) => {
+            const base64 = e.target.result.split(',')[1];
+            resolve(base64);
+          };
           reader.onerror = reject;
-          reader.readAsText(file);
+          reader.readAsDataURL(file);
         });
       };
 
-      const doc1Text = await readFile(doc1);
-      const doc2Text = await readFile(doc2);
+      const doc1Base64 = await readFileAsBase64(doc1);
+      const doc2Base64 = await readFileAsBase64(doc2);
 
-      // Call AI to compare documents
+      // Determine file types
+      const getMediaType = (filename) => {
+        const ext = filename.toLowerCase().split('.').pop();
+        if (ext === 'pdf') return 'application/pdf';
+        if (ext === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        if (ext === 'doc') return 'application/msword';
+        return 'application/pdf';
+      };
+
+      const doc1MediaType = getMediaType(doc1.name);
+      const doc2MediaType = getMediaType(doc2.name);
+
+      // Call AI to compare documents with file attachments
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -350,49 +365,77 @@ export default function App() {
           messages: [
             {
               role: "user",
-              content: `You are a legal document comparison expert specializing in Pakistani law. Compare these two legal documents with focus on: "${compareFocus}"
+              content: [
+                {
+                  type: "document",
+                  source: {
+                    type: "base64",
+                    media_type: doc1MediaType,
+                    data: doc1Base64
+                  }
+                },
+                {
+                  type: "document",
+                  source: {
+                    type: "base64",
+                    media_type: doc2MediaType,
+                    data: doc2Base64
+                  }
+                },
+                {
+                  type: "text",
+                  text: `You are a legal document comparison expert specializing in Pakistani law. 
 
-DOCUMENT 1 (${doc1.name}):
-${doc1Text}
+I have uploaded two legal documents:
+- Document 1: ${doc1.name}
+- Document 2: ${doc2.name}
 
-DOCUMENT 2 (${doc2.name}):
-${doc2Text}
+Please compare these documents with primary focus on: "${compareFocus}"
 
 Provide a comprehensive comparison report with the following sections:
 
 1. EXECUTIVE SUMMARY
-Brief overview of the comparison findings
+Brief overview of the comparison findings (2-3 sentences)
 
 2. KEY DIFFERENCES
-List and explain all significant differences between the documents, especially focusing on "${compareFocus}"
+List and explain all significant differences between the documents, especially focusing on "${compareFocus}". Number each difference clearly.
 
 3. SIMILARITIES
-Common provisions or clauses in both documents
+Common provisions or clauses found in both documents
 
-4. LEGAL IMPLICATIONS
-Analysis of how the differences affect legal rights, obligations, and risks under Pakistani law
+4. LEGAL IMPLICATIONS UNDER PAKISTANI LAW
+Analysis of how the differences affect legal rights, obligations, and risks under Pakistani law (PPC, CrPC, Contract Act, etc.)
 
 5. RECOMMENDATIONS
-Practical advice on which document provisions are more favorable or protective
+Practical advice on which document provisions are more favorable or protective, and what changes might be beneficial
 
-6. FOCAL POINT ANALYSIS: ${compareFocus}
-Detailed analysis specifically addressing the focal point requested
+6. DETAILED FOCAL POINT ANALYSIS: ${compareFocus}
+In-depth analysis specifically addressing the focal point requested with specific references to clauses in both documents
 
-Format the report professionally with clear sections and bullet points where appropriate.`,
-            },
+Format the report professionally with clear headings and organized bullet points.`
+                }
+              ]
+            }
           ],
           userId: user?.id,
         }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to compare documents");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `API returned status ${res.status}`);
       }
 
       const data = await res.json();
+      
+      if (!data.reply) {
+        throw new Error("No response received from AI");
+      }
+
       setComparisonResult(data.reply);
     } catch (error) {
-      setComparisonResult(`Error comparing documents: ${error.message}. Please try again.`);
+      console.error("Comparison error:", error);
+      setComparisonResult(`❌ Error comparing documents: ${error.message}\n\nPlease ensure:\n- Both files are valid PDF, DOC, or DOCX documents\n- Files are not corrupted or password-protected\n- Files contain readable text (not just scanned images)\n- Your internet connection is stable\n\nTry again or contact support if the issue persists.`);
     } finally {
       setComparingDocs(false);
     }
