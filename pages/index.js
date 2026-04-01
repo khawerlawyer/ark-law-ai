@@ -301,10 +301,10 @@ export default function App() {
         .ticker { animation: tickerScrollH 480s linear infinite; }
         .ticker:hover { animation-play-state: paused; }
         @keyframes conductScroll {
-          0% { transform: translateY(100%); }
+          0% { transform: translateY(0%); }
           100% { transform: translateY(-100%); }
         }
-        .conduct-ticker { animation: conductScroll 30s linear infinite; }
+        .conduct-ticker { animation: conductScroll 15s linear infinite; }
         .conduct-ticker:hover { animation-play-state: paused; }
         @media (max-width: 768px) {
           .desktop-only { display: none; }
@@ -314,6 +314,7 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif" }}>
         {/* HEADER */}
         <header style={{ background: NAVY, padding: "10px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img src="/favicon.svg" alt="ARK" style={{ width: "54px", height: "54px" }} />
             <div>
@@ -322,6 +323,7 @@ export default function App() {
             </div>
           </div>
 
+          {/* CENTER - LOGIN & TRIAL BUTTONS */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {!user ? (
               <>
@@ -343,6 +345,16 @@ export default function App() {
               </div>
             )}
             <UserButton />
+          </div>
+
+          {/* RIGHT - LANGUAGE TOGGLE */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button style={{ padding: "6px 12px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>
+              EN
+            </button>
+            <button style={{ padding: "6px 12px", background: NAVY_SURFACE, color: TEXT_MUTED, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, opacity: 0.4, title: "Urdu — Coming Soon" }}>
+              اردو
+            </button>
           </div>
         </header>
 
