@@ -882,6 +882,7 @@ By Attorney & AI Innovator Khawer Rabbani
         );
       }
       return <span key={index}>{part}</span>;
+    });
   };
 
   return (
