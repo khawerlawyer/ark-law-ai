@@ -2,6 +2,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { messages, userId } = req.body;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).json({ error: "API key not configured" });
+  }
 
   // Check guest session
   const guestStartCookie = req.cookies.ark_guest_start;
@@ -26,6 +31,7 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": apiKey,
       },
       body: JSON.stringify({
         model: "claude-opus-4-1",
