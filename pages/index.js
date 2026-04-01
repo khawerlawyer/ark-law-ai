@@ -269,19 +269,6 @@ export default function App() {
     }
   };
 
-  const handleCodeSubmit = () => {
-    if (codeInput === "JUSTICESARABBANI") {
-      setShowCodePopup(false);
-      setShowSuccessPopup(true);
-      setGuestTime(1440);
-      localStorage.setItem("ark_guest_start", Date.now().toString());
-      setCodeInput("");
-    } else {
-      alert("Incorrect code. Please try again.");
-      setCodeInput("");
-    }
-  };
-
   const handleNewsClick = async (headline) => {
     const newsItem = newsDatabase.find(item => item.headline === headline);
     if (newsItem) {
@@ -1346,29 +1333,6 @@ By Attorney & AI Innovator Khawer Rabbani
           <div style={{ color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
         </footer>
       </div>
-
-      {/* CODE POPUP */}
-      {showCodePopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: POPUP_DARK, padding: "40px", borderRadius: "12px", border: `2px solid ${GOLD}`, maxWidth: "400px", textAlign: "center", boxShadow: `0 0 30px rgba(201,168,76,0.3)` }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 20px" }} />
-            <h2 style={{ color: GOLD, fontSize: 18, marginBottom: "15px" }}>Extend Your Access</h2>
-            <p style={{ color: TEXT_SECONDARY, fontSize: 12, marginBottom: "20px" }}>Enter the magic code to extend your session to 24 hours</p>
-            <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "20px", textAlign: "center", border: `1px solid ${GOLD}` }}>
-              <div style={{ color: GOLD, fontSize: 28, fontWeight: 700, letterSpacing: "2px" }}>JUSTICESARABBANI</div>
-            </div>
-            <input type="text" value={codeInput} onChange={(e) => setCodeInput(e.target.value.toUpperCase())} placeholder="Type the code above..." style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "15px", fontSize: 12 }} />
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={() => setShowCodePopup(false)} style={{ flex: 1, padding: "10px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer" }}>
-                Close
-              </button>
-              <button onClick={handleCodeSubmit} style={{ flex: 1, padding: "10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, boxShadow: `0 0 15px rgba(201,168,76,0.5)` }}>
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* SUCCESS POPUP */}
       {showSuccessPopup && (
