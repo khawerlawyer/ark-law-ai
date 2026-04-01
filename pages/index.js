@@ -325,6 +325,17 @@ export default function App() {
       return;
     }
 
+    // Check file sizes (API limit is typically 5MB per file)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (doc1.size > maxSize) {
+      alert(`Document 1 is too large (${(doc1.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB. Please use a smaller file or compress it.`);
+      return;
+    }
+    if (doc2.size > maxSize) {
+      alert(`Document 2 is too large (${(doc2.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB. Please use a smaller file or compress it.`);
+      return;
+    }
+
     setComparingDocs(true);
     setComparisonResult("");
 
@@ -386,33 +397,56 @@ export default function App() {
                   type: "text",
                   text: `You are a legal document comparison expert specializing in Pakistani law. 
 
-I have uploaded two legal documents:
-- Document 1: ${doc1.name}
-- Document 2: ${doc2.name}
+I have uploaded two legal documents for comparison:
+- Document 1: ${doc1.name} (${(doc1.size / 1024).toFixed(1)}KB)
+- Document 2: ${doc2.name} (${(doc2.size / 1024).toFixed(1)}KB)
 
-Please compare these documents with primary focus on: "${compareFocus}"
+IMPORTANT INSTRUCTIONS:
+- These documents may contain scanned images or be image-based PDFs. Please use OCR to extract and read all text from any images.
+- If the documents are scanned or image-based, extract all visible text carefully before comparison.
+- Compare all content whether it's native text or text extracted from images.
 
-Provide a comprehensive comparison report with the following sections:
+PRIMARY FOCUS: "${compareFocus}"
+
+Please provide a comprehensive comparison report with the following sections:
 
 1. EXECUTIVE SUMMARY
 Brief overview of the comparison findings (2-3 sentences)
 
-2. KEY DIFFERENCES
-List and explain all significant differences between the documents, especially focusing on "${compareFocus}". Number each difference clearly.
+2. DOCUMENT ANALYSIS
+- Document 1: Type of document, key sections identified
+- Document 2: Type of document, key sections identified
+- Note if documents contained scanned images/OCR was used
 
-3. SIMILARITIES
-Common provisions or clauses found in both documents
+3. KEY DIFFERENCES
+List and explain all significant differences between the documents, especially focusing on "${compareFocus}". Number each difference clearly with specific clause references.
 
-4. LEGAL IMPLICATIONS UNDER PAKISTANI LAW
-Analysis of how the differences affect legal rights, obligations, and risks under Pakistani law (PPC, CrPC, Contract Act, etc.)
+4. SIMILARITIES
+Common provisions or clauses found in both documents with references
 
-5. RECOMMENDATIONS
-Practical advice on which document provisions are more favorable or protective, and what changes might be beneficial
+5. LEGAL IMPLICATIONS UNDER PAKISTANI LAW
+Analysis of how the differences affect legal rights, obligations, and risks under:
+- Pakistan Penal Code (PPC)
+- Code of Criminal Procedure (CrPC)
+- Contract Act, 1872
+- Other relevant Pakistani laws and regulations
 
-6. DETAILED FOCAL POINT ANALYSIS: ${compareFocus}
-In-depth analysis specifically addressing the focal point requested with specific references to clauses in both documents
+6. RISK ASSESSMENT
+Identify potential legal risks or vulnerabilities in each document
 
-Format the report professionally with clear headings and organized bullet points.`
+7. RECOMMENDATIONS
+Practical advice on:
+- Which document provisions are more favorable or protective
+- What changes or additions might be beneficial
+- Red flags or concerns to address
+
+8. DETAILED FOCAL POINT ANALYSIS: ${compareFocus}
+In-depth analysis specifically addressing the focal point requested with:
+- Specific clause references from both documents
+- Comparative analysis of the provisions
+- Legal implications and recommendations
+
+Format the report professionally with clear headings, numbered points, and organized sections. Use bullet points where appropriate.`
                 }
               ]
             }
@@ -423,6 +457,16 @@ Format the report professionally with clear headings and organized bullet points
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
+        
+        // Handle specific error codes
+        if (res.status === 413) {
+          throw new Error(`Files are too large for the server to process. Document 1: ${(doc1.size / 1024 / 1024).toFixed(2)}MB, Document 2: ${(doc2.size / 1024 / 1024).toFixed(2)}MB. Try compressing the PDFs or using smaller files (max 5MB each).`);
+        } else if (res.status === 429) {
+          throw new Error("Too many requests. Please wait a moment and try again.");
+        } else if (res.status === 500) {
+          throw new Error("Server error. The documents may be corrupted or in an unsupported format.");
+        }
+        
         throw new Error(errorData.error || `API returned status ${res.status}`);
       }
 
@@ -435,7 +479,7 @@ Format the report professionally with clear headings and organized bullet points
       setComparisonResult(data.reply);
     } catch (error) {
       console.error("Comparison error:", error);
-      setComparisonResult(`❌ Error comparing documents: ${error.message}\n\nPlease ensure:\n- Both files are valid PDF, DOC, or DOCX documents\n- Files are not corrupted or password-protected\n- Files contain readable text (not just scanned images)\n- Your internet connection is stable\n\nTry again or contact support if the issue persists.`);
+      setComparisonResult(`❌ Error comparing documents: ${error.message}\n\n📋 TROUBLESHOOTING:\n\n✓ File Size Limits:\n  - Document 1: ${(doc1.size / 1024 / 1024).toFixed(2)}MB\n  - Document 2: ${(doc2.size / 1024 / 1024).toFixed(2)}MB\n  - Maximum: 5MB per file\n\n✓ File Requirements:\n  - Valid PDF, DOC, or DOCX format\n  - Not password-protected\n  - Not corrupted\n  - Scanned PDFs are supported (OCR enabled)\n\n✓ Solutions:\n  - Compress large PDF files using online tools\n  - Remove unnecessary pages\n  - Reduce image quality in the PDF\n  - Split large documents into sections\n\n✓ If issue persists, contact support with error details.`);
     } finally {
       setComparingDocs(false);
     }
@@ -1209,11 +1253,29 @@ By Attorney & AI Innovator Khawer Rabbani
               <div style={{ marginBottom: "15px" }}>
                 <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>📄 Document 1</label>
                 <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])} style={{ width: "100%", padding: "8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 11 }} />
+                {doc1 && (
+                  <div style={{ marginTop: "5px", fontSize: 10, color: doc1.size > 5*1024*1024 ? "#ff6b6b" : ACCENT_PK }}>
+                    {doc1.name} - {(doc1.size / 1024 / 1024).toFixed(2)}MB {doc1.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}
+                  </div>
+                )}
               </div>
               
               <div style={{ marginBottom: "15px" }}>
                 <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>📄 Document 2</label>
                 <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])} style={{ width: "100%", padding: "8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 11 }} />
+                {doc2 && (
+                  <div style={{ marginTop: "5px", fontSize: 10, color: doc2.size > 5*1024*1024 ? "#ff6b6b" : ACCENT_PK }}>
+                    {doc2.name} - {(doc2.size / 1024 / 1024).toFixed(2)}MB {doc2.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ marginBottom: "15px", padding: "10px", background: NAVY_SURFACE, borderRadius: "4px", borderLeft: `3px solid ${ACCENT_PK}` }}>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.6" }}>
+                  ℹ️ <strong>Supported:</strong> PDF, DOC, DOCX (max 5MB each)<br/>
+                  ✓ Scanned PDFs supported (OCR enabled)<br/>
+                  ✓ Image-based documents supported
+                </div>
               </div>
               
               <div style={{ marginBottom: "15px" }}>
