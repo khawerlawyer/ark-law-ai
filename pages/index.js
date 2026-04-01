@@ -919,8 +919,12 @@ By Attorney & AI Innovator Khawer Rabbani
 
       <style>{`
         @keyframes scroll {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .news-ticker-content {
+          animation: scroll 120s linear infinite;
+          will-change: transform;
         }
         @keyframes conductScroll {
           0% { transform: translateY(0%); }
@@ -1103,73 +1107,74 @@ By Attorney & AI Innovator Khawer Rabbani
           </div>
         </header>
 
-        {/* NEWS TICKER - PERFECTLY ALIGNED, ALWAYS SCROLLING */}
+        {/* NEWS TICKER - CONTINUOUS INFINITE LOOP */}
         <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px" }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div style={{ 
-              display: "flex", 
-              gap: "50px", 
-              whiteSpace: "nowrap", 
-              animation: "scroll 360s linear infinite", 
-              animationDelay: "-180s",
-              width: "max-content" 
-            }}>
-              {/* Always show news - with enough duplicates to never have gaps */}
-              {(newsItems.length > 0 ? newsItems : [
-                "🇵🇰 Supreme Court Ruling on Constitutional Rights",
-                "🇵🇰 New Tax Amendment Affects Business Sector",
-                "🇵🇰 Family Court Interprets Guardianship Laws",
-                "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
-                "🇵🇰 High Court Decision on Property Disputes",
-                "🇵🇰 Procedural Changes in Criminal Courts"
-              ]).concat(
-                newsItems.length > 0 ? newsItems : [
+            <div className="news-ticker-wrapper">
+              <div className="news-ticker-content" style={{ 
+                display: "flex", 
+                gap: "80px", 
+                whiteSpace: "nowrap",
+                width: "max-content"
+              }}>
+                {/* First set of news items */}
+                {(newsItems.length > 0 ? newsItems : [
                   "🇵🇰 Supreme Court Ruling on Constitutional Rights",
                   "🇵🇰 New Tax Amendment Affects Business Sector",
                   "🇵🇰 Family Court Interprets Guardianship Laws",
                   "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
                   "🇵🇰 High Court Decision on Property Disputes",
                   "🇵🇰 Procedural Changes in Criminal Courts"
-                ]
-              ).concat(
-                newsItems.length > 0 ? newsItems : [
+                ]).map((item, i) => (
+                  <button 
+                    key={`news-1-${i}`} 
+                    onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
+                    style={{ 
+                      background: "none", 
+                      border: "none", 
+                      color: ACCENT_PK, 
+                      cursor: newsItems.length > 0 ? "pointer" : "default", 
+                      fontSize: 12, 
+                      padding: "0", 
+                      flexShrink: 0, 
+                      fontWeight: 500, 
+                      textDecoration: "none", 
+                      whiteSpace: "nowrap" 
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+                {/* Second set - exact duplicate for seamless loop */}
+                {(newsItems.length > 0 ? newsItems : [
                   "🇵🇰 Supreme Court Ruling on Constitutional Rights",
                   "🇵🇰 New Tax Amendment Affects Business Sector",
                   "🇵🇰 Family Court Interprets Guardianship Laws",
                   "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
                   "🇵🇰 High Court Decision on Property Disputes",
                   "🇵🇰 Procedural Changes in Criminal Courts"
-                ]
-              ).concat(
-                newsItems.length > 0 ? newsItems : [
-                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
-                  "🇵🇰 New Tax Amendment Affects Business Sector",
-                  "🇵🇰 Family Court Interprets Guardianship Laws",
-                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
-                  "🇵🇰 High Court Decision on Property Disputes",
-                  "🇵🇰 Procedural Changes in Criminal Courts"
-                ]
-              ).map((item, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
-                  style={{ 
-                    background: "none", 
-                    border: "none", 
-                    color: ACCENT_PK, 
-                    cursor: newsItems.length > 0 ? "pointer" : "default", 
-                    fontSize: 12, 
-                    padding: "0", 
-                    flexShrink: 0, 
-                    fontWeight: 500, 
-                    textDecoration: "none", 
-                    whiteSpace: "nowrap" 
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
+                ]).map((item, i) => (
+                  <button 
+                    key={`news-2-${i}`} 
+                    onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
+                    style={{ 
+                      background: "none", 
+                      border: "none", 
+                      color: ACCENT_PK, 
+                      cursor: newsItems.length > 0 ? "pointer" : "default", 
+                      fontSize: 12, 
+                      padding: "0", 
+                      flexShrink: 0, 
+                      fontWeight: 500, 
+                      textDecoration: "none", 
+                      whiteSpace: "nowrap" 
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
