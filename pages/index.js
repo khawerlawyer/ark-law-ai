@@ -439,15 +439,17 @@ export default function App() {
           0% { transform: translateY(0%); }
           100% { transform: translateY(-50%); }
         }
-        @keyframes wave {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(-8deg); }
-          75% { transform: rotate(8deg); }
-        }
         @keyframes flagWave {
-          0% { d: path("M 0 0 Q 5 5 10 0 T 20 0 T 30 0 L 30 20 Q 25 15 20 20 T 10 20 T 0 20 Z"); }
-          50% { d: path("M 0 0 Q 5 -5 10 0 T 20 0 T 30 0 L 30 20 Q 25 25 20 20 T 10 20 T 0 20 Z"); }
-          100% { d: path("M 0 0 Q 5 5 10 0 T 20 0 T 30 0 L 30 20 Q 25 15 20 20 T 10 20 T 0 20 Z"); }
+          0%, 100% { transform: perspective(400px) rotateY(0deg); }
+          25% { transform: perspective(400px) rotateY(-15deg); }
+          50% { transform: perspective(400px) rotateY(0deg); }
+          75% { transform: perspective(400px) rotateY(15deg); }
+        }
+        @keyframes flagRipple {
+          0%, 100% { d: path("M 0 0 L 52 0 L 52 36 L 0 36 Z"); }
+          25% { d: path("M 0 0 Q 13 2 26 0 T 52 0 L 52 36 Q 39 34 26 36 T 0 36 Z"); }
+          50% { d: path("M 0 0 Q 13 -2 26 0 T 52 0 L 52 36 Q 39 38 26 36 T 0 36 Z"); }
+          75% { d: path("M 0 0 Q 13 2 26 0 T 52 0 L 52 36 Q 39 34 26 36 T 0 36 Z"); }
         }
         .conduct-ticker { 
           animation: conductScroll 60s linear infinite;
@@ -455,7 +457,7 @@ export default function App() {
         }
         .conduct-ticker:hover { animation-play-state: paused; }
         .pakistan-flag {
-          animation: wave 2s ease-in-out infinite;
+          animation: flagWave 3s ease-in-out infinite;
           transform-origin: left center;
           display: inline-block;
         }
@@ -503,64 +505,83 @@ export default function App() {
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {/* Animated Pakistan Flag SVG - Enhanced */}
-            <div className="pakistan-flag" style={{ width: "52px", height: "36px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
-              <svg viewBox="0 0 52 36" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+            {/* Animated Waving Pakistan Flag */}
+            <div className="pakistan-flag" style={{ width: "56px", height: "38px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "visible", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", perspective: "400px" }}>
+              <svg viewBox="0 0 56 38" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%", overflow: "visible" }}>
                 <defs>
-                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{ stopColor: "#01A550", stopOpacity: 1 }} />
-                    <stop offset="50%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: "#015C2B", stopOpacity: 1 }} />
+                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
+                    <stop offset="50%" style={{ stopColor: "#01A550", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
+                  </linearGradient>
+                  <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style={{ stopColor: "#F8F8F8", stopOpacity: 1 }} />
+                    <stop offset="50%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 1 }} />
                   </linearGradient>
                   <filter id="shadow">
-                    <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.3"/>
+                    <feDropShadow dx="0.5" dy="0.5" stdDeviation="0.8" floodOpacity="0.4"/>
                   </filter>
-                  <radialGradient id="starGlow" cx="50%" cy="50%">
-                    <stop offset="0%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 0.9 }} />
-                  </radialGradient>
+                  <clipPath id="flagClip">
+                    <path>
+                      <animate attributeName="d" 
+                        values="M 0 0 L 56 0 L 56 38 L 0 38 Z;
+                                M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;
+                                M 0 0 Q 14 -2 28 0 T 56 0 L 56 38 Q 42 40 28 38 T 0 38 Z;
+                                M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;
+                                M 0 0 L 56 0 L 56 38 L 0 38 Z"
+                        dur="2.5s" 
+                        repeatCount="indefinite"/>
+                    </path>
+                  </clipPath>
                 </defs>
                 
-                {/* Green background with gradient */}
-                <rect x="0" y="0" width="52" height="36" fill="url(#greenGradient)"/>
-                
-                {/* White stripe with subtle gradient */}
-                <rect x="0" y="0" width="13" height="36" fill="#FFFFFF"/>
-                <rect x="0" y="0" width="13" height="36" fill="url(#greenGradient)" opacity="0.05"/>
-                
-                {/* Crescent with glow */}
-                <g filter="url(#shadow)">
-                  <circle cx="30" cy="18" r="8" fill="#FFFFFF"/>
-                  <circle cx="32.5" cy="18" r="7" fill="url(#greenGradient)"/>
+                <g clipPath="url(#flagClip)">
+                  {/* Green section with gradient */}
+                  <rect x="0" y="0" width="56" height="38" fill="url(#greenGradient)"/>
+                  
+                  {/* White stripe */}
+                  <rect x="0" y="0" width="14" height="38" fill="url(#whiteGradient)"/>
+                  
+                  {/* Crescent shadow layer */}
+                  <g filter="url(#shadow)">
+                    <circle cx="32" cy="19" r="8.5" fill="#FFFFFF"/>
+                    <circle cx="34.5" cy="19" r="7.5" fill="url(#greenGradient)"/>
+                  </g>
+                  
+                  {/* Star with shadow */}
+                  <g transform="translate(42, 19)" filter="url(#shadow)">
+                    <polygon points="0,-6.5 2,-2 7,-2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2 -2,-2" 
+                             fill="#FFFFFF" 
+                             stroke="#F5F5F5" 
+                             strokeWidth="0.3"/>
+                  </g>
+                  
+                  {/* Wave ripple effect */}
+                  <g opacity="0.25">
+                    <path fill="#FFFFFF">
+                      <animate attributeName="d" 
+                        values="M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z;
+                                M 14 0 Q 24 -3 35 0 T 56 0 L 56 38 Q 45 41 35 38 T 14 38 Z;
+                                M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z"
+                        dur="2s" 
+                        repeatCount="indefinite"/>
+                    </path>
+                  </g>
+                  
+                  {/* Shimmer waves */}
+                  <g opacity="0.15">
+                    <rect x="0" y="0" width="56" height="38" fill="url(#whiteGradient)">
+                      <animate attributeName="opacity" 
+                        values="0.1;0.2;0.1" 
+                        dur="3s" 
+                        repeatCount="indefinite"/>
+                    </rect>
+                  </g>
                 </g>
                 
-                {/* Star with glow */}
-                <g transform="translate(39, 18)" filter="url(#shadow)">
-                  <polygon points="0,-6 1.8,-1.8 6.5,-1.8 3,-0.5 4,5 0,2.5 -4,5 -3,-0.5 -6.5,-1.8 -1.8,-1.8" 
-                           fill="url(#starGlow)" 
-                           stroke="#E8E8E8" 
-                           strokeWidth="0.3"/>
-                </g>
-                
-                {/* Animated wave overlay */}
-                <g opacity="0.2">
-                  <path fill="#FFFFFF">
-                    <animate attributeName="d" 
-                      values="M 13 0 Q 20 3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z;
-                              M 13 0 Q 20 -3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z;
-                              M 13 0 Q 20 3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z"
-                      dur="2s" 
-                      repeatCount="indefinite"/>
-                  </path>
-                </g>
-                
-                {/* Shimmer effect */}
-                <rect x="0" y="0" width="52" height="36" fill="url(#greenGradient)" opacity="0.1">
-                  <animate attributeName="opacity" 
-                    values="0.05;0.15;0.05" 
-                    dur="3s" 
-                    repeatCount="indefinite"/>
-                </rect>
+                {/* Flag pole shadow */}
+                <line x1="0" y1="0" x2="0" y2="38" stroke="#333" strokeWidth="0.5" opacity="0.3"/>
               </svg>
             </div>
             
@@ -581,8 +602,8 @@ export default function App() {
               display: "flex", 
               gap: "50px", 
               whiteSpace: "nowrap", 
-              animation: "scroll 180s linear infinite", 
-              animationDelay: "-90s",
+              animation: "scroll 360s linear infinite", 
+              animationDelay: "-180s",
               width: "max-content" 
             }}>
               {newsItems.length > 0 ? (
