@@ -151,16 +151,14 @@ export default function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-send greeting
+  // Auto-send greeting on mount
   useEffect(() => {
-    if (messages.length === 0) {
-      const greeting = {
-        role: "assistant",
-        content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law. How may I assist you today?",
-      };
-      setMessages([greeting]);
-    }
-  }, []);
+    const greeting = {
+      role: "assistant",
+      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law. How may I assist you today?",
+    };
+    setMessages([greeting]);
+  }, []); // Only run once on mount
 
   // Scroll to bottom
   useEffect(() => {
