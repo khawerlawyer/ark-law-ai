@@ -1153,7 +1153,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
               </div>
               <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct Points for Attorneys in Pakistan</div>
-              <div style={{ overflow: "hidden", height: "calc(100% - 280px)", width: "100%", position: "relative" }}>
+              <div style={{ overflow: "hidden", height: "calc(100% - 230px)", width: "100%", position: "relative" }}>
                 <div className="conduct-ticker" style={{ fontSize: 10, lineHeight: "1.7", width: "100%", paddingRight: "5px" }}>
                   {CONDUCT_PK.concat(CONDUCT_PK).concat(CONDUCT_PK).map((conduct, i) => (
                     <div 
@@ -1193,29 +1193,29 @@ By Attorney & AI Innovator Khawer Rabbani
 
               {/* KACHOKAY QUOTE BOX */}
               <div style={{ 
-                marginTop: "10px", 
-                padding: "12px", 
+                marginTop: "6px", 
+                padding: "6px", 
                 background: `linear-gradient(135deg, ${GOLD}15, ${ACCENT_PK}15)`, 
-                borderRadius: "8px", 
-                border: `2px solid ${GOLD}`,
+                borderRadius: "4px", 
+                border: `1px solid ${GOLD}`,
                 textAlign: "center"
               }}>
                 <img 
                   src="/kachokay.jpg" 
                   alt="Kachokay" 
                   style={{ 
-                    width: "120px", 
-                    height: "120px", 
+                    width: "60px", 
+                    height: "60px", 
                     borderRadius: "50%", 
-                    border: `3px solid ${GOLD}`,
-                    marginBottom: "8px",
+                    border: `2px solid ${GOLD}`,
+                    marginBottom: "4px",
                     objectFit: "cover"
                   }} 
                 />
-                <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, marginBottom: "4px" }}>
+                <div style={{ fontSize: 8, color: GOLD, fontWeight: 700, marginBottom: "2px" }}>
                   Everyday a New Kachokay Quote
                 </div>
-                <div style={{ fontSize: 8, color: ACCENT_PK, fontStyle: "italic" }}>
+                <div style={{ fontSize: 6, color: ACCENT_PK, fontStyle: "italic" }}>
                   (Coming Soon!)
                 </div>
               </div>
