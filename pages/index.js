@@ -142,16 +142,41 @@ export default function App() {
     fetchNewsHeadlines();
   }, []);
 
+  const newsDatabase = [
+    {
+      headline: "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights",
+      source: "Supreme Court of Pakistan Official Records",
+      fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions."
+    },
+    {
+      headline: "🇵🇰 New Tax Amendment Affects Business Sector",
+      source: "Federal Board of Revenue (FBR)",
+      fullText: "The Federal Board of Revenue has announced new amendments to the Income Tax Ordinance, 2001, effective immediately. Key changes include: (1) Modified tax rates for small and medium enterprises, (2) Enhanced deductions for research and development, (3) Stricter compliance requirements for corporate entities. Businesses are advised to consult with tax professionals to ensure compliance. The FBR has set a grace period of 30 days for voluntary compliance."
+    },
+    {
+      headline: "🇵🇰 Family Court Interprets Guardianship Laws",
+      source: "District Court - Family Division",
+      fullText: "In a significant judgment, the Family Court has clarified provisions of the Guardians and Wards Act, 1890. The court ruled that guardianship decisions must prioritize the best interests of the child above all considerations. The judgment emphasizes that courts must conduct thorough investigations, hear all parties, and consider the child's wishes in guardianship matters. This ruling affects all guardianship petitions pending in courts across Pakistan."
+    },
+    {
+      headline: "🇵🇰 Labour Ministry Issues New Worker Protection Guidelines",
+      source: "Ministry of Labour, Employment & Manpower",
+      fullText: "The Labour Ministry has issued comprehensive guidelines under the Workers' Compensation Act for improved worker protection. New provisions include: (1) Enhanced compensation for workplace injuries, (2) Mandatory insurance coverage for all workers, (3) Faster claim processing mechanisms. Employers must comply within 60 days. Non-compliance may result in penalties and legal action. Workers can file complaints through the ministry's online portal."
+    },
+    {
+      headline: "🇵🇰 High Court Decision on Property Disputes",
+      source: "Lahore High Court - Civil Division",
+      fullText: "The Lahore High Court has established important guidelines for resolving property disputes under the Transfer of Property Act, 1882. The judgment clarifies that possession must be clearly established through documentary evidence, witness testimony, or adverse possession principles. Courts are directed to expedite property cases to reduce pending litigation. The ruling also addresses issues of land grabbing and unlawful occupation."
+    },
+    {
+      headline: "🇵🇰 Procedural Changes in Criminal Courts",
+      source: "Supreme Judicial Council",
+      fullText: "New procedural rules have been implemented in criminal courts across Pakistan to expedite trials under the Code of Criminal Procedure, 1898. Changes include: (1) Mandatory video conferencing for witness examination, (2) Electronic filing of documents, (3) Stricter time limits for adjournments. These reforms aim to reduce case backlogs and ensure speedy justice. All courts must implement these procedures immediately."
+    }
+  ];
+
   const fetchNewsHeadlines = async () => {
-    const defaultNews = [
-      "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights",
-      "🇵🇰 New Tax Amendment Affects Business Sector",
-      "🇵🇰 Family Court Interprets Guardianship Laws",
-      "🇵🇰 Labour Ministry Issues New Worker Protection Guidelines",
-      "🇵🇰 High Court Decision on Property Disputes",
-      "🇵🇰 Procedural Changes in Criminal Courts",
-    ];
-    setNewsItems(defaultNews);
+    setNewsItems(newsDatabase.map(item => item.headline));
   };
 
   const sendMessage = async (msg = null) => {
@@ -232,32 +257,35 @@ export default function App() {
   };
 
   const handleNewsClick = async (headline) => {
-    setSelectedNews(headline);
-    setShowNewsPopup(true);
-    setNewsLoading(true);
-    setNewsAnalysis("");
+    const newsItem = newsDatabase.find(item => item.headline === headline);
+    if (newsItem) {
+      setSelectedNews(newsItem);
+      setShowNewsPopup(true);
+      setNewsLoading(true);
+      setNewsAnalysis("");
 
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "user",
-              content: `Analyze this legal news headline from Pakistan and explain its significance under Pakistani law:\n\n"${headline}"\n\nProvide a brief explanation of how this affects Pakistani citizens and businesses.`,
-            },
-          ],
-          userId: user?.id,
-        }),
-      });
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `Analyze this legal news from Pakistan and explain its legal significance and impact:\n\nHeadline: ${newsItem.headline}\n\nFull Text: ${newsItem.fullText}\n\nProvide a concise analysis of how this affects Pakistani citizens and businesses, relevant statutes, and practical implications.`,
+              },
+            ],
+            userId: user?.id,
+          }),
+        });
 
-      const data = await res.json();
-      setNewsAnalysis(data.reply);
-    } catch (error) {
-      setNewsAnalysis("Unable to analyze this news item. Please try again.");
-    } finally {
-      setNewsLoading(false);
+        const data = await res.json();
+        setNewsAnalysis(data.reply);
+      } catch (error) {
+        setNewsAnalysis("Unable to analyze this news item. Please try again.");
+      } finally {
+        setNewsLoading(false);
+      }
     }
   };
 
@@ -537,9 +565,9 @@ export default function App() {
       )}
 
       {/* NEWS POPUP */}
-      {showNewsPopup && (
+      {showNewsPopup && selectedNews && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "650px", maxHeight: "80vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.2)` }}>
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.2)` }}>
             {/* POPUP HEADER */}
             <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -556,19 +584,44 @@ export default function App() {
 
             {/* POPUP CONTENT */}
             <div style={{ padding: "25px" }}>
-              <p style={{ color: GOLD, fontSize: 14, fontWeight: 600, marginBottom: "15px", lineHeight: "1.6", borderLeft: `3px solid ${ACCENT_PK}`, paddingLeft: "12px" }}>
-                {selectedNews}
+              {/* HEADLINE */}
+              <p style={{ color: GOLD, fontSize: 15, fontWeight: 700, marginBottom: "10px", lineHeight: "1.6" }}>
+                {selectedNews.headline}
               </p>
+
+              {/* SOURCE */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "15px", padding: "10px", background: NAVY_SURFACE, borderRadius: "4px", borderLeft: `3px solid ${ACCENT_PK}` }}>
+                <span style={{ fontSize: 10, color: TEXT_MUTED }}>📰 Source:</span>
+                <span style={{ fontSize: 11, color: ACCENT_PK, fontWeight: 600 }}>{selectedNews.source}</span>
+              </div>
+
+              {/* DIVIDER */}
               <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
-              {newsLoading ? (
-                <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>
-                  ⏳ Analyzing legal significance...
-                </div>
-              ) : (
-                <div style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
-                  {newsAnalysis}
-                </div>
-              )}
+
+              {/* FULL TEXT */}
+              <div style={{ marginBottom: "15px" }}>
+                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>Full News Details:</h4>
+                <p style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
+                  {selectedNews.fullText}
+                </p>
+              </div>
+
+              {/* DIVIDER */}
+              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
+
+              {/* LEGAL ANALYSIS */}
+              <div>
+                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>⚖️ Legal Analysis & Impact:</h4>
+                {newsLoading ? (
+                  <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>
+                    ⏳ Analyzing legal significance...
+                  </div>
+                ) : (
+                  <div style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
+                    {newsAnalysis}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* POPUP FOOTER */}
