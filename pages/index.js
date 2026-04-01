@@ -151,9 +151,15 @@ export default function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-send greeting - REMOVED (users can start chatting directly)
+  // Auto-send greeting
   useEffect(() => {
-    // No auto-greeting - let users start naturally
+    if (messages.length === 0) {
+      const greeting = {
+        role: "assistant",
+        content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law. How may I assist you today?",
+      };
+      setMessages([greeting]);
+    }
   }, []);
 
   // Scroll to bottom
