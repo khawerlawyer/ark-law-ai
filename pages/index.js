@@ -1605,17 +1605,21 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
       )}
 
-      {/* LINKEDIN PROFILE POPUP */}
+      {/* PROFILE POPUP - KHAWER RABBANI */}
       {showLinkedInPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "900px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.3)` }}>
+          <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "1000px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.3)` }}>
             {/* POPUP HEADER */}
             <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "50px", height: "50px" }} />
-                <div>
-                  <div style={{ color: GOLD, fontWeight: 700, fontSize: 16 }}>ARK Law AI</div>
-                  <div style={{ color: ACCENT_PK, fontSize: 11, marginTop: "3px" }}>Attorney & AI Innovator Khawer Rabbani</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                  <img src="/khawer-profile.jpeg" alt="Khawer Rabbani" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div>
+                    <div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & Creator of ARK Law AI</div>
+                  </div>
                 </div>
               </div>
               <button onClick={() => setShowLinkedInPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", padding: "0", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -1623,44 +1627,64 @@ By Attorney & AI Innovator Khawer Rabbani
               </button>
             </div>
 
-            {/* POPUP CONTENT */}
-            <div style={{ padding: "0" }}>
+            {/* POPUP CONTENT - PDF VIEWER */}
+            <div style={{ padding: "0", background: CREAM }}>
               <iframe 
-                src="https://www.linkedin.com/in/khawerrabbani/" 
+                src="/KRprofile.pdf#toolbar=0" 
                 style={{ 
                   width: "100%", 
-                  height: "70vh", 
+                  height: "75vh", 
                   border: "none",
                   background: "white"
                 }}
-                title="Khawer Rabbani LinkedIn Profile"
+                title="Khawer Rabbani Professional Profile"
               />
             </div>
 
             {/* POPUP FOOTER */}
-            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-              <a 
-                href="https://www.linkedin.com/in/khawerrabbani/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ 
-                  padding: "10px 24px", 
-                  background: "#0077B5", 
-                  color: "white", 
-                  border: "none", 
-                  borderRadius: "4px", 
-                  cursor: "pointer", 
-                  fontWeight: 600, 
-                  fontSize: 12,
-                  textDecoration: "none",
-                  display: "inline-block"
-                }}
-              >
-                🔗 Open in LinkedIn
-              </a>
-              <button onClick={() => setShowLinkedInPopup(false)} style={{ padding: "10px 24px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
-                Close
-              </button>
+            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: 10, color: TEXT_MUTED }}>
+                📧 khawer.rabbani@gmail.com
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <a 
+                  href="https://www.linkedin.com/in/khawerrabbani/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    padding: "10px 20px", 
+                    background: "#0077B5", 
+                    color: "white", 
+                    border: "none", 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontWeight: 600, 
+                    fontSize: 12,
+                    textDecoration: "none",
+                    display: "inline-block"
+                  }}
+                >
+                  🔗 LinkedIn Profile
+                </a>
+                <button 
+                  onClick={() => window.open('/KRprofile.pdf', '_blank')}
+                  style={{ 
+                    padding: "10px 20px", 
+                    background: ACCENT_PK, 
+                    color: NAVY, 
+                    border: "none", 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontWeight: 600, 
+                    fontSize: 12
+                  }}
+                >
+                  📄 Download Profile
+                </button>
+                <button onClick={() => setShowLinkedInPopup(false)} style={{ padding: "10px 20px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
