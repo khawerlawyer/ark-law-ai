@@ -867,6 +867,21 @@ By Attorney & AI Innovator Khawer Rabbani
       </Head>
 
       <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        html, body {
+          height: 100%;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        #__next {
+          height: 100%;
+          overflow: hidden;
+        }
         @keyframes scroll {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
