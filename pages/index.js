@@ -503,36 +503,64 @@ export default function App() {
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {/* Animated Pakistan Flag SVG */}
-            <div className="pakistan-flag" style={{ width: "48px", height: "32px" }}>
-              <svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+            {/* Animated Pakistan Flag SVG - Enhanced */}
+            <div className="pakistan-flag" style={{ width: "52px", height: "36px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+              <svg viewBox="0 0 52 36" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
                 <defs>
-                  <clipPath id="wave">
-                    <rect x="0" y="0" width="48" height="32"/>
-                  </clipPath>
+                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: "#01A550", stopOpacity: 1 }} />
+                    <stop offset="50%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#015C2B", stopOpacity: 1 }} />
+                  </linearGradient>
+                  <filter id="shadow">
+                    <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.3"/>
+                  </filter>
+                  <radialGradient id="starGlow" cx="50%" cy="50%">
+                    <stop offset="0%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 0.9 }} />
+                  </radialGradient>
                 </defs>
-                {/* Green background */}
-                <rect x="0" y="0" width="48" height="32" fill="#01411C"/>
-                {/* White stripe */}
-                <rect x="0" y="0" width="12" height="32" fill="#FFFFFF"/>
-                {/* Crescent */}
-                <circle cx="28" cy="16" r="7" fill="#FFFFFF"/>
-                <circle cx="30" cy="16" r="6" fill="#01411C"/>
-                {/* Star */}
-                <g transform="translate(34, 16)">
-                  <polygon points="0,-5 1.5,-1.5 5.5,-1.5 2.5,1 3.5,5 0,2.5 -3.5,5 -2.5,1 -5.5,-1.5 -1.5,-1.5" fill="#FFFFFF"/>
+                
+                {/* Green background with gradient */}
+                <rect x="0" y="0" width="52" height="36" fill="url(#greenGradient)"/>
+                
+                {/* White stripe with subtle gradient */}
+                <rect x="0" y="0" width="13" height="36" fill="#FFFFFF"/>
+                <rect x="0" y="0" width="13" height="36" fill="url(#greenGradient)" opacity="0.05"/>
+                
+                {/* Crescent with glow */}
+                <g filter="url(#shadow)">
+                  <circle cx="30" cy="18" r="8" fill="#FFFFFF"/>
+                  <circle cx="32.5" cy="18" r="7" fill="url(#greenGradient)"/>
                 </g>
-                {/* Wave effect overlay */}
-                <g opacity="0.15">
-                  <path d="M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z" fill="#000000">
+                
+                {/* Star with glow */}
+                <g transform="translate(39, 18)" filter="url(#shadow)">
+                  <polygon points="0,-6 1.8,-1.8 6.5,-1.8 3,-0.5 4,5 0,2.5 -4,5 -3,-0.5 -6.5,-1.8 -1.8,-1.8" 
+                           fill="url(#starGlow)" 
+                           stroke="#E8E8E8" 
+                           strokeWidth="0.3"/>
+                </g>
+                
+                {/* Animated wave overlay */}
+                <g opacity="0.2">
+                  <path fill="#FFFFFF">
                     <animate attributeName="d" 
-                      values="M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z;
-                              M 12 0 Q 18 -4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z;
-                              M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z"
-                      dur="1.5s" 
+                      values="M 13 0 Q 20 3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z;
+                              M 13 0 Q 20 -3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z;
+                              M 13 0 Q 20 3 26 0 T 39 0 T 52 0 L 52 36 L 13 36 Z"
+                      dur="2s" 
                       repeatCount="indefinite"/>
                   </path>
                 </g>
+                
+                {/* Shimmer effect */}
+                <rect x="0" y="0" width="52" height="36" fill="url(#greenGradient)" opacity="0.1">
+                  <animate attributeName="opacity" 
+                    values="0.05;0.15;0.05" 
+                    dur="3s" 
+                    repeatCount="indefinite"/>
+                </rect>
               </svg>
             </div>
             
@@ -545,29 +573,38 @@ export default function App() {
           </div>
         </header>
 
-        {/* NEWS TICKER - ALIGNED WITH HEADER */}
-        <div style={{ background: NAVY_MID, padding: "5px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px" }}>
-          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12 }}>⚖ LEGAL NEWS</span>
+        {/* NEWS TICKER - PERFECTLY ALIGNED, ALWAYS SCROLLING */}
+        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px" }}>
+          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 180s linear infinite", width: "max-content" }}>
+            <div style={{ 
+              display: "flex", 
+              gap: "50px", 
+              whiteSpace: "nowrap", 
+              animation: "scroll 180s linear infinite", 
+              animationDelay: "-90s",
+              width: "max-content" 
+            }}>
               {newsItems.length > 0 ? (
                 <>
-                  {newsItems.concat(newsItems).concat(newsItems).concat(newsItems).map((item, i) => (
-                    <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none" }}>
+                  {newsItems.concat(newsItems).concat(newsItems).concat(newsItems).concat(newsItems).map((item, i) => (
+                    <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none", whiteSpace: "nowrap" }}>
                       {item}
                     </button>
                   ))}
                 </>
               ) : (
                 <>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 New Tax Amendment Affects Business Sector</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Family Court Interprets Guardianship Laws</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 High Court Decision on Property Disputes</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Procedural Changes in Criminal Courts</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 New Tax Amendment Affects Business Sector</div>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 New Tax Amendment Affects Business Sector</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Family Court Interprets Guardianship Laws</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 High Court Decision on Property Disputes</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Procedural Changes in Criminal Courts</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 New Tax Amendment Affects Business Sector</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Family Court Interprets Guardianship Laws</span>
+                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</span>
                 </>
               )}
             </div>
