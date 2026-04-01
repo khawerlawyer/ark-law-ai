@@ -176,16 +176,9 @@ export default function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-send greeting
+  // Auto-send greeting - REMOVED (users can start chatting directly)
   useEffect(() => {
-    if (messages.length === 0 && !nameAsked) {
-      setNameAsked(true);
-      const greeting = {
-        role: "assistant",
-        content: "السلام علیکم! Welcome to ARK Law AI. Before we begin, may I know your name?",
-      };
-      setMessages([greeting]);
-    }
+    // No auto-greeting - let users start naturally
   }, []);
 
   // Scroll to bottom
@@ -247,17 +240,11 @@ export default function App() {
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
-    // Name collection
-    if (!nameAsked) {
-      setName(userMessage);
+    // Ask for name only on very first message, then proceed with answer
+    if (!nameAsked && messages.length === 0) {
       setNameAsked(true);
-      const response = {
-        role: "assistant",
-        content: `Wonderful to meet you, ${userMessage}! 🙏 Now, how can ARK Law AI assist you with Pakistani legal matters today?`,
-      };
-      setMessages([...updatedMessages, response]);
-      setInput("");
-      return;
+      setName(userMessage.split(' ')[0]); // Use first word as name
+      // Don't return - continue to get the answer
     }
 
     setMessages(updatedMessages);
@@ -1000,6 +987,32 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
             )}
             <UserButton />
+            
+            {/* Contact Email */}
+            <a href="mailto:contact@arklaw.ai" style={{ 
+              fontSize: 11, 
+              color: ACCENT_PK, 
+              textDecoration: "none", 
+              padding: "6px 12px", 
+              background: NAVY_SURFACE, 
+              border: `1px solid ${ACCENT_PK}`, 
+              borderRadius: "4px",
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = ACCENT_PK;
+              e.currentTarget.style.color = NAVY;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = NAVY_SURFACE;
+              e.currentTarget.style.color = ACCENT_PK;
+            }}
+            >
+              📧 contact@arklaw.ai
+            </a>
           </div>
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
