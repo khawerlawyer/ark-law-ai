@@ -55,7 +55,68 @@ export default function App() {
     { id: "constitution", label: "Constitutional Law", icon: "📜" },
   ];
 
-  const QUICK_QUERIES_PK = [
+  const CONDUCT_PK = [
+    { 
+      text: "Maintain integrity and honesty in all professional dealings", 
+      source: "https://www.pbc.org.pk/rules-and-regulations",
+      title: "Professional Integrity - Pakistan Bar Council"
+    },
+    { 
+      text: "Provide competent and ethical legal counsel", 
+      source: "https://www.pbc.org.pk/code-of-conduct",
+      title: "Competence & Ethics - Legal Practitioners Act"
+    },
+    { 
+      text: "Protect client confidentiality and privilege", 
+      source: "https://www.pbc.org.pk/rules-and-regulations",
+      title: "Confidentiality Rules - Bar Council"
+    },
+    { 
+      text: "Avoid conflicts of interest", 
+      source: "https://www.pbc.org.pk/code-of-conduct",
+      title: "Conflict of Interest - Professional Standards"
+    },
+    { 
+      text: "Charge fair and reasonable fees", 
+      source: "https://www.pbc.org.pk/rules-and-regulations",
+      title: "Fee Guidelines - Pakistan Bar Council"
+    },
+    { 
+      text: "Respect the rule of law and Constitution", 
+      source: "https://www.supremecourt.gov.pk/",
+      title: "Constitutional Obligations - Supreme Court"
+    },
+    { 
+      text: "Promote access to justice for all", 
+      source: "https://www.pbc.org.pk/",
+      title: "Access to Justice - Bar Council Mission"
+    },
+    { 
+      text: "Continue professional development and training", 
+      source: "https://www.pbc.org.pk/",
+      title: "CPD Requirements - Pakistan Bar Council"
+    },
+    { 
+      text: "Treat opposing counsel with respect and courtesy", 
+      source: "https://www.pbc.org.pk/code-of-conduct",
+      title: "Professional Courtesy - Code of Conduct"
+    },
+    { 
+      text: "Disclose material facts and evidence", 
+      source: "https://www.pbc.org.pk/rules-and-regulations",
+      title: "Disclosure Obligations - Bar Rules"
+    },
+    { 
+      text: "Never mislead courts or clients", 
+      source: "https://www.pbc.org.pk/code-of-conduct",
+      title: "Truthfulness Standards - Professional Ethics"
+    },
+    { 
+      text: "Uphold the honour and dignity of the profession", 
+      source: "https://www.pbc.org.pk/",
+      title: "Professional Honor - Pakistan Bar Council"
+    },
+  ];
     "What are my rights as a tenant in Pakistan?",
     "How do I file an FIR in Pakistan?",
     "What is the procedure for divorce in Pakistan?",
@@ -611,6 +672,160 @@ By Attorney & AI Innovator Khawer Rabbani
     setTimeout(() => printWindow.print(), 500);
   };
 
+  const openConductSource = (conduct) => {
+    const newWindow = window.open("", "_blank", "width=900,height=700");
+    newWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${conduct.title} - ARK Law AI</title>
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #F5F1E8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+          }
+          .header {
+            background: #0D1B2A;
+            padding: 20px;
+            border-bottom: 3px solid #C9A84C;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+          }
+          .header h1 {
+            color: #C9A84C;
+            margin: 0;
+            font-size: 20px;
+          }
+          .header .subtitle {
+            color: #3EB489;
+            font-size: 11px;
+            margin-top: 3px;
+          }
+          .toolbar {
+            background: #162032;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2B3F57;
+            display: flex;
+            gap: 10px;
+          }
+          .toolbar button {
+            padding: 8px 16px;
+            background: #C9A84C;
+            color: #0D1B2A;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+          }
+          .toolbar button:hover {
+            background: #E5C887;
+          }
+          .content {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          .conduct-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 5px solid #C9A84C;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+          }
+          .conduct-box h2 {
+            color: #0D1B2A;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #3EB489;
+            padding-bottom: 10px;
+          }
+          .conduct-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+          }
+          .source-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 3px solid #3EB489;
+            margin-top: 20px;
+          }
+          .source-info strong {
+            color: #0D1B2A;
+          }
+          iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #2B3F57;
+            border-radius: 4px;
+            margin-top: 20px;
+          }
+          .footer {
+            background: #0D1B2A;
+            color: #C9A84C;
+            text-align: center;
+            padding: 15px;
+            font-size: 10px;
+            border-top: 2px solid #C9A84C;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="header-left">
+            <img src="/ark-logo.png" alt="ARK" width="40" height="40" />
+            <div>
+              <h1>ARK Law AI</h1>
+              <div class="subtitle">Code of Conduct for Attorneys in Pakistan</div>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button onclick="window.print()">🖨️ Print</button>
+          <button onclick="window.close()">✕ Close</button>
+        </div>
+        <div class="content">
+          <div class="conduct-box">
+            <h2>${conduct.title}</h2>
+            <div class="conduct-text">
+              <strong>Code of Conduct Point:</strong><br/>
+              ${conduct.text}
+            </div>
+            <div class="source-info">
+              <strong>📚 Source:</strong> ${conduct.title}<br/>
+              <strong>🔗 Reference:</strong> Pakistan Bar Council<br/>
+              <strong>📖 More Information:</strong> <a href="${conduct.source}" target="_blank" style="color: #3EB489;">${conduct.source}</a>
+            </div>
+          </div>
+          
+          <div class="conduct-box">
+            <h2>📄 Official Source Document</h2>
+            <iframe src="${conduct.source}" frameborder="0"></iframe>
+          </div>
+        </div>
+        <div class="footer">
+          This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of<br/>
+          Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan
+        </div>
+      </body>
+      </html>
+    `);
+  };
+
   const openLinkInNewWindow = (url) => {
     const newWindow = window.open("", "_blank", "width=900,height=700");
     newWindow.document.write(`
@@ -903,28 +1118,61 @@ By Attorney & AI Innovator Khawer Rabbani
               animationDelay: "-180s",
               width: "max-content" 
             }}>
-              {newsItems.length > 0 ? (
-                <>
-                  {newsItems.concat(newsItems).concat(newsItems).concat(newsItems).concat(newsItems).map((item, i) => (
-                    <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none", whiteSpace: "nowrap" }}>
-                      {item}
-                    </button>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 New Tax Amendment Affects Business Sector</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Family Court Interprets Guardianship Laws</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 High Court Decision on Property Disputes</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Procedural Changes in Criminal Courts</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 New Tax Amendment Affects Business Sector</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Family Court Interprets Guardianship Laws</span>
-                  <span style={{ color: ACCENT_PK, fontSize: 12, flexShrink: 0 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</span>
-                </>
-              )}
+              {/* Always show news - with enough duplicates to never have gaps */}
+              {(newsItems.length > 0 ? newsItems : [
+                "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                "🇵🇰 New Tax Amendment Affects Business Sector",
+                "🇵🇰 Family Court Interprets Guardianship Laws",
+                "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                "🇵🇰 High Court Decision on Property Disputes",
+                "🇵🇰 Procedural Changes in Criminal Courts"
+              ]).concat(
+                newsItems.length > 0 ? newsItems : [
+                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                  "🇵🇰 New Tax Amendment Affects Business Sector",
+                  "🇵🇰 Family Court Interprets Guardianship Laws",
+                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                  "🇵🇰 High Court Decision on Property Disputes",
+                  "🇵🇰 Procedural Changes in Criminal Courts"
+                ]
+              ).concat(
+                newsItems.length > 0 ? newsItems : [
+                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                  "🇵🇰 New Tax Amendment Affects Business Sector",
+                  "🇵🇰 Family Court Interprets Guardianship Laws",
+                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                  "🇵🇰 High Court Decision on Property Disputes",
+                  "🇵🇰 Procedural Changes in Criminal Courts"
+                ]
+              ).concat(
+                newsItems.length > 0 ? newsItems : [
+                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                  "🇵🇰 New Tax Amendment Affects Business Sector",
+                  "🇵🇰 Family Court Interprets Guardianship Laws",
+                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                  "🇵🇰 High Court Decision on Property Disputes",
+                  "🇵🇰 Procedural Changes in Criminal Courts"
+                ]
+              ).map((item, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
+                  style={{ 
+                    background: "none", 
+                    border: "none", 
+                    color: ACCENT_PK, 
+                    cursor: newsItems.length > 0 ? "pointer" : "default", 
+                    fontSize: 12, 
+                    padding: "0", 
+                    flexShrink: 0, 
+                    fontWeight: 500, 
+                    textDecoration: "none", 
+                    whiteSpace: "nowrap" 
+                  }}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -953,10 +1201,38 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
               <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct Points for Attorneys in Pakistan</div>
               <div style={{ overflow: "hidden", height: "calc(100% - 180px)", width: "100%", position: "relative" }}>
-                <div className="conduct-ticker" style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.7", width: "100%", paddingRight: "10px" }}>
+                <div className="conduct-ticker" style={{ fontSize: 10, lineHeight: "1.7", width: "100%", paddingRight: "5px" }}>
                   {CONDUCT_PK.concat(CONDUCT_PK).concat(CONDUCT_PK).map((conduct, i) => (
-                    <div key={i} style={{ marginBottom: "12px", paddingLeft: "8px", borderLeft: `2px solid ${ACCENT_PK}`, whiteSpace: "normal" }}>
-                      • {conduct}
+                    <div 
+                      key={i} 
+                      onClick={() => openConductSource(conduct)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`;
+                        e.currentTarget.style.borderLeftColor = GOLD;
+                        e.currentTarget.style.color = GOLD;
+                        e.currentTarget.style.transform = "translateX(3px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.borderLeftColor = ACCENT_PK;
+                        e.currentTarget.style.color = TEXT_MUTED;
+                        e.currentTarget.style.transform = "translateX(0)";
+                      }}
+                      style={{ 
+                        marginBottom: "8px", 
+                        padding: "8px 8px 8px 8px", 
+                        borderLeft: `3px solid ${ACCENT_PK}`, 
+                        whiteSpace: "normal",
+                        cursor: "pointer",
+                        borderRadius: "4px",
+                        transition: "all 0.3s ease",
+                        color: TEXT_MUTED,
+                        fontSize: "9px",
+                        lineHeight: "1.5"
+                      }}
+                      title="Click to view source"
+                    >
+                      📋 {conduct.text}
                     </div>
                   ))}
                 </div>
