@@ -359,11 +359,11 @@ export default function App() {
         </header>
 
         {/* NEWS TICKER */}
-        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", whiteSpace: "nowrap" }}>
-          <span style={{ color: GOLD, fontWeight: 600, marginRight: "20px" }}>⚖ LEGAL NEWS</span>
-          <div style={{ display: "inline-flex", gap: "30px", width: "max-content" }} className="ticker">
+        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", whiteSpace: "nowrap", display: "flex", alignItems: "center" }}>
+          <span style={{ color: GOLD, fontWeight: 600, marginRight: "20px", flexShrink: 0 }}>⚖ LEGAL NEWS</span>
+          <div style={{ display: "inline-flex", gap: "30px", width: "max-content", animation: "tickerScrollH 480s linear infinite" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
             {newsItems.concat(newsItems).map((item, i) => (
-              <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: item.includes("🇵🇰") ? ACCENT_PK : TEXT_SECONDARY, cursor: "pointer", fontSize: 12, whiteSpace: "nowrap", padding: "0" }}>
+              <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: item.includes("🇵🇰") ? ACCENT_PK : TEXT_SECONDARY, cursor: "pointer", fontSize: 12, whiteSpace: "nowrap", padding: "0", flexShrink: 0 }}>
                 {item}
               </button>
             ))}
