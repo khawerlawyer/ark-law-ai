@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
-import { UserButton, SignUpButton, useUser } from "@clerk/nextjs";
+import { UserButton, SignUpButton, SignInButton, useUser } from "@clerk/nextjs";
 
 const GOLD = "#C9A84C";
 const NAVY = "#0D1B2A";
@@ -952,15 +952,32 @@ By Attorney & AI Innovator Khawer Rabbani
             </div>
           </div>
 
-          {/* CENTER - OPEN FOR ALL BANNER */}
+          {/* CENTER - USER INFO & BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {/* Show user name if logged in */}
+            {user && (
+              <div style={{ 
+                padding: "6px 15px", 
+                background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
+                color: NAVY, 
+                border: `2px solid ${ACCENT_PK}`, 
+                borderRadius: "4px", 
+                fontSize: 12, 
+                fontWeight: 700, 
+                whiteSpace: "nowrap"
+              }}>
+                👤 {user.firstName || user.fullName || "User"}
+              </div>
+            )}
+            
+            {/* Open for All Banner */}
             <div style={{ 
-              padding: "5px 15px", 
+              padding: "6px 20px", 
               background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
               color: NAVY, 
               border: `2px solid ${GOLD}`, 
               borderRadius: "4px", 
-              fontSize: 11, 
+              fontSize: 13, 
               fontWeight: 700, 
               boxShadow: `0 0 15px rgba(201,168,76,0.5)`,
               animation: "glow 2s ease-in-out infinite",
@@ -968,9 +985,8 @@ By Attorney & AI Innovator Khawer Rabbani
               letterSpacing: "0.3px",
               whiteSpace: "nowrap"
             }}>
-              ✨ Open for All! Utilize and Get Benefit ✨
+              ✨ Open for All! ✨
             </div>
-            <UserButton />
             
             {/* Contact Email */}
             <a href="mailto:contact@arklaw.ai" style={{ 
@@ -993,6 +1009,52 @@ By Attorney & AI Innovator Khawer Rabbani
               <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
               📧 contact@arklaw.ai
             </a>
+            
+            {/* Auth Buttons */}
+            {!user ? (
+              <>
+                <SignInButton mode="modal">
+                  <button style={{ 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}>
+                    Login
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button style={{ 
+                    padding: "6px 16px", 
+                    background: ACCENT_PK, 
+                    color: NAVY, 
+                    border: `2px solid ${ACCENT_PK}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}>
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </>
+            ) : (
+              <UserButton 
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "w-8 h-8",
+                    userButtonPopoverCard: "bg-navy",
+                  }
+                }}
+              />
+            )}
           </div>
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
@@ -1180,7 +1242,7 @@ By Attorney & AI Innovator Khawer Rabbani
                   <div style={{ fontSize: 6, color: ACCENT_PK, marginTop: "2px", fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
                 </div>
               </div>
-              <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct Points for Attorneys in Pakistan</div>
+              <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct</div>
               <div style={{ overflow: "hidden", height: "calc(100% - 230px)", width: "100%", position: "relative" }}>
                 <div className="conduct-ticker" style={{ fontSize: 10, lineHeight: "1.7", width: "100%", paddingRight: "5px" }}>
                   {CONDUCT_PK.concat(CONDUCT_PK).concat(CONDUCT_PK).map((conduct, i) => (
@@ -1289,27 +1351,26 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* RIGHT SIDEBAR - Practice Areas & Tools */}
           {!isMobile && (
             <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
-              {/* VERSION CARD */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}15, ${ACCENT_PK}15)`, borderRadius: "6px", border: `1px solid ${GOLD}`, textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: GOLD, marginBottom: "4px" }}>ARK Law AI</div>
-                <div style={{ fontSize: 10, color: ACCENT_PK, fontWeight: 600 }}>Free Version</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: "4px" }}>Pakistan Legal Edition</div>
-                <div style={{ fontSize: 8, color: TEXT_SECONDARY, marginTop: "2px" }}>AI-Powered Legal Assistant</div>
-                <div style={{ fontSize: 8, color: ACCENT_PK, marginTop: "4px" }}>
-                  by Attorney & AI Innovator{" "}
-                  <span 
-                    onClick={() => setShowLinkedInPopup(true)}
-                    style={{ 
-                      cursor: "pointer", 
-                      textDecoration: "underline",
-                      fontWeight: 600
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                    onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
+              
+              {/* QUICK QUERIES - MOVED TO TOP */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
+                {QUICK_QUERIES_PK.map((query, i) => (
+                  <button key={i} onClick={() => sendMessage(query)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = `${GOLD}15`;
+                    e.currentTarget.style.borderColor = GOLD;
+                    e.currentTarget.style.color = TEXT_PRIMARY;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = NAVY;
+                    e.currentTarget.style.borderColor = NAVY_BORDER;
+                    e.currentTarget.style.color = TEXT_SECONDARY;
+                  }}
                   >
-                    Khawer Rabbani
-                  </span>
-                </div>
+                    {query}
+                  </button>
+                ))}
               </div>
 
               {/* Document Drafting */}
@@ -1352,16 +1413,6 @@ By Attorney & AI Innovator Khawer Rabbani
                 {PRACTICE_AREAS_PK.map((area) => (
                   <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 10, textAlign: "left" }}>
                     {area.icon} {area.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Quick Queries */}
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>💬 QUICK QUERIES</div>
-                {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.3" }}>
-                    {query}
                   </button>
                 ))}
               </div>
