@@ -8,7 +8,6 @@ const NAVY_MID = "#162032";
 const NAVY_SURFACE = "#1E2D40";
 const NAVY_BORDER = "#2B3F57";
 const ACCENT_PK = "#3EB489";
-const NAVY_HEADER = "#1E3A5F";
 const TEXT_PRIMARY = "#FAF6EE";
 const TEXT_SECONDARY = "#B8C4D0";
 const TEXT_MUTED = "#6E8099";
@@ -301,6 +300,12 @@ export default function App() {
         }
         .ticker { animation: tickerScrollH 480s linear infinite; }
         .ticker:hover { animation-play-state: paused; }
+        @keyframes conductScroll {
+          0% { transform: translateY(100%); }
+          100% { transform: translateY(-100%); }
+        }
+        .conduct-ticker { animation: conductScroll 30s linear infinite; }
+        .conduct-ticker:hover { animation-play-state: paused; }
         @media (max-width: 768px) {
           .desktop-only { display: none; }
         }
@@ -308,7 +313,7 @@ export default function App() {
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif" }}>
         {/* HEADER */}
-        <header style={{ background: NAVY_HEADER, padding: "10px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <header style={{ background: NAVY, padding: "10px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img src="/favicon.svg" alt="ARK" style={{ width: "54px", height: "54px" }} />
             <div>
@@ -357,18 +362,20 @@ export default function App() {
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
           {/* LEFT SIDEBAR - Code of Conduct */}
           {!isMobile && (
-            <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto" }}>
+            <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "hidden", display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{ textAlign: "center", marginBottom: "15px" }}>
                 <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
                 <div style={{ fontSize: 10, color: ACCENT_PK, fontWeight: 600, marginTop: "5px" }}>FOUNDER OF PAKISTAN</div>
                 <div style={{ fontSize: 9, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
               </div>
-              <div style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.4" }}>
-                {CONDUCT_PK.map((conduct, i) => (
-                  <div key={i} style={{ marginBottom: "8px", paddingLeft: "8px", borderLeft: `2px solid ${ACCENT_PK}` }}>
-                    • {conduct}
-                  </div>
-                ))}
+              <div style={{ overflow: "hidden", height: "500px", width: "100%", position: "relative" }}>
+                <div className="conduct-ticker" style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.6", width: "100%" }}>
+                  {CONDUCT_PK.concat(CONDUCT_PK).map((conduct, i) => (
+                    <div key={i} style={{ marginBottom: "12px", paddingLeft: "8px", borderLeft: `2px solid ${ACCENT_PK}`, whiteSpace: "normal" }}>
+                      • {conduct}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -377,13 +384,21 @@ export default function App() {
           <div style={{ flex: 1, display: "flex", flexDirection: "column", background: NAVY_MID }}>
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
               {messages.map((msg, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
+                  {msg.role === "assistant" && (
+                    <img src="/khawer.jpeg" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  )}
                   <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : NAVY_SURFACE, color: msg.role === "user" ? NAVY : TEXT_PRIMARY, fontSize: 13, lineHeight: "1.4" }}>
                     {msg.content}
                   </div>
                 </div>
               ))}
-              {loading && <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>}
+              {loading && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <img src="/khawer.jpeg" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
@@ -498,7 +513,7 @@ export default function App() {
       {showNewsPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "80vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
-            <div style={{ background: NAVY_HEADER, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
               <h3 style={{ color: GOLD, margin: 0 }}>Legal News Analysis</h3>
               <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
                 ✕
@@ -520,7 +535,7 @@ export default function App() {
       {showDraftPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
-            <div style={{ background: NAVY_HEADER, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
               <h3 style={{ color: GOLD, margin: 0 }}>✍️ Legal Document Drafting</h3>
               <button onClick={() => setShowDraftPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
                 ✕
