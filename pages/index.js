@@ -155,7 +155,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law. How may I assist you today?",
+      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nBefore we begin, may I know your name?",
     };
     setMessages([greeting]);
   }, []); // Only run once on mount
@@ -212,6 +212,19 @@ export default function App() {
     if (!userMessage.trim()) return;
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
+
+    // Check if this is the name response (first user message after greeting)
+    if (!nameAsked && messages.length === 1) {
+      setNameAsked(true);
+      setName(userMessage);
+      const greetingResponse = {
+        role: "assistant",
+        content: `Wonderful to meet you, ${userMessage}! 🙏\n\nNow, how can I assist you with Pakistani legal matters today?`,
+      };
+      setMessages([...updatedMessages, greetingResponse]);
+      setInput("");
+      return;
+    }
 
     setMessages(updatedMessages);
     setInput("");
