@@ -302,7 +302,10 @@ export default function App() {
           0% { transform: translateY(0%); }
           100% { transform: translateY(-100%); }
         }
-        .conduct-ticker { animation: conductScroll 15s linear infinite; }
+        .conduct-ticker { 
+          animation: conductScroll 45s linear infinite;
+          will-change: transform;
+        }
         .conduct-ticker:hover { animation-play-state: paused; }
         @media (max-width: 768px) {
           .desktop-only { display: none; }
@@ -357,25 +360,27 @@ export default function App() {
         </header>
 
         {/* NEWS TICKER */}
-        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", gap: "20px", height: "40px" }}>
-          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0 }}>⚖ LEGAL NEWS</span>
-          <div style={{ display: "flex", gap: "40px", animation: "scroll 60s linear infinite", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
-            {newsItems.length > 0 ? (
-              <>
-                {newsItems.map((item, i) => (
-                  <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500 }}>
-                    {item}
-                  </button>
-                ))}
-                {newsItems.map((item, i) => (
-                  <button key={`dup-${i}`} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500 }}>
-                    {item}
-                  </button>
-                ))}
-              </>
-            ) : (
-              <div style={{ color: TEXT_MUTED, fontSize: 12 }}>Loading legal news...</div>
-            )}
+        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "40px", width: "100%" }}>
+          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px" }}>⚖ LEGAL NEWS</span>
+          <div style={{ flex: 1, overflow: "hidden" }}>
+            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 80s linear infinite", width: "fit-content" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
+              {newsItems.length > 0 ? (
+                <>
+                  {newsItems.map((item, i) => (
+                    <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "underline" }}>
+                      {item}
+                    </button>
+                  ))}
+                  {newsItems.map((item, i) => (
+                    <button key={`dup-${i}`} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "underline" }}>
+                      {item}
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <div style={{ color: TEXT_MUTED, fontSize: 12 }}>Loading legal news...</div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -384,15 +389,16 @@ export default function App() {
           {/* LEFT SIDEBAR - Code of Conduct */}
           {!isMobile && (
             <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "hidden", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <div style={{ textAlign: "center", marginBottom: "15px" }}>
+              <div style={{ textAlign: "center", marginBottom: "10px" }}>
                 <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
                 <div style={{ fontSize: 10, color: ACCENT_PK, fontWeight: 600, marginTop: "5px" }}>FOUNDER OF PAKISTAN</div>
                 <div style={{ fontSize: 9, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
               </div>
-              <div style={{ overflow: "hidden", height: "500px", width: "100%", position: "relative" }}>
-                <div className="conduct-ticker" style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.6", width: "100%" }}>
+              <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct Points for Attorneys in Pakistan</div>
+              <div style={{ overflow: "hidden", height: "calc(100% - 140px)", width: "100%", position: "relative" }}>
+                <div className="conduct-ticker" style={{ fontSize: 9, color: TEXT_MUTED, lineHeight: "1.6", width: "100%", paddingRight: "10px" }}>
                   {CONDUCT_PK.concat(CONDUCT_PK).map((conduct, i) => (
-                    <div key={i} style={{ marginBottom: "12px", paddingLeft: "8px", borderLeft: `2px solid ${ACCENT_PK}`, whiteSpace: "normal" }}>
+                    <div key={i} style={{ marginBottom: "10px", paddingLeft: "8px", borderLeft: `2px solid ${ACCENT_PK}`, whiteSpace: "normal" }}>
                       • {conduct}
                     </div>
                   ))}
@@ -532,21 +538,44 @@ export default function App() {
 
       {/* NEWS POPUP */}
       {showNewsPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "80vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
-            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
-              <h3 style={{ color: GOLD, margin: 0 }}>Legal News Analysis</h3>
-              <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "650px", maxHeight: "80vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.2)` }}>
+            {/* POPUP HEADER */}
+            <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/favicon.svg" alt="ARK" style={{ width: "40px", height: "40px" }} />
+                <div>
+                  <div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div>
+                </div>
+              </div>
+              <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", padding: "0", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 ✕
               </button>
             </div>
-            <div style={{ padding: "20px" }}>
-              <p style={{ color: ACCENT_PK, fontSize: 14, fontWeight: 600, marginBottom: "15px" }}>{selectedNews}</p>
+
+            {/* POPUP CONTENT */}
+            <div style={{ padding: "25px" }}>
+              <p style={{ color: GOLD, fontSize: 14, fontWeight: 600, marginBottom: "15px", lineHeight: "1.6", borderLeft: `3px solid ${ACCENT_PK}`, paddingLeft: "12px" }}>
+                {selectedNews}
+              </p>
+              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
               {newsLoading ? (
-                <p style={{ color: TEXT_MUTED }}>Analyzing news...</p>
+                <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>
+                  ⏳ Analyzing legal significance...
+                </div>
               ) : (
-                <div style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{newsAnalysis}</div>
+                <div style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
+                  {newsAnalysis}
+                </div>
               )}
+            </div>
+
+            {/* POPUP FOOTER */}
+            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={() => setShowNewsPopup(false)} style={{ padding: "10px 24px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                CLOSE
+              </button>
             </div>
           </div>
         </div>
