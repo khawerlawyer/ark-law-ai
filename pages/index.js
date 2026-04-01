@@ -348,7 +348,8 @@ export default function App() {
             <img src="/favicon.svg" alt="ARK" style={{ width: "54px", height: "54px" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: TEXT_MUTED }}>Pakistan Legal Intelligence Engine by Khawer Rabbani</div>
+              <div style={{ fontSize: 11, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: ACCENT_PK }}>by Attorney & AI Innovator Khawer Rabbani</div>
             </div>
           </div>
 
