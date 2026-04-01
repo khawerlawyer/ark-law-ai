@@ -1,11 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic();
-
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { messages, userId, trialDaysLeft } = req.body;
+  const { messages, userId } = req.body;
 
   // Check guest session
   const guestStartCookie = req.cookies.ark_guest_start;
@@ -26,21 +22,32 @@ export default async function handler(req, res) {
   try {
     const systemPrompt = buildSystemPrompt();
 
-    const response = await client.messages.create({
-      model: "claude-opus-4-1",
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: messages.map((m) => ({
-        role: m.role,
-        content: m.content,
-      })),
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-opus-4-1",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      }),
     });
 
-    const assistantMessage = response.content[0]?.text || "Unable to generate response";
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || "API request failed");
+    }
+
+    const data = await response.json();
+    const assistantMessage = data.content[0]?.text || "Unable to generate response";
 
     return res.status(200).json({
       reply: assistantMessage,
-      trialDaysLeft: trialDaysLeft,
     });
   } catch (error) {
     console.error("API Error:", error);
