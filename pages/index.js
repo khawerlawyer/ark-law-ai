@@ -209,13 +209,6 @@ export default function App() {
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
-    // Ask for name only on very first message, then proceed with answer
-    if (!nameAsked && messages.length === 0) {
-      setNameAsked(true);
-      setName(userMessage.split(' ')[0]); // Use first word as name
-      // Don't return - continue to get the answer
-    }
-
     setMessages(updatedMessages);
     setInput("");
     setLoading(true);
@@ -913,9 +906,9 @@ By Attorney & AI Innovator Khawer Rabbani
         }
       `}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
         {/* HEADER */}
-        <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
@@ -929,19 +922,20 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* CENTER - OPEN FOR ALL BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             <div style={{ 
-              padding: "10px 30px", 
+              padding: "5px 15px", 
               background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
               color: NAVY, 
-              border: `3px solid ${GOLD}`, 
-              borderRadius: "8px", 
-              fontSize: 16, 
+              border: `2px solid ${GOLD}`, 
+              borderRadius: "4px", 
+              fontSize: 11, 
               fontWeight: 700, 
-              boxShadow: `0 0 20px rgba(201,168,76,0.6)`,
+              boxShadow: `0 0 15px rgba(201,168,76,0.5)`,
               animation: "glow 2s ease-in-out infinite",
               textAlign: "center",
-              letterSpacing: "0.5px"
+              letterSpacing: "0.3px",
+              whiteSpace: "nowrap"
             }}>
-              ✨ Open for All Right Now! Utilize and Get Benefit ✨
+              ✨ Open for All! Utilize and Get Benefit ✨
             </div>
             <UserButton />
             
@@ -1060,7 +1054,7 @@ By Attorney & AI Innovator Khawer Rabbani
         </header>
 
         {/* NEWS TICKER - CONTINUOUS INFINITE LOOP */}
-        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px" }}>
+        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div className="news-ticker-wrapper">
@@ -1236,7 +1230,7 @@ By Attorney & AI Innovator Khawer Rabbani
               {/* VERSION CARD */}
               <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}15, ${ACCENT_PK}15)`, borderRadius: "6px", border: `1px solid ${GOLD}`, textAlign: "center" }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: GOLD, marginBottom: "4px" }}>ARK Law AI</div>
-                <div style={{ fontSize: 10, color: ACCENT_PK, fontWeight: 600 }}>Version 2.0</div>
+                <div style={{ fontSize: 10, color: ACCENT_PK, fontWeight: 600 }}>Free Version</div>
                 <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: "4px" }}>Pakistan Legal Edition</div>
                 <div style={{ fontSize: 8, color: TEXT_SECONDARY, marginTop: "2px" }}>AI-Powered Legal Assistant</div>
                 <div style={{ fontSize: 8, color: ACCENT_PK, marginTop: "4px" }}>
