@@ -6,6 +6,7 @@ const GOLD = "#C9A84C";
 const NAVY = "#0D1B2A";
 const NAVY_MID = "#162032";
 const NAVY_SURFACE = "#1E2D40";
+const NAVY_BORDER = "#2B3F57";
 const ACCENT_PK = "#3EB489";
 const NAVY_HEADER = "#1E3A5F";
 const TEXT_PRIMARY = "#FAF6EE";
