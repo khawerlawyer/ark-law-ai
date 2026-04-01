@@ -23,8 +23,6 @@ export default function App() {
   const [nameAsked, setNameAsked] = useState(false);
   const [sidebarOpen, setOpenSidebar] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [guestTime, setGuestTime] = useState(180);
-  const [showCodePopup, setShowCodePopup] = useState(false);
   const [codeInput, setCodeInput] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showNewsPopup, setShowNewsPopup] = useState(false);
@@ -159,16 +157,6 @@ export default function App() {
     }
   }, [user]);
 
-  // Update timer every minute
-  useEffect(() => {
-    if (!user && guestTime > 0) {
-      const timer = setInterval(() => {
-        setGuestTime((prev) => Math.max(0, prev - 1));
-      }, 60000);
-      return () => clearInterval(timer);
-    }
-  }, [user, guestTime]);
-
   // Mobile detection
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -232,12 +220,6 @@ export default function App() {
   const sendMessage = async (msg = null) => {
     const userMessage = msg || input;
     if (!userMessage.trim()) return;
-
-    // Check guest session
-    if (!user && guestTime <= 0) {
-      alert("Your 3-hour free trial has ended. Please sign up for 7-day free trial!");
-      return;
-    }
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
@@ -900,11 +882,7 @@ By Attorney & AI Innovator Khawer Rabbani
         );
       }
       return <span key={index}>{part}</span>;
-    });
   };
-
-  const guestMinutes = Math.floor(guestTime % 60);
-  const guestHours = Math.floor(guestTime / 60);
 
   return (
     <>
@@ -912,7 +890,7 @@ By Attorney & AI Innovator Khawer Rabbani
         <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
         <meta
           name="description"
-          content="ARK Law AI: Expert AI legal assistant for Pakistani law. Free 3-hour trial, 7-day free access."
+          content="ARK Law AI: Expert AI legal assistant for Pakistani law. Open for all - utilize and get benefit."
         />
         <link rel="icon" href="/favicon.svg" />
       </Head>
@@ -952,6 +930,10 @@ By Attorney & AI Innovator Khawer Rabbani
           transform-origin: left center;
           display: inline-block;
         }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
+          50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); }
+        }
         @media (max-width: 768px) {
           .desktop-only { display: none; }
         }
@@ -970,27 +952,23 @@ By Attorney & AI Innovator Khawer Rabbani
             </div>
           </div>
 
-          {/* CENTER - LOGIN & TRIAL BUTTONS */}
+          {/* CENTER - OPEN FOR ALL BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {!user ? (
-              <>
-                <div style={{ fontSize: 12, color: guestTime > 60 ? ACCENT_PK : "#ff6b6b", fontWeight: 600, padding: "6px 12px", border: `2px solid ${GOLD}`, borderRadius: "4px", background: NAVY_SURFACE }}>
-                  ⏱ {guestHours}h {guestMinutes}m free
-                </div>
-                <button onClick={() => setShowCodePopup(true)} style={{ padding: "6px 12px", background: GOLD, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, boxShadow: `0 0 10px rgba(201,168,76,0.3)` }}>
-                  ✨ Need more time?
-                </button>
-                <SignUpButton>
-                  <button style={{ padding: "6px 12px", background: ACCENT_PK, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, boxShadow: `0 0 10px rgba(201,168,76,0.3)` }}>
-                    ⭐ FREE TRIAL
-                  </button>
-                </SignUpButton>
-              </>
-            ) : (
-              <div style={{ fontSize: 12, color: ACCENT_PK, fontWeight: 600 }}>
-                {user.firstName || "User"}
-              </div>
-            )}
+            <div style={{ 
+              padding: "10px 30px", 
+              background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+              color: NAVY, 
+              border: `3px solid ${GOLD}`, 
+              borderRadius: "8px", 
+              fontSize: 16, 
+              fontWeight: 700, 
+              boxShadow: `0 0 20px rgba(201,168,76,0.6)`,
+              animation: "glow 2s ease-in-out infinite",
+              textAlign: "center",
+              letterSpacing: "0.5px"
+            }}>
+              ✨ Open for All Right Now! Utilize and Get Benefit ✨
+            </div>
             <UserButton />
             
             {/* Contact Email */}
