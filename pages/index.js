@@ -117,6 +117,8 @@ export default function App() {
       title: "Professional Honor - Pakistan Bar Council"
     },
   ];
+
+  const QUICK_QUERIES_PK = [
     "What are my rights as a tenant in Pakistan?",
     "How do I file an FIR in Pakistan?",
     "What is the procedure for divorce in Pakistan?",
@@ -125,21 +127,6 @@ export default function App() {
     "How to draft a will in Pakistan?",
     "What is a power of attorney?",
     "Explain contract law in Pakistan",
-  ];
-
-  const CONDUCT_PK = [
-    "Maintain integrity and honesty in all professional dealings",
-    "Provide competent and ethical legal counsel",
-    "Protect client confidentiality and privilege",
-    "Avoid conflicts of interest",
-    "Charge fair and reasonable fees",
-    "Respect the rule of law and Constitution",
-    "Promote access to justice for all",
-    "Continue professional development and training",
-    "Treat opposing counsel with respect and courtesy",
-    "Disclose material facts and evidence",
-    "Never mislead courts or clients",
-    "Uphold the honour and dignity of the profession",
   ];
 
   const DOCUMENT_TYPES = [
