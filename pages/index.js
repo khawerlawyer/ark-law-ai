@@ -294,12 +294,10 @@ export default function App() {
       </Head>
 
       <style>{`
-        @keyframes tickerScrollH {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+        @keyframes scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
-        .ticker { animation: tickerScrollH 480s linear infinite; }
-        .ticker:hover { animation-play-state: paused; }
         @keyframes conductScroll {
           0% { transform: translateY(0%); }
           100% { transform: translateY(-100%); }
@@ -359,14 +357,25 @@ export default function App() {
         </header>
 
         {/* NEWS TICKER */}
-        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", whiteSpace: "nowrap", display: "flex", alignItems: "center" }}>
-          <span style={{ color: GOLD, fontWeight: 600, marginRight: "20px", flexShrink: 0 }}>⚖ LEGAL NEWS</span>
-          <div style={{ display: "inline-flex", gap: "30px", width: "max-content", animation: "tickerScrollH 480s linear infinite" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
-            {newsItems.concat(newsItems).map((item, i) => (
-              <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: item.includes("🇵🇰") ? ACCENT_PK : TEXT_SECONDARY, cursor: "pointer", fontSize: 12, whiteSpace: "nowrap", padding: "0", flexShrink: 0 }}>
-                {item}
-              </button>
-            ))}
+        <div style={{ background: NAVY_MID, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", gap: "20px", height: "40px" }}>
+          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0 }}>⚖ LEGAL NEWS</span>
+          <div style={{ display: "flex", gap: "40px", animation: "scroll 60s linear infinite", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.animationPlayState = "paused"} onMouseLeave={(e) => e.currentTarget.style.animationPlayState = "running"}>
+            {newsItems.length > 0 ? (
+              <>
+                {newsItems.map((item, i) => (
+                  <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500 }}>
+                    {item}
+                  </button>
+                ))}
+                {newsItems.map((item, i) => (
+                  <button key={`dup-${i}`} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500 }}>
+                    {item}
+                  </button>
+                ))}
+              </>
+            ) : (
+              <div style={{ color: TEXT_MUTED, fontSize: 12 }}>Loading legal news...</div>
+            )}
           </div>
         </div>
 
