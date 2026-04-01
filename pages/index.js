@@ -441,8 +441,13 @@ export default function App() {
         }
         @keyframes wave {
           0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(-5deg); }
-          75% { transform: rotate(5deg); }
+          25% { transform: rotate(-8deg); }
+          75% { transform: rotate(8deg); }
+        }
+        @keyframes flagWave {
+          0% { d: path("M 0 0 Q 5 5 10 0 T 20 0 T 30 0 L 30 20 Q 25 15 20 20 T 10 20 T 0 20 Z"); }
+          50% { d: path("M 0 0 Q 5 -5 10 0 T 20 0 T 30 0 L 30 20 Q 25 25 20 20 T 10 20 T 0 20 Z"); }
+          100% { d: path("M 0 0 Q 5 5 10 0 T 20 0 T 30 0 L 30 20 Q 25 15 20 20 T 10 20 T 0 20 Z"); }
         }
         .conduct-ticker { 
           animation: conductScroll 60s linear infinite;
@@ -498,8 +503,38 @@ export default function App() {
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {/* Animated Pakistan Flag */}
-            <div className="pakistan-flag" style={{ fontSize: 28 }}>🇵🇰</div>
+            {/* Animated Pakistan Flag SVG */}
+            <div className="pakistan-flag" style={{ width: "48px", height: "32px" }}>
+              <svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                <defs>
+                  <clipPath id="wave">
+                    <rect x="0" y="0" width="48" height="32"/>
+                  </clipPath>
+                </defs>
+                {/* Green background */}
+                <rect x="0" y="0" width="48" height="32" fill="#01411C"/>
+                {/* White stripe */}
+                <rect x="0" y="0" width="12" height="32" fill="#FFFFFF"/>
+                {/* Crescent */}
+                <circle cx="28" cy="16" r="7" fill="#FFFFFF"/>
+                <circle cx="30" cy="16" r="6" fill="#01411C"/>
+                {/* Star */}
+                <g transform="translate(34, 16)">
+                  <polygon points="0,-5 1.5,-1.5 5.5,-1.5 2.5,1 3.5,5 0,2.5 -3.5,5 -2.5,1 -5.5,-1.5 -1.5,-1.5" fill="#FFFFFF"/>
+                </g>
+                {/* Wave effect overlay */}
+                <g opacity="0.15">
+                  <path d="M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z" fill="#000000">
+                    <animate attributeName="d" 
+                      values="M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z;
+                              M 12 0 Q 18 -4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z;
+                              M 12 0 Q 18 4 24 0 T 36 0 T 48 0 L 48 32 L 12 32 Z"
+                      dur="1.5s" 
+                      repeatCount="indefinite"/>
+                  </path>
+                </g>
+              </svg>
+            </div>
             
             <button style={{ padding: "6px 12px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>
               EN
@@ -510,21 +545,30 @@ export default function App() {
           </div>
         </header>
 
-        {/* NEWS TICKER - CONTINUOUS SCROLLING */}
-        <div style={{ background: NAVY_MID, padding: "5px 0px 5px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", width: "100%" }}>
+        {/* NEWS TICKER - ALIGNED WITH HEADER */}
+        <div style={{ background: NAVY_MID, padding: "5px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px" }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12 }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 180s linear infinite", width: "fit-content" }}>
+            <div style={{ display: "flex", gap: "50px", whiteSpace: "nowrap", animation: "scroll 180s linear infinite", width: "max-content" }}>
               {newsItems.length > 0 ? (
                 <>
-                  {newsItems.concat(newsItems).concat(newsItems).map((item, i) => (
+                  {newsItems.concat(newsItems).concat(newsItems).concat(newsItems).map((item, i) => (
                     <button key={i} onClick={() => handleNewsClick(item)} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: "pointer", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none" }}>
                       {item}
                     </button>
                   ))}
                 </>
               ) : (
-                <div style={{ color: TEXT_MUTED, fontSize: 12 }}>Loading legal news...</div>
+                <>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 New Tax Amendment Affects Business Sector</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Family Court Interprets Guardianship Laws</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Labour Ministry Issues Worker Protection Guidelines</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 High Court Decision on Property Disputes</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Procedural Changes in Criminal Courts</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 Supreme Court Ruling on Constitutional Rights</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>🇵🇰 New Tax Amendment Affects Business Sector</div>
+                </>
               )}
             </div>
           </div>
@@ -566,8 +610,13 @@ export default function App() {
           )}
 
           {/* CHAT AREA */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM }}>
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+            {/* Watermark Logo */}
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
+              <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
+            </div>
+            
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", position: "relative", zIndex: 1 }}>
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
                   {msg.role === "assistant" && (
@@ -698,6 +747,7 @@ export default function App() {
       {showSuccessPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "12px", border: `2px solid ${ACCENT_PK}`, maxWidth: "450px", textAlign: "center" }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 15px" }} />
             <div style={{ fontSize: 48, marginBottom: "15px" }}>✅</div>
             <h2 style={{ color: ACCENT_PK, fontSize: 18, marginBottom: "15px" }}>Correct Code!</h2>
             <div style={{ borderTop: `2px solid ${GOLD}`, borderBottom: `2px solid ${GOLD}`, padding: "20px", margin: "20px 0" }}>
@@ -787,7 +837,10 @@ export default function App() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
             <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
-              <h3 style={{ color: GOLD, margin: 0 }}>✍️ Legal Document Drafting</h3>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
+                <h3 style={{ color: GOLD, margin: 0 }}>✍️ Legal Document Drafting</h3>
+              </div>
               <button onClick={() => setShowDraftPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
                 ✕
               </button>
@@ -833,7 +886,10 @@ export default function App() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
             <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
-              <h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
+                <h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3>
+              </div>
               <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
                 ✕
               </button>
