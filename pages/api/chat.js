@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "claude-opus-4-1",
-        max_tokens: 1000,
+        max_tokens: 800,
         system: systemPrompt,
         messages: messages.map((m) => ({
           role: m.role,
