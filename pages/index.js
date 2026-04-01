@@ -1202,10 +1202,10 @@ By Attorney & AI Innovator Khawer Rabbani
               }}>
                 <img 
                   src="/kachokay.jpg" 
-                  alt="Khachokay" 
+                  alt="Kachokay" 
                   style={{ 
-                    width: "80px", 
-                    height: "80px", 
+                    width: "120px", 
+                    height: "120px", 
                     borderRadius: "50%", 
                     border: `3px solid ${GOLD}`,
                     marginBottom: "8px",
