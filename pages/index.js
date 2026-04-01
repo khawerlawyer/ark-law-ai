@@ -143,20 +143,6 @@ export default function App() {
     "complaint",
   ];
 
-  // Initialize guest timer
-  useEffect(() => {
-    const startStr = localStorage.getItem("ark_guest_start");
-    if (!user && startStr) {
-      const start = parseInt(startStr);
-      const now = Date.now();
-      const elapsed = Math.floor((now - start) / 1000 / 60);
-      const remaining = Math.max(0, 180 - elapsed);
-      setGuestTime(remaining);
-    } else if (!user) {
-      localStorage.setItem("ark_guest_start", Date.now().toString());
-    }
-  }, [user]);
-
   // Mobile detection
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
