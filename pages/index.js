@@ -1366,39 +1366,7 @@ By Attorney & AI Innovator Khawer Rabbani
           {!isMobile && (
             <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
               
-              {/* QUICK QUERIES - MOVED TO TOP */}
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
-                {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = `${GOLD}15`;
-                    e.currentTarget.style.borderColor = GOLD;
-                    e.currentTarget.style.color = TEXT_PRIMARY;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = NAVY;
-                    e.currentTarget.style.borderColor = NAVY_BORDER;
-                    e.currentTarget.style.color = TEXT_SECONDARY;
-                  }}
-                  >
-                    {query}
-                  </button>
-                ))}
-              </div>
-
-              {/* Document Drafting */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer" }} onClick={() => setShowDraftPopup(true)}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD }}>✍️ DRAFT LEGAL DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: "4px" }}>Create contracts, affidavits, and more</div>
-                <div style={{ display: "flex", gap: "4px", marginTop: "6px", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 DOC</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 PDF</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOCX</span>
-                </div>
-              </div>
-
-              {/* Document Analyzer */}
+              {/* Document Analyzer - MOVED TO TOP */}
               <div style={{ padding: "12px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}` }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px" }}>📂 ANALYZE DOCUMENTS</div>
                 <input type="file" accept=".pdf,.docx,.doc" style={{ fontSize: 10, marginBottom: "8px" }} onChange={(e) => {
@@ -1419,6 +1387,38 @@ By Attorney & AI Innovator Khawer Rabbani
                   <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 1</span>
                   <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 2</span>
                 </div>
+              </div>
+
+              {/* Document Drafting */}
+              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer" }} onClick={() => setShowDraftPopup(true)}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD }}>✍️ DRAFT LEGAL DOCUMENTS</div>
+                <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: "4px" }}>Create contracts, affidavits, and more</div>
+                <div style={{ display: "flex", gap: "4px", marginTop: "6px", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 DOC</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 PDF</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOCX</span>
+                </div>
+              </div>
+              
+              {/* QUICK QUERIES - AFTER DOCUMENT TOOLS */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
+                {QUICK_QUERIES_PK.map((query, i) => (
+                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = `${GOLD}15`;
+                    e.currentTarget.style.borderColor = GOLD;
+                    e.currentTarget.style.color = TEXT_PRIMARY;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = NAVY;
+                    e.currentTarget.style.borderColor = NAVY_BORDER;
+                    e.currentTarget.style.color = TEXT_SECONDARY;
+                  }}
+                  >
+                    {query}
+                  </button>
+                ))}
               </div>
 
               {/* Practice Areas */}
