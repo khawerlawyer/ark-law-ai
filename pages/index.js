@@ -1236,9 +1236,10 @@ By Attorney & AI Innovator Khawer Rabbani
 
         {/* BODY */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-          {/* LEFT SIDEBAR - Code of Conduct */}
+          {/* LEFT SIDEBAR - Document Tools */}
           {!isMobile && (
-            <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "hidden", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ width: "220px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
+              
               <div style={{ display: "flex", gap: "10px", marginBottom: "10px", justifyContent: "center" }}>
                 <div style={{ textAlign: "center" }}>
                   <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "50px", height: "50px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
@@ -1256,48 +1257,50 @@ By Attorney & AI Innovator Khawer Rabbani
                   <div style={{ fontSize: 6, color: ACCENT_PK, marginTop: "2px", fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
                 </div>
               </div>
-              <div style={{ fontSize: 9, color: GOLD, fontWeight: 600, marginBottom: "10px", textAlign: "center" }}>Code of Conduct</div>
-              <div style={{ overflow: "hidden", height: "calc(100% - 230px)", width: "100%", position: "relative" }}>
-                <div className="conduct-ticker" style={{ fontSize: 10, lineHeight: "1.7", width: "100%", paddingRight: "5px" }}>
-                  {CONDUCT_PK.concat(CONDUCT_PK).concat(CONDUCT_PK).map((conduct, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => openConductSource(conduct)}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`;
-                        e.currentTarget.style.borderLeftColor = GOLD;
-                        e.currentTarget.style.color = GOLD;
-                        e.currentTarget.style.transform = "translateX(3px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.borderLeftColor = ACCENT_PK;
-                        e.currentTarget.style.color = TEXT_MUTED;
-                        e.currentTarget.style.transform = "translateX(0)";
-                      }}
-                      style={{ 
-                        marginBottom: "8px", 
-                        padding: "8px 8px 8px 8px", 
-                        borderLeft: `3px solid ${ACCENT_PK}`, 
-                        whiteSpace: "normal",
-                        cursor: "pointer",
-                        borderRadius: "4px",
-                        transition: "all 0.3s ease",
-                        color: TEXT_MUTED,
-                        fontSize: "9px",
-                        lineHeight: "1.5"
-                      }}
-                      title="Click to view source"
-                    >
-                      📋 {conduct.text}
-                    </div>
-                  ))}
+
+              {/* Document Analyzer */}
+              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${ACCENT_PK}` }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>📂 ANALYZE DOCUMENTS</div>
+                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Upload legal documents for analysis</div>
+                <input type="file" accept=".pdf,.docx,.doc" style={{ width: "100%", fontSize: 10, padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", color: CREAM, cursor: "pointer" }} onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => alert("Feature coming soon: Document analysis");
+                    reader.readAsArrayBuffer(file);
+                  }
+                }} />
+                <div style={{ display: "flex", gap: "4px", marginTop: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 PDF</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 DOCX</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOC</span>
+                </div>
+              </div>
+
+              {/* Document Comparison */}
+              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${GOLD}`, cursor: "pointer" }} onClick={() => setShowComparePopup(true)}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "4px", textAlign: "center" }}>⚖️ COMPARE DOCUMENTS</div>
+                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Upload 2 documents to compare</div>
+                <div style={{ display: "flex", gap: "4px", justifyContent: "center", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 1</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 2</span>
+                </div>
+              </div>
+
+              {/* Document Drafting */}
+              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${ACCENT_PK}`, cursor: "pointer" }} onClick={() => setShowDraftPopup(true)}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "4px", textAlign: "center" }}>✍️ DRAFT DOCUMENTS</div>
+                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Create contracts, affidavits & more</div>
+                <div style={{ display: "flex", gap: "4px", justifyContent: "center", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 DOC</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 PDF</span>
+                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOCX</span>
                 </div>
               </div>
 
               {/* KACHOKAY QUOTE BOX */}
               <div style={{ 
-                marginTop: "6px", 
+                marginTop: "auto",
                 padding: "6px", 
                 background: `linear-gradient(135deg, ${GOLD}15, ${ACCENT_PK}15)`, 
                 borderRadius: "4px", 
@@ -1362,45 +1365,11 @@ By Attorney & AI Innovator Khawer Rabbani
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR - Practice Areas & Tools */}
+          {/* RIGHT SIDEBAR - Quick Queries & Practice Areas */}
           {!isMobile && (
             <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
               
-              {/* Document Analyzer - MOVED TO TOP */}
-              <div style={{ padding: "12px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}` }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px" }}>📂 ANALYZE DOCUMENTS</div>
-                <input type="file" accept=".pdf,.docx,.doc" style={{ fontSize: 10, marginBottom: "8px" }} onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = () => alert("Feature coming soon: Document analysis");
-                    reader.readAsArrayBuffer(file);
-                  }
-                }} />
-              </div>
-
-              {/* Document Comparison */}
-              <div style={{ padding: "12px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}`, cursor: "pointer" }} onClick={() => setShowComparePopup(true)}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px" }}>⚖️ COMPARE LEGAL DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED }}>Upload 2 documents to compare</div>
-                <div style={{ display: "flex", gap: "4px", marginTop: "6px", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 1</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 2</span>
-                </div>
-              </div>
-
-              {/* Document Drafting */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer" }} onClick={() => setShowDraftPopup(true)}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD }}>✍️ DRAFT LEGAL DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginTop: "4px" }}>Create contracts, affidavits, and more</div>
-                <div style={{ display: "flex", gap: "4px", marginTop: "6px", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 DOC</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 PDF</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOCX</span>
-                </div>
-              </div>
-              
-              {/* QUICK QUERIES - AFTER DOCUMENT TOOLS */}
+              {/* QUICK QUERIES */}
               <div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
                 {QUICK_QUERIES_PK.map((query, i) => (
