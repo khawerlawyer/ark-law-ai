@@ -1535,7 +1535,7 @@ By Attorney & AI Innovator Khawer Rabbani
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
                   {msg.role === "assistant" && (
-                    <img src="/khawer.jpeg" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                    <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
                   )}
                   <div style={{ maxWidth: "70%", position: "relative" }}>
                     <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
@@ -1570,7 +1570,7 @@ By Attorney & AI Innovator Khawer Rabbani
               ))}
               {loading && (
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <img src="/khawer.jpeg" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
                   <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
                 </div>
               )}
