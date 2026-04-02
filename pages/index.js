@@ -20,6 +20,7 @@ export default function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const [authScreenMode, setAuthScreenMode] = useState("login"); // "login" or "signup"
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -161,6 +162,9 @@ export default function App() {
     const savedUser = localStorage.getItem('arklaw_user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    } else {
+      // Show login screen if no user is logged in
+      setShowLoginPopup(true);
     }
   }, []);
 
@@ -2570,64 +2574,229 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
       )}
 
-      {/* LOGIN POPUP */}
-      {showLoginPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} />
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>Login to ARK Law AI</h2>
-              </div>
-              <button onClick={() => setShowLoginPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
+      {/* AUTHENTICATION SCREEN - REQUIRED ON FIRST LOAD */}
+      {showLoginPopup && !user && (
+        <div style={{ position: "fixed", inset: 0, background: NAVY, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5000 }}>
+          {/* Background App Preview (Blurred) */}
+          <div style={{ position: "absolute", inset: 0, filter: "blur(8px)", opacity: 0.3, pointerEvents: "none" }}>
+            {/* App logo watermark */}
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+              <img src="/ark-logo.png" alt="ARK" style={{ width: "300px", height: "300px", opacity: 0.15 }} />
+            </div>
+          </div>
+
+          {/* Auth Container */}
+          <div style={{ position: "relative", zIndex: 1, width: "90%", maxWidth: "500px" }}>
+            
+            {/* Logo & Title */}
+            <div style={{ textAlign: "center", marginBottom: "30px" }}>
+              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "100px", height: "100px", marginBottom: "20px", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
+              <h1 style={{ color: GOLD, fontSize: "32px", fontWeight: 700, marginBottom: "8px", textShadow: `0 2px 10px ${GOLD}40` }}>ARK Law AI</h1>
+              <p style={{ color: ACCENT_PK, fontSize: "14px", marginBottom: "5px" }}>The Legal Intelligence Engine</p>
+              <p style={{ color: GOLD, fontSize: "11px", fontStyle: "italic" }}>میرا فاضل دوست</p>
             </div>
 
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target);
+            {/* Auth Box */}
+            <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "16px", border: `3px solid ${GOLD}`, boxShadow: `0 0 40px ${GOLD}50` }}>
               
-              try {
-                const res = await fetch('/api/auth/login', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                  }),
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                  localStorage.setItem('arklaw_user', JSON.stringify(data.user));
-                  setUser(data.user);
-                  setShowLoginPopup(false);
-                } else {
-                  alert(data.error || 'Invalid email or password');
-                }
-              } catch (error) {
-                alert('Login failed. Please try again.');
-              }
-            }}>
-              
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+              {/* Toggle Tabs */}
+              <div style={{ display: "flex", gap: "10px", marginBottom: "30px" }}>
+                <button 
+                  onClick={() => setAuthScreenMode("login")}
+                  style={{ 
+                    flex: 1, 
+                    padding: "12px", 
+                    background: authScreenMode === "login" ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY, 
+                    color: authScreenMode === "login" ? NAVY : TEXT_MUTED,
+                    border: authScreenMode === "login" ? "none" : `1px solid ${NAVY_BORDER}`,
+                    borderRadius: "8px", 
+                    cursor: "pointer", 
+                    fontWeight: 700, 
+                    fontSize: 14,
+                    transition: "all 0.3s",
+                    boxShadow: authScreenMode === "login" ? `0 4px 15px ${GOLD}40` : "none"
+                  }}
+                >
+                  Login
+                </button>
+                <button 
+                  onClick={() => setAuthScreenMode("signup")}
+                  style={{ 
+                    flex: 1, 
+                    padding: "12px", 
+                    background: authScreenMode === "signup" ? `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)` : NAVY, 
+                    color: authScreenMode === "signup" ? "white" : TEXT_MUTED,
+                    border: authScreenMode === "signup" ? "none" : `1px solid ${NAVY_BORDER}`,
+                    borderRadius: "8px", 
+                    cursor: "pointer", 
+                    fontWeight: 700, 
+                    fontSize: 14,
+                    transition: "all 0.3s",
+                    boxShadow: authScreenMode === "signup" ? `0 4px 15px ${ACCENT_PK}40` : "none"
+                  }}
+                >
+                  Sign Up
+                </button>
               </div>
 
-              <div style={{ marginBottom: "25px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
-                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
-              </div>
+              {/* LOGIN FORM */}
+              {authScreenMode === "login" && (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  
+                  try {
+                    const res = await fetch('/api/auth/login', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        email: formData.get('email'),
+                        password: formData.get('password'),
+                      }),
+                    });
 
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: `0 4px 15px ${GOLD}40` }}>
-                Login
-              </button>
+                    const data = await res.json();
 
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12 }}>
-                Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span>
-              </p>
-            </form>
+                    if (res.ok) {
+                      localStorage.setItem('arklaw_user', JSON.stringify(data.user));
+                      setUser(data.user);
+                      setShowLoginPopup(false);
+                    } else {
+                      alert(data.error || 'Invalid email or password');
+                    }
+                  } catch (error) {
+                    alert('Login failed. Please try again.');
+                  }
+                }}>
+                  
+                  <h3 style={{ color: GOLD, fontSize: 18, marginBottom: "20px", fontWeight: 700 }}>Welcome Back!</h3>
+                  
+                  <div style={{ marginBottom: "18px" }}>
+                    <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
+                    <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+                  </div>
+
+                  <div style={{ marginBottom: "25px" }}>
+                    <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
+                    <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
+                  </div>
+
+                  <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${GOLD}40` }}>
+                    Login to ARK Law AI
+                  </button>
+                </form>
+              )}
+
+              {/* SIGNUP FORM */}
+              {authScreenMode === "signup" && (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  
+                  try {
+                    const res = await fetch('/api/auth/signup', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        email: formData.get('email'),
+                        password: formData.get('password'),
+                        name: formData.get('name'),
+                        age: formData.get('age'),
+                        profession: formData.get('profession'),
+                        barOfPractice: formData.get('barOfPractice'),
+                        city: formData.get('city'),
+                        province: formData.get('province'),
+                        country: formData.get('country'),
+                      }),
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                      // Show success and switch to login
+                      alert(`Account created successfully! Please login with your credentials.`);
+                      setAuthScreenMode("login");
+                    } else {
+                      alert(data.error || 'Signup failed. Please try again.');
+                    }
+                  } catch (error) {
+                    alert('Signup failed. Please try again.');
+                  }
+                }}>
+                  
+                  <h3 style={{ color: ACCENT_PK, fontSize: 18, marginBottom: "15px", fontWeight: 700 }}>Create Your Account</h3>
+                  
+                  <div style={{ maxHeight: "400px", overflowY: "auto", paddingRight: "10px" }}>
+                    <div style={{ marginBottom: "15px" }}>
+                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Email Address *</label>
+                      <input name="email" type="email" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="your.email@example.com" />
+                    </div>
+
+                    <div style={{ marginBottom: "15px" }}>
+                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Password *</label>
+                      <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="Minimum 6 characters" />
+                    </div>
+
+                    <div style={{ marginBottom: "15px" }}>
+                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Full Name *</label>
+                      <input name="name" type="text" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="Your full name" />
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "15px" }}>
+                      <div>
+                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Age *</label>
+                        <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
+                      </div>
+                      
+                      <div>
+                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Profession *</label>
+                        <select name="profession" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }}>
+                          <option value="">Select...</option>
+                          <option>Lawyer</option>
+                          <option>Legal Assistant</option>
+                          <option>Paralegal</option>
+                          <option>Law Clerk</option>
+                          <option>Court Researcher</option>
+                          <option>Law Student</option>
+                          <option>Judge</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: "15px" }}>
+                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
+                      <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "15px" }}>
+                      <div>
+                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>City *</label>
+                        <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
+                      </div>
+                      
+                      <div>
+                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Province *</label>
+                        <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: "20px" }}>
+                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Country *</label>
+                      <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
+                    </div>
+                  </div>
+
+                  <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
+                    Create Account
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Footer Note */}
+            <div style={{ textAlign: "center", marginTop: "20px", color: TEXT_MUTED, fontSize: 10 }}>
+              By continuing, you agree to ARK Law AI's Terms of Service
+            </div>
           </div>
         </div>
       )}
