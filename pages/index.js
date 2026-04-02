@@ -19,6 +19,7 @@ export default function App() {
   const [showSignupPopup, setShowSignupPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -189,6 +190,34 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Save chat history when messages change (only user messages)
+  useEffect(() => {
+    if (user && messages.length > 1) {
+      const userMessages = messages.filter(m => m.role === 'user');
+      if (userMessages.length > 0) {
+        const newHistory = userMessages.map((msg, idx) => ({
+          id: Date.now() + idx,
+          question: msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : ''),
+          timestamp: new Date().toISOString(),
+        }));
+        
+        // Load existing history and merge
+        const existingHistory = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
+        const mergedHistory = [...existingHistory, ...newHistory].slice(-50); // Keep last 50
+        localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(mergedHistory));
+        setChatHistory(mergedHistory);
+      }
+    }
+  }, [messages, user]);
+
+  // Load chat history when user logs in
+  useEffect(() => {
+    if (user) {
+      const history = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
+      setChatHistory(history);
+    }
+  }, [user]);
 
   // Fetch news on mount
   useEffect(() => {
@@ -2710,91 +2739,171 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "50px", height: "50px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: 700, color: NAVY }}>
-                  {user.name.charAt(0).toUpperCase()}
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: `3px solid ${GOLD}`, maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: `0 0 40px ${GOLD}50` }}>
+            
+            {/* Header with Logo */}
+            <div style={{ padding: "25px 35px", borderBottom: `2px solid ${NAVY_BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: `drop-shadow(0 0 10px ${GOLD}60)` }} />
+                <div>
+                  <h2 style={{ color: GOLD, margin: 0, fontSize: "22px", fontWeight: 700 }}>ARK Law AI</h2>
+                  <p style={{ color: ACCENT_PK, margin: "4px 0 0 0", fontSize: "12px" }}>My Account</p>
                 </div>
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>My Account</h2>
               </div>
-              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
+              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
 
-            {/* User Information */}
-            <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
-              <h3 style={{ color: ACCENT_PK, fontSize: 16, marginBottom: "15px", fontWeight: 700 }}>Account Information</h3>
+            {/* Main Content - Two Column Layout */}
+            <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
               
-              <div style={{ display: "grid", gap: "12px" }}>
-                <div>
-                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Full Name</label>
-                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.name}</div>
-                </div>
+              {/* LEFT COLUMN - User Information */}
+              <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: `2px solid ${NAVY_BORDER}` }}>
                 
-                <div>
-                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Email Address</label>
-                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.email}</div>
-                </div>
-                
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  <div>
-                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Age</label>
-                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.age}</div>
+                {/* User Avatar & Name */}
+                <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "25px" }}>
+                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY, boxShadow: `0 4px 15px ${GOLD}40` }}>
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Profession</label>
-                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.profession}</div>
+                    <h3 style={{ color: CREAM, margin: 0, fontSize: "24px", fontWeight: 700 }}>{user.name}</h3>
+                    <p style={{ color: TEXT_MUTED, margin: "5px 0 0 0", fontSize: "12px" }}>
+                      ⭐ Member since {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </div>
                 </div>
-                
-                {user.barOfPractice && (
-                  <div>
-                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Bar of Practice</label>
-                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.barOfPractice}</div>
-                  </div>
-                )}
-                
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  <div>
-                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>City</label>
-                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.city}</div>
-                  </div>
-                  <div>
-                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Province</label>
-                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.province}</div>
+
+                {/* Account Information */}
+                <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: `1px solid ${NAVY_BORDER}` }}>
+                  <h4 style={{ color: ACCENT_PK, fontSize: 14, marginBottom: "15px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>Account Information</h4>
+                  
+                  <div style={{ display: "grid", gap: "14px" }}>
+                    <div>
+                      <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Email Address</label>
+                      <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.email}</div>
+                    </div>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                      <div>
+                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Age</label>
+                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.age}</div>
+                      </div>
+                      <div>
+                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Profession</label>
+                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.profession}</div>
+                      </div>
+                    </div>
+                    
+                    {user.barOfPractice && (
+                      <div>
+                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bar of Practice</label>
+                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.barOfPractice}</div>
+                      </div>
+                    )}
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                      <div>
+                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>City</label>
+                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.city}</div>
+                      </div>
+                      <div>
+                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Province</label>
+                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.province}</div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Country</label>
+                      <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.country}</div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Logout Button */}
+                <button 
+                  onClick={() => {
+                    localStorage.removeItem('arklaw_user');
+                    localStorage.removeItem(`chat_history_${user.id}`);
+                    setUser(null);
+                    setChatHistory([]);
+                    setShowMyAccountPopup(false);
+                    alert('You have been logged out successfully.');
+                  }}
+                  style={{ 
+                    width: "100%", 
+                    padding: "14px", 
+                    background: `linear-gradient(135deg, #DC2626, #991B1B)`, 
+                    color: "white", 
+                    border: "none", 
+                    borderRadius: "8px", 
+                    fontWeight: 700, 
+                    fontSize: 15, 
+                    cursor: "pointer", 
+                    boxShadow: `0 4px 15px rgba(220, 38, 38, 0.4)`,
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
+                  onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                >
+                  🚪 Logout
+                </button>
+              </div>
+
+              {/* RIGHT COLUMN - Chat History */}
+              <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", background: NAVY_SURFACE }}>
+                <div style={{ padding: "20px", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+                  <h4 style={{ color: GOLD, fontSize: 14, margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>📜 Chat History</h4>
+                  <p style={{ color: TEXT_MUTED, fontSize: 10, margin: "5px 0 0 0" }}>Your previous conversations</p>
+                </div>
                 
-                <div>
-                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Country</label>
-                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.country}</div>
+                <div style={{ flex: 1, overflowY: "auto", padding: "15px" }}>
+                  {chatHistory.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "40px 20px", color: TEXT_MUTED }}>
+                      <div style={{ fontSize: 40, marginBottom: "10px" }}>💬</div>
+                      <p style={{ fontSize: 12, margin: 0 }}>No chat history yet</p>
+                      <p style={{ fontSize: 10, margin: "5px 0 0 0" }}>Start asking questions!</p>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {chatHistory.slice().reverse().map((item, idx) => (
+                        <div 
+                          key={item.id || idx} 
+                          style={{ 
+                            background: NAVY, 
+                            padding: "12px", 
+                            borderRadius: "6px", 
+                            border: `1px solid ${NAVY_BORDER}`,
+                            cursor: "pointer",
+                            transition: "all 0.2s"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = GOLD;
+                            e.currentTarget.style.background = `${NAVY}dd`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = NAVY_BORDER;
+                            e.currentTarget.style.background = NAVY;
+                          }}
+                        >
+                          <div style={{ color: CREAM, fontSize: 12, lineHeight: "1.4", marginBottom: "6px" }}>
+                            {item.question}
+                          </div>
+                          <div style={{ color: TEXT_MUTED, fontSize: 9, display: "flex", alignItems: "center", gap: "5px" }}>
+                            <span>🕒</span>
+                            {new Date(item.timestamp).toLocaleString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric', 
+                              hour: 'numeric', 
+                              minute: '2-digit' 
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
 
-            {/* Logout Button */}
-            <button 
-              onClick={() => {
-                localStorage.removeItem('arklaw_user');
-                setUser(null);
-                setShowMyAccountPopup(false);
-                alert('You have been logged out successfully.');
-              }}
-              style={{ 
-                width: "100%", 
-                padding: "14px", 
-                background: `linear-gradient(135deg, #DC2626, #991B1B)`, 
-                color: "white", 
-                border: "none", 
-                borderRadius: "6px", 
-                fontWeight: 700, 
-                fontSize: 16, 
-                cursor: "pointer", 
-                boxShadow: `0 4px 15px rgba(220, 38, 38, 0.4)` 
-              }}
-            >
-              Logout
-            </button>
+            </div>
           </div>
         </div>
       )}
