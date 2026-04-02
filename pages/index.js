@@ -1924,7 +1924,7 @@ By Attorney & AI Innovator Khawer Rabbani
                   <div>
                     <div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div>
                     <div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div>
-                    <div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & Creator of ARK Law AI</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & CEO, ARK LAW AI</div>
                   </div>
                 </div>
               </div>
