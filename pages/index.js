@@ -14,14 +14,6 @@ const CREAM = "#F5F1E8";
 const POPUP_DARK = "#0A1118";
 
 export default function App() {
-  // Custom auth state (replaces Clerk)
-  const [user, setUser] = useState(null);
-  const [showSignupPopup, setShowSignupPopup] = useState(false);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
-  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
-  const [authScreenMode, setAuthScreenMode] = useState("login"); // "login" or "signup"
-  
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -157,17 +149,6 @@ export default function App() {
     "complaint",
   ];
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const savedUser = localStorage.getItem('arklaw_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      // Show login screen if no user is logged in
-      setShowLoginPopup(true);
-    }
-  }, []);
-
   // Mobile detection
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -178,17 +159,13 @@ export default function App() {
 
   // Auto-send greeting on mount
   useEffect(() => {
-    const greetingContent = user 
-      ? `السلام علیکم! (Assalam o Alaikum!) Welcome back, ${user.name}! 🎉\n\nYour trusted legal companion for Pakistani law is here to assist you.\n\nHow may I assist you with your legal questions today?`
-      : "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?";
-    
     const greeting = {
       role: "assistant",
-      content: greetingContent,
+      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
     };
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
-  }, [user]); // Re-run when user changes
+  }, []); // Only run once on mount
 
   // Scroll to bottom
   useEffect(() => {
@@ -253,7 +230,7 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updatedMessages,
-          userId: user?.id,
+          
         }),
       });
 
@@ -428,7 +405,7 @@ export default function App() {
                 content: `Analyze this legal news from Pakistan and explain its legal significance and impact:\n\nHeadline: ${newsItem.headline}\n\nFull Text: ${newsItem.fullText}\n\nProvide a concise analysis of how this affects Pakistani citizens and businesses, relevant statutes, and practical implications.`,
               },
             ],
-            userId: user?.id,
+            
           }),
         });
 
@@ -476,7 +453,7 @@ Generate the COMPLETE document text ready for immediate use.`;
               content: prompt,
             },
           ],
-          userId: user?.id,
+          
         }),
       });
 
@@ -647,7 +624,7 @@ Format the report professionally with clear headings, numbered points, and organ
               ]
             }
           ],
-          userId: user?.id,
+          
         }),
       });
 
@@ -1230,21 +1207,6 @@ By Attorney & AI Innovator Khawer Rabbani
 
           {/* CENTER - USER INFO & BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {/* Show user name if logged in */}
-            {user && (
-              <div style={{ 
-                padding: "6px 15px", 
-                background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
-                color: NAVY, 
-                border: `2px solid ${ACCENT_PK}`, 
-                borderRadius: "4px", 
-                fontSize: 12, 
-                fontWeight: 700, 
-                whiteSpace: "nowrap"
-              }}>
-                👤 {user.name || "User"}
-              </div>
-            )}
             
             {/* Open for All Banner */}
             <div style={{ 
@@ -1285,61 +1247,6 @@ By Attorney & AI Innovator Khawer Rabbani
               <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
               📧 contact@arklaw.ai
             </a>
-            
-            {/* Auth Buttons */}
-            {!user ? (
-              <>
-                <button 
-                  onClick={() => setShowLoginPopup(true)}
-                  style={{ 
-                    padding: "6px 16px", 
-                    background: GOLD, 
-                    color: NAVY, 
-                    border: `2px solid ${GOLD}`, 
-                    borderRadius: "4px", 
-                    cursor: "pointer", 
-                    fontSize: 11, 
-                    fontWeight: 600,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  Login
-                </button>
-                <button 
-                  onClick={() => setShowSignupPopup(true)}
-                  style={{ 
-                    padding: "6px 16px", 
-                    background: ACCENT_PK, 
-                    color: NAVY, 
-                    border: `2px solid ${ACCENT_PK}`, 
-                    borderRadius: "4px", 
-                    cursor: "pointer", 
-                    fontSize: 11, 
-                    fontWeight: 600,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  Sign Up
-                </button>
-              </>
-            ) : (
-              <button 
-                onClick={() => setShowMyAccountPopup(true)}
-                style={{ 
-                  padding: "6px 16px", 
-                  background: NAVY_SURFACE, 
-                  color: GOLD, 
-                  border: `2px solid ${GOLD}`, 
-                  borderRadius: "4px", 
-                  cursor: "pointer", 
-                  fontSize: 11, 
-                  fontWeight: 600,
-                  transition: "all 0.2s"
-                }}
-              >
-                👤 My Account
-              </button>
-            )}
           </div>
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
@@ -1749,27 +1656,9 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
 
         {/* FOOTER */}
-        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, position: "relative" }}>
-          <div style={{ textAlign: "center" }}>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
-          <div style={{ textAlign: "center", color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
-          
-          {/* Golden Banner - Bottom Right */}
-          <div style={{ 
-            position: "absolute", 
-            bottom: "8px", 
-            right: "20px",
-            padding: "6px 16px",
-            background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
-            color: NAVY,
-            borderRadius: "4px",
-            fontSize: 9,
-            fontWeight: 700,
-            boxShadow: `0 2px 8px ${GOLD}40`,
-            border: `1px solid ${GOLD}`,
-            letterSpacing: "0.3px"
-          }}>
-            ✨ Designed & Developed by ARK Lex AI LLC.
-          </div>
+        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, textAlign: "center" }}>
+          <div>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
+          <div style={{ color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
         </footer>
       </div>
 
@@ -2409,506 +2298,3 @@ By Attorney & AI Innovator Khawer Rabbani
           </div>
         </div>
       )}
-
-      {/* SIGNUP POPUP - Complete Form */}
-      {showSignupPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} />
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "22px" }}>Join ARK Law AI</h2>
-              </div>
-              <button onClick={() => setShowSignupPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
-            </div>
-
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target);
-              
-              try {
-                const res = await fetch('/api/auth/signup', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                    name: formData.get('name'),
-                    age: formData.get('age'),
-                    profession: formData.get('profession'),
-                    barOfPractice: formData.get('barOfPractice'),
-                    city: formData.get('city'),
-                    province: formData.get('province'),
-                    country: formData.get('country'),
-                  }),
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                  setShowSignupPopup(false);
-                  // Show welcome popup
-                  setUser({ ...data.user, isNewUser: true });
-                  setShowWelcomePopup(true);
-                } else {
-                  alert(data.error || 'Signup failed. Please try again.');
-                }
-              } catch (error) {
-                alert('Signup failed. Please try again.');
-              }
-            }}>
-              
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
-              </div>
-
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label>
-                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
-              </div>
-
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label>
-                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label>
-                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
-                
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label>
-                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}>
-                    <option value="">Select...</option>
-                    <option>Lawyer</option>
-                    <option>Legal Assistant</option>
-                    <option>Paralegal</option>
-                    <option>Law Clerk</option>
-                    <option>Court Researcher</option>
-                    <option>Law Student</option>
-                    <option>Judge</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
-                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label>
-                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
-                
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label>
-                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: "25px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label>
-                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-              </div>
-
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
-                Create Account
-              </button>
-
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12, marginTop: "15px" }}>
-                Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span>
-              </p>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* WELCOME POPUP - After Successful Signup */}
-      {showWelcomePopup && user?.isNewUser && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3500 }}>
-          <div style={{ background: `linear-gradient(135deg, ${NAVY}, ${NAVY_SURFACE})`, padding: "40px", borderRadius: "16px", width: "90%", maxWidth: "500px", border: `3px solid ${GOLD}`, textAlign: "center", boxShadow: `0 0 40px ${GOLD}60` }}>
-            <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "100px", height: "100px", marginBottom: "20px", filter: "drop-shadow(0 0 20px rgba(201,168,76,0.5))" }} />
-            
-            <h1 style={{ color: GOLD, fontSize: "28px", marginBottom: "15px", fontWeight: 700 }}>Welcome, {user.name}! 🎉</h1>
-            
-            <p style={{ color: CREAM, fontSize: "16px", lineHeight: "1.6", marginBottom: "10px" }}>
-              You are now part of <strong style={{ color: ACCENT_PK }}>ARK Law AI</strong> — Pakistan's premier AI-powered legal intelligence platform.
-            </p>
-            
-            <p style={{ color: TEXT_SECONDARY, fontSize: "14px", lineHeight: "1.6", marginBottom: "25px" }}>
-              We wish you a great learning and assistance journey. May ARK Law AI be your trusted companion in navigating Pakistani law.
-            </p>
-
-            <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "25px", border: `1px solid ${GOLD}40` }}>
-              <p style={{ color: ACCENT_PK, fontSize: "13px", fontWeight: 600, marginBottom: "8px" }}>✨ Your account has been created successfully!</p>
-              <p style={{ color: TEXT_MUTED, fontSize: "12px" }}>Please login to start using ARK Law AI</p>
-            </div>
-
-            <button 
-              onClick={() => {
-                setShowWelcomePopup(false);
-                setUser(null);
-                setShowLoginPopup(true);
-              }}
-              style={{ 
-                width: "100%", 
-                padding: "14px", 
-                background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
-                color: NAVY, 
-                border: "none", 
-                borderRadius: "8px", 
-                fontWeight: 700, 
-                fontSize: 16, 
-                cursor: "pointer",
-                boxShadow: `0 4px 20px ${GOLD}50`
-              }}
-            >
-              Continue to Login →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* AUTHENTICATION SCREEN - REQUIRED ON FIRST LOAD */}
-      {showLoginPopup && !user && (
-        <div style={{ position: "fixed", inset: 0, background: NAVY, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5000 }}>
-          {/* Background App Preview (Blurred) */}
-          <div style={{ position: "absolute", inset: 0, filter: "blur(8px)", opacity: 0.3, pointerEvents: "none" }}>
-            {/* App logo watermark */}
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-              <img src="/ark-logo.png" alt="ARK" style={{ width: "300px", height: "300px", opacity: 0.15 }} />
-            </div>
-          </div>
-
-          {/* Auth Container */}
-          <div style={{ position: "relative", zIndex: 1, width: "90%", maxWidth: "500px" }}>
-            
-            {/* Logo & Title */}
-            <div style={{ textAlign: "center", marginBottom: "30px" }}>
-              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "100px", height: "100px", marginBottom: "20px", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
-              <h1 style={{ color: GOLD, fontSize: "32px", fontWeight: 700, marginBottom: "8px", textShadow: `0 2px 10px ${GOLD}40` }}>ARK Law AI</h1>
-              <p style={{ color: ACCENT_PK, fontSize: "14px", marginBottom: "5px" }}>The Legal Intelligence Engine</p>
-              <p style={{ color: GOLD, fontSize: "11px", fontStyle: "italic" }}>میرا فاضل دوست</p>
-            </div>
-
-            {/* Auth Box */}
-            <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "16px", border: `3px solid ${GOLD}`, boxShadow: `0 0 40px ${GOLD}50` }}>
-              
-              {/* Toggle Tabs */}
-              <div style={{ display: "flex", gap: "10px", marginBottom: "30px" }}>
-                <button 
-                  onClick={() => setAuthScreenMode("login")}
-                  style={{ 
-                    flex: 1, 
-                    padding: "12px", 
-                    background: authScreenMode === "login" ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY, 
-                    color: authScreenMode === "login" ? NAVY : TEXT_MUTED,
-                    border: authScreenMode === "login" ? "none" : `1px solid ${NAVY_BORDER}`,
-                    borderRadius: "8px", 
-                    cursor: "pointer", 
-                    fontWeight: 700, 
-                    fontSize: 14,
-                    transition: "all 0.3s",
-                    boxShadow: authScreenMode === "login" ? `0 4px 15px ${GOLD}40` : "none"
-                  }}
-                >
-                  Login
-                </button>
-                <button 
-                  onClick={() => setAuthScreenMode("signup")}
-                  style={{ 
-                    flex: 1, 
-                    padding: "12px", 
-                    background: authScreenMode === "signup" ? `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)` : NAVY, 
-                    color: authScreenMode === "signup" ? "white" : TEXT_MUTED,
-                    border: authScreenMode === "signup" ? "none" : `1px solid ${NAVY_BORDER}`,
-                    borderRadius: "8px", 
-                    cursor: "pointer", 
-                    fontWeight: 700, 
-                    fontSize: 14,
-                    transition: "all 0.3s",
-                    boxShadow: authScreenMode === "signup" ? `0 4px 15px ${ACCENT_PK}40` : "none"
-                  }}
-                >
-                  Sign Up
-                </button>
-              </div>
-
-              {/* LOGIN FORM */}
-              {authScreenMode === "login" && (
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  
-                  try {
-                    const res = await fetch('/api/auth/login', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        email: formData.get('email'),
-                        password: formData.get('password'),
-                      }),
-                    });
-
-                    const data = await res.json();
-
-                    if (res.ok) {
-                      localStorage.setItem('arklaw_user', JSON.stringify(data.user));
-                      setUser(data.user);
-                      setShowLoginPopup(false);
-                    } else {
-                      alert(data.error || 'Invalid email or password');
-                    }
-                  } catch (error) {
-                    alert('Login failed. Please try again.');
-                  }
-                }}>
-                  
-                  <h3 style={{ color: GOLD, fontSize: 18, marginBottom: "20px", fontWeight: 700 }}>Welcome Back!</h3>
-                  
-                  <div style={{ marginBottom: "18px" }}>
-                    <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
-                    <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
-                  </div>
-
-                  <div style={{ marginBottom: "25px" }}>
-                    <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
-                    <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
-                  </div>
-
-                  <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${GOLD}40` }}>
-                    Login to ARK Law AI
-                  </button>
-                </form>
-              )}
-
-              {/* SIGNUP FORM */}
-              {authScreenMode === "signup" && (
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  
-                  try {
-                    const res = await fetch('/api/auth/signup', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        email: formData.get('email'),
-                        password: formData.get('password'),
-                        name: formData.get('name'),
-                        age: formData.get('age'),
-                        profession: formData.get('profession'),
-                        barOfPractice: formData.get('barOfPractice'),
-                        city: formData.get('city'),
-                        province: formData.get('province'),
-                        country: formData.get('country'),
-                      }),
-                    });
-
-                    const data = await res.json();
-
-                    if (res.ok) {
-                      // Show success and switch to login
-                      alert(`Account created successfully! Please login with your credentials.`);
-                      setAuthScreenMode("login");
-                    } else {
-                      alert(data.error || 'Signup failed. Please try again.');
-                    }
-                  } catch (error) {
-                    alert('Signup failed. Please try again.');
-                  }
-                }}>
-                  
-                  <h3 style={{ color: ACCENT_PK, fontSize: 18, marginBottom: "15px", fontWeight: 700 }}>Create Your Account</h3>
-                  
-                  <div style={{ maxHeight: "400px", overflowY: "auto", paddingRight: "10px" }}>
-                    <div style={{ marginBottom: "15px" }}>
-                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Email Address *</label>
-                      <input name="email" type="email" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="your.email@example.com" />
-                    </div>
-
-                    <div style={{ marginBottom: "15px" }}>
-                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Password *</label>
-                      <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="Minimum 6 characters" />
-                    </div>
-
-                    <div style={{ marginBottom: "15px" }}>
-                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Full Name *</label>
-                      <input name="name" type="text" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} placeholder="Your full name" />
-                    </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "15px" }}>
-                      <div>
-                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Age *</label>
-                        <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
-                      </div>
-                      
-                      <div>
-                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Profession *</label>
-                        <select name="profession" required style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }}>
-                          <option value="">Select...</option>
-                          <option>Lawyer</option>
-                          <option>Legal Assistant</option>
-                          <option>Paralegal</option>
-                          <option>Law Clerk</option>
-                          <option>Court Researcher</option>
-                          <option>Law Student</option>
-                          <option>Judge</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: "15px" }}>
-                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
-                      <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
-                    </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "15px" }}>
-                      <div>
-                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>City *</label>
-                        <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
-                      </div>
-                      
-                      <div>
-                        <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Province *</label>
-                        <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: "20px" }}>
-                      <label style={{ color: GOLD, fontSize: 12, display: "block", marginBottom: "5px", fontWeight: 600 }}>Country *</label>
-                      <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "10px", background: NAVY, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 13 }} />
-                    </div>
-                  </div>
-
-                  <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
-                    Create Account
-                  </button>
-                </form>
-              )}
-            </div>
-
-            {/* Footer Note */}
-            <div style={{ textAlign: "center", marginTop: "20px", color: TEXT_MUTED, fontSize: 10 }}>
-              By continuing, you agree to ARK Law AI's Terms of Service
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MY ACCOUNT POPUP - With Activity Log */}
-      {showMyAccountPopup && user && !user.isNewUser && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "50px", height: "50px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: 700, color: NAVY }}>
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>My Account</h2>
-              </div>
-              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
-            </div>
-
-            {/* Profile Information */}
-            <div style={{ background: NAVY_SURFACE, padding: "25px", borderRadius: "10px", marginBottom: "20px", border: `2px solid ${GOLD}30` }}>
-              <h3 style={{ color: ACCENT_PK, fontSize: 16, marginBottom: "18px", fontWeight: 700, borderBottom: `2px solid ${ACCENT_PK}`, paddingBottom: "8px" }}>📋 Profile Information</h3>
-              
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Name</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.name}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Email</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.email}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Age</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.age}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Profession</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.profession}</div>
-                </div>
-
-                {user.barOfPractice && (
-                  <div>
-                    <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Bar of Practice</span>
-                    <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.barOfPractice}</div>
-                  </div>
-                )}
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Location</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.city}, {user.province}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Country</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{user.country}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: TEXT_MUTED, fontSize: 11, display: "block" }}>Member Since</span>
-                  <div style={{ color: CREAM, fontSize: 14, marginTop: "4px", fontWeight: 600 }}>{new Date(user.createdAt).toLocaleDateString()}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Activity Log */}
-            <div style={{ background: NAVY_SURFACE, padding: "25px", borderRadius: "10px", marginBottom: "20px", border: `2px solid ${ACCENT_PK}30` }}>
-              <h3 style={{ color: ACCENT_PK, fontSize: 16, marginBottom: "15px", fontWeight: 700, borderBottom: `2px solid ${ACCENT_PK}`, paddingBottom: "8px" }}>📊 Recent Activity</h3>
-              
-              {messages.filter(m => m.role === 'user').length > 0 ? (
-                <div style={{ maxHeight: "200px", overflowY: "auto" }}>
-                  {messages.filter(m => m.role === 'user').slice(-5).reverse().map((msg, idx) => (
-                    <div key={idx} style={{ padding: "10px", background: NAVY, borderRadius: "6px", marginBottom: "8px", border: `1px solid ${NAVY_BORDER}` }}>
-                      <div style={{ color: TEXT_MUTED, fontSize: 10, marginBottom: "4px" }}>Query {messages.filter(m => m.role === 'user').length - idx}</div>
-                      <div style={{ color: CREAM, fontSize: 12 }}>{msg.content.substring(0, 80)}{msg.content.length > 80 ? '...' : ''}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "20px", color: TEXT_MUTED, fontSize: 13 }}>
-                  No queries yet. Start asking legal questions!
-                </div>
-              )}
-            </div>
-
-            {/* Buttons */}
-            <div style={{ display: "flex", gap: "12px" }}>
-              <button 
-                onClick={() => {
-                  if (confirm('Are you sure you want to logout?')) {
-                    localStorage.removeItem('arklaw_user');
-                    setUser(null);
-                    setShowMyAccountPopup(false);
-                    setMessages([{
-                      role: "assistant",
-                      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
-                    }]);
-                  }
-                }}
-                style={{ flex: 1, padding: "14px", background: "#DC3545", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
-              >
-                🚪 Logout
-              </button>
-              <button onClick={() => setShowMyAccountPopup(false)} style={{ flex: 1, padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
