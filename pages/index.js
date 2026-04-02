@@ -171,13 +171,17 @@ export default function App() {
 
   // Auto-send greeting on mount
   useEffect(() => {
+    const greetingContent = user 
+      ? `السلام علیکم! (Assalam o Alaikum!) Welcome back, ${user.name}! 🎉\n\nYour trusted legal companion for Pakistani law is here to assist you.\n\nHow may I assist you with your legal questions today?`
+      : "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nMay I know your name?\n\nHow may I assist you with your legal questions today?";
+    
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
+      content: greetingContent,
     };
     setMessages([greeting]);
-    setNameAsked(true); // Mark as asked immediately so we never ask for name
-  }, []); // Only run once on mount
+    setNameAsked(user ? true : false); // Only mark as asked if user is logged in
+  }, [user]); // Re-run when user changes
 
   // Scroll to bottom
   useEffect(() => {
@@ -230,6 +234,18 @@ export default function App() {
     const userMessage = msg || input;
     if (!userMessage.trim()) return;
 
+    // If user is not logged in and we haven't asked for name yet, collect it
+    if (!user && !nameAsked && !skipNameCheck) {
+      setName(userMessage);
+      setNameAsked(true);
+      setMessages([...messages, 
+        { role: "user", content: userMessage },
+        { role: "assistant", content: `Nice to meet you, ${userMessage}! 😊\n\nHow may I assist you with your legal questions today?` }
+      ]);
+      setInput("");
+      return;
+    }
+
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
     setMessages(updatedMessages);
@@ -252,7 +268,9 @@ export default function App() {
       }
 
       const data = await res.json();
-      const personalizedResponse = name ? data.reply.replace(/Ahmed/g, name) : data.reply;
+      // Use logged-in user's name or collected name for personalization
+      const userName = user?.name || name;
+      const personalizedResponse = userName ? data.reply.replace(/Ahmed/g, userName) : data.reply;
 
       setMessages((prev) => [
         ...prev,
