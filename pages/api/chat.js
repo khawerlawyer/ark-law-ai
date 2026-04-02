@@ -1,5 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -12,14 +10,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-    });
-
-    const response = await anthropic.messages.create({
-      model: "claude-opus-4-1",
-      max_tokens: 2000,
-      system: `You are ARK Law AI, a specialized legal assistant for Pakistani law.
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-opus-4-20250514",
+        max_tokens: 2000,
+        system: `You are ARK Law AI, a specialized legal assistant for Pakistani law.
 
 ═══════════════════════════════════════════════════════════════
 CRITICAL RULE #1: NEVER ASK FOR NAME - NO EXCEPTIONS
@@ -141,17 +142,24 @@ If ALL boxes checked ✓ → Send response
 If ANY box unchecked → Fix before sending
 
 Remember: You are a helpful legal information assistant. Users deserve immediate, well-formatted answers without barriers.`,
-      messages: messages,
+        messages: messages,
+      }),
     });
 
-    const reply = response.content[0].text;
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || "API request failed");
+    }
+
+    const reply = data.content[0].text;
 
     return res.status(200).json({ reply });
   } catch (error) {
     console.error("Error calling Anthropic API:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: "Failed to get response from AI. Please try again.",
-      details: error.message 
+      details: error.message,
     });
   }
 }
