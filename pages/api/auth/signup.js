@@ -1,6 +1,7 @@
-// Initialize global users array if it doesn't exist
-if (!global.arkLawUsers) {
+// Initialize global users array - this persists across requests during server runtime
+if (typeof global.arkLawUsers === 'undefined') {
   global.arkLawUsers = [];
+  console.log('✅ Initialized arkLawUsers array');
 }
 
 function hashPassword(password) {
@@ -25,15 +26,29 @@ export default async function handler(req, res) {
       country,
     } = req.body;
 
+    // Validate required fields
     if (!email || !password || !name || !age || !profession || !city || !province || !country) {
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
 
-    const users = global.arkLawUsers;
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    console.log('📝 Signup attempt for:', email);
+    console.log('📊 Current users in database:', global.arkLawUsers.length);
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const existingUser = global.arkLawUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (existingUser) {
+      console.log('❌ User already exists:', email);
       return res.status(400).json({ error: 'An account with this email already exists' });
     }
 
@@ -52,12 +67,14 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString(),
     };
 
-    users.push(newUser);
-    global.arkLawUsers = users; // Store in global
+    // Add to global array
+    global.arkLawUsers.push(newUser);
 
-    console.log('User created:', newUser.email);
-    console.log('Total users:', users.length);
+    console.log('✅ User created successfully:', email);
+    console.log('📊 Total users now:', global.arkLawUsers.length);
+    console.log('👥 All users:', global.arkLawUsers.map(u => u.email));
 
+    // Return user without password
     const { password: _, ...userWithoutPassword } = newUser;
 
     return res.status(201).json({
@@ -66,7 +83,7 @@ export default async function handler(req, res) {
       user: userWithoutPassword,
     });
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('❌ Signup error:', error);
     return res.status(500).json({ 
       error: 'An error occurred during signup',
       details: error.message 
