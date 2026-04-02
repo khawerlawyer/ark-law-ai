@@ -166,7 +166,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
+      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?",
     };
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
@@ -1264,15 +1264,17 @@ By Attorney & AI Innovator Khawer Rabbani
               color: NAVY, 
               border: `2px solid ${GOLD}`, 
               borderRadius: "4px", 
-              fontSize: 13, 
+              fontSize: 11, 
               fontWeight: 700, 
               boxShadow: `0 0 15px rgba(201,168,76,0.5)`,
               animation: "glow 2s ease-in-out infinite",
               textAlign: "center",
               letterSpacing: "0.3px",
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
+              lineHeight: "1.4"
             }}>
-              ✨ Open for All! ✨
+              ✨ Open for All! ✨<br/>
+              <span style={{ fontSize: 8, fontWeight: 600 }}>Sign-up Recommended for Best Results</span>
             </div>
             
             {/* Contact Email */}
