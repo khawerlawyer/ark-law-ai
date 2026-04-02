@@ -36,6 +36,11 @@ export default function App() {
   const [newsItems, setNewsItems] = useState([]);
   const [showComparePopup, setShowComparePopup] = useState(false);
   const [doc1, setDoc1] = useState(null);
+  
+  // Voice functionality state
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentSpeakingIndex, setCurrentSpeakingIndex] = useState(null);
   const [doc2, setDoc2] = useState(null);
   const [compareFocus, setCompareFocus] = useState("");
   const [comparisonResult, setComparisonResult] = useState("");
@@ -251,6 +256,100 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Voice Input - Speech Recognition
+  const startVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice recognition is not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      if (event.error === 'no-speech') {
+        alert('No speech detected. Please try again.');
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  // Text-to-Speech - Read answer aloud
+  const speakText = (text, messageIndex) => {
+    // Stop any current speech
+    if (isSpeaking && currentSpeakingIndex === messageIndex) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setCurrentSpeakingIndex(null);
+      return;
+    }
+
+    // Stop any other speech
+    window.speechSynthesis.cancel();
+
+    // Clean the text - remove special characters but keep periods for pauses
+    const cleanText = text.replace(/[•\n]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    
+    // Configure voice settings for male voice
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 0.8; // Lower pitch for male voice
+    utterance.volume = 1.0;
+    utterance.lang = 'en-US';
+
+    // Try to find a male voice
+    const voices = window.speechSynthesis.getVoices();
+    const maleVoice = voices.find(voice => 
+      voice.name.includes('Male') || 
+      voice.name.includes('David') || 
+      voice.name.includes('Mark') ||
+      voice.lang.includes('en')
+    );
+    
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setCurrentSpeakingIndex(messageIndex);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setCurrentSpeakingIndex(null);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setCurrentSpeakingIndex(null);
+    };
+
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleNewsClick = async (headline) => {
@@ -985,6 +1084,10 @@ By Attorney & AI Innovator Khawer Rabbani
           0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
           50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); }
         }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
         @media (max-width: 768px) {
           .desktop-only { display: none; }
         }
@@ -1380,8 +1483,34 @@ By Attorney & AI Innovator Khawer Rabbani
                   {msg.role === "assistant" && (
                     <img src="/khawer.jpeg" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
                   )}
-                  <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-                    {renderMessageContent(msg.content)}
+                  <div style={{ maxWidth: "70%", position: "relative" }}>
+                    <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                      {renderMessageContent(msg.content)}
+                    </div>
+                    {msg.role === "assistant" && (
+                      <button
+                        onClick={() => speakText(msg.content, i)}
+                        style={{
+                          marginTop: "6px",
+                          padding: "6px 12px",
+                          background: currentSpeakingIndex === i ? ACCENT_PK : GOLD,
+                          color: NAVY,
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                          fontSize: 11,
+                          fontWeight: 600,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          transition: "all 0.2s"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                      >
+                        {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1396,8 +1525,56 @@ By Attorney & AI Innovator Khawer Rabbani
 
             {/* INPUT AREA */}
             <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px" }}>
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask ARK Law AI..." style={{ flex: 1, padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 13 }} />
-              <button onClick={() => sendMessage()} disabled={loading} style={{ padding: "10px 20px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+              <button 
+                onClick={startVoiceInput}
+                disabled={loading || isListening}
+                style={{ 
+                  padding: "10px 16px", 
+                  background: isListening ? ACCENT_PK : NAVY_SURFACE, 
+                  color: isListening ? NAVY : TEXT_PRIMARY,
+                  border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, 
+                  borderRadius: "4px", 
+                  cursor: loading || isListening ? "not-allowed" : "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 16,
+                  transition: "all 0.3s",
+                  animation: isListening ? "pulse 1.5s infinite" : "none"
+                }}
+                title="Click to speak your question"
+              >
+                {isListening ? "🎤 Listening..." : "🎤"}
+              </button>
+              <input 
+                type="text" 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
+                placeholder={isListening ? "Listening..." : "Ask ARK Law AI or click mic to speak..."} 
+                style={{ 
+                  flex: 1, 
+                  padding: "10px", 
+                  background: NAVY_SURFACE, 
+                  border: `1px solid ${NAVY_BORDER}`, 
+                  color: TEXT_PRIMARY, 
+                  borderRadius: "4px", 
+                  fontSize: 13 
+                }} 
+              />
+              <button 
+                onClick={() => sendMessage()} 
+                disabled={loading || isListening} 
+                style={{ 
+                  padding: "10px 20px", 
+                  background: GOLD, 
+                  color: NAVY, 
+                  border: "none", 
+                  borderRadius: "4px", 
+                  cursor: loading || isListening ? "not-allowed" : "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 13,
+                  opacity: loading || isListening ? 0.5 : 1
+                }}
+              >
                 SEND
               </button>
             </div>
