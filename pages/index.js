@@ -1125,7 +1125,7 @@ By Attorney & AI Innovator Khawer Rabbani
       if (imageMatch || urlMatch) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
               {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
@@ -1158,7 +1158,7 @@ By Attorney & AI Innovator Khawer Rabbani
       else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
               {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
@@ -1169,7 +1169,7 @@ By Attorney & AI Innovator Khawer Rabbani
         elements.push(
           <div key={`bullet-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px', lineHeight: '1.6' }}>
             <span style={{ color: '#C9A84C', fontWeight: 'bold', flexShrink: 0 }}>•</span>
-            <span style={{ fontWeight: 600 }}>{parseMarkdown(bulletText)}</span>
+            <span>{parseMarkdown(bulletText)}</span>
           </div>
         );
       }
@@ -1180,7 +1180,7 @@ By Attorney & AI Innovator Khawer Rabbani
       )) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
               {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
@@ -1205,7 +1205,7 @@ By Attorney & AI Innovator Khawer Rabbani
       else if (trimmedLine.length === 0) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
               {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
@@ -1221,7 +1221,7 @@ By Attorney & AI Innovator Khawer Rabbani
     // Flush any remaining paragraph
     if (currentParagraph.length > 0) {
       elements.push(
-        <p key={`p-final`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+        <p key={`p-final`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
           {parseMarkdown(currentParagraph.join(' '))}
         </p>
       );
