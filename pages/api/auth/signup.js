@@ -1,4 +1,7 @@
-let users = [];
+// Initialize global users array if it doesn't exist
+if (!global.arkLawUsers) {
+  global.arkLawUsers = [];
+}
 
 function hashPassword(password) {
   return Buffer.from(password).toString('base64');
@@ -26,11 +29,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
 
+    const users = global.arkLawUsers;
+
+    // Check if user already exists
     const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (existingUser) {
       return res.status(400).json({ error: 'An account with this email already exists' });
     }
 
+    // Create new user
     const newUser = {
       id: Date.now().toString(),
       email: email.toLowerCase(),
@@ -46,6 +53,7 @@ export default async function handler(req, res) {
     };
 
     users.push(newUser);
+    global.arkLawUsers = users; // Store in global
 
     console.log('User created:', newUser.email);
     console.log('Total users:', users.length);
@@ -65,5 +73,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
-export { users };
