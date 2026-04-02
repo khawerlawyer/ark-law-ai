@@ -1148,7 +1148,20 @@ By Attorney & AI Innovator Khawer Rabbani
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
               <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div style={{ fontSize: 8, color: ACCENT_PK }}>by Attorney & AI Innovator Khawer Rabbani</div>
+              <div 
+                onClick={() => setShowLinkedInPopup(true)}
+                style={{ 
+                  fontSize: 8, 
+                  color: ACCENT_PK, 
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
+                onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
+              >
+                by Attorney & AI Innovator Khawer Rabbani
+              </div>
             </div>
           </div>
 
