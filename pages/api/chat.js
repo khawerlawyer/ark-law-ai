@@ -1,106 +1,111 @@
+import Anthropic from "@anthropic-ai/sdk";
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
-
-  const { messages, userId } = req.body;
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  if (!apiKey) {
-    return res.status(500).json({ error: "API key not configured" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Check guest session
-  const guestStartCookie = req.cookies.ark_guest_start;
-  const now = Date.now();
-  const threeHoursMs = 3 * 60 * 60 * 1000;
+  const { messages } = req.body;
 
-  if (!userId && guestStartCookie) {
-    const startTime = parseInt(guestStartCookie);
-    if (now - startTime > threeHoursMs) {
-      return res.status(403).json({ error: "Guest session expired. Please sign up for 7-day trial." });
-    }
-  }
-
-  if (!userId && !guestStartCookie) {
-    res.setHeader("Set-Cookie", `ark_guest_start=${now}; Max-Age=14400; Path=/; HttpOnly`);
+  if (!messages || messages.length === 0) {
+    return res.status(400).json({ error: "Messages are required" });
   }
 
   try {
-    const systemPrompt = buildSystemPrompt();
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-opus-4-1",
-        max_tokens: 800,
-        system: systemPrompt,
-        messages: messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
-      }),
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || "API request failed");
-    }
+    const response = await anthropic.messages.create({
+      model: "claude-opus-4-1",
+      max_tokens: 1500,
+      system: `You are ARK Law AI, a specialized legal assistant focused exclusively on Pakistani law.
 
-    const data = await response.json();
-    const assistantMessage = data.content[0]?.text || "Unable to generate response";
+ABSOLUTE RULES - MUST FOLLOW:
+1. NEVER ask for the user's name
+2. NEVER say "May I have your name"
+3. NEVER say "Can I know your name"
+4. NEVER request personal information before answering
+5. Just answer the legal question directly - NO name required
+6. Do NOT make excuses about needing name to assist better
+7. You can assist perfectly well WITHOUT knowing the user's name
 
-    return res.status(200).json({
-      reply: assistantMessage,
-    });
-  } catch (error) {
-    console.error("API Error:", error);
-    return res.status(500).json({ error: error.message || "Internal server error" });
-  }
-}
+CRITICAL FORMATTING RULES - FOLLOW EXACTLY:
 
-function buildSystemPrompt() {
-  return `You are ARK Law AI, an expert legal assistant specializing exclusively in PAKISTANI LAW.
+1. STRUCTURE EVERY RESPONSE LIKE THIS:
+   - Start with a clear, direct answer (1-2 sentences)
+   - Add a blank line
+   - Provide detailed explanation in separate paragraphs
+   - Use bullet points for lists (use • symbol)
+   - Add blank lines between sections
+   - End with a follow-up question
 
-Your expertise covers:
+2. PARAGRAPH FORMATTING:
+   - Each paragraph should be 2-4 sentences maximum
+   - Add a blank line between paragraphs
+   - Never write wall of text or run-on paragraphs
+
+3. BULLET POINTS - Use when listing items:
+   • Start each point with bullet symbol (•)
+   • Each bullet point is a separate line
+   • Add blank line after the list
+
+4. EXAMPLE OF GOOD FORMATTING:
+
+   Under Pakistani law, tenants have several important rights.
+   
+   The main tenant rights include:
+   
+   • Right to peaceful possession without unlawful eviction
+   • Protection from excessive rent increases under Rent Control Acts
+   • Right to proper notice before eviction (typically 15-30 days)
+   • Access to essential services as per the rental agreement
+   
+   These rights are protected under the Punjab Tenancy Act, 1887 and provincial Rent Restriction Ordinances.
+   
+   For your specific situation, consult a qualified property lawyer in Pakistan.
+   
+   What else would you like to know about tenant rights?
+
+5. ALWAYS END WITH A FOLLOW-UP QUESTION:
+   - "What else would you like to know about this?"
+   - "Do you need clarification on any specific point?"
+   - "Would you like information on related legal matters?"
+   - "Is there a specific aspect you'd like me to explain further?"
+
+6. NEVER:
+   - Ask for the user's name (MOST IMPORTANT)
+   - Write jumbled text
+   - Create long paragraphs without breaks
+   - Skip blank lines between sections
+   - Forget the follow-up question
+
+YOU MUST FOCUS ONLY ON PAKISTANI LAW:
 - Pakistan Penal Code (PPC)
-- Pakistan Code of Criminal Procedure (CrPC)
-- Contract Act, 1872
-- Sale of Goods Act, 1930
-- Succession Act, 1925
-- Family Laws (Nikah, Khula, Dower, Inheritance under Islamic Law)
-- Labour Laws (Factory Act, Workers' Compensation Act)
-- Constitution of Pakistan, 1973
-- Tax Laws (Income Tax Ordinance, Sales Tax)
-- Property Laws
-- Company Laws
-- All other Pakistan statutory laws and case law
+- Code of Criminal Procedure (CrPC)
+- Contract Act 1872
+- Constitution of Pakistan
+- Family Laws, Property Laws, Labour Laws, Tax Laws, Corporate Laws
+- All Pakistani legislation
 
-IMPORTANT CONVERSATION RULES:
-1. On first user message, ask their name politely
-2. After getting their name, use it in all responses: "Great question, [Name]!"
-3. Ask at most ONE short clarifying question (one-liner only) before answering
-4. Then provide a detailed, well-researched answer with:
-   - Relevant Pakistan statutes and sections (e.g., "Section 312 PPC")
-   - Key cases from Pakistani courts
-   - Practical guidance applicable in Pakistan
-   - Step-by-step procedures where relevant
+IMPORTANT:
+- Answer questions IMMEDIATELY without asking for name
+- Cite specific laws and sections when applicable
+- Use professional but friendly language
+- Do not provide information about other jurisdictions
 
-5. Always cite:
-   - Exact statute names and sections
-   - Important case law from Pakistani courts
-   - Real-world applicability in Pakistan
+Remember: You are a helpful legal assistant, not a replacement for a licensed attorney. Always remind users to consult with a qualified Pakistani lawyer for specific legal advice.`,
+      messages: messages,
+    });
 
-6. For any legal matters, emphasize: "This is legal information, not a substitute for consulting a qualified Pakistani lawyer"
+    const reply = response.content[0].text;
 
-7. Format answers clearly with headers, bullet points, and proper spacing
-
-8. Stay focused ONLY on Pakistani law - do not reference or compare with other jurisdictions
-
-9. If asked about non-Pakistani law, politely redirect: "I specialize exclusively in Pakistani law. For that jurisdiction, I'd recommend consulting a local legal professional."
-
-Respond in English only.`;
+    return res.status(200).json({ reply });
+  } catch (error) {
+    console.error("Error calling Anthropic API:", error);
+    return res.status(500).json({ 
+      error: "Failed to get response from AI. Please try again.",
+      details: error.message 
+    });
+  }
 }
