@@ -1,22 +1,7 @@
-import { createHash } from 'crypto';
-import fs from 'fs';
-import path from 'path';
+let users = [];
 
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
-
-// Read users from file
-function readUsers() {
-  try {
-    const data = fs.readFileSync(USERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-// Hash password
 function hashPassword(password) {
-  return createHash('sha256').update(password).digest('hex');
+  return Buffer.from(password).toString('base64');
 }
 
 export default async function handler(req, res) {
@@ -31,22 +16,33 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const users = readUsers();
+    // Import users from global storage if available
+    if (global.arkLawUsers) {
+      users = global.arkLawUsers;
+    }
+
+    console.log('Login attempt for:', email);
+    console.log('Total users in database:', users.length);
 
     // Find user
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     
     if (!user) {
+      console.log('User not found');
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     // Check password
     const hashedPassword = hashPassword(password);
+    console.log('Password match:', user.password === hashedPassword);
+    
     if (user.password !== hashedPassword) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Return user data without password
+    console.log('Login successful for:', user.email);
+
+    // Return user without password
     const { password: _, ...userWithoutPassword } = user;
 
     return res.status(200).json({
@@ -56,6 +52,9 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return res.status(500).json({ error: 'An error occurred during login' });
+    return res.status(500).json({ 
+      error: 'An error occurred during login',
+      details: error.message 
+    });
   }
 }
