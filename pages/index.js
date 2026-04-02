@@ -155,7 +155,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nBefore we begin, may I know your name?",
+      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nYou can start by asking any legal question, or tell me your name first if you'd like!",
     };
     setMessages([greeting]);
   }, []); // Only run once on mount
@@ -207,14 +207,23 @@ export default function App() {
     setNewsItems(newsDatabase.map(item => item.headline));
   };
 
-  const sendMessage = async (msg = null) => {
+  const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
     if (!userMessage.trim()) return;
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
     // Check if this is the name response (first user message after greeting)
-    if (!nameAsked && messages.length === 1) {
+    // Only ask for name if user typed manually (not clicked a link/query)
+    // and the message doesn't look like a legal question
+    const looksLikeQuestion = userMessage.includes('?') || 
+                              userMessage.toLowerCase().includes('what') ||
+                              userMessage.toLowerCase().includes('how') ||
+                              userMessage.toLowerCase().includes('law') ||
+                              userMessage.toLowerCase().includes('legal') ||
+                              userMessage.length > 30;
+    
+    if (!nameAsked && messages.length === 1 && !skipNameCheck && !looksLikeQuestion && !msg) {
       setNameAsked(true);
       setName(userMessage);
       const greetingResponse = {
@@ -224,6 +233,11 @@ export default function App() {
       setMessages([...updatedMessages, greetingResponse]);
       setInput("");
       return;
+    }
+
+    // If it's a question or clicked link, skip name asking and just answer
+    if (!nameAsked && messages.length === 1) {
+      setNameAsked(true); // Mark as asked so we don't ask again
     }
 
     setMessages(updatedMessages);
@@ -1356,7 +1370,7 @@ By Attorney & AI Innovator Khawer Rabbani
               <div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
                 {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
+                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = `${GOLD}15`;
                     e.currentTarget.style.borderColor = GOLD;
@@ -1411,7 +1425,7 @@ By Attorney & AI Innovator Khawer Rabbani
               <div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
                 {PRACTICE_AREAS_PK.map((area) => (
-                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 10, textAlign: "left" }}>
+                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 10, textAlign: "left" }}>
                     {area.icon} {area.label}
                   </button>
                 ))}
