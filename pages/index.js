@@ -14,6 +14,11 @@ const CREAM = "#F5F1E8";
 const POPUP_DARK = "#0A1118";
 
 export default function App() {
+  // Auth state
+  const [user, setUser] = useState(null);
+  const [showSignupPopup, setShowSignupPopup] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -161,7 +166,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
+      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
     };
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
@@ -224,13 +229,17 @@ export default function App() {
     setInput("");
     setLoading(true);
 
+    // Add empty assistant message for streaming
+    const streamingMessageIndex = updatedMessages.length;
+    setMessages([...updatedMessages, { role: "assistant", content: "" }]);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updatedMessages,
-          
+          stream: true,
         }),
       });
 
@@ -239,15 +248,55 @@ export default function App() {
         throw new Error(error.error || "Failed to get response");
       }
 
-      const data = await res.json();
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = "";
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.content) {
+                accumulatedContent += data.content;
+                // Update the message in real-time
+                setMessages(prev => {
+                  const newMessages = [...prev];
+                  newMessages[streamingMessageIndex] = {
+                    role: "assistant",
+                    content: accumulatedContent
+                  };
+                  return newMessages;
+                });
+              }
+            } catch (e) {
+              // Skip invalid JSON
+            }
+          }
+        }
+      }
+
+      // If no streaming data was received, fall back to regular response
+      if (!accumulatedContent) {
+        const data = await res.json();
+        setMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[streamingMessageIndex] = {
+            role: "assistant",
+            content: data.reply
+          };
+          return newMessages;
+        });
+      }
     } catch (error) {
       setMessages((prev) => [
-        ...prev,
+        ...prev.slice(0, streamingMessageIndex),
         {
           role: "assistant",
           content: `❌ Error: ${error.message}. Please try again.`,
@@ -1247,6 +1296,40 @@ By Attorney & AI Innovator Khawer Rabbani
               <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
               📧 contact@arklaw.ai
             </a>
+            
+            {/* Auth Buttons */}
+            <button 
+              onClick={() => setShowLoginPopup(true)}
+              style={{ 
+                padding: "6px 16px", 
+                background: GOLD, 
+                color: NAVY, 
+                border: `2px solid ${GOLD}`, 
+                borderRadius: "4px", 
+                cursor: "pointer", 
+                fontSize: 11, 
+                fontWeight: 600,
+                transition: "all 0.2s"
+              }}
+            >
+              Login
+            </button>
+            <button 
+              onClick={() => setShowSignupPopup(true)}
+              style={{ 
+                padding: "6px 16px", 
+                background: ACCENT_PK, 
+                color: NAVY, 
+                border: `2px solid ${ACCENT_PK}`, 
+                borderRadius: "4px", 
+                cursor: "pointer", 
+                fontSize: 11, 
+                fontWeight: 600,
+                transition: "all 0.2s"
+              }}
+            >
+              Sign Up
+            </button>
           </div>
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
@@ -1656,9 +1739,27 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
 
         {/* FOOTER */}
-        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, textAlign: "center" }}>
-          <div>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
-          <div style={{ color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
+        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, position: "relative" }}>
+          <div style={{ textAlign: "center" }}>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
+          <div style={{ textAlign: "center", color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
+          
+          {/* Golden Banner - Bottom Right */}
+          <div style={{ 
+            position: "absolute", 
+            bottom: "8px", 
+            right: "20px",
+            padding: "6px 16px",
+            background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
+            color: NAVY,
+            borderRadius: "4px",
+            fontSize: 9,
+            fontWeight: 700,
+            boxShadow: `0 2px 8px ${GOLD}40`,
+            border: `1px solid ${GOLD}`,
+            letterSpacing: "0.3px"
+          }}>
+            ✨ Designed & Developed by ARK Lex AI LLC.
+          </div>
         </footer>
       </div>
 
@@ -2295,6 +2396,186 @@ By Attorney & AI Innovator Khawer Rabbani
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* LOGIN POPUP */}
+      {showLoginPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
+          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} />
+                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>Login to ARK Law AI</h2>
+              </div>
+              <button onClick={() => setShowLoginPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              
+              try {
+                const res = await fetch('/api/auth/login', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                  }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                  localStorage.setItem('arklaw_user', JSON.stringify(data.user));
+                  setUser(data.user);
+                  setShowLoginPopup(false);
+                  alert(`Welcome back, ${data.user.name}!`);
+                } else {
+                  alert(data.error || 'Invalid email or password');
+                }
+              } catch (error) {
+                alert('Login failed. Please try again.');
+              }
+            }}>
+              
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+              </div>
+
+              <div style={{ marginBottom: "25px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
+                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
+              </div>
+
+              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: `0 4px 15px ${GOLD}40` }}>
+                Login
+              </button>
+
+              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12 }}>
+                Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span>
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* SIGNUP POPUP */}
+      {showSignupPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
+          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} />
+                <h2 style={{ color: GOLD, margin: 0, fontSize: "22px" }}>Join ARK Law AI</h2>
+              </div>
+              <button onClick={() => setShowSignupPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              
+              try {
+                const res = await fetch('/api/auth/signup', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    name: formData.get('name'),
+                    age: formData.get('age'),
+                    profession: formData.get('profession'),
+                    barOfPractice: formData.get('barOfPractice'),
+                    city: formData.get('city'),
+                    province: formData.get('province'),
+                    country: formData.get('country'),
+                  }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                  setShowSignupPopup(false);
+                  alert('Account created successfully! Please login with your credentials.');
+                  setShowLoginPopup(true);
+                } else {
+                  alert(data.error || 'Signup failed. Please try again.');
+                }
+              } catch (error) {
+                alert('Signup failed. Please try again.');
+              }
+            }}>
+              
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label>
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+              </div>
+
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label>
+                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
+              </div>
+
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label>
+                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
+                <div>
+                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label>
+                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                </div>
+                
+                <div>
+                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label>
+                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}>
+                    <option value="">Select...</option>
+                    <option>Lawyer</option>
+                    <option>Legal Assistant</option>
+                    <option>Paralegal</option>
+                    <option>Law Clerk</option>
+                    <option>Court Researcher</option>
+                    <option>Law Student</option>
+                    <option>Judge</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
+                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
+                <div>
+                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label>
+                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                </div>
+                
+                <div>
+                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label>
+                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: "25px" }}>
+                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label>
+                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+              </div>
+
+              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
+                Create Account
+              </button>
+
+              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12, marginTop: "15px" }}>
+                Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span>
+              </p>
+            </form>
           </div>
         </div>
       )}
