@@ -1745,9 +1745,27 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
 
         {/* FOOTER */}
-        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, textAlign: "center" }}>
-          <div>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
-          <div style={{ color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
+        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, position: "relative" }}>
+          <div style={{ textAlign: "center" }}>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
+          <div style={{ textAlign: "center", color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
+          
+          {/* Golden Banner - Bottom Right */}
+          <div style={{ 
+            position: "absolute", 
+            bottom: "8px", 
+            right: "20px",
+            padding: "6px 16px",
+            background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
+            color: NAVY,
+            borderRadius: "4px",
+            fontSize: 9,
+            fontWeight: 700,
+            boxShadow: `0 2px 8px ${GOLD}40`,
+            border: `1px solid ${GOLD}`,
+            letterSpacing: "0.3px"
+          }}>
+            ✨ Designed & Developed by ARK Lex AI LLC.
+          </div>
         </footer>
       </div>
 
