@@ -229,6 +229,10 @@ export default function App() {
     setInput("");
     setLoading(true);
 
+    // Add empty assistant message for streaming
+    const streamingMessageIndex = updatedMessages.length;
+    setMessages([...updatedMessages, { role: "assistant", content: "" }]);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -239,25 +243,59 @@ export default function App() {
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to get response");
+        throw new Error("Failed to get response");
       }
 
-      const data = await res.json();
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = "";
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            
+            if (data === '[DONE]') {
+              break;
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                accumulatedContent += parsed.content;
+                // Update the message in real-time with streaming effect
+                setMessages(prev => {
+                  const newMessages = [...prev];
+                  newMessages[streamingMessageIndex] = {
+                    role: "assistant",
+                    content: accumulatedContent
+                  };
+                  return newMessages;
+                });
+              }
+            } catch (e) {
+              // Skip invalid JSON
+            }
+          }
+        }
+      }
+
+      setLoading(false);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages[streamingMessageIndex] = {
           role: "assistant",
           content: `❌ Error: ${error.message}. Please try again.`,
-        },
-      ]);
-    } finally {
+        };
+        return newMessages;
+      });
       setLoading(false);
     }
   };
@@ -1021,51 +1059,135 @@ By Attorney & AI Innovator Khawer Rabbani
   };
 
   const renderMessageContent = (content) => {
-    // Split content into lines
     const lines = content.split('\n');
     const elements = [];
     let currentParagraph = [];
     
+    // Helper function to parse markdown formatting in text
+    const parseMarkdown = (text) => {
+      const parts = [];
+      let remaining = text;
+      let key = 0;
+      
+      while (remaining.length > 0) {
+        // Check for ***bold italic***
+        const boldItalicMatch = remaining.match(/^\*\*\*(.+?)\*\*\*/);
+        if (boldItalicMatch) {
+          parts.push(
+            <strong key={key++} style={{ fontStyle: 'italic' }}>
+              {boldItalicMatch[1]}
+            </strong>
+          );
+          remaining = remaining.slice(boldItalicMatch[0].length);
+          continue;
+        }
+        
+        // Check for **bold**
+        const boldMatch = remaining.match(/^\*\*(.+?)\*\*/);
+        if (boldMatch) {
+          parts.push(<strong key={key++}>{boldMatch[1]}</strong>);
+          remaining = remaining.slice(boldMatch[0].length);
+          continue;
+        }
+        
+        // Check for *italic*
+        const italicMatch = remaining.match(/^\*(.+?)\*/);
+        if (italicMatch) {
+          parts.push(<em key={key++}>{italicMatch[1]}</em>);
+          remaining = remaining.slice(italicMatch[0].length);
+          continue;
+        }
+        
+        // Regular character
+        const nextSpecial = remaining.search(/\*/);
+        if (nextSpecial === -1) {
+          parts.push(remaining);
+          break;
+        } else if (nextSpecial > 0) {
+          parts.push(remaining.slice(0, nextSpecial));
+          remaining = remaining.slice(nextSpecial);
+        } else {
+          parts.push(remaining[0]);
+          remaining = remaining.slice(1);
+        }
+      }
+      
+      return parts;
+    };
+    
     lines.forEach((line, index) => {
-      // Trim the line
       const trimmedLine = line.trim();
       
-      // Check if line is a bullet point
-      if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
-        // Flush current paragraph if exists
+      // Check for images: ![alt](url) or just image URLs
+      const imageMatch = trimmedLine.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+      const urlMatch = trimmedLine.match(/^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp))$/i);
+      
+      if (imageMatch || urlMatch) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
-              {currentParagraph.join(' ')}
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+              {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
           currentParagraph = [];
         }
         
-        // Add bullet point
+        const imgUrl = imageMatch ? imageMatch[2] : urlMatch[1];
+        const imgAlt = imageMatch ? imageMatch[1] : 'Image';
+        
+        elements.push(
+          <div key={`img-${index}`} style={{ marginBottom: '16px', marginTop: '16px' }}>
+            <img 
+              src={imgUrl} 
+              alt={imgAlt}
+              style={{ 
+                maxWidth: '100%', 
+                height: 'auto', 
+                borderRadius: '8px',
+                border: '2px solid #C9A84C',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        );
+      }
+      // Check if line is a bullet point
+      else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
+        if (currentParagraph.length > 0) {
+          elements.push(
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+              {parseMarkdown(currentParagraph.join(' '))}
+            </p>
+          );
+          currentParagraph = [];
+        }
+        
         const bulletText = trimmedLine.substring(1).trim();
         elements.push(
           <div key={`bullet-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px', lineHeight: '1.6' }}>
             <span style={{ color: '#C9A84C', fontWeight: 'bold', flexShrink: 0 }}>•</span>
-            <span>{bulletText}</span>
+            <span style={{ fontWeight: 600 }}>{parseMarkdown(bulletText)}</span>
           </div>
         );
       }
-      // Check if line looks like a header (short line, possibly ends with colon, or all caps)
-      else if (trimmedLine.length > 0 && trimmedLine.length < 60 && 
-               (trimmedLine.endsWith(':') || trimmedLine === trimmedLine.toUpperCase() || 
-                /^[A-Z][^.!?]*:?$/.test(trimmedLine))) {
-        // Flush current paragraph if exists
+      // Check if line is a header (***text*** or ends with :)
+      else if (trimmedLine.length > 0 && (
+        trimmedLine.startsWith('***') && trimmedLine.endsWith('***') ||
+        (trimmedLine.endsWith(':') && trimmedLine.length < 60)
+      )) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
-              {currentParagraph.join(' ')}
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+              {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
           currentParagraph = [];
         }
         
-        // Add header
+        const headerText = trimmedLine.replace(/^\*\*\*|\*\*\*$/g, '');
         elements.push(
           <h3 key={`h-${index}`} style={{ 
             fontWeight: 'bold', 
@@ -1075,7 +1197,7 @@ By Attorney & AI Innovator Khawer Rabbani
             marginBottom: '8px',
             fontSize: '15px'
           }}>
-            {trimmedLine}
+            {headerText}
           </h3>
         );
       }
@@ -1083,8 +1205,8 @@ By Attorney & AI Innovator Khawer Rabbani
       else if (trimmedLine.length === 0) {
         if (currentParagraph.length > 0) {
           elements.push(
-            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
-              {currentParagraph.join(' ')}
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+              {parseMarkdown(currentParagraph.join(' '))}
             </p>
           );
           currentParagraph = [];
@@ -1099,8 +1221,8 @@ By Attorney & AI Innovator Khawer Rabbani
     // Flush any remaining paragraph
     if (currentParagraph.length > 0) {
       elements.push(
-        <p key={`p-final`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
-          {currentParagraph.join(' ')}
+        <p key={`p-final`} style={{ marginBottom: '12px', lineHeight: '1.6', fontWeight: 600 }}>
+          {parseMarkdown(currentParagraph.join(' '))}
         </p>
       );
     }
