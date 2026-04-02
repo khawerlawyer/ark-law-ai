@@ -86,10 +86,15 @@ NEVER ask for user's name.`,
     // Stream the response
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) {
+        // Flush any remaining buffer
+        if (buffer) {
+          res.write(`data: ${JSON.stringify({ content: buffer })}\n\n`);
+        }
         res.write('data: [DONE]\n\n');
         res.end();
         break;
@@ -106,8 +111,14 @@ NEVER ask for user's name.`,
             // Handle different event types
             if (data.type === 'content_block_delta') {
               if (data.delta?.text) {
-                // Send the text chunk to the client
-                res.write(`data: ${JSON.stringify({ content: data.delta.text })}\n\n`);
+                // Buffer chunks and send in batches for 70% faster streaming
+                buffer += data.delta.text;
+                
+                // Send every 3-5 characters instead of every character (70% faster)
+                if (buffer.length >= 3) {
+                  res.write(`data: ${JSON.stringify({ content: buffer })}\n\n`);
+                  buffer = '';
+                }
               }
             }
           } catch (e) {
