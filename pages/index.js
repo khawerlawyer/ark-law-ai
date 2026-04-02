@@ -229,17 +229,12 @@ export default function App() {
     setInput("");
     setLoading(true);
 
-    // Add empty assistant message for streaming
-    const streamingMessageIndex = updatedMessages.length;
-    setMessages([...updatedMessages, { role: "assistant", content: "" }]);
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updatedMessages,
-          stream: true,
         }),
       });
 
@@ -248,55 +243,15 @@ export default function App() {
         throw new Error(error.error || "Failed to get response");
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulatedContent = "";
+      const data = await res.json();
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              if (data.content) {
-                accumulatedContent += data.content;
-                // Update the message in real-time
-                setMessages(prev => {
-                  const newMessages = [...prev];
-                  newMessages[streamingMessageIndex] = {
-                    role: "assistant",
-                    content: accumulatedContent
-                  };
-                  return newMessages;
-                });
-              }
-            } catch (e) {
-              // Skip invalid JSON
-            }
-          }
-        }
-      }
-
-      // If no streaming data was received, fall back to regular response
-      if (!accumulatedContent) {
-        const data = await res.json();
-        setMessages(prev => {
-          const newMessages = [...prev];
-          newMessages[streamingMessageIndex] = {
-            role: "assistant",
-            content: data.reply
-          };
-          return newMessages;
-        });
-      }
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.reply },
+      ]);
     } catch (error) {
       setMessages((prev) => [
-        ...prev.slice(0, streamingMessageIndex),
+        ...prev,
         {
           role: "assistant",
           content: `❌ Error: ${error.message}. Please try again.`,
