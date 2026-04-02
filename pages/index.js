@@ -310,7 +310,7 @@ export default function App() {
     recognition.start();
   };
 
-  // Text-to-Speech - Read answer aloud
+  // Text-to-Speech - Read answer aloud with MALE voice
   const speakText = (text, messageIndex) => {
     // Stop any current speech
     if (isSpeaking && currentSpeakingIndex === messageIndex) {
@@ -328,23 +328,53 @@ export default function App() {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Configure voice settings for male voice
-    utterance.rate = 0.9; // Slightly slower for clarity
-    utterance.pitch = 0.8; // Lower pitch for male voice
+    // Configure voice settings for DEEP MALE voice
+    utterance.rate = 0.85; // Slower for clarity and gravitas
+    utterance.pitch = 0.7; // Much lower pitch for deep male voice
     utterance.volume = 1.0;
     utterance.lang = 'en-US';
 
-    // Try to find a male voice
-    const voices = window.speechSynthesis.getVoices();
-    const maleVoice = voices.find(voice => 
-      voice.name.includes('Male') || 
-      voice.name.includes('David') || 
-      voice.name.includes('Mark') ||
-      voice.lang.includes('en')
-    );
-    
-    if (maleVoice) {
-      utterance.voice = maleVoice;
+    // Wait for voices to load, then select best male voice
+    const setVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Priority order: Try to find the best male voice
+      const maleVoice = 
+        // First: Look for explicit male voices
+        voices.find(v => v.name.toLowerCase().includes('male') && !v.name.toLowerCase().includes('female')) ||
+        // Second: Common male voice names
+        voices.find(v => 
+          v.name.includes('David') || 
+          v.name.includes('James') || 
+          v.name.includes('Daniel') ||
+          v.name.includes('Aaron') ||
+          v.name.includes('George') ||
+          v.name.includes('Rishi') ||
+          v.name.includes('Sameer')
+        ) ||
+        // Third: Google US English male voice
+        voices.find(v => v.name.includes('Google US English') && v.name.includes('Male')) ||
+        // Fourth: Microsoft voices (usually male by default)
+        voices.find(v => v.name.includes('Microsoft David')) ||
+        voices.find(v => v.name.includes('Microsoft Mark')) ||
+        // Fifth: Any English male voice
+        voices.find(v => v.lang.includes('en') && v.name.toLowerCase().includes('male')) ||
+        // Sixth: Default English voice (usually male in most browsers)
+        voices.find(v => v.lang.includes('en-US')) ||
+        voices.find(v => v.lang.includes('en'));
+      
+      if (maleVoice) {
+        utterance.voice = maleVoice;
+        console.log('Using voice:', maleVoice.name); // For debugging
+      }
+    };
+
+    // Set voice immediately if available
+    setVoice();
+
+    // Also set voice when voices are loaded (for some browsers)
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = setVoice;
     }
 
     utterance.onstart = () => {
