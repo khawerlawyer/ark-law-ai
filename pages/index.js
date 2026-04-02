@@ -191,22 +191,36 @@ export default function App() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Save chat history when messages change (only user messages)
+  // Track the last saved message count
+  const lastSavedCountRef = useRef(0);
+
+  // Save chat history when NEW messages are added
   useEffect(() => {
     if (user && messages.length > 1) {
       const userMessages = messages.filter(m => m.role === 'user');
-      if (userMessages.length > 0) {
-        const newHistory = userMessages.map((msg, idx) => ({
-          id: Date.now() + idx,
-          question: msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : ''),
-          timestamp: new Date().toISOString(),
-        }));
+      
+      // Only save if we have new messages
+      if (userMessages.length > lastSavedCountRef.current) {
+        const newMessages = userMessages.slice(lastSavedCountRef.current);
         
-        // Load existing history and merge
-        const existingHistory = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
-        const mergedHistory = [...existingHistory, ...newHistory].slice(-50); // Keep last 50
-        localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(mergedHistory));
-        setChatHistory(mergedHistory);
+        if (newMessages.length > 0) {
+          const newHistory = newMessages.map((msg) => ({
+            id: Date.now() + Math.random(),
+            question: msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : ''),
+            timestamp: new Date().toISOString(),
+          }));
+          
+          // Load existing history and append new ones
+          const existingHistory = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
+          const mergedHistory = [...existingHistory, ...newHistory].slice(-50); // Keep last 50
+          localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(mergedHistory));
+          setChatHistory(mergedHistory);
+          
+          // Update the ref
+          lastSavedCountRef.current = userMessages.length;
+          
+          console.log('✅ Saved chat history:', mergedHistory.length, 'items');
+        }
       }
     }
   }, [messages, user]);
@@ -216,6 +230,11 @@ export default function App() {
     if (user) {
       const history = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
       setChatHistory(history);
+      console.log('📜 Loaded chat history:', history.length, 'items');
+      
+      // Set initial count
+      const userMessages = messages.filter(m => m.role === 'user');
+      lastSavedCountRef.current = userMessages.length;
     }
   }, [user]);
 
@@ -329,6 +348,22 @@ export default function App() {
       }
 
       setLoading(false);
+      
+      // Manually save to chat history if user is logged in
+      if (user) {
+        const historyItem = {
+          id: Date.now() + Math.random(),
+          question: userMessage.substring(0, 100) + (userMessage.length > 100 ? '...' : ''),
+          timestamp: new Date().toISOString(),
+        };
+        
+        const existingHistory = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
+        const updatedHistory = [...existingHistory, historyItem].slice(-50);
+        localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(updatedHistory));
+        setChatHistory(updatedHistory);
+        
+        console.log('💾 Manually saved to history:', historyItem.question);
+      }
     } catch (error) {
       setMessages((prev) => {
         const newMessages = [...prev];
