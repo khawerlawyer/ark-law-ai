@@ -328,7 +328,7 @@ export default function App() {
     recognition.start();
   };
 
-  // Text-to-Speech - Read answer aloud with DEEP MALE PAKISTANI voice
+  // Text-to-Speech - Read answer aloud with FEMALE PAKISTANI voice
   const speakText = (text, messageIndex) => {
     // Stop any current speech
     if (isSpeaking && currentSpeakingIndex === messageIndex) {
@@ -346,46 +346,48 @@ export default function App() {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Configure voice settings for VERY DEEP MALE voice
-    utterance.rate = 0.8; // Slower, more authoritative
-    utterance.pitch = 0.5; // VERY low pitch for deep masculine voice
+    // Configure voice settings for FEMALE voice with Pakistani accent
+    utterance.rate = 0.85; // Natural speaking pace
+    utterance.pitch = 1.1; // Slightly higher pitch for feminine voice
     utterance.volume = 1.0;
     utterance.lang = 'en-IN'; // Indian English (closest to Pakistani accent)
 
-    // Wait for voices to load, then select best male voice
+    // Wait for voices to load, then select best female voice
     const setVoice = () => {
       const voices = window.speechSynthesis.getVoices();
       
       console.log('Available voices:', voices.map(v => v.name + ' (' + v.lang + ')'));
       
-      // Priority order: Find deepest male voice with South Asian accent
-      const maleVoice = 
-        // First: Indian/Pakistani English male voices
+      // Priority order: Find female voice with South Asian/Pakistani accent
+      const femaleVoice = 
+        // First: Indian/Pakistani English female voices
         voices.find(v => (v.lang.includes('en-IN') || v.lang.includes('en-PK')) && 
-                        (v.name.toLowerCase().includes('male') || v.name.includes('Rishi') || v.name.includes('Sameer'))) ||
-        // Second: Specific Indian male names
-        voices.find(v => v.name.includes('Rishi') || v.name.includes('Sameer') || v.name.includes('Prabhat')) ||
-        // Third: Google Indian English
+                        (v.name.toLowerCase().includes('female') || v.name.includes('Heera') || v.name.includes('Swara'))) ||
+        // Second: Specific Indian female names
+        voices.find(v => v.name.includes('Veena') || v.name.includes('Heera') || v.name.includes('Swara') || v.name.includes('Neerja')) ||
+        // Third: Google Indian English (usually female)
         voices.find(v => v.lang.includes('en-IN')) ||
-        // Fourth: Any explicit male voice
-        voices.find(v => v.name.toLowerCase().includes('male') && !v.name.toLowerCase().includes('female')) ||
-        // Fifth: Common deep male voice names
-        voices.find(v => v.name.includes('Daniel') || v.name.includes('James') || v.name.includes('Aaron')) ||
-        // Sixth: Microsoft deep voices
-        voices.find(v => v.name.includes('Microsoft David')) ||
-        voices.find(v => v.name.includes('Microsoft Mark')) ||
-        // Seventh: Google US Male
-        voices.find(v => v.name.includes('Google US English') && !v.name.includes('Female')) ||
-        // Eighth: Any UK English (deeper accent)
-        voices.find(v => v.lang.includes('en-GB') && !v.name.toLowerCase().includes('female')) ||
-        // Ninth: Default to first available English voice
+        // Fourth: Any explicit female voice
+        voices.find(v => v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('male')) ||
+        // Fifth: Common female voice names
+        voices.find(v => v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen')) ||
+        // Sixth: Microsoft female voices
+        voices.find(v => v.name.includes('Microsoft Zira')) ||
+        voices.find(v => v.name.includes('Microsoft Heera')) ||
+        // Seventh: Google US Female
+        voices.find(v => v.name.includes('Google US English Female')) ||
+        // Eighth: Any UK English female
+        voices.find(v => v.lang.includes('en-GB') && v.name.toLowerCase().includes('female')) ||
+        // Ninth: Default to first available female voice
+        voices.find(v => v.name.toLowerCase().includes('female')) ||
+        // Tenth: Default to first available English voice
         voices.find(v => v.lang.includes('en'));
       
-      if (maleVoice) {
-        utterance.voice = maleVoice;
-        console.log('✅ Selected voice:', maleVoice.name, '- Language:', maleVoice.lang);
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+        console.log('✅ Selected voice:', femaleVoice.name, '- Language:', femaleVoice.lang);
       } else {
-        console.log('⚠️ No specific male voice found, using default');
+        console.log('⚠️ No specific female voice found, using default');
       }
     };
 
