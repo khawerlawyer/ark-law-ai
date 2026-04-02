@@ -38,6 +38,9 @@ export default function App() {
   const [draftContent, setDraftContent] = useState("");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftType, setDraftType] = useState("affidavit");
+  const [draftStep, setDraftStep] = useState("type-selection"); // type-selection, gathering-info, generating, completed
+  const [draftRequirements, setDraftRequirements] = useState({});
+  const [draftGenerating, setDraftGenerating] = useState(false);
   const [newsItems, setNewsItems] = useState([]);
   const [showComparePopup, setShowComparePopup] = useState(false);
   const [doc1, setDoc1] = useState(null);
@@ -432,6 +435,57 @@ export default function App() {
       } finally {
         setNewsLoading(false);
       }
+    }
+  };
+
+  const generateDocument = async (requirements) => {
+    setDraftGenerating(true);
+    setDraftStep("generating");
+
+    try {
+      const prompt = `You are an expert Pakistani legal document drafter. Generate a complete, professionally formatted legal document based on these requirements:
+
+Document Type: ${draftType}
+Requirements: ${JSON.stringify(requirements, null, 2)}
+
+CRITICAL INSTRUCTIONS:
+1. Follow Pakistani legal document format and conventions
+2. Include all necessary legal clauses as per Pakistani law
+3. Use proper Pakistani legal terminology
+4. Include all standard sections for this document type
+5. Add witness and notary sections where applicable
+6. Format with proper headings, numbering, and structure
+7. Make it court-ready and professionally formatted
+8. Include all parties' complete details
+9. Add governing law as Pakistani law
+10. Include jurisdiction clauses (Pakistani courts)
+
+Generate the COMPLETE document text ready for immediate use.`;
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          userId: user?.id,
+        }),
+      });
+
+      const data = await res.json();
+      
+      setDraftContent(data.reply);
+      setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
+      setDraftStep("completed");
+    } catch (error) {
+      alert("Failed to generate document. Please try again.");
+      setDraftStep("gathering-info");
+    } finally {
+      setDraftGenerating(false);
     }
   };
 
@@ -1786,50 +1840,383 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
       )}
 
-      {/* DOCUMENT DRAFTING POPUP */}
+      {/* DOCUMENT DRAFTING POPUP - AI POWERED */}
       {showDraftPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
-            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "800px", maxHeight: "90vh", overflow: "auto", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
+            
+            {/* HEADER */}
+            <div style={{ background: `linear-gradient(135deg, ${NAVY}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-                <h3 style={{ color: GOLD, margin: 0 }}>✍️ Legal Document Drafting</h3>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
+                <div>
+                  <h3 style={{ color: GOLD, margin: 0, fontSize: 18 }}>✍️ AI Legal Document Drafting</h3>
+                  <div style={{ color: ACCENT_PK, fontSize: 10, marginTop: "3px" }}>Powered by ARK Law AI - Pakistani Law Compliant</div>
+                </div>
               </div>
-              <button onClick={() => setShowDraftPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
+              <button 
+                onClick={() => {
+                  setShowDraftPopup(false);
+                  setDraftStep("type-selection");
+                  setDraftContent("");
+                  setDraftRequirements({});
+                }} 
+                style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}
+              >
                 ✕
               </button>
             </div>
-            <div style={{ padding: "20px" }}>
-              <select value={draftType} onChange={(e) => setDraftType(e.target.value)} style={{ width: "100%", padding: "10px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "15px", fontSize: 12 }}>
-                {DOCUMENT_TYPES.map((dt) => (
-                  <option key={dt} value={dt}>
-                    {dt.toUpperCase()}
-                  </option>
-                ))}
-              </select>
 
-              <input type="text" placeholder="Document Title" value={draftTitle} onChange={(e) => setDraftTitle(e.target.value)} style={{ width: "100%", padding: "10px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "15px", fontSize: 12 }} />
+            {/* CONTENT */}
+            <div style={{ padding: "25px" }}>
+              
+              {/* STEP 1: DOCUMENT TYPE SELECTION */}
+              {draftStep === "type-selection" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "15px", fontWeight: 700 }}>📋 Step 1: Select Document Type</h4>
+                  
+                  <select 
+                    value={draftType} 
+                    onChange={(e) => setDraftType(e.target.value)} 
+                    style={{ 
+                      width: "100%", 
+                      padding: "12px", 
+                      background: NAVY, 
+                      border: `2px solid ${NAVY_BORDER}`, 
+                      color: TEXT_PRIMARY, 
+                      borderRadius: "6px", 
+                      marginBottom: "20px", 
+                      fontSize: 13,
+                      cursor: "pointer"
+                    }}
+                  >
+                    <option value="">-- Select Document Type --</option>
+                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
+                    <option value="contract">📄 General Contract</option>
+                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
+                    <option value="affidavit">⚖️ Affidavit</option>
+                    <option value="will">📜 Will / Testament</option>
+                    <option value="power-of-attorney">🔑 Power of Attorney</option>
+                    <option value="employment-agreement">💼 Employment Agreement</option>
+                    <option value="partnership-deed">🤝 Partnership Deed</option>
+                    <option value="sale-deed">🏘️ Sale Deed</option>
+                    <option value="divorce-agreement">💔 Divorce Agreement</option>
+                    <option value="loan-agreement">💰 Loan Agreement</option>
+                    <option value="trust-deed">🏛️ Trust Deed</option>
+                  </select>
 
-              <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} placeholder="Start typing your document content here..." style={{ width: "100%", height: "300px", padding: "10px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "15px", fontSize: 12, fontFamily: "Arial, sans-serif" }} />
+                  <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", borderLeft: `4px solid ${ACCENT_PK}`, marginBottom: "20px" }}>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, fontWeight: 600, marginBottom: "8px" }}>ℹ️ How It Works:</div>
+                    <div style={{ color: TEXT_SECONDARY, fontSize: 11, lineHeight: "1.6" }}>
+                      1. Select the document type you need<br/>
+                      2. Provide required information in the form<br/>
+                      3. AI will generate a complete, court-ready document<br/>
+                      4. Edit the document if needed<br/>
+                      5. Download in Word or PDF format
+                    </div>
+                  </div>
 
-              <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: "15px" }}>
-                Words: {draftContent.split(/\s+/).filter(Boolean).length} | Characters: {draftContent.length}
-              </div>
+                  <button 
+                    onClick={() => {
+                      if (!draftType) {
+                        alert("Please select a document type");
+                        return;
+                      }
+                      setDraftStep("gathering-info");
+                    }}
+                    disabled={!draftType}
+                    style={{ 
+                      width: "100%", 
+                      padding: "14px", 
+                      background: draftType ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY_BORDER, 
+                      color: NAVY, 
+                      border: "none", 
+                      borderRadius: "6px", 
+                      cursor: draftType ? "pointer" : "not-allowed", 
+                      fontWeight: 700, 
+                      fontSize: 14,
+                      boxShadow: draftType ? `0 4px 15px ${GOLD}40` : "none"
+                    }}
+                  >
+                    Next: Provide Information →
+                  </button>
+                </div>
+              )}
 
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={() => setShowDraftPopup(false)} style={{ flex: 1, padding: "10px", background: NAVY_BORDER, color: TEXT_PRIMARY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 12 }}>
-                  Close
-                </button>
-                <button onClick={() => downloadDraft("doc")} style={{ flex: 1, padding: "10px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
-                  ⬇️ DOC
-                </button>
-                <button onClick={() => downloadDraft("pdf")} style={{ flex: 1, padding: "10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
-                  ⬇️ PDF
-                </button>
-                <button onClick={() => downloadDraft("docx")} style={{ flex: 1, padding: "10px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
-                  ⬇️ DOCX
-                </button>
-              </div>
+              {/* STEP 2: GATHERING INFORMATION */}
+              {draftStep === "gathering-info" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>
+                    📝 Step 2: Provide Document Information
+                  </h4>
+                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "20px" }}>
+                    Fill in the details below. AI will generate a complete Pakistani legal document.
+                  </p>
+
+                  {/* DYNAMIC FORM BASED ON DOCUMENT TYPE */}
+                  <div style={{ maxHeight: "400px", overflowY: "auto", padding: "5px" }}>
+                    
+                    {/* RENTAL AGREEMENT FIELDS */}
+                    {draftType === "rental-agreement" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🏠 Landlord Information</h5>
+                          <input placeholder="Landlord Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Landlord CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Landlord Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>👤 Tenant Information</h5>
+                          <input placeholder="Tenant Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Tenant CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Tenant Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🏘️ Property Details</h5>
+                          <input placeholder="Property Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Property Type (House/Flat/Commercial) *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyType: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Covered Area (sq ft/marla/kanal) *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyArea: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>💰 Rental Terms</h5>
+                          <input placeholder="Monthly Rent Amount (PKR) *" onChange={(e) => setDraftRequirements({...draftRequirements, monthlyRent: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Security Deposit (PKR) *" onChange={(e) => setDraftRequirements({...draftRequirements, securityDeposit: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Lease Duration (e.g., 1 year, 11 months) *" onChange={(e) => setDraftRequirements({...draftRequirements, leaseDuration: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Rent Payment Date (e.g., 1st of each month) *" onChange={(e) => setDraftRequirements({...draftRequirements, paymentDate: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Notice Period (e.g., 1 month) *" onChange={(e) => setDraftRequirements({...draftRequirements, noticePeriod: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AFFIDAVIT FIELDS */}
+                    {draftType === "affidavit" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>⚖️ Deponent Information</h5>
+                          <input placeholder="Deponent Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Father's/Husband's Name *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentFatherName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📋 Affidavit Details</h5>
+                          <input placeholder="Purpose of Affidavit *" onChange={(e) => setDraftRequirements({...draftRequirements, purpose: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <textarea placeholder="Facts to be stated under oath * (Describe all facts in detail)" onChange={(e) => setDraftRequirements({...draftRequirements, facts: e.target.value})} style={{ width: "100%", height: "120px", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12, fontFamily: "Arial, sans-serif" }} />
+                          <input placeholder="Authority/Court where to be filed *" onChange={(e) => setDraftRequirements({...draftRequirements, authority: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* NDA FIELDS */}
+                    {draftType === "nda" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📤 Disclosing Party</h5>
+                          <input placeholder="Party Name *" onChange={(e) => setDraftRequirements({...draftRequirements, disclosingParty: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Address *" onChange={(e) => setDraftRequirements({...draftRequirements, disclosingAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📥 Receiving Party</h5>
+                          <input placeholder="Party Name *" onChange={(e) => setDraftRequirements({...draftRequirements, receivingParty: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Address *" onChange={(e) => setDraftRequirements({...draftRequirements, receivingAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🔒 Confidentiality Terms</h5>
+                          <textarea placeholder="Nature of Confidential Information *" onChange={(e) => setDraftRequirements({...draftRequirements, confidentialInfo: e.target.value})} style={{ width: "100%", height: "80px", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12, fontFamily: "Arial, sans-serif" }} />
+                          <input placeholder="Duration of Confidentiality (e.g., 3 years) *" onChange={(e) => setDraftRequirements({...draftRequirements, duration: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GENERIC FORM FOR OTHER DOCUMENT TYPES */}
+                    {!["rental-agreement", "affidavit", "nda"].includes(draftType) && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📋 Document Information</h5>
+                          <textarea 
+                            placeholder={`Provide all necessary details for ${draftType}:\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information`}
+                            onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} 
+                            style={{ width: "100%", height: "250px", padding: "12px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12, fontFamily: "Arial, sans-serif", lineHeight: "1.6" }} 
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* BUTTONS */}
+                  <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                    <button 
+                      onClick={() => setDraftStep("type-selection")}
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: NAVY_SURFACE, 
+                        color: TEXT_PRIMARY, 
+                        border: `1px solid ${NAVY_BORDER}`, 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontSize: 13,
+                        fontWeight: 600
+                      }}
+                    >
+                      ← Back
+                    </button>
+                    <button 
+                      onClick={() => generateDocument(draftRequirements)}
+                      disabled={draftGenerating}
+                      style={{ 
+                        flex: 2, 
+                        padding: "12px", 
+                        background: draftGenerating ? NAVY_BORDER : `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
+                        color: draftGenerating ? TEXT_MUTED : "white", 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: draftGenerating ? "not-allowed" : "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 14,
+                        boxShadow: draftGenerating ? "none" : `0 4px 15px ${ACCENT_PK}40`
+                      }}
+                    >
+                      {draftGenerating ? "⏳ Generating Document..." : "🚀 Generate Document with AI"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: GENERATING */}
+              {draftStep === "generating" && (
+                <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <img src="/ark-logo.png" alt="ARK" style={{ width: "80px", height: "80px", marginBottom: "20px", opacity: 0.8, animation: "pulse 2s infinite" }} />
+                  <h4 style={{ color: GOLD, fontSize: 16, marginBottom: "15px", fontWeight: 700 }}>⏳ Generating Your Legal Document...</h4>
+                  <p style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.6" }}>
+                    Our AI is drafting a comprehensive, Pakistani law-compliant document based on your requirements.
+                    <br/>This may take a few moments.
+                  </p>
+                  <div style={{ marginTop: "20px", padding: "15px", background: NAVY, borderRadius: "6px", border: `1px solid ${GOLD}30` }}>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Analyzing requirements</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Applying Pakistani legal format</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Including all necessary clauses</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>⏳ Finalizing document...</div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: COMPLETED - EDITABLE DOCUMENT */}
+              {draftStep === "completed" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>
+                    ✅ Document Generated Successfully!
+                  </h4>
+                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "15px" }}>
+                    Your {draftType} has been generated. You can edit it below and download in Word or PDF format.
+                  </p>
+
+                  {/* EDITABLE DOCUMENT AREA */}
+                  <textarea 
+                    value={draftContent} 
+                    onChange={(e) => setDraftContent(e.target.value)} 
+                    style={{ 
+                      width: "100%", 
+                      height: "400px", 
+                      padding: "15px", 
+                      background: "white", 
+                      border: `2px solid ${GOLD}`, 
+                      color: "#000", 
+                      borderRadius: "6px", 
+                      marginBottom: "15px", 
+                      fontSize: 13, 
+                      fontFamily: "'Times New Roman', serif",
+                      lineHeight: "1.8",
+                      whiteSpace: "pre-wrap"
+                    }} 
+                  />
+
+                  {/* STATS */}
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px", padding: "10px", background: NAVY, borderRadius: "4px" }}>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📝 Words: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.split(/\s+/).filter(Boolean).length}</span>
+                    </div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📊 Characters: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.length}</span>
+                    </div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📄 Pages: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</span>
+                    </div>
+                  </div>
+
+                  {/* DISCLAIMER */}
+                  <div style={{ background: `${GOLD}15`, padding: "12px", borderRadius: "6px", borderLeft: `4px solid ${GOLD}`, marginBottom: "20px" }}>
+                    <div style={{ color: GOLD, fontSize: 10, fontWeight: 600, marginBottom: "5px" }}>⚠️ IMPORTANT LEGAL DISCLAIMER</div>
+                    <div style={{ color: TEXT_SECONDARY, fontSize: 10, lineHeight: "1.5" }}>
+                      This document is AI-generated for reference purposes only. Please have it reviewed and verified by a qualified Pakistani lawyer before execution or filing in court.
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button 
+                      onClick={() => {
+                        setDraftStep("type-selection");
+                        setDraftContent("");
+                        setDraftRequirements({});
+                      }}
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: NAVY_SURFACE, 
+                        color: TEXT_PRIMARY, 
+                        border: `1px solid ${NAVY_BORDER}`, 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontSize: 12,
+                        fontWeight: 600
+                      }}
+                    >
+                      🔄 New Document
+                    </button>
+                    <button 
+                      onClick={() => downloadDraft("docx")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: ACCENT_PK, 
+                        color: NAVY, 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 12,
+                        boxShadow: `0 2px 8px ${ACCENT_PK}40`
+                      }}
+                    >
+                      📥 Download DOCX
+                    </button>
+                    <button 
+                      onClick={() => downloadDraft("pdf")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                        color: NAVY, 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 12,
+                        boxShadow: `0 2px 8px ${GOLD}40`
+                      }}
+                    >
+                      📄 Download PDF
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
