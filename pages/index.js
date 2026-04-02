@@ -155,9 +155,10 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nYou can start by asking any legal question, or tell me your name first if you'd like!",
+      content: "السلام علیکم! (Assalam o Alaikum!) Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you with your legal questions today?",
     };
     setMessages([greeting]);
+    setNameAsked(true); // Mark as asked immediately so we never ask for name
   }, []); // Only run once on mount
 
   // Scroll to bottom
@@ -212,33 +213,6 @@ export default function App() {
     if (!userMessage.trim()) return;
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
-
-    // Check if this is the name response (first user message after greeting)
-    // Only ask for name if user typed manually (not clicked a link/query)
-    // and the message doesn't look like a legal question
-    const looksLikeQuestion = userMessage.includes('?') || 
-                              userMessage.toLowerCase().includes('what') ||
-                              userMessage.toLowerCase().includes('how') ||
-                              userMessage.toLowerCase().includes('law') ||
-                              userMessage.toLowerCase().includes('legal') ||
-                              userMessage.length > 30;
-    
-    if (!nameAsked && messages.length === 1 && !skipNameCheck && !looksLikeQuestion && !msg) {
-      setNameAsked(true);
-      setName(userMessage);
-      const greetingResponse = {
-        role: "assistant",
-        content: `Wonderful to meet you, ${userMessage}! 🙏\n\nNow, how can I assist you with Pakistani legal matters today?`,
-      };
-      setMessages([...updatedMessages, greetingResponse]);
-      setInput("");
-      return;
-    }
-
-    // If it's a question or clicked link, skip name asking and just answer
-    if (!nameAsked && messages.length === 1) {
-      setNameAsked(true); // Mark as asked so we don't ask again
-    }
 
     setMessages(updatedMessages);
     setInput("");
@@ -859,27 +833,91 @@ By Attorney & AI Innovator Khawer Rabbani
   };
 
   const renderMessageContent = (content) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = content.split(urlRegex);
+    // Split content into lines
+    const lines = content.split('\n');
+    const elements = [];
+    let currentParagraph = [];
     
-    return parts.map((part, index) => {
-      if (part.match(urlRegex)) {
-        return (
-          <a
-            key={index}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              openLinkInNewWindow(part);
-            }}
-            style={{ color: "#3EB489", textDecoration: "underline", cursor: "pointer" }}
-          >
-            {part}
-          </a>
+    lines.forEach((line, index) => {
+      // Trim the line
+      const trimmedLine = line.trim();
+      
+      // Check if line is a bullet point
+      if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
+        // Flush current paragraph if exists
+        if (currentParagraph.length > 0) {
+          elements.push(
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+              {currentParagraph.join(' ')}
+            </p>
+          );
+          currentParagraph = [];
+        }
+        
+        // Add bullet point
+        const bulletText = trimmedLine.substring(1).trim();
+        elements.push(
+          <div key={`bullet-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px', lineHeight: '1.6' }}>
+            <span style={{ color: '#C9A84C', fontWeight: 'bold', flexShrink: 0 }}>•</span>
+            <span>{bulletText}</span>
+          </div>
         );
       }
-      return <span key={index}>{part}</span>;
+      // Check if line looks like a header (short line, possibly ends with colon, or all caps)
+      else if (trimmedLine.length > 0 && trimmedLine.length < 60 && 
+               (trimmedLine.endsWith(':') || trimmedLine === trimmedLine.toUpperCase() || 
+                /^[A-Z][^.!?]*:?$/.test(trimmedLine))) {
+        // Flush current paragraph if exists
+        if (currentParagraph.length > 0) {
+          elements.push(
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+              {currentParagraph.join(' ')}
+            </p>
+          );
+          currentParagraph = [];
+        }
+        
+        // Add header
+        elements.push(
+          <h3 key={`h-${index}`} style={{ 
+            fontWeight: 'bold', 
+            fontStyle: 'italic',
+            color: '#0D1B2A', 
+            marginTop: '16px', 
+            marginBottom: '8px',
+            fontSize: '15px'
+          }}>
+            {trimmedLine}
+          </h3>
+        );
+      }
+      // Empty line - flush paragraph
+      else if (trimmedLine.length === 0) {
+        if (currentParagraph.length > 0) {
+          elements.push(
+            <p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+              {currentParagraph.join(' ')}
+            </p>
+          );
+          currentParagraph = [];
+        }
+      }
+      // Regular text line
+      else {
+        currentParagraph.push(trimmedLine);
+      }
     });
+    
+    // Flush any remaining paragraph
+    if (currentParagraph.length > 0) {
+      elements.push(
+        <p key={`p-final`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+          {currentParagraph.join(' ')}
+        </p>
+      );
+    }
+    
+    return <div style={{ whiteSpace: 'normal' }}>{elements}</div>;
   };
 
   return (
