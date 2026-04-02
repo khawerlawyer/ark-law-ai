@@ -18,6 +18,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -171,6 +172,18 @@ export default function App() {
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
   }, []); // Only run once on mount
+
+  // Load user from localStorage
+  useEffect(() => {
+    const savedUser = localStorage.getItem('arklaw_user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
+  }, []);
 
   // Scroll to bottom
   useEffect(() => {
@@ -1376,39 +1389,74 @@ By Attorney & AI Innovator Khawer Rabbani
               📧 contact@arklaw.ai
             </a>
             
-            {/* Auth Buttons */}
-            <button 
-              onClick={() => setShowLoginPopup(true)}
-              style={{ 
-                padding: "6px 16px", 
-                background: GOLD, 
-                color: NAVY, 
-                border: `2px solid ${GOLD}`, 
-                borderRadius: "4px", 
-                cursor: "pointer", 
-                fontSize: 11, 
-                fontWeight: 600,
-                transition: "all 0.2s"
-              }}
-            >
-              Login
-            </button>
-            <button 
-              onClick={() => setShowSignupPopup(true)}
-              style={{ 
-                padding: "6px 16px", 
-                background: ACCENT_PK, 
-                color: NAVY, 
-                border: `2px solid ${ACCENT_PK}`, 
-                borderRadius: "4px", 
-                cursor: "pointer", 
-                fontSize: 11, 
-                fontWeight: 600,
-                transition: "all 0.2s"
-              }}
-            >
-              Sign Up
-            </button>
+            {/* Auth Buttons or User Info */}
+            {!user ? (
+              <>
+                <button 
+                  onClick={() => setShowLoginPopup(true)}
+                  style={{ 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}
+                >
+                  Login
+                </button>
+                <button 
+                  onClick={() => setShowSignupPopup(true)}
+                  style={{ 
+                    padding: "6px 16px", 
+                    background: ACCENT_PK, 
+                    color: NAVY, 
+                    border: `2px solid ${ACCENT_PK}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <>
+                <div style={{ 
+                  padding: "6px 15px", 
+                  background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
+                  color: "white", 
+                  border: `2px solid ${ACCENT_PK}`, 
+                  borderRadius: "4px", 
+                  fontSize: 11, 
+                  fontWeight: 700,
+                  whiteSpace: "nowrap"
+                }}>
+                  👤 {user.name}
+                </div>
+                <button 
+                  onClick={() => setShowMyAccountPopup(true)}
+                  style={{ 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}
+                >
+                  My Account
+                </button>
+              </>
+            )}
           </div>
 
           {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
@@ -2655,6 +2703,98 @@ By Attorney & AI Innovator Khawer Rabbani
                 Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span>
               </p>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MY ACCOUNT POPUP */}
+      {showMyAccountPopup && user && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
+          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "50px", height: "50px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: 700, color: NAVY }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>My Account</h2>
+              </div>
+              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
+            </div>
+
+            {/* User Information */}
+            <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
+              <h3 style={{ color: ACCENT_PK, fontSize: 16, marginBottom: "15px", fontWeight: 700 }}>Account Information</h3>
+              
+              <div style={{ display: "grid", gap: "12px" }}>
+                <div>
+                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Full Name</label>
+                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.name}</div>
+                </div>
+                
+                <div>
+                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Email Address</label>
+                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.email}</div>
+                </div>
+                
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Age</label>
+                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.age}</div>
+                  </div>
+                  <div>
+                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Profession</label>
+                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.profession}</div>
+                  </div>
+                </div>
+                
+                {user.barOfPractice && (
+                  <div>
+                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Bar of Practice</label>
+                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.barOfPractice}</div>
+                  </div>
+                )}
+                
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>City</label>
+                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.city}</div>
+                  </div>
+                  <div>
+                    <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Province</label>
+                    <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.province}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label style={{ color: TEXT_MUTED, fontSize: 11, display: "block", marginBottom: "4px" }}>Country</label>
+                  <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.country}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <button 
+              onClick={() => {
+                localStorage.removeItem('arklaw_user');
+                setUser(null);
+                setShowMyAccountPopup(false);
+                alert('You have been logged out successfully.');
+              }}
+              style={{ 
+                width: "100%", 
+                padding: "14px", 
+                background: `linear-gradient(135deg, #DC2626, #991B1B)`, 
+                color: "white", 
+                border: "none", 
+                borderRadius: "6px", 
+                fontWeight: 700, 
+                fontSize: 16, 
+                cursor: "pointer", 
+                boxShadow: `0 4px 15px rgba(220, 38, 38, 0.4)` 
+              }}
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}
