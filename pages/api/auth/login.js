@@ -1,4 +1,8 @@
-let users = [];
+// Ensure global array exists
+if (typeof global.arkLawUsers === 'undefined') {
+  global.arkLawUsers = [];
+  console.log('⚠️ Warning: arkLawUsers was not initialized. Creating empty array.');
+}
 
 function hashPassword(password) {
   return Buffer.from(password).toString('base64');
@@ -16,31 +20,32 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Import users from global storage if available
-    if (global.arkLawUsers) {
-      users = global.arkLawUsers;
-    }
+    console.log('🔐 Login attempt for:', email);
+    console.log('📊 Total users in database:', global.arkLawUsers.length);
+    console.log('👥 Available users:', global.arkLawUsers.map(u => u.email));
 
-    console.log('Login attempt for:', email);
-    console.log('Total users in database:', users.length);
-
-    // Find user
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // Find user (case-insensitive email)
+    const user = global.arkLawUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
     
     if (!user) {
-      console.log('User not found');
+      console.log('❌ User not found:', email);
       return res.status(401).json({ error: 'Invalid email or password' });
     }
+
+    console.log('✅ User found:', user.email);
 
     // Check password
     const hashedPassword = hashPassword(password);
-    console.log('Password match:', user.password === hashedPassword);
+    console.log('🔑 Comparing passwords...');
+    console.log('   Provided (hashed):', hashedPassword);
+    console.log('   Stored (hashed):', user.password);
     
     if (user.password !== hashedPassword) {
+      console.log('❌ Password mismatch');
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    console.log('Login successful for:', user.email);
+    console.log('✅ Login successful for:', user.email);
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
@@ -51,7 +56,7 @@ export default async function handler(req, res) {
       user: userWithoutPassword,
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
     return res.status(500).json({ 
       error: 'An error occurred during login',
       details: error.message 
