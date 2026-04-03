@@ -1427,11 +1427,38 @@ By Attorney & AI Innovator Khawer Rabbani
       </Head>
 
       <style jsx global>{`
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: ${COLORS.background}; }
-        .card { background: ${COLORS.cardBg}; border-radius: 16px; padding: 24px; border: 1px solid ${COLORS.gray[200]}; }
-        .btn-lime { background: ${COLORS.primaryLight}; color: ${COLORS.text.primary}; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .badge-new { background: ${COLORS.primaryLight}; color: ${COLORS.text.primary}; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        * { 
+          margin: 0; 
+          padding: 0; 
+          box-sizing: border-box; 
+        }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+          background: #F5F5F0; 
+        }
+        .card { 
+          background: #FAFAF8; 
+          border-radius: 16px; 
+          padding: 24px; 
+          border: 1px solid #E8E8E0; 
+        }
+        .btn-lime { 
+          background: #C4D600; 
+          color: #2C3E1F; 
+          border: none; 
+          padding: 10px 24px; 
+          border-radius: 8px; 
+          font-weight: 700; 
+          cursor: pointer; 
+        }
+        .badge-new { 
+          background: #C4D600; 
+          color: #2C3E1F; 
+          padding: 4px 12px; 
+          border-radius: 6px; 
+          font-size: 11px; 
+          font-weight: 700; 
+        }
       `}</style>
 
       <div style={{ minHeight: "100vh", background: COLORS.background }}>
