@@ -1531,19 +1531,6 @@ By Attorney & AI Innovator Khawer Rabbani
                 >
                   <span>👤</span> Sign up
                 </button>
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.05)";
-                      e.currentTarget.style.boxShadow = `0 0 30px ${GOLD}, 0 0 60px ${GOLD}60`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                      e.currentTarget.style.boxShadow = `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`;
-                    }}
-                  >
-                    ✨ Sign Up - Get 500K Credits FREE!
-                  </button>
-                </div>
               </>
             ) : (
               <>
