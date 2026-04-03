@@ -172,7 +172,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?",
+      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nThis AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan.\n\nHow may I assist you today?",
     };
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
