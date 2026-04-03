@@ -55,6 +55,7 @@ export default function App() {
   const [comparingDocs, setComparingDocs] = useState(false);
   const [showLinkedInPopup, setShowLinkedInPopup] = useState(false);
   const messagesEndRef = useRef(null);
+  const lastSavedCountRef = useRef(0);
 
   const PRACTICE_AREAS_PK = [
     { id: "general", label: "General Legal", icon: "⚖️" },
@@ -190,9 +191,6 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // Track the last saved message count
-  const lastSavedCountRef = useRef(0);
 
   // Save chat history when NEW messages are added
   useEffect(() => {
