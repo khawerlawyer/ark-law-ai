@@ -2359,29 +2359,231 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
 
         {/* FOOTER */}
-        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, position: "relative" }}>
-          <div style={{ textAlign: "center" }}>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
-          <div style={{ textAlign: "center", color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
-          
-          {/* Golden Banner - Bottom Right */}
-          <div style={{ 
-            position: "absolute", 
-            bottom: "8px", 
-            right: "20px",
-            padding: "6px 16px",
-            background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
-            color: NAVY,
-            borderRadius: "4px",
-            fontSize: 9,
-            fontWeight: 700,
-            boxShadow: `0 2px 8px ${GOLD}40`,
-            border: `1px solid ${GOLD}`,
-            letterSpacing: "0.3px"
-          }}>
-            ✨ Designed & Developed by ARK Lex AI LLC.
-          </div>
-        </footer>
+        {/* FOOTER - DataNexus Style */}
+<footer style={{ 
+  background: "#3B4F2E", 
+  color: "#FFFFFF", 
+  padding: isMobile ? "32px 20px" : "48px 40px",
+  marginTop: "0"
+}}>
+  <div style={{ 
+    maxWidth: "1600px", 
+    margin: "0 auto", 
+    display: "grid", 
+    gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr 1fr 1fr", 
+    gap: "40px",
+    marginBottom: "40px"
+  }}>
+    
+    {/* Logo Column - includes Justice Rabbani Dedication */}
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+        <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
+        <span style={{ fontSize: "20px", fontWeight: 700 }}>ARK Law AI</span>
       </div>
+      
+      <p style={{ fontSize: "14px", opacity: 0.8, lineHeight: "1.6", marginBottom: "16px" }}>
+        AI-powered legal insights. Trusted data. Professional decisions for Pakistani law.
+      </p>
+      
+      {/* Justice Rabbani Dedication - Preserved */}
+      <p style={{ 
+        fontSize: "11px", 
+        opacity: 0.85, 
+        lineHeight: "1.5", 
+        fontStyle: "italic",
+        borderLeft: "2px solid rgba(255,255,255,0.3)",
+        paddingLeft: "12px",
+        color: "#FFD700"
+      }}>
+        This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan
+      </p>
+    </div>
+    
+    {/* Product Column */}
+    <div>
+      <h4 style={{ 
+        fontSize: "14px", 
+        fontWeight: 700, 
+        marginBottom: "16px", 
+        opacity: 0.6, 
+        textTransform: "uppercase", 
+        letterSpacing: "0.5px" 
+      }}>
+        Product
+      </h4>
+      <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2.2" }}>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Features
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Sources
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Enterprise
+        </div>
+      </div>
+    </div>
+    
+    {/* Company Column */}
+    <div>
+      <h4 style={{ 
+        fontSize: "14px", 
+        fontWeight: 700, 
+        marginBottom: "16px", 
+        opacity: 0.6, 
+        textTransform: "uppercase", 
+        letterSpacing: "0.5px" 
+      }}>
+        Company
+      </h4>
+      <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2.2" }}>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          About Us
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Careers
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Blog
+        </div>
+      </div>
+    </div>
+    
+    {/* Resources Column */}
+    <div>
+      <h4 style={{ 
+        fontSize: "14px", 
+        fontWeight: 700, 
+        marginBottom: "16px", 
+        opacity: 0.6, 
+        textTransform: "uppercase", 
+        letterSpacing: "0.5px" 
+      }}>
+        Resources
+      </h4>
+      <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2.2" }}>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Docs
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          Guides
+        </div>
+        <div 
+          style={{ cursor: "pointer", transition: "opacity 0.2s" }} 
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          API
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  {/* Bottom Bar - Copyright & Social Icons */}
+  <div style={{ 
+    paddingTop: "24px",
+    borderTop: "1px solid rgba(255,255,255,0.1)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "16px"
+  }}>
+    {/* Copyright Text */}
+    <div style={{ fontSize: "13px", opacity: 0.7 }}>
+      © 2025 ARK Law AI. All rights reserved. | Designed & Developed by ARK Lex AI LLC.
+    </div>
+    
+    {/* Social Media Icons */}
+    <div style={{ display: "flex", gap: "16px" }}>
+      <a 
+        href="https://twitter.com/arklawai" 
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ 
+          color: "#FFFFFF", 
+          opacity: 0.7, 
+          fontSize: "20px", 
+          transition: "opacity 0.2s", 
+          textDecoration: "none" 
+        }} 
+        onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+        onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+        title="Twitter"
+      >
+        🐦
+      </a>
+      <a 
+        href="https://linkedin.com/company/arklawai" 
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ 
+          color: "#FFFFFF", 
+          opacity: 0.7, 
+          fontSize: "20px", 
+          transition: "opacity 0.2s", 
+          textDecoration: "none" 
+        }} 
+        onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+        onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+        title="LinkedIn"
+      >
+        💼
+      </a>
+      <a 
+        href="https://github.com/arklawai" 
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ 
+          color: "#FFFFFF", 
+          opacity: 0.7, 
+          fontSize: "20px", 
+          transition: "opacity 0.2s", 
+          textDecoration: "none" 
+        }} 
+        onMouseEnter={(e) => e.currentTarget.style.opacity = "1"} 
+        onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+        title="GitHub"
+      >
+        💻
+      </a>
+    </div>
+  </div>
+</footer>
+             </div>
 
       {/* SUCCESS POPUP */}
       {showSuccessPopup && (
