@@ -1562,7 +1562,7 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* LOGIN POPUP */}
       {showLoginPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
+          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: "3px solid #C9A84C", boxShadow: "0 0 30px rgba(201, 168, 76, 0.5)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} />
@@ -1619,15 +1619,15 @@ By Attorney & AI Innovator Khawer Rabbani
               
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
               </div>
 
               <div style={{ marginBottom: "25px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
-                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
+                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: `0 4px 15px ${GOLD}40` }}>
+              <button type="submit" style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #C9A84C, #E5C887)", color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: "0 4px 15px rgba(201, 168, 76, 0.4)" }}>
                 Login
               </button>
 
@@ -1642,7 +1642,7 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
+          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: "3px solid #C9A84C", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 0 30px rgba(201, 168, 76, 0.5)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} />
@@ -1701,28 +1701,28 @@ By Attorney & AI Innovator Khawer Rabbani
               
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
               </div>
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label>
-                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
+                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
               </div>
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label>
-                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
+                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label>
-                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
                 
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label>
-                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}>
+                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }}>
                     <option value="">Select...</option>
                     <option>Lawyer</option>
                     <option>Legal Assistant</option>
@@ -1737,24 +1737,24 @@ By Attorney & AI Innovator Khawer Rabbani
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
-                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label>
-                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
                 
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label>
-                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
               </div>
 
               <div style={{ marginBottom: "25px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label>
-                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
               </div>
 
               <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
@@ -1772,12 +1772,12 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: `3px solid ${GOLD}`, maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: `0 0 40px ${GOLD}50` }}>
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: "3px solid #C9A84C", maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: "0 0 40px rgba(201, 168, 76, 0.5)" }}>
             
             {/* Header with Logo */}
-            <div style={{ padding: "25px 35px", borderBottom: `2px solid ${NAVY_BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ padding: "25px 35px", borderBottom: "2px solid #2B3F57", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: `drop-shadow(0 0 10px ${GOLD}60)` }} />
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: "drop-shadow(0 0 10px rgba(201, 168, 76, 0.6))" }} />
                 <div>
                   <h2 style={{ color: GOLD, margin: 0, fontSize: "22px", fontWeight: 700 }}>ARK Law AI</h2>
                   <p style={{ color: ACCENT_PK, margin: "4px 0 0 0", fontSize: "12px" }}>My Account</p>
@@ -1790,11 +1790,11 @@ By Attorney & AI Innovator Khawer Rabbani
             <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
               
               {/* LEFT COLUMN - User Information */}
-              <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: `2px solid ${NAVY_BORDER}` }}>
+              <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: "2px solid #2B3F57" }}>
                 
                 {/* User Avatar & Name */}
                 <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "25px" }}>
-                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY, boxShadow: `0 4px 15px ${GOLD}40` }}>
+                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #C9A84C, #3EB489)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY, boxShadow: "0 4px 15px rgba(201, 168, 76, 0.4)" }}>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -1806,7 +1806,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
 
                 {/* Account Information */}
-                <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: `1px solid ${NAVY_BORDER}` }}>
+                <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: "1px solid #2B3F57" }}>
                   <h4 style={{ color: ACCENT_PK, fontSize: 14, marginBottom: "15px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>Account Information</h4>
                   
                   <div style={{ display: "grid", gap: "14px" }}>
@@ -1883,7 +1883,7 @@ By Attorney & AI Innovator Khawer Rabbani
 
               {/* RIGHT COLUMN - Chat History */}
               <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", background: NAVY_SURFACE }}>
-                <div style={{ padding: "20px", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+                <div style={{ padding: "20px", borderBottom: "1px solid #2B3F57" }}>
                   <h4 style={{ color: GOLD, fontSize: 14, margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>📜 Chat History</h4>
                   <p style={{ color: TEXT_MUTED, fontSize: 10, margin: "5px 0 0 0" }}>Your previous conversations</p>
                 </div>
@@ -1904,7 +1904,7 @@ By Attorney & AI Innovator Khawer Rabbani
                             background: NAVY, 
                             padding: "12px", 
                             borderRadius: "6px", 
-                            border: `1px solid ${NAVY_BORDER}`,
+                            border: "1px solid #2B3F57",
                             cursor: "pointer",
                             transition: "all 0.2s"
                           }}
@@ -1950,8 +1950,8 @@ By Attorney & AI Innovator Khawer Rabbani
             borderRadius: "16px", 
             width: "90%", 
             maxWidth: "500px", 
-            border: `3px solid ${GOLD}`, 
-            boxShadow: `0 0 40px ${GOLD}60`,
+            border: "3px solid #C9A84C", 
+            boxShadow: "0 0 40px rgba(201, 168, 76, 0.6)",
             textAlign: "center"
           }}>
             
@@ -1990,7 +1990,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 style={{ 
                   width: "100px", 
                   height: "100px",
-                  filter: `drop-shadow(0 0 20px ${GOLD}60)`
+                  filter: "drop-shadow(0 0 20px rgba(201, 168, 76, 0.6))"
                 }} 
               />
               <h2 style={{ 
@@ -2045,9 +2045,9 @@ By Attorney & AI Innovator Khawer Rabbani
             <div style={{ 
               display: "inline-block",
               padding: "20px 40px",
-              background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`,
+              background: "linear-gradient(135deg, #C9A84C, #3EB489)",
               borderRadius: "12px",
-              boxShadow: `0 4px 20px ${GOLD}40`
+              boxShadow: "0 4px 20px rgba(201, 168, 76, 0.4)"
             }}>
               <div style={{ 
                 fontSize: "24px", 
@@ -2072,7 +2072,7 @@ By Attorney & AI Innovator Khawer Rabbani
               background: NAVY_SURFACE,
               padding: "20px",
               borderRadius: "10px",
-              border: `1px solid ${NAVY_BORDER}`
+              border: "1px solid #2B3F57"
             }}>
               <div style={{ color: GOLD, fontSize: "14px", fontWeight: 700, marginBottom: "15px" }}>
                 ✨ Pro Features:
