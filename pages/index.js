@@ -1426,7 +1426,7 @@ By Attorney & AI Innovator Khawer Rabbani
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <style jsx global>{`
+      <style>{`
         * { 
           margin: 0; 
           padding: 0; 
