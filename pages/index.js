@@ -1610,7 +1610,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 
                 console.log('✅ Login successful:', email);
                 console.log('💰 User tokens:', userWithoutPassword.tokens);
-                alert(`Welcome back, ${userWithoutPassword.name}! You have ${userWithoutPassword.tokens?.toLocaleString() || '500,000'} credits.`);
+                alert('Welcome back, ' + userWithoutPassword.name + '! You have ' + (userWithoutPassword.tokens?.toLocaleString() || '500,000') + ' credits.');
               } catch (error) {
                 console.error('Login error:', error);
                 alert('Login failed. Please try again.');
@@ -1757,7 +1757,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
+              <button type="submit" style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #3EB489, #2D9B6E)", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: "0 4px 15px rgba(62, 180, 137, 0.4)" }}>
                 Create Account
               </button>
 
@@ -1855,7 +1855,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 <button 
                   onClick={() => {
                     localStorage.removeItem('arklaw_user');
-                    localStorage.removeItem(`chat_history_${user.id}`);
+                    localStorage.removeItem('chat_history_' + user.id);
                     setUser(null);
                     setChatHistory([]);
                     setShowMyAccountPopup(false);
@@ -1910,7 +1910,7 @@ By Attorney & AI Innovator Khawer Rabbani
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.borderColor = GOLD;
-                            e.currentTarget.style.background = `${NAVY}dd`;
+                            e.currentTarget.style.background = "#0D1B2Add";
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.borderColor = NAVY_BORDER;
@@ -2059,7 +2059,7 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
               <div style={{ 
                 fontSize: "13px", 
-                color: `${NAVY}cc`
+                color: "#0D1B2Acc"
               }}>
                 Stay tuned for exciting updates!
               </div>
