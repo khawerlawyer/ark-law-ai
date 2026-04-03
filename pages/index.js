@@ -22,7 +22,7 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [userTokens, setUserTokens] = useState(300000); // Starting tokens
+  const [userTokens, setUserTokens] = useState(500000); // Starting tokens - 500K FREE!
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -1379,6 +1379,16 @@ By Attorney & AI Innovator Khawer Rabbani
           0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
           50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); }
         }
+        @keyframes glowPulse {
+          0%, 100% { 
+            box-shadow: 0 0 20px rgba(201,168,76,0.8), 0 0 40px rgba(201,168,76,0.4);
+            transform: scale(1);
+          }
+          50% { 
+            box-shadow: 0 0 30px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6);
+            transform: scale(1.02);
+          }
+        }
         @keyframes pulse {
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.1); opacity: 0.8; }
@@ -1479,22 +1489,34 @@ By Attorney & AI Innovator Khawer Rabbani
                 >
                   Login
                 </button>
-                <button 
-                  onClick={() => setShowSignupPopup(true)}
-                  style={{ 
-                    padding: "6px 16px", 
-                    background: ACCENT_PK, 
-                    color: NAVY, 
-                    border: `2px solid ${ACCENT_PK}`, 
-                    borderRadius: "4px", 
-                    cursor: "pointer", 
-                    fontSize: 11, 
-                    fontWeight: 600,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  Sign Up
-                </button>
+                <div style={{ position: "relative" }}>
+                  <button 
+                    onClick={() => setShowSignupPopup(true)}
+                    style={{ 
+                      padding: "8px 20px", 
+                      background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, 
+                      color: NAVY, 
+                      border: `2px solid ${GOLD}`, 
+                      borderRadius: "6px", 
+                      cursor: "pointer", 
+                      fontSize: 12, 
+                      fontWeight: 700,
+                      transition: "all 0.3s",
+                      boxShadow: `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`,
+                      animation: "glowPulse 2s infinite"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.05)";
+                      e.currentTarget.style.boxShadow = `0 0 30px ${GOLD}, 0 0 60px ${GOLD}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`;
+                    }}
+                  >
+                    ✨ Sign Up - Get 500K Credits FREE!
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -1512,7 +1534,7 @@ By Attorney & AI Innovator Khawer Rabbani
                     width: "32px",
                     height: "32px",
                     borderRadius: "50%",
-                    background: `conic-gradient(${GOLD} ${(userTokens/300000)*100}%, ${NAVY_BORDER} 0%)`,
+                    background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -1530,7 +1552,7 @@ By Attorney & AI Innovator Khawer Rabbani
                       fontWeight: 700,
                       color: GOLD
                     }}>
-                      {Math.round((userTokens/300000)*100)}%
+                      {Math.round((userTokens/500000)*100)}%
                     </div>
                   </div>
                   <div>
@@ -2863,34 +2885,38 @@ By Attorney & AI Innovator Khawer Rabbani
               const password = formData.get('password');
               
               try {
-                // Get all users from localStorage
-                const allUsers = JSON.parse(localStorage.getItem('arklaw_all_users') || '[]');
+                // Call login API
+                const res = await fetch('/api/auth/login', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, password }),
+                });
                 
-                // Find user by email
-                const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+                const data = await res.json();
                 
-                if (!user) {
-                  alert('Invalid email or password');
-                  return;
-                }
-                
-                // Check password
-                const encodedPassword = btoa(password);
-                if (user.password !== encodedPassword) {
-                  alert('Invalid email or password');
+                if (!res.ok) {
+                  alert(data.error || 'Invalid email or password');
                   return;
                 }
                 
                 // Login successful
-                const userWithoutPassword = { ...user };
-                delete userWithoutPassword.password;
+                const userWithoutPassword = data.user;
                 
+                // Set user and tokens
                 localStorage.setItem('arklaw_user', JSON.stringify(userWithoutPassword));
                 setUser(userWithoutPassword);
+                setUserTokens(userWithoutPassword.tokens || 500000); // Load user's token count
+                
+                // Load chat history if exists
+                if (userWithoutPassword.chatHistory && userWithoutPassword.chatHistory.length > 0) {
+                  setChatHistory(userWithoutPassword.chatHistory);
+                }
+                
                 setShowLoginPopup(false);
                 
                 console.log('✅ Login successful:', email);
-                alert(`Welcome back, ${user.name}!`);
+                console.log('💰 User tokens:', userWithoutPassword.tokens);
+                alert(`Welcome back, ${userWithoutPassword.name}! You have ${userWithoutPassword.tokens?.toLocaleString() || '500,000'} credits.`);
               } catch (error) {
                 console.error('Login error:', error);
                 alert('Login failed. Please try again.');
@@ -2946,39 +2972,33 @@ By Attorney & AI Innovator Khawer Rabbani
               const country = formData.get('country');
               
               try {
-                // Check if user already exists in localStorage
-                const allUsers = JSON.parse(localStorage.getItem('arklaw_all_users') || '[]');
-                const existingUser = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-                
-                if (existingUser) {
-                  alert('An account with this email already exists. Please login instead.');
-                  return;
+                // Call backend API
+                const res = await fetch('/api/auth/signup', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email,
+                    password,
+                    name,
+                    age,
+                    profession,
+                    barOfPractice,
+                    city,
+                    province,
+                    country,
+                  }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                  console.log('✅ User created successfully:', email);
+                  setShowSignupPopup(false);
+                  alert('🎉 Account created successfully! You have been awarded 500,000 FREE credits! Please login.');
+                  setShowLoginPopup(true);
+                } else {
+                  alert(data.error || 'Signup failed. Please try again.');
                 }
-                
-                // Create new user
-                const newUser = {
-                  id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                  email: email.toLowerCase(),
-                  password: btoa(password), // Simple encoding
-                  name,
-                  age: parseInt(age),
-                  profession,
-                  barOfPractice: barOfPractice || '',
-                  city,
-                  province,
-                  country,
-                  createdAt: new Date().toISOString(),
-                };
-                
-                // Save to all users list
-                allUsers.push(newUser);
-                localStorage.setItem('arklaw_all_users', JSON.stringify(allUsers));
-                
-                console.log('✅ User created and saved to localStorage:', email);
-                
-                setShowSignupPopup(false);
-                alert('Account created successfully! Please login with your credentials.');
-                setShowLoginPopup(true);
               } catch (error) {
                 console.error('Signup error:', error);
                 alert('Signup failed. Please try again.');
