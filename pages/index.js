@@ -1864,14 +1864,14 @@ By Attorney & AI Innovator Khawer Rabbani
                   style={{ 
                     width: "100%", 
                     padding: "14px", 
-                    background: `linear-gradient(135deg, #DC2626, #991B1B)`, 
+                    background: "linear-gradient(135deg, #DC2626, #991B1B)", 
                     color: "white", 
                     border: "none", 
                     borderRadius: "8px", 
                     fontWeight: 700, 
                     fontSize: 15, 
                     cursor: "pointer", 
-                    boxShadow: `0 4px 15px rgba(220, 38, 38, 0.4)`,
+                    boxShadow: "0 4px 15px rgba(220, 38, 38, 0.4)",
                     transition: "all 0.2s"
                   }}
                   onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
@@ -2009,13 +2009,13 @@ By Attorney & AI Innovator Khawer Rabbani
               width: "80px", 
               height: "80px", 
               margin: "0 auto 20px",
-              background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+              background: "linear-gradient(135deg, #4A90E2, #6B5CE7)",
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "40px",
-              boxShadow: `0 8px 20px rgba(74, 144, 226, 0.4)`,
+              boxShadow: "0 8px 20px rgba(74, 144, 226, 0.4)",
               animation: "pulse 2s infinite"
             }}>
               ✨
