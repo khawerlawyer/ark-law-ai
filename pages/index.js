@@ -22,6 +22,7 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [userTokens, setUserTokens] = useState(300000); // Starting tokens
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -283,6 +284,12 @@ export default function App() {
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
     if (!userMessage.trim()) return;
+
+    // Deduct tokens (estimate: ~100 tokens per message)
+    const tokensToDeduct = 100;
+    if (userTokens > 0) {
+      setUserTokens(prev => Math.max(0, prev - tokensToDeduct));
+    }
 
     const updatedMessages = [...messages, { role: "user", content: userMessage }];
 
@@ -1491,6 +1498,48 @@ By Attorney & AI Innovator Khawer Rabbani
               </>
             ) : (
               <>
+                {/* Token Counter - Show when logged in */}
+                <div style={{ 
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "6px 15px",
+                  background: NAVY_SURFACE,
+                  border: `2px solid ${NAVY_BORDER}`,
+                  borderRadius: "6px"
+                }}>
+                  <div style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    background: `conic-gradient(${GOLD} ${(userTokens/300000)*100}%, ${NAVY_BORDER} 0%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative"
+                  }}>
+                    <div style={{
+                      width: "26px",
+                      height: "26px",
+                      borderRadius: "50%",
+                      background: NAVY_SURFACE,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "9px",
+                      fontWeight: 700,
+                      color: GOLD
+                    }}>
+                      {Math.round((userTokens/300000)*100)}%
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: GOLD }}>
+                      {userTokens.toLocaleString()} Credits
+                    </div>
+                  </div>
+                </div>
+
                 <div style={{ 
                   padding: "6px 15px", 
                   background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
@@ -1711,50 +1760,8 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
 
               {/* Document Analyzer */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${ACCENT_PK}` }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>📂 ANALYZE DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Upload legal documents for analysis</div>
-                <input type="file" accept=".pdf,.docx,.doc" style={{ width: "100%", fontSize: 10, padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", color: CREAM, cursor: "pointer" }} onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = () => alert("Feature coming soon: Document analysis");
-                    reader.readAsArrayBuffer(file);
-                  }
-                }} />
-                <div style={{ display: "flex", gap: "4px", marginTop: "8px", justifyContent: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 PDF</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 DOCX</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOC</span>
-                </div>
-              </div>
-
-              {/* Document Comparison */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${GOLD}`, cursor: "pointer" }} onClick={() => setShowComparePopup(true)}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "4px", textAlign: "center" }}>⚖️ COMPARE DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Upload 2 documents to compare</div>
-                <div style={{ display: "flex", gap: "4px", justifyContent: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 1</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📄 DOC 2</span>
-                </div>
-              </div>
-
-              {/* Document Drafting */}
-              <div style={{ padding: "12px", background: `linear-gradient(135deg, ${GOLD}20, ${ACCENT_PK}20)`, borderRadius: "6px", border: `2px solid ${ACCENT_PK}`, cursor: "pointer" }} onClick={() => setShowDraftPopup(true)}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: "4px", textAlign: "center" }}>✍️ DRAFT DOCUMENTS</div>
-                <div style={{ fontSize: 9, color: TEXT_MUTED, marginBottom: "8px", textAlign: "center" }}>Create contracts, affidavits & more</div>
-                <div style={{ display: "flex", gap: "4px", justifyContent: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📄 DOC</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: ACCENT_PK, color: NAVY, borderRadius: "3px" }}>📋 PDF</span>
-                  <span style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, borderRadius: "3px" }}>📑 DOCX</span>
-                </div>
-              </div>
-
-              {/* UPGRADE TO PRO BOX */}
               <div 
-                onClick={() => setShowUpgradePopup(true)}
                 style={{ 
-                  marginTop: "auto",
                   padding: "15px", 
                   background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
                   borderRadius: "8px", 
@@ -1785,13 +1792,75 @@ By Attorney & AI Innovator Khawer Rabbani
                   fontSize: "24px",
                   boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
                 }}>
-                  ✨
+                  📂
                 </div>
                 <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
-                  Upgrade to Pro
+                  Analyze Documents
                 </div>
                 <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
-                  Get more tools, faster AI, and exclusive features
+                  Upload legal documents for analysis
+                </div>
+                <input type="file" accept=".pdf,.docx,.doc" style={{ 
+                  width: "100%", 
+                  fontSize: 10, 
+                  padding: "6px", 
+                  background: "white", 
+                  border: `2px solid ${NAVY}`, 
+                  borderRadius: "6px", 
+                  color: NAVY, 
+                  cursor: "pointer",
+                  fontWeight: 600
+                }} onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => alert("Feature coming soon: Document analysis");
+                    reader.readAsArrayBuffer(file);
+                  }
+                }} />
+              </div>
+
+              {/* Document Comparison */}
+              <div 
+                onClick={() => setShowComparePopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ⚖️
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Compare Documents
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Upload 2 documents to compare
                 </div>
                 <div style={{ 
                   padding: "8px 16px",
@@ -1802,9 +1871,65 @@ By Attorney & AI Innovator Khawer Rabbani
                   color: "white",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
                 }}>
-                  ✨ Upgrade Now
+                  Start Comparing
                 </div>
               </div>
+
+              {/* Document Drafting */}
+              <div 
+                onClick={() => setShowDraftPopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ✍️
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Draft Documents
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Create contracts, affidavits & more
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  Start Drafting
+                </div>
+              </div>
+
             </div>
           )}
 
@@ -1967,6 +2092,61 @@ By Attorney & AI Innovator Khawer Rabbani
           {!isMobile && (
             <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
               
+              {/* UPGRADE TO PRO BOX */}
+              <div 
+                onClick={() => setShowUpgradePopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ✨
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Upgrade to Pro
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Get more tools, faster AI, and exclusive features
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  ✨ Upgrade Now
+                </div>
+              </div>
+
               {/* QUICK QUERIES */}
               <div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
