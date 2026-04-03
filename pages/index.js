@@ -20,6 +20,8 @@ export default function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -1748,32 +1750,59 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
               </div>
 
-              {/* KACHOKAY QUOTE BOX */}
-              <div style={{ 
-                marginTop: "auto",
-                padding: "6px", 
-                background: `linear-gradient(135deg, ${GOLD}15, ${ACCENT_PK}15)`, 
-                borderRadius: "4px", 
-                border: `1px solid ${GOLD}`,
-                textAlign: "center"
-              }}>
-                <img 
-                  src="/kachokay.jpg" 
-                  alt="Kachokay" 
-                  style={{ 
-                    width: "60px", 
-                    height: "60px", 
-                    borderRadius: "50%", 
-                    border: `2px solid ${GOLD}`,
-                    marginBottom: "4px",
-                    objectFit: "cover"
-                  }} 
-                />
-                <div style={{ fontSize: 8, color: GOLD, fontWeight: 700, marginBottom: "2px" }}>
-                  Everyday a New Kachokay Quote
+              {/* UPGRADE TO PRO BOX */}
+              <div 
+                onClick={() => setShowUpgradePopup(true)}
+                style={{ 
+                  marginTop: "auto",
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ✨
                 </div>
-                <div style={{ fontSize: 6, color: ACCENT_PK, fontStyle: "italic" }}>
-                  (Coming Soon!)
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Upgrade to Pro
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Get more tools, faster AI, and exclusive features
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  ✨ Upgrade Now
                 </div>
               </div>
             </div>
@@ -1833,7 +1862,7 @@ By Attorney & AI Innovator Khawer Rabbani
             </div>
 
             {/* INPUT AREA */}
-            <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px" }}>
+            <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
               <button 
                 onClick={startVoiceInput}
                 disabled={loading || isListening}
@@ -1853,12 +1882,57 @@ By Attorney & AI Innovator Khawer Rabbani
               >
                 {isListening ? "🎤 Listening..." : "🎤"}
               </button>
+              
+              {/* File Upload Button */}
+              <label 
+                htmlFor="file-upload"
+                style={{ 
+                  padding: "10px 16px", 
+                  background: NAVY_SURFACE, 
+                  color: TEXT_PRIMARY,
+                  border: `1px solid ${NAVY_BORDER}`, 
+                  borderRadius: "4px", 
+                  cursor: "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 16,
+                  transition: "all 0.3s",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = `${GOLD}20`;
+                  e.currentTarget.style.borderColor = GOLD;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = NAVY_SURFACE;
+                  e.currentTarget.style.borderColor = NAVY_BORDER;
+                }}
+                title="Upload files, images, or documents"
+              >
+                📎
+                <input 
+                  id="file-upload"
+                  type="file" 
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files);
+                    if (files.length > 0) {
+                      setUploadedFiles(prev => [...prev, ...files]);
+                      alert(`${files.length} file(s) uploaded: ${files.map(f => f.name).join(', ')}`);
+                    }
+                  }}
+                  style={{ display: "none" }}
+                />
+              </label>
+              
               <input 
                 type="text" 
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
                 onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
-                placeholder={isListening ? "Listening..." : "Ask ARK Law AI or click mic to speak..."} 
+                placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) attached...` : "Ask ARK Law AI or click mic to speak..."} 
                 style={{ 
                   flex: 1, 
                   padding: "10px", 
@@ -2969,6 +3043,168 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
 
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* UPGRADE TO PRO POPUP */}
+      {showUpgradePopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
+          <div style={{ 
+            background: NAVY, 
+            padding: "40px", 
+            borderRadius: "16px", 
+            width: "90%", 
+            maxWidth: "500px", 
+            border: `3px solid ${GOLD}`, 
+            boxShadow: `0 0 40px ${GOLD}60`,
+            textAlign: "center"
+          }}>
+            
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowUpgradePopup(false)} 
+              style={{ 
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                background: "none", 
+                border: "none", 
+                color: GOLD, 
+                fontSize: 32, 
+                cursor: "pointer", 
+                lineHeight: 1,
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "rotate(90deg)";
+                e.currentTarget.style.color = ACCENT_PK;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "rotate(0deg)";
+                e.currentTarget.style.color = GOLD;
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Logo and App Name */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", marginBottom: "30px" }}>
+              <img 
+                src="/ark-logo.png" 
+                alt="ARK Law AI" 
+                style={{ 
+                  width: "100px", 
+                  height: "100px",
+                  filter: `drop-shadow(0 0 20px ${GOLD}60)`
+                }} 
+              />
+              <h2 style={{ 
+                color: GOLD, 
+                margin: 0, 
+                fontSize: "32px",
+                fontWeight: 800,
+                letterSpacing: "1px"
+              }}>
+                ARK Law AI
+              </h2>
+            </div>
+
+            {/* Icon */}
+            <div style={{ 
+              width: "80px", 
+              height: "80px", 
+              margin: "0 auto 20px",
+              background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "40px",
+              boxShadow: `0 8px 20px rgba(74, 144, 226, 0.4)`,
+              animation: "pulse 2s infinite"
+            }}>
+              ✨
+            </div>
+
+            {/* Title */}
+            <h3 style={{ 
+              color: CREAM, 
+              fontSize: "28px", 
+              fontWeight: 700, 
+              margin: "0 0 15px 0" 
+            }}>
+              Upgrade to Pro
+            </h3>
+
+            {/* Description */}
+            <p style={{ 
+              color: TEXT_MUTED, 
+              fontSize: "16px", 
+              lineHeight: "1.6",
+              marginBottom: "30px"
+            }}>
+              Get more tools, faster AI, and exclusive features
+            </p>
+
+            {/* Coming Soon Badge */}
+            <div style={{ 
+              display: "inline-block",
+              padding: "20px 40px",
+              background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`,
+              borderRadius: "12px",
+              boxShadow: `0 4px 20px ${GOLD}40`
+            }}>
+              <div style={{ 
+                fontSize: "24px", 
+                fontWeight: 800, 
+                color: NAVY,
+                marginBottom: "5px"
+              }}>
+                🚀 COMING SOON
+              </div>
+              <div style={{ 
+                fontSize: "13px", 
+                color: `${NAVY}cc`
+              }}>
+                Stay tuned for exciting updates!
+              </div>
+            </div>
+
+            {/* Features List */}
+            <div style={{ 
+              marginTop: "30px",
+              textAlign: "left",
+              background: NAVY_SURFACE,
+              padding: "20px",
+              borderRadius: "10px",
+              border: `1px solid ${NAVY_BORDER}`
+            }}>
+              <div style={{ color: GOLD, fontSize: "14px", fontWeight: 700, marginBottom: "15px" }}>
+                ✨ Pro Features:
+              </div>
+              {[
+                "Priority AI Response Time",
+                "Advanced Document Analysis",
+                "Unlimited Chat History",
+                "Export Chat as PDF",
+                "Premium Legal Templates",
+                "24/7 Priority Support"
+              ].map((feature, i) => (
+                <div key={i} style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "10px",
+                  marginBottom: "10px",
+                  color: TEXT_MUTED,
+                  fontSize: "13px"
+                }}>
+                  <span style={{ color: ACCENT_PK, fontSize: "16px" }}>✓</span>
+                  {feature}
+                </div>
+              ))}
+            </div>
+
           </div>
         </div>
       )}
