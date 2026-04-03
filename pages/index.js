@@ -1261,9 +1261,6 @@ export default function ARKLawAI() {
           -moz-osx-font-smoothing: grayscale;
         }
       `}</style>
-    </>
-  );
-}
 
       {/* LOGIN POPUP */}
       {showLoginPopup && (
