@@ -1,18 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-const COLORS = {
-  primary: "#5A7A3D",
-  primaryLight: "#C4D600",
-  background: "#F5F5F0",
-  cardBg: "#FAFAF8",
-  white: "#FFFFFF",
-  text: { primary: "#2C3E1F", secondary: "#6B7C5E", muted: "#9CA89F" },
-  gray: { 50: "#FAFAF8", 100: "#F5F5F0", 200: "#E8E8E0", 300: "#D4D4C8", 400: "#A8A89F", 500: "#7C7C73", 600: "#5C5C54", 700: "#3F3F38", 800: "#2C2C26", 900: "#1A1A16" },
-  gold: "#C9A84C",
-  navy: "#0D1B2A"
-};
-
+// ARK Law AI v2.0 - DataNexus Style
 const GOLD = "#C9A84C";
 const NAVY = "#0D1B2A";
 const NAVY_MID = "#162032";
@@ -24,6 +13,13 @@ const TEXT_SECONDARY = "#B8C4D0";
 const TEXT_MUTED = "#6E8099";
 const CREAM = "#F5F1E8";
 const POPUP_DARK = "#0A1118";
+
+// DataNexus colors for new elements
+const BG_LIGHT = "#F5F5F0";
+const CARD_BG = "#FAFAF8";
+const BORDER_LIGHT = "#E8E8E0";
+const PRIMARY_GREEN = "#5A7A3D";
+const LIME_GREEN = "#C4D600";
 
 export default function App() {
   // Auth state
@@ -1418,151 +1414,1539 @@ By Attorney & AI Innovator Khawer Rabbani
 
       <style>{`
         * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        html, body {
+          height: 100%;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        #__next {
+          height: 100%;
+          overflow: hidden;
+        }
+        @keyframes scroll {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .news-ticker-content {
+          animation: scroll 120s linear infinite;
+          will-change: transform;
+        }
+        @keyframes conductScroll {
+          0% { transform: translateY(0%); }
+          100% { transform: translateY(-50%); }
+        }
+        @keyframes flagWave {
+          0%, 100% { transform: perspective(400px) rotateY(0deg); }
+          25% { transform: perspective(400px) rotateY(-15deg); }
+          50% { transform: perspective(400px) rotateY(0deg); }
+          75% { transform: perspective(400px) rotateY(15deg); }
+        }
+        @keyframes flagRipple {
+          0%, 100% { d: path("M 0 0 L 52 0 L 52 36 L 0 36 Z"); }
+          25% { d: path("M 0 0 Q 13 2 26 0 T 52 0 L 52 36 Q 39 34 26 36 T 0 36 Z"); }
+          50% { d: path("M 0 0 Q 13 -2 26 0 T 52 0 L 52 36 Q 39 38 26 36 T 0 36 Z"); }
+          75% { d: path("M 0 0 Q 13 2 26 0 T 52 0 L 52 36 Q 39 34 26 36 T 0 36 Z"); }
+        }
+        .conduct-ticker { 
+          animation: conductScroll 60s linear infinite;
+          will-change: transform;
+        }
+        .conduct-ticker:hover { animation-play-state: paused; }
+        .pakistan-flag {
+          animation: flagWave 3s ease-in-out infinite;
+          transform-origin: left center;
+          display: inline-block;
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
+          50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); }
+        }
+        @keyframes glowPulse {
+          0%, 100% { 
+            box-shadow: 0 0 20px rgba(201,168,76,0.8), 0 0 40px rgba(201,168,76,0.4);
+            transform: scale(1);
+          }
+          50% { 
+            box-shadow: 0 0 30px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6);
+            transform: scale(1.02);
+          }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        @media (max-width: 768px) {
+          .desktop-only { display: none; }
+        }
+      `}</style>
 
-  return (
-    <>
-      <Head>
-        <title>ARK Law AI - Pakistani Legal Assistant</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
-
-      <div style={{ minHeight: "100vh", background: "#F5F5F0" }}>
-        
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: BG_LIGHT, color: "#2C3E1F", fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
         {/* HEADER */}
-        <header style={{ background: "#FFFFFF", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #E8E8E0", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: "#FFFFFF", padding: "16px 40px", borderBottom: "1px solid " + BORDER_LIGHT, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
+          {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-            <span style={{ fontSize: "20px", fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+
+          {/* RIGHT - AUTH BUTTONS */}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "8px 20px", background: "transparent", border: "none", color: "#6B7C5E", fontWeight: 600, cursor: "pointer" }}>Log in</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ background: "#C4D600", color: "#2C3E1F", border: "none", padding: "10px 24px", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }} style={{ display: "flex", alignItems: "center", gap: "6px" }}><span>👤</span> Sign up</button>
+                <button 
+                  onClick={() => setShowLoginPopup(true)}
+                  style={{ 
+                    padding: "10px 24px", 
+                    background: "transparent", 
+                    color: "#6B7C5E", 
+                    border: "none", 
+                    borderRadius: "8px", 
+                    cursor: "pointer", 
+                    fontSize: 14, 
+                    fontWeight: 600
+                  }}
+                >
+                  Log in
+                </button>
+                <button 
+                  onClick={() => setShowSignupPopup(true)}
+                  style={{ 
+                    padding: "10px 24px", 
+                    background: LIME_GREEN, 
+                    color: "#2C3E1F", 
+                    border: "none", 
+                    borderRadius: "8px", 
+                    cursor: "pointer", 
+                    fontSize: 14, 
+                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px"
+                  }}
+                >
+                  <span>👤</span> Sign up
+                </button>
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.05)";
+                      e.currentTarget.style.boxShadow = `0 0 30px ${GOLD}, 0 0 60px ${GOLD}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`;
+                    }}
+                  >
+                    ✨ Sign Up - Get 500K Credits FREE!
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <div style={{ padding: "8px 16px", background: "#F5F5F0", borderRadius: "8px", fontSize: "13px", fontWeight: 600 }}>{userTokens.toLocaleString()} Credits</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "8px 16px", background: "#5A7A3D", color: "#FFFFFF", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer" }}>{user.name}</button>
+                {/* Token Counter - Show when logged in */}
+                <div style={{ 
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "6px 15px",
+                  background: NAVY_SURFACE,
+                  border: `2px solid ${NAVY_BORDER}`,
+                  borderRadius: "6px"
+                }}>
+                  <div style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative"
+                  }}>
+                    <div style={{
+                      width: "26px",
+                      height: "26px",
+                      borderRadius: "50%",
+                      background: NAVY_SURFACE,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "9px",
+                      fontWeight: 700,
+                      color: GOLD
+                    }}>
+                      {Math.round((userTokens/500000)*100)}%
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: GOLD }}>
+                      {userTokens.toLocaleString()} Credits
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  padding: "6px 15px", 
+                  background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
+                  color: "white", 
+                  border: `2px solid ${ACCENT_PK}`, 
+                  borderRadius: "4px", 
+                  fontSize: 11, 
+                  fontWeight: 700,
+                  whiteSpace: "nowrap"
+                }}>
+                  👤 {user.name}
+                </div>
+                <button 
+                  onClick={() => setShowMyAccountPopup(true)}
+                  style={{ 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
+                  }}
+                >
+                  My Account
+                </button>
               </>
             )}
           </div>
+
+          {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {/* Animated Waving Pakistan Flag */}
+            <div className="pakistan-flag" style={{ width: "56px", height: "38px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "visible", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", perspective: "400px" }}>
+              <svg viewBox="0 0 56 38" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%", overflow: "visible" }}>
+                <defs>
+                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
+                    <stop offset="50%" style={{ stopColor: "#01A550", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
+                  </linearGradient>
+                  <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style={{ stopColor: "#F8F8F8", stopOpacity: 1 }} />
+                    <stop offset="50%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} />
+                    <stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 1 }} />
+                  </linearGradient>
+                  <filter id="shadow">
+                    <feDropShadow dx="0.5" dy="0.5" stdDeviation="0.8" floodOpacity="0.4"/>
+                  </filter>
+                  <clipPath id="flagClip">
+                    <path>
+                      <animate attributeName="d" 
+                        values="M 0 0 L 56 0 L 56 38 L 0 38 Z;
+                                M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;
+                                M 0 0 Q 14 -2 28 0 T 56 0 L 56 38 Q 42 40 28 38 T 0 38 Z;
+                                M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;
+                                M 0 0 L 56 0 L 56 38 L 0 38 Z"
+                        dur="2.5s" 
+                        repeatCount="indefinite"/>
+                    </path>
+                  </clipPath>
+                </defs>
+                
+                <g clipPath="url(#flagClip)">
+                  {/* Green section with gradient */}
+                  <rect x="0" y="0" width="56" height="38" fill="url(#greenGradient)"/>
+                  
+                  {/* White stripe */}
+                  <rect x="0" y="0" width="14" height="38" fill="url(#whiteGradient)"/>
+                  
+                  {/* Crescent shadow layer */}
+                  <g filter="url(#shadow)">
+                    <circle cx="32" cy="19" r="8.5" fill="#FFFFFF"/>
+                    <circle cx="34.5" cy="19" r="7.5" fill="url(#greenGradient)"/>
+                  </g>
+                  
+                  {/* Star with shadow */}
+                  <g transform="translate(42, 19)" filter="url(#shadow)">
+                    <polygon points="0,-6.5 2,-2 7,-2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2 -2,-2" 
+                             fill="#FFFFFF" 
+                             stroke="#F5F5F5" 
+                             strokeWidth="0.3"/>
+                  </g>
+                  
+                  {/* Wave ripple effect */}
+                  <g opacity="0.25">
+                    <path fill="#FFFFFF">
+                      <animate attributeName="d" 
+                        values="M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z;
+                                M 14 0 Q 24 -3 35 0 T 56 0 L 56 38 Q 45 41 35 38 T 14 38 Z;
+                                M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z"
+                        dur="2s" 
+                        repeatCount="indefinite"/>
+                    </path>
+                  </g>
+                  
+                  {/* Shimmer waves */}
+                  <g opacity="0.15">
+                    <rect x="0" y="0" width="56" height="38" fill="url(#whiteGradient)">
+                      <animate attributeName="opacity" 
+                        values="0.1;0.2;0.1" 
+                        dur="3s" 
+                        repeatCount="indefinite"/>
+                    </rect>
+                  </g>
+                </g>
+                
+                {/* Flag pole shadow */}
+                <line x1="0" y1="0" x2="0" y2="38" stroke="#333" strokeWidth="0.5" opacity="0.3"/>
+              </svg>
+            </div>
+            
+            <button style={{ padding: "6px 12px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>
+              EN
+            </button>
+            <button style={{ padding: "6px 12px", background: NAVY_SURFACE, color: TEXT_MUTED, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, opacity: 0.4 }} title="Urdu — Coming Soon">
+              اردو
+            </button>
+          </div>
         </header>
 
-        {/* BANNER */}
-        <div style={{ background: "#F5F5F0", padding: "12px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", borderBottom: "1px solid #E8E8E0" }}>
-          <span style={{ background: "#C4D600", color: "#2C3E1F", padding: "4px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: 700 }}>New</span>
-          <span style={{ fontSize: "14px", color: "#2C3E1F" }}>ARK Law AI just got smarter! Explore improved answers and Pro features.</span>
-          <button onClick={() => setShowUpgradePopup(true)} style={{ background: "transparent", border: "none", color: "#5A7A3D", fontWeight: 600, cursor: "pointer" }}>See what's new →</button>
-        </div>
-
-        {/* MAIN */}
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "40px 20px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 320px", gap: "24px" }}>
-          
-          {/* LEFT */}
-          {!isMobile && (
-            <div>
-              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0", marginBottom: "24px" }}>
-                <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Meet the Founder</h3>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <img src="/khawer-profile.jpeg" alt="Khawer" style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover" }} />
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: "13px" }}>Khawer Rizvi</div>
-                    <div style={{ fontSize: "11px", color: "#9CA89F" }}>Founder & CEO</div>
-                  </div>
-                </div>
-              </div>
-              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
-                <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Features</h3>
-                <div onClick={() => setShowDraftPopup(true)} style={{ padding: "16px", background: "#F5F5F0", borderRadius: "12px", marginBottom: "12px", cursor: "pointer" }}>
-                  <div style={{ fontSize: "20px", marginBottom: "8px" }}>📊</div>
-                  <div style={{ fontWeight: 700, fontSize: "14px" }}>Draft Documents</div>
-                  <div style={{ fontSize: "12px", color: "#9CA89F" }}>Create legal documents</div>
-                </div>
-                <div onClick={() => setShowComparePopup(true)} style={{ padding: "16px", background: "#F5F5F0", borderRadius: "12px", cursor: "pointer" }}>
-                  <div style={{ fontSize: "20px", marginBottom: "8px" }}>⚖️</div>
-                  <div style={{ fontWeight: 700, fontSize: "14px" }}>Compare Documents</div>
-                  <div style={{ fontSize: "12px", color: "#9CA89F" }}>Analyze differences</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CENTER */}
-          <div>
-            {messages.length <= 1 && (
-              <div style={{ textAlign: "center", padding: "60px 40px", marginBottom: "24px" }}>
-                <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚖️</div>
-                <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "16px", color: "#2C3E1F" }}>Hello! I'm ARK Law AI</h1>
-                <p style={{ fontSize: "16px", color: "#6B7C5E", marginBottom: "32px" }}>Ask questions, get insights, and explore Pakistani law.</p>
-              </div>
-            )}
-
-            {messages.length > 1 && (
-              <div style={{ marginBottom: "24px" }}>
-                {messages.slice(1).map((msg, i) => (
-                  <div key={i} style={{ background: msg.role === "user" ? "#5A7A3D10" : "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0", marginBottom: "16px", borderLeft: (msg.role === "user" ? "4px solid #5A7A3D" : "4px solid #C9A84C") }}>
-                    <div style={{ fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{msg.content}</div>
-                  </div>
+        {/* NEWS TICKER - CONTINUOUS INFINITE LOOP */}
+        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
+          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
+          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+            <div className="news-ticker-wrapper">
+              <div className="news-ticker-content" style={{ 
+                display: "flex", 
+                gap: "80px", 
+                whiteSpace: "nowrap",
+                width: "max-content"
+              }}>
+                {/* First set of news items */}
+                {(newsItems.length > 0 ? newsItems : [
+                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                  "🇵🇰 New Tax Amendment Affects Business Sector",
+                  "🇵🇰 Family Court Interprets Guardianship Laws",
+                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                  "🇵🇰 High Court Decision on Property Disputes",
+                  "🇵🇰 Procedural Changes in Criminal Courts"
+                ]).map((item, i) => (
+                  <button 
+                    key={`news-1-${i}`} 
+                    onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
+                    style={{ 
+                      background: "none", 
+                      border: "none", 
+                      color: ACCENT_PK, 
+                      cursor: newsItems.length > 0 ? "pointer" : "default", 
+                      fontSize: 12, 
+                      padding: "0", 
+                      flexShrink: 0, 
+                      fontWeight: 500, 
+                      textDecoration: "none", 
+                      whiteSpace: "nowrap" 
+                    }}
+                  >
+                    {item}
+                  </button>
                 ))}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-
-            <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
-              {uploadedFiles.length > 0 && (
-                <div style={{ marginBottom: "16px", padding: "12px", background: "#F5F5F0", borderRadius: "8px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                  {uploadedFiles.map((file, i) => (
-                    <div key={i} style={{ padding: "6px 12px", background: "#FFFFFF", borderRadius: "6px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{file.name}</span>
-                      <button onClick={() => setUploadedFiles(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer" }}>✕</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask anything about Pakistani law..." style={{ flex: 1, padding: "14px 16px", border: "1px solid #E8E8E0", borderRadius: "10px", fontSize: "14px", outline: "none" }} />
-                <label style={{ width: "44px", height: "44px", background: "#F5F5F0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                  <span>📎</span>
-                  <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
-                </label>
-                <button onClick={startVoiceInput} style={{ width: "44px", height: "44px", background: isListening ? "#5A7A3D" : "#F5F5F0", color: isListening ? "#FFFFFF" : "#2C3E1F", borderRadius: "10px", border: "none", cursor: "pointer" }}>🎤</button>
-                <button onClick={() => sendMessage()} disabled={loading} style={{ width: "44px", height: "44px", background: "#5A7A3D", color: "#FFFFFF", borderRadius: "10px", border: "none", cursor: "pointer", opacity: loading ? 0.6 : 1 }}>➤</button>
+                {/* Second set - exact duplicate for seamless loop */}
+                {(newsItems.length > 0 ? newsItems : [
+                  "🇵🇰 Supreme Court Ruling on Constitutional Rights",
+                  "🇵🇰 New Tax Amendment Affects Business Sector",
+                  "🇵🇰 Family Court Interprets Guardianship Laws",
+                  "🇵🇰 Labour Ministry Issues Worker Protection Guidelines",
+                  "🇵🇰 High Court Decision on Property Disputes",
+                  "🇵🇰 Procedural Changes in Criminal Courts"
+                ]).map((item, i) => (
+                  <button 
+                    key={`news-2-${i}`} 
+                    onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} 
+                    style={{ 
+                      background: "none", 
+                      border: "none", 
+                      color: ACCENT_PK, 
+                      cursor: newsItems.length > 0 ? "pointer" : "default", 
+                      fontSize: 12, 
+                      padding: "0", 
+                      flexShrink: 0, 
+                      fontWeight: 500, 
+                      textDecoration: "none", 
+                      whiteSpace: "nowrap" 
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* RIGHT */}
+        {/* BODY */}
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+          {/* LEFT SIDEBAR - Document Tools */}
           {!isMobile && (
-            <div>
-              <div style={{ background: "linear-gradient(135deg, #C9A84C, #E5C887)", marginBottom: "24px" }}>
-                <div style={{ fontSize: "24px", marginBottom: "12px" }}>👑</div>
-                <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#0D1B2A" }}>Upgrade to Pro</h3>
-                <p style={{ fontSize: "13px", marginBottom: "16px", color: "#0D1B2A" }}>Unlock advanced features</p>
-                <button onClick={() => setShowUpgradePopup(true)} style={{ width: "100%", padding: "12px", background: "#FFFFFF", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}>✨ Go Pro</button>
+            <div style={{ width: "220px", background: NAVY_SURFACE, borderRight: "1px solid " + NAVY_BORDER, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
+              
+              {/* Document Analyzer */}
+              <div 
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  📂
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Analyze Documents
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Upload legal documents for analysis
+                </div>
+                <input type="file" accept=".pdf,.docx,.doc" style={{ 
+                  width: "100%", 
+                  fontSize: 10, 
+                  padding: "6px", 
+                  background: "white", 
+                  border: `2px solid ${NAVY}`, 
+                  borderRadius: "6px", 
+                  color: NAVY, 
+                  cursor: "pointer",
+                  fontWeight: 600
+                }} onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => alert("Feature coming soon: Document analysis");
+                    reader.readAsArrayBuffer(file);
+                  }
+                }} />
               </div>
-              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
-                <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "16px" }}>Quick Queries</h3>
-                {QUICK_QUERIES_PK.map((q, i) => (
-                  <button key={i} onClick={() => setInput(q)} style={{ width: "100%", padding: "12px 16px", background: "#FFFFFF", border: "1px solid #E8E8E0", borderRadius: "8px", marginBottom: "8px", cursor: "pointer", textAlign: "left" }}><span>🔍</span> {q}</button>
+
+              {/* Document Comparison */}
+              <div 
+                onClick={() => setShowComparePopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ⚖️
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Compare Documents
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Upload 2 documents to compare
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  Start Comparing
+                </div>
+              </div>
+
+              {/* Document Drafting */}
+              <div 
+                onClick={() => setShowDraftPopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ✍️
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Draft Documents
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Create contracts, affidavits & more
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  Start Drafting
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* CHAT AREA */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+            {/* Watermark Logo */}
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
+              <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
+            </div>
+            
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", position: "relative", zIndex: 1 }}>
+              {messages.map((msg, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
+                  {msg.role === "assistant" && (
+                    <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  )}
+                  <div style={{ maxWidth: "70%", position: "relative" }}>
+                    <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                      {renderMessageContent(msg.content)}
+                    </div>
+                    {msg.role === "assistant" && (
+                      <button
+                        onClick={() => speakText(msg.content, i)}
+                        style={{
+                          marginTop: "6px",
+                          padding: "6px 12px",
+                          background: currentSpeakingIndex === i ? ACCENT_PK : GOLD,
+                          color: NAVY,
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                          fontSize: 11,
+                          fontWeight: 600,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          transition: "all 0.2s"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                      >
+                        {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* UPLOADED FILES DISPLAY */}
+            {uploadedFiles.length > 0 && (
+              <div style={{ 
+                padding: "10px 15px", 
+                borderTop: `1px solid ${NAVY_BORDER}`,
+                background: `${NAVY_SURFACE}aa`,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                alignItems: "center"
+              }}>
+                <span style={{ fontSize: 11, color: TEXT_MUTED, fontWeight: 600 }}>
+                  📎 Attached Files ({uploadedFiles.length}):
+                </span>
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "4px 10px",
+                    background: NAVY_SURFACE,
+                    border: `1px solid ${GOLD}`,
+                    borderRadius: "4px",
+                    fontSize: 11,
+                    color: CREAM
+                  }}>
+                    <span>{file.name}</span>
+                    <span style={{ color: TEXT_MUTED }}>
+                      ({(file.size / 1024).toFixed(1)} KB)
+                    </span>
+                    <button
+                      onClick={() => {
+                        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: GOLD,
+                        cursor: "pointer",
+                        fontSize: 14,
+                        padding: "0 4px",
+                        lineHeight: 1
+                      }}
+                      title="Remove file"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setUploadedFiles([])}
+                  style={{
+                    padding: "4px 10px",
+                    background: `${GOLD}20`,
+                    border: `1px solid ${GOLD}`,
+                    borderRadius: "4px",
+                    color: GOLD,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = GOLD;
+                    e.currentTarget.style.color = NAVY;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = `${GOLD}20`;
+                    e.currentTarget.style.color = GOLD;
+                  }}
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
+
+            {/* INPUT AREA */}
+            <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
+              <button 
+                onClick={startVoiceInput}
+                disabled={loading || isListening}
+                style={{ 
+                  padding: "10px 16px", 
+                  background: isListening ? ACCENT_PK : NAVY_SURFACE, 
+                  color: isListening ? NAVY : TEXT_PRIMARY,
+                  border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, 
+                  borderRadius: "4px", 
+                  cursor: loading || isListening ? "not-allowed" : "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 16,
+                  transition: "all 0.3s",
+                  animation: isListening ? "pulse 1.5s infinite" : "none"
+                }}
+                title="Click to speak your question"
+              >
+                {isListening ? "🎤 Listening..." : "🎤"}
+              </button>
+              
+              {/* File Upload Button */}
+              <label 
+                htmlFor="file-upload"
+                style={{ 
+                  padding: "10px 16px", 
+                  background: NAVY_SURFACE, 
+                  color: TEXT_PRIMARY,
+                  border: `1px solid ${NAVY_BORDER}`, 
+                  borderRadius: "4px", 
+                  cursor: "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 16,
+                  transition: "all 0.3s",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = `${GOLD}20`;
+                  e.currentTarget.style.borderColor = GOLD;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = NAVY_SURFACE;
+                  e.currentTarget.style.borderColor = NAVY_BORDER;
+                }}
+                title="Upload files, images, or documents"
+              >
+                📎
+                <input 
+                  id="file-upload"
+                  type="file" 
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files);
+                    if (files.length > 0) {
+                      setUploadedFiles(prev => [...prev, ...files]);
+                      alert(`${files.length} file(s) uploaded: ${files.map(f => f.name).join(', ')}`);
+                    }
+                  }}
+                  style={{ display: "none" }}
+                />
+              </label>
+              
+              <input 
+                type="text" 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
+                placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} 
+                style={{ 
+                  flex: 1, 
+                  padding: "10px", 
+                  background: NAVY_SURFACE, 
+                  border: `1px solid ${NAVY_BORDER}`, 
+                  color: TEXT_PRIMARY, 
+                  borderRadius: "4px", 
+                  fontSize: 13 
+                }} 
+              />
+              <button 
+                onClick={() => sendMessage()} 
+                disabled={loading || isListening} 
+                style={{ 
+                  padding: "10px 20px", 
+                  background: GOLD, 
+                  color: NAVY, 
+                  border: "none", 
+                  borderRadius: "4px", 
+                  cursor: loading || isListening ? "not-allowed" : "pointer", 
+                  fontWeight: 600, 
+                  fontSize: 13,
+                  opacity: loading || isListening ? 0.5 : 1
+                }}
+              >
+                SEND
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT SIDEBAR - Quick Queries & Practice Areas */}
+          {!isMobile && (
+            <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
+              
+              {/* UPGRADE TO PRO BOX */}
+              <div 
+                onClick={() => setShowUpgradePopup(true)}
+                style={{ 
+                  padding: "15px", 
+                  background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                  borderRadius: "8px", 
+                  border: `2px solid ${GOLD}`,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: `0 4px 15px ${GOLD}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`;
+                }}
+              >
+                <div style={{ 
+                  width: "50px", 
+                  height: "50px", 
+                  margin: "0 auto 10px",
+                  background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                }}>
+                  ✨
+                </div>
+                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>
+                  Upgrade to Pro
+                </div>
+                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>
+                  Get more tools, faster AI, and exclusive features
+                </div>
+                <div style={{ 
+                  padding: "8px 16px",
+                  background: `linear-gradient(135deg, #FFD700, #4A90E2)`,
+                  borderRadius: "6px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)"
+                }}>
+                  ✨ Upgrade Now
+                </div>
+              </div>
+
+              {/* QUICK QUERIES */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
+                {QUICK_QUERIES_PK.map((query, i) => (
+                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = `${GOLD}15`;
+                    e.currentTarget.style.borderColor = GOLD;
+                    e.currentTarget.style.color = TEXT_PRIMARY;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = NAVY;
+                    e.currentTarget.style.borderColor = NAVY_BORDER;
+                    e.currentTarget.style.color = TEXT_SECONDARY;
+                  }}
+                  >
+                    {query}
+                  </button>
+                ))}
+              </div>
+
+              {/* Practice Areas */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
+                {PRACTICE_AREAS_PK.map((area) => (
+                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 10, textAlign: "left" }}>
+                    {area.icon} {area.label}
+                  </button>
                 ))}
               </div>
             </div>
           )}
-
         </div>
 
         {/* FOOTER */}
-        <footer style={{ background: "#0D1B2A", color: "#FFFFFF", padding: "40px", marginTop: "60px", textAlign: "center" }}>
-          <div style={{ fontSize: "20px", fontWeight: 700, marginBottom: "16px" }}>ARK Law AI</div>
-          <div style={{ fontSize: "13px", opacity: 0.7 }}>© 2025 ARK Law AI. All rights reserved. | ✨ Designed by ARK Lex AI LLC</div>
+        <footer style={{ padding: "8px 20px", borderTop: `1px solid ${NAVY_BORDER}`, fontSize: 9, color: TEXT_MUTED, position: "relative" }}>
+          <div style={{ textAlign: "center" }}>⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer</div>
+          <div style={{ textAlign: "center", color: GOLD, marginTop: "3px", fontSize: 8 }}>This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan</div>
+          
+          {/* Golden Banner - Bottom Right */}
+          <div style={{ 
+            position: "absolute", 
+            bottom: "8px", 
+            right: "20px",
+            padding: "6px 16px",
+            background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
+            color: NAVY,
+            borderRadius: "4px",
+          </div>
         </footer>
-
       </div>
+
+      {/* SUCCESS POPUP */}
+      {showSuccessPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "12px", border: `2px solid ${ACCENT_PK}`, maxWidth: "450px", textAlign: "center" }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 15px" }} />
+            <div style={{ fontSize: 48, marginBottom: "15px" }}>✅</div>
+            <h2 style={{ color: ACCENT_PK, fontSize: 18, marginBottom: "15px" }}>Correct Code!</h2>
+            <div style={{ borderTop: `2px solid ${GOLD}`, borderBottom: `2px solid ${GOLD}`, padding: "20px", margin: "20px 0" }}>
+              <p style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.6" }}>
+                You have entered the correct magic code dedicated to Honorable Justice S. A. Rabbani, legendary jurist of Pakistan. Now you are able to utilize this AI Legal Assistant for 24 hours without signing up for a trial.
+              </p>
+            </div>
+            <button onClick={() => setShowSuccessPopup(false)} style={{ padding: "12px 30px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600 }}>
+              OK — Let's Go! ⚖️
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* NEWS POPUP */}
+      {showNewsPopup && selectedNews && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.2)` }}>
+            {/* POPUP HEADER */}
+            <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
+                <div>
+                  <div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div>
+                </div>
+              </div>
+              <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", padding: "0", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                ✕
+              </button>
+            </div>
+
+            {/* POPUP CONTENT */}
+            <div style={{ padding: "25px" }}>
+              {/* HEADLINE */}
+              <p style={{ color: GOLD, fontSize: 15, fontWeight: 700, marginBottom: "10px", lineHeight: "1.6" }}>
+                {selectedNews.headline}
+              </p>
+
+              {/* SOURCE */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "15px", padding: "10px", background: NAVY_SURFACE, borderRadius: "4px", borderLeft: `3px solid ${ACCENT_PK}` }}>
+                <span style={{ fontSize: 10, color: TEXT_MUTED }}>📰 Source:</span>
+                <span style={{ fontSize: 11, color: ACCENT_PK, fontWeight: 600 }}>{selectedNews.source}</span>
+              </div>
+
+              {/* DIVIDER */}
+              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
+
+              {/* FULL TEXT */}
+              <div style={{ marginBottom: "15px" }}>
+                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>Full News Details:</h4>
+                <p style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
+                  {selectedNews.fullText}
+                </p>
+              </div>
+
+              {/* DIVIDER */}
+              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
+
+              {/* LEGAL ANALYSIS */}
+              <div>
+                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>⚖️ Legal Analysis & Impact:</h4>
+                {newsLoading ? (
+                  <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>
+                    ⏳ Analyzing legal significance...
+                  </div>
+                ) : (
+                  <div style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>
+                    {newsAnalysis}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* POPUP FOOTER */}
+            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={() => setShowNewsPopup(false)} style={{ padding: "10px 24px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                CLOSE
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DOCUMENT DRAFTING POPUP - AI POWERED */}
+      {showDraftPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "800px", maxHeight: "90vh", overflow: "auto", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
+            
+            {/* HEADER */}
+            <div style={{ background: `linear-gradient(135deg, ${NAVY}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
+                <div>
+                  <h3 style={{ color: GOLD, margin: 0, fontSize: 18 }}>✍️ AI Legal Document Drafting</h3>
+                  <div style={{ color: ACCENT_PK, fontSize: 10, marginTop: "3px" }}>Powered by ARK Law AI - Pakistani Law Compliant</div>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowDraftPopup(false);
+                  setDraftStep("type-selection");
+                  setDraftContent("");
+                  setDraftRequirements({});
+                }} 
+                style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* CONTENT */}
+            <div style={{ padding: "25px" }}>
+              
+              {/* STEP 1: DOCUMENT TYPE SELECTION */}
+              {draftStep === "type-selection" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "15px", fontWeight: 700 }}>📋 Step 1: Select Document Type</h4>
+                  
+                  <select 
+                    value={draftType} 
+                    onChange={(e) => setDraftType(e.target.value)} 
+                    style={{ 
+                      width: "100%", 
+                      padding: "12px", 
+                      background: NAVY, 
+                      border: `2px solid ${NAVY_BORDER}`, 
+                      color: TEXT_PRIMARY, 
+                      borderRadius: "6px", 
+                      marginBottom: "20px", 
+                      fontSize: 13,
+                      cursor: "pointer"
+                    }}
+                  >
+                    <option value="">-- Select Document Type --</option>
+                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
+                    <option value="contract">📄 General Contract</option>
+                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
+                    <option value="affidavit">⚖️ Affidavit</option>
+                    <option value="will">📜 Will / Testament</option>
+                    <option value="power-of-attorney">🔑 Power of Attorney</option>
+                    <option value="employment-agreement">💼 Employment Agreement</option>
+                    <option value="partnership-deed">🤝 Partnership Deed</option>
+                    <option value="sale-deed">🏘️ Sale Deed</option>
+                    <option value="divorce-agreement">💔 Divorce Agreement</option>
+                    <option value="loan-agreement">💰 Loan Agreement</option>
+                    <option value="trust-deed">🏛️ Trust Deed</option>
+                  </select>
+
+                  <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", borderLeft: `4px solid ${ACCENT_PK}`, marginBottom: "20px" }}>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, fontWeight: 600, marginBottom: "8px" }}>ℹ️ How It Works:</div>
+                    <div style={{ color: TEXT_SECONDARY, fontSize: 11, lineHeight: "1.6" }}>
+                      1. Select the document type you need<br/>
+                      2. Provide required information in the form<br/>
+                      3. AI will generate a complete, court-ready document<br/>
+                      4. Edit the document if needed<br/>
+                      5. Download in Word or PDF format
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      if (!draftType) {
+                        alert("Please select a document type");
+                        return;
+                      }
+                      setDraftStep("gathering-info");
+                    }}
+                    disabled={!draftType}
+                    style={{ 
+                      width: "100%", 
+                      padding: "14px", 
+                      background: draftType ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY_BORDER, 
+                      color: NAVY, 
+                      border: "none", 
+                      borderRadius: "6px", 
+                      cursor: draftType ? "pointer" : "not-allowed", 
+                      fontWeight: 700, 
+                      fontSize: 14,
+                      boxShadow: draftType ? `0 4px 15px ${GOLD}40` : "none"
+                    }}
+                  >
+                    Next: Provide Information →
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 2: GATHERING INFORMATION */}
+              {draftStep === "gathering-info" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>
+                    📝 Step 2: Provide Document Information
+                  </h4>
+                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "20px" }}>
+                    Fill in the details below. AI will generate a complete Pakistani legal document.
+                  </p>
+
+                  {/* DYNAMIC FORM BASED ON DOCUMENT TYPE */}
+                  <div style={{ maxHeight: "400px", overflowY: "auto", padding: "5px" }}>
+                    
+                    {/* RENTAL AGREEMENT FIELDS */}
+                    {draftType === "rental-agreement" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🏠 Landlord Information</h5>
+                          <input placeholder="Landlord Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Landlord CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Landlord Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, landlordAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>👤 Tenant Information</h5>
+                          <input placeholder="Tenant Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Tenant CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Tenant Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, tenantAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🏘️ Property Details</h5>
+                          <input placeholder="Property Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Property Type (House/Flat/Commercial) *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyType: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Covered Area (sq ft/marla/kanal) *" onChange={(e) => setDraftRequirements({...draftRequirements, propertyArea: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>💰 Rental Terms</h5>
+                          <input placeholder="Monthly Rent Amount (PKR) *" onChange={(e) => setDraftRequirements({...draftRequirements, monthlyRent: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Security Deposit (PKR) *" onChange={(e) => setDraftRequirements({...draftRequirements, securityDeposit: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Lease Duration (e.g., 1 year, 11 months) *" onChange={(e) => setDraftRequirements({...draftRequirements, leaseDuration: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Rent Payment Date (e.g., 1st of each month) *" onChange={(e) => setDraftRequirements({...draftRequirements, paymentDate: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Notice Period (e.g., 1 month) *" onChange={(e) => setDraftRequirements({...draftRequirements, noticePeriod: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AFFIDAVIT FIELDS */}
+                    {draftType === "affidavit" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>⚖️ Deponent Information</h5>
+                          <input placeholder="Deponent Full Name *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="CNIC Number *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentCNIC: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Father's/Husband's Name *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentFatherName: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Complete Address *" onChange={(e) => setDraftRequirements({...draftRequirements, deponentAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📋 Affidavit Details</h5>
+                          <input placeholder="Purpose of Affidavit *" onChange={(e) => setDraftRequirements({...draftRequirements, purpose: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <textarea placeholder="Facts to be stated under oath * (Describe all facts in detail)" onChange={(e) => setDraftRequirements({...draftRequirements, facts: e.target.value})} style={{ width: "100%", height: "120px", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12, fontFamily: "Arial, sans-serif" }} />
+                          <input placeholder="Authority/Court where to be filed *" onChange={(e) => setDraftRequirements({...draftRequirements, authority: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* NDA FIELDS */}
+                    {draftType === "nda" && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📤 Disclosing Party</h5>
+                          <input placeholder="Party Name *" onChange={(e) => setDraftRequirements({...draftRequirements, disclosingParty: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Address *" onChange={(e) => setDraftRequirements({...draftRequirements, disclosingAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📥 Receiving Party</h5>
+                          <input placeholder="Party Name *" onChange={(e) => setDraftRequirements({...draftRequirements, receivingParty: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12 }} />
+                          <input placeholder="Address *" onChange={(e) => setDraftRequirements({...draftRequirements, receivingAddress: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>🔒 Confidentiality Terms</h5>
+                          <textarea placeholder="Nature of Confidential Information *" onChange={(e) => setDraftRequirements({...draftRequirements, confidentialInfo: e.target.value})} style={{ width: "100%", height: "80px", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", marginBottom: "10px", fontSize: 12, fontFamily: "Arial, sans-serif" }} />
+                          <input placeholder="Duration of Confidentiality (e.g., 3 years) *" onChange={(e) => setDraftRequirements({...draftRequirements, duration: e.target.value})} style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GENERIC FORM FOR OTHER DOCUMENT TYPES */}
+                    {!["rental-agreement", "affidavit", "nda"].includes(draftType) && (
+                      <div>
+                        <div style={{ background: NAVY, padding: "15px", borderRadius: "6px", marginBottom: "15px", border: `1px solid ${GOLD}40` }}>
+                          <h5 style={{ color: ACCENT_PK, fontSize: 12, marginBottom: "12px", fontWeight: 600 }}>📋 Document Information</h5>
+                          <textarea 
+                            placeholder={`Provide all necessary details for ${draftType}:\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information`}
+                            onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} 
+                            style={{ width: "100%", height: "250px", padding: "12px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12, fontFamily: "Arial, sans-serif", lineHeight: "1.6" }} 
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* BUTTONS */}
+                  <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                    <button 
+                      onClick={() => setDraftStep("type-selection")}
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: NAVY_SURFACE, 
+                        color: TEXT_PRIMARY, 
+                        border: `1px solid ${NAVY_BORDER}`, 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontSize: 13,
+                        fontWeight: 600
+                      }}
+                    >
+                      ← Back
+                    </button>
+                    <button 
+                      onClick={() => generateDocument(draftRequirements)}
+                      disabled={draftGenerating}
+                      style={{ 
+                        flex: 2, 
+                        padding: "12px", 
+                        background: draftGenerating ? NAVY_BORDER : `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, 
+                        color: draftGenerating ? TEXT_MUTED : "white", 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: draftGenerating ? "not-allowed" : "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 14,
+                        boxShadow: draftGenerating ? "none" : `0 4px 15px ${ACCENT_PK}40`
+                      }}
+                    >
+                      {draftGenerating ? "⏳ Generating Document..." : "🚀 Generate Document with AI"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: GENERATING */}
+              {draftStep === "generating" && (
+                <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <img src="/ark-logo.png" alt="ARK" style={{ width: "80px", height: "80px", marginBottom: "20px", opacity: 0.8, animation: "pulse 2s infinite" }} />
+                  <h4 style={{ color: GOLD, fontSize: 16, marginBottom: "15px", fontWeight: 700 }}>⏳ Generating Your Legal Document...</h4>
+                  <p style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.6" }}>
+                    Our AI is drafting a comprehensive, Pakistani law-compliant document based on your requirements.
+                    <br/>This may take a few moments.
+                  </p>
+                  <div style={{ marginTop: "20px", padding: "15px", background: NAVY, borderRadius: "6px", border: `1px solid ${GOLD}30` }}>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Analyzing requirements</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Applying Pakistani legal format</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 11, marginBottom: "8px" }}>✓ Including all necessary clauses</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>⏳ Finalizing document...</div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: COMPLETED - EDITABLE DOCUMENT */}
+              {draftStep === "completed" && (
+                <div>
+                  <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>
+                    ✅ Document Generated Successfully!
+                  </h4>
+                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "15px" }}>
+                    Your {draftType} has been generated. You can edit it below and download in Word or PDF format.
+                  </p>
+
+                  {/* EDITABLE DOCUMENT AREA */}
+                  <textarea 
+                    value={draftContent} 
+                    onChange={(e) => setDraftContent(e.target.value)} 
+                    style={{ 
+                      width: "100%", 
+                      height: "400px", 
+                      padding: "15px", 
+                      background: "white", 
+                      border: `2px solid ${GOLD}`, 
+                      color: "#000", 
+                      borderRadius: "6px", 
+                      marginBottom: "15px", 
+                      fontSize: 13, 
+                      fontFamily: "'Times New Roman', serif",
+                      lineHeight: "1.8",
+                      whiteSpace: "pre-wrap"
+                    }} 
+                  />
+
+                  {/* STATS */}
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px", padding: "10px", background: NAVY, borderRadius: "4px" }}>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📝 Words: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.split(/\s+/).filter(Boolean).length}</span>
+                    </div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📊 Characters: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.length}</span>
+                    </div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>
+                      📄 Pages: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</span>
+                    </div>
+                  </div>
+
+                  {/* DISCLAIMER */}
+                  <div style={{ background: `${GOLD}15`, padding: "12px", borderRadius: "6px", borderLeft: `4px solid ${GOLD}`, marginBottom: "20px" }}>
+                    <div style={{ color: GOLD, fontSize: 10, fontWeight: 600, marginBottom: "5px" }}>⚠️ IMPORTANT LEGAL DISCLAIMER</div>
+                    <div style={{ color: TEXT_SECONDARY, fontSize: 10, lineHeight: "1.5" }}>
+                      This document is AI-generated for reference purposes only. Please have it reviewed and verified by a qualified Pakistani lawyer before execution or filing in court.
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button 
+                      onClick={() => {
+                        setDraftStep("type-selection");
+                        setDraftContent("");
+                        setDraftRequirements({});
+                      }}
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: NAVY_SURFACE, 
+                        color: TEXT_PRIMARY, 
+                        border: `1px solid ${NAVY_BORDER}`, 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontSize: 12,
+                        fontWeight: 600
+                      }}
+                    >
+                      🔄 New Document
+                    </button>
+                    <button 
+                      onClick={() => downloadDraft("docx")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: ACCENT_PK, 
+                        color: NAVY, 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 12,
+                        boxShadow: `0 2px 8px ${ACCENT_PK}40`
+                      }}
+                    >
+                      📥 Download DOCX
+                    </button>
+                    <button 
+                      onClick={() => downloadDraft("pdf")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: "12px", 
+                        background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+                        color: NAVY, 
+                        border: "none", 
+                        borderRadius: "6px", 
+                        cursor: "pointer", 
+                        fontWeight: 700, 
+                        fontSize: 12,
+                        boxShadow: `0 2px 8px ${GOLD}40`
+                      }}
+                    >
+                      📄 Download PDF
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DOCUMENT COMPARISON POPUP */}
+      {showComparePopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
+            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
+                <h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3>
+              </div>
+              <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>
+                ✕
+              </button>
+            </div>
+            <div style={{ padding: "20px" }}>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>📄 Document 1</label>
+                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])} style={{ width: "100%", padding: "8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 11 }} />
+                {doc1 && (
+                  <div style={{ marginTop: "5px", fontSize: 10, color: doc1.size > 5*1024*1024 ? "#ff6b6b" : ACCENT_PK }}>
+                    {doc1.name} - {(doc1.size / 1024 / 1024).toFixed(2)}MB {doc1.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>📄 Document 2</label>
+                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])} style={{ width: "100%", padding: "8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 11 }} />
+                {doc2 && (
+                  <div style={{ marginTop: "5px", fontSize: 10, color: doc2.size > 5*1024*1024 ? "#ff6b6b" : ACCENT_PK }}>
+                    {doc2.name} - {(doc2.size / 1024 / 1024).toFixed(2)}MB {doc2.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ marginBottom: "15px", padding: "10px", background: NAVY_SURFACE, borderRadius: "4px", borderLeft: `3px solid ${ACCENT_PK}` }}>
+                <div style={{ fontSize: 10, color: TEXT_MUTED, lineHeight: "1.6" }}>
+                  ℹ️ <strong>Supported:</strong> PDF, DOC, DOCX (max 5MB each)<br/>
+                  ✓ Scanned PDFs supported (OCR enabled)<br/>
+                  ✓ Image-based documents supported
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>🎯 Focal Point for Comparison</label>
+                <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses, termination conditions..." style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
+              </div>
+
+              {comparingDocs && (
+                <div style={{ marginBottom: "15px", padding: "20px", background: NAVY, borderRadius: "6px", border: `1px solid ${GOLD}`, textAlign: "center" }}>
+                  <div style={{ color: GOLD, fontSize: 14, fontWeight: 600, marginBottom: "10px" }}>⏳ Analyzing Documents...</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 11 }}>AI is comparing the documents and analyzing differences based on your focal point</div>
+                </div>
+              )}
+
+              {comparisonResult && !comparingDocs && (
+                <div style={{ marginBottom: "15px", padding: "15px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}` }}>
+                  <div style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "10px" }}>📊 Comparison Report</div>
+                  <div style={{ color: TEXT_PRIMARY, fontSize: 11, lineHeight: "1.6", whiteSpace: "pre-wrap", maxHeight: "400px", overflowY: "auto" }}>
+                    {comparisonResult}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button onClick={() => { setShowComparePopup(false); setDoc1(null); setDoc2(null); setCompareFocus(""); setComparisonResult(""); }} style={{ flex: 1, padding: "10px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 12 }}>
+                  Close
+                </button>
+                <button onClick={compareDocuments} disabled={comparingDocs} style={{ flex: 1, padding: "10px", background: comparingDocs ? NAVY_BORDER : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 12, boxShadow: `0 0 15px rgba(201,168,76,0.5)` }}>
+                  {comparingDocs ? "⏳ Analyzing..." : "🔍 Compare Documents"}
+                </button>
+                {comparisonResult && (
+                  <button onClick={downloadComparisonPDF} style={{ flex: 1, padding: "10px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                    📄 Download PDF
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PROFILE POPUP - KHAWER RABBANI */}
+      {showLinkedInPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "1000px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: `0 0 30px rgba(201,168,76,0.3)` }}>
+            {/* POPUP HEADER */}
+            <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "50px", height: "50px" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                  <img src="/khawer-profile.jpeg" alt="Khawer Rabbani" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div>
+                    <div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div>
+                    <div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & CEO, ARK LAW AI</div>
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setShowLinkedInPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", padding: "0", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                ✕
+              </button>
+            </div>
+
+            {/* POPUP CONTENT - PDF VIEWER */}
+            <div style={{ padding: "0", background: CREAM }}>
+              <iframe 
+                src="/KRprofile.pdf#toolbar=0" 
+                style={{ 
+                  width: "100%", 
+                  height: "75vh", 
+                  border: "none",
+                  background: "white"
+                }}
+                title="Khawer Rabbani Professional Profile"
+              />
+            </div>
+
+            {/* POPUP FOOTER */}
+            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: 10, color: TEXT_MUTED }}>
+                📧 khawer.rabbani@gmail.com
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <a 
+                  href="https://www.linkedin.com/in/khawerrabbani/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    padding: "10px 20px", 
+                    background: "#0077B5", 
+                    color: "white", 
+                    border: "none", 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontWeight: 600, 
+                    fontSize: 12,
+                    textDecoration: "none",
+                    display: "inline-block"
+                  }}
+                >
+                  🔗 LinkedIn Profile
+                </a>
+                <button 
+                  onClick={() => window.open('/KRprofile.pdf', '_blank')}
+                  style={{ 
+                    padding: "10px 20px", 
+                    background: ACCENT_PK, 
+                    color: NAVY, 
+                    border: "none", 
+                    borderRadius: "4px", 
+                    cursor: "pointer", 
+                    fontWeight: 600, 
+                    fontSize: 12
+                  }}
+                >
+                  📄 Download Profile
+                </button>
+                <button onClick={() => setShowLinkedInPopup(false)} style={{ padding: "10px 20px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* LOGIN POPUP */}
       {showLoginPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: "3px solid #C9A84C", boxShadow: "0 0 30px rgba(201, 168, 76, 0.5)" }}>
+          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} />
@@ -1610,7 +2994,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 
                 console.log('✅ Login successful:', email);
                 console.log('💰 User tokens:', userWithoutPassword.tokens);
-                alert('Welcome back, ' + userWithoutPassword.name + '! You have ' + (userWithoutPassword.tokens?.toLocaleString() || '500,000') + ' credits.');
+                alert(`Welcome back, ${userWithoutPassword.name}! You have ${userWithoutPassword.tokens?.toLocaleString() || '500,000'} credits.`);
               } catch (error) {
                 console.error('Login error:', error);
                 alert('Login failed. Please try again.');
@@ -1619,15 +3003,15 @@ By Attorney & AI Innovator Khawer Rabbani
               
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
               </div>
 
               <div style={{ marginBottom: "25px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
-                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
+                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #C9A84C, #E5C887)", color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: "0 4px 15px rgba(201, 168, 76, 0.4)" }}>
+              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px", boxShadow: `0 4px 15px ${GOLD}40` }}>
                 Login
               </button>
 
@@ -1642,7 +3026,7 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: "3px solid #C9A84C", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 0 30px rgba(201, 168, 76, 0.5)" }}>
+          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} />
@@ -1701,28 +3085,28 @@ By Attorney & AI Innovator Khawer Rabbani
               
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
+                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
               </div>
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label>
-                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
+                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
               </div>
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label>
-                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
+                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label>
-                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
                 
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label>
-                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }}>
+                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}>
                     <option value="">Select...</option>
                     <option>Lawyer</option>
                     <option>Legal Assistant</option>
@@ -1737,27 +3121,27 @@ By Attorney & AI Innovator Khawer Rabbani
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
-                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label>
-                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
                 
                 <div>
                   <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label>
-                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
                 </div>
               </div>
 
               <div style={{ marginBottom: "25px" }}>
                 <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label>
-                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: "2px solid #2B3F57", borderRadius: "6px", color: CREAM, fontSize: 14 }} />
+                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
               </div>
 
-              <button type="submit" style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #3EB489, #2D9B6E)", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: "0 4px 15px rgba(62, 180, 137, 0.4)" }}>
+              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", boxShadow: `0 4px 15px ${ACCENT_PK}40` }}>
                 Create Account
               </button>
 
@@ -1772,12 +3156,12 @@ By Attorney & AI Innovator Khawer Rabbani
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: "3px solid #C9A84C", maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: "0 0 40px rgba(201, 168, 76, 0.5)" }}>
+          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: `3px solid ${GOLD}`, maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: `0 0 40px ${GOLD}50` }}>
             
             {/* Header with Logo */}
-            <div style={{ padding: "25px 35px", borderBottom: "2px solid #2B3F57", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ padding: "25px 35px", borderBottom: `2px solid ${NAVY_BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: "drop-shadow(0 0 10px rgba(201, 168, 76, 0.6))" }} />
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: `drop-shadow(0 0 10px ${GOLD}60)` }} />
                 <div>
                   <h2 style={{ color: GOLD, margin: 0, fontSize: "22px", fontWeight: 700 }}>ARK Law AI</h2>
                   <p style={{ color: ACCENT_PK, margin: "4px 0 0 0", fontSize: "12px" }}>My Account</p>
@@ -1790,11 +3174,11 @@ By Attorney & AI Innovator Khawer Rabbani
             <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
               
               {/* LEFT COLUMN - User Information */}
-              <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: "2px solid #2B3F57" }}>
+              <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: `2px solid ${NAVY_BORDER}` }}>
                 
                 {/* User Avatar & Name */}
                 <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "25px" }}>
-                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #C9A84C, #3EB489)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY, boxShadow: "0 4px 15px rgba(201, 168, 76, 0.4)" }}>
+                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY, boxShadow: `0 4px 15px ${GOLD}40` }}>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -1806,7 +3190,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
 
                 {/* Account Information */}
-                <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: "1px solid #2B3F57" }}>
+                <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: `1px solid ${NAVY_BORDER}` }}>
                   <h4 style={{ color: ACCENT_PK, fontSize: 14, marginBottom: "15px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>Account Information</h4>
                   
                   <div style={{ display: "grid", gap: "14px" }}>
@@ -1855,7 +3239,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 <button 
                   onClick={() => {
                     localStorage.removeItem('arklaw_user');
-                    localStorage.removeItem('chat_history_' + user.id);
+                    localStorage.removeItem(`chat_history_${user.id}`);
                     setUser(null);
                     setChatHistory([]);
                     setShowMyAccountPopup(false);
@@ -1864,14 +3248,14 @@ By Attorney & AI Innovator Khawer Rabbani
                   style={{ 
                     width: "100%", 
                     padding: "14px", 
-                    background: "linear-gradient(135deg, #DC2626, #991B1B)", 
+                    background: `linear-gradient(135deg, #DC2626, #991B1B)`, 
                     color: "white", 
                     border: "none", 
                     borderRadius: "8px", 
                     fontWeight: 700, 
                     fontSize: 15, 
                     cursor: "pointer", 
-                    boxShadow: "0 4px 15px rgba(220, 38, 38, 0.4)",
+                    boxShadow: `0 4px 15px rgba(220, 38, 38, 0.4)`,
                     transition: "all 0.2s"
                   }}
                   onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
@@ -1883,7 +3267,7 @@ By Attorney & AI Innovator Khawer Rabbani
 
               {/* RIGHT COLUMN - Chat History */}
               <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", background: NAVY_SURFACE }}>
-                <div style={{ padding: "20px", borderBottom: "1px solid #2B3F57" }}>
+                <div style={{ padding: "20px", borderBottom: `1px solid ${NAVY_BORDER}` }}>
                   <h4 style={{ color: GOLD, fontSize: 14, margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>📜 Chat History</h4>
                   <p style={{ color: TEXT_MUTED, fontSize: 10, margin: "5px 0 0 0" }}>Your previous conversations</p>
                 </div>
@@ -1904,13 +3288,13 @@ By Attorney & AI Innovator Khawer Rabbani
                             background: NAVY, 
                             padding: "12px", 
                             borderRadius: "6px", 
-                            border: "1px solid #2B3F57",
+                            border: `1px solid ${NAVY_BORDER}`,
                             cursor: "pointer",
                             transition: "all 0.2s"
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.borderColor = GOLD;
-                            e.currentTarget.style.background = "#0D1B2Add";
+                            e.currentTarget.style.background = `${NAVY}dd`;
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.borderColor = NAVY_BORDER;
@@ -1950,8 +3334,8 @@ By Attorney & AI Innovator Khawer Rabbani
             borderRadius: "16px", 
             width: "90%", 
             maxWidth: "500px", 
-            border: "3px solid #C9A84C", 
-            boxShadow: "0 0 40px rgba(201, 168, 76, 0.6)",
+            border: `3px solid ${GOLD}`, 
+            boxShadow: `0 0 40px ${GOLD}60`,
             textAlign: "center"
           }}>
             
@@ -1990,7 +3374,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 style={{ 
                   width: "100px", 
                   height: "100px",
-                  filter: "drop-shadow(0 0 20px rgba(201, 168, 76, 0.6))"
+                  filter: `drop-shadow(0 0 20px ${GOLD}60)`
                 }} 
               />
               <h2 style={{ 
@@ -2009,13 +3393,13 @@ By Attorney & AI Innovator Khawer Rabbani
               width: "80px", 
               height: "80px", 
               margin: "0 auto 20px",
-              background: "linear-gradient(135deg, #4A90E2, #6B5CE7)",
+              background: `linear-gradient(135deg, #4A90E2, #6B5CE7)`,
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "40px",
-              boxShadow: "0 8px 20px rgba(74, 144, 226, 0.4)",
+              boxShadow: `0 8px 20px rgba(74, 144, 226, 0.4)`,
               animation: "pulse 2s infinite"
             }}>
               ✨
@@ -2045,9 +3429,9 @@ By Attorney & AI Innovator Khawer Rabbani
             <div style={{ 
               display: "inline-block",
               padding: "20px 40px",
-              background: "linear-gradient(135deg, #C9A84C, #3EB489)",
+              background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`,
               borderRadius: "12px",
-              boxShadow: "0 4px 20px rgba(201, 168, 76, 0.4)"
+              boxShadow: `0 4px 20px ${GOLD}40`
             }}>
               <div style={{ 
                 fontSize: "24px", 
@@ -2059,7 +3443,7 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
               <div style={{ 
                 fontSize: "13px", 
-                color: "#0D1B2Acc"
+                color: `${NAVY}cc`
               }}>
                 Stay tuned for exciting updates!
               </div>
@@ -2072,7 +3456,7 @@ By Attorney & AI Innovator Khawer Rabbani
               background: NAVY_SURFACE,
               padding: "20px",
               borderRadius: "10px",
-              border: "1px solid #2B3F57"
+              border: `1px solid ${NAVY_BORDER}`
             }}>
               <div style={{ color: GOLD, fontSize: "14px", fontWeight: 700, marginBottom: "15px" }}>
                 ✨ Pro Features:
