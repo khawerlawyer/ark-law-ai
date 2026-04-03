@@ -1,8 +1,4 @@
-// Ensure global array exists
-if (typeof global.arkLawUsers === 'undefined') {
-  global.arkLawUsers = [];
-  console.log('⚠️ Warning: arkLawUsers was not initialized. Creating empty array.');
-}
+import { findUserByEmail, getAllUsers } from '../../../lib/userDatabase';
 
 function hashPassword(password) {
   return Buffer.from(password).toString('base64');
@@ -21,11 +17,13 @@ export default async function handler(req, res) {
     }
 
     console.log('🔐 Login attempt for:', email);
-    console.log('📊 Total users in database:', global.arkLawUsers.length);
-    console.log('👥 Available users:', global.arkLawUsers.map(u => u.email));
+    
+    const allUsers = getAllUsers();
+    console.log('📊 Total users in database:', allUsers.length);
+    console.log('👥 Available users:', allUsers.map(u => u.email));
 
-    // Find user (case-insensitive email)
-    const user = global.arkLawUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // Find user
+    const user = findUserByEmail(email);
     
     if (!user) {
       console.log('❌ User not found:', email);
@@ -37,8 +35,6 @@ export default async function handler(req, res) {
     // Check password
     const hashedPassword = hashPassword(password);
     console.log('🔑 Comparing passwords...');
-    console.log('   Provided (hashed):', hashedPassword);
-    console.log('   Stored (hashed):', user.password);
     
     if (user.password !== hashedPassword) {
       console.log('❌ Password mismatch');
