@@ -172,7 +172,7 @@ export default function App() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nThis AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan.\n\nHow may I assist you today?",
+      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?",
     };
     setMessages([greeting]);
     setNameAsked(true); // Always mark as asked - never ask for name
@@ -2018,6 +2018,82 @@ By Attorney & AI Innovator Khawer Rabbani
               )}
               <div ref={messagesEndRef} />
             </div>
+
+            {/* UPLOADED FILES DISPLAY */}
+            {uploadedFiles.length > 0 && (
+              <div style={{ 
+                padding: "10px 15px", 
+                borderTop: `1px solid ${NAVY_BORDER}`,
+                background: `${NAVY_SURFACE}aa`,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                alignItems: "center"
+              }}>
+                <span style={{ fontSize: 11, color: TEXT_MUTED, fontWeight: 600 }}>
+                  📎 Attached Files ({uploadedFiles.length}):
+                </span>
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "4px 10px",
+                    background: NAVY_SURFACE,
+                    border: `1px solid ${GOLD}`,
+                    borderRadius: "4px",
+                    fontSize: 11,
+                    color: CREAM
+                  }}>
+                    <span>{file.name}</span>
+                    <span style={{ color: TEXT_MUTED }}>
+                      ({(file.size / 1024).toFixed(1)} KB)
+                    </span>
+                    <button
+                      onClick={() => {
+                        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: GOLD,
+                        cursor: "pointer",
+                        fontSize: 14,
+                        padding: "0 4px",
+                        lineHeight: 1
+                      }}
+                      title="Remove file"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setUploadedFiles([])}
+                  style={{
+                    padding: "4px 10px",
+                    background: `${GOLD}20`,
+                    border: `1px solid ${GOLD}`,
+                    borderRadius: "4px",
+                    color: GOLD,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = GOLD;
+                    e.currentTarget.style.color = NAVY;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = `${GOLD}20`;
+                    e.currentTarget.style.color = GOLD;
+                  }}
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
 
             {/* INPUT AREA */}
             <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
