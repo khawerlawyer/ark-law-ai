@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-// ARK Law AI v2.0 - DataNexus Style
 const GOLD = "#C9A84C";
 const NAVY = "#0D1B2A";
 const NAVY_MID = "#162032";
@@ -13,13 +12,6 @@ const TEXT_SECONDARY = "#B8C4D0";
 const TEXT_MUTED = "#6E8099";
 const CREAM = "#F5F1E8";
 const POPUP_DARK = "#0A1118";
-
-// DataNexus colors for new elements
-const BG_LIGHT = "#F5F5F0";
-const CARD_BG = "#FAFAF8";
-const BORDER_LIGHT = "#E8E8E0";
-const PRIMARY_GREEN = "#5A7A3D";
-const LIME_GREEN = "#C4D600";
 
 export default function App() {
   // Auth state
@@ -1485,52 +1477,84 @@ By Attorney & AI Innovator Khawer Rabbani
         }
       `}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: BG_LIGHT, color: "#2C3E1F", fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#F5F5F0", color: "#2C3E1F", fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
         {/* HEADER */}
-        <header style={{ background: "#FFFFFF", padding: "16px 40px", borderBottom: "1px solid " + BORDER_LIGHT, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: "#FFFFFF", padding: "16px 40px", borderBottom: "1px solid #E8E8E0", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           {/* LEFT - LOGO */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-            <span style={{ fontSize: 20, fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</div>
+              <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div 
+                onClick={() => setShowLinkedInPopup(true)}
+                style={{ 
+                  fontSize: 8, 
+                  color: ACCENT_PK, 
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
+                onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
+              >
+                by Attorney & AI Innovator Khawer Rabbani
+              </div>
+            </div>
           </div>
 
-          {/* RIGHT - AUTH BUTTONS */}
+          {/* CENTER - USER INFO & BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            
+            {/* Auth Buttons */}
+                        {/* Auth Buttons or User Info */}
             {!user ? (
               <>
                 <button 
                   onClick={() => setShowLoginPopup(true)}
                   style={{ 
-                    padding: "10px 24px", 
-                    background: "transparent", 
-                    color: "#6B7C5E", 
-                    border: "none", 
-                    borderRadius: "8px", 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
                     cursor: "pointer", 
-                    fontSize: 14, 
-                    fontWeight: 600
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
                   }}
                 >
-                  Log in
+                  Login
                 </button>
-                <button 
-                  onClick={() => setShowSignupPopup(true)}
-                  style={{ 
-                    padding: "10px 24px", 
-                    background: LIME_GREEN, 
-                    color: "#2C3E1F", 
-                    border: "none", 
-                    borderRadius: "8px", 
-                    cursor: "pointer", 
-                    fontSize: 14, 
-                    fontWeight: 700,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px"
-                  }}
-                >
-                  <span>👤</span> Sign up
-                </button>
+                <div style={{ position: "relative" }}>
+                  <button 
+                    onClick={() => setShowSignupPopup(true)}
+                    style={{ 
+                      padding: "8px 20px", 
+                      background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, 
+                      color: NAVY, 
+                      border: `2px solid ${GOLD}`, 
+                      borderRadius: "6px", 
+                      cursor: "pointer", 
+                      fontSize: 12, 
+                      fontWeight: 700,
+                      transition: "all 0.3s",
+                      boxShadow: `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`,
+                      animation: "glowPulse 2s infinite"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.05)";
+                      e.currentTarget.style.boxShadow = `0 0 30px ${GOLD}, 0 0 60px ${GOLD}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = `0 0 20px ${GOLD}80, 0 0 40px ${GOLD}40`;
+                    }}
+                  >
+                    ✨ Sign Up - Get 500K Credits FREE!
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -1700,7 +1724,7 @@ By Attorney & AI Innovator Khawer Rabbani
         </header>
 
         {/* NEWS TICKER - CONTINUOUS INFINITE LOOP */}
-        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
+        <div style={{ background: NAVY_MID, borderBottom: "1px solid #E8E8E0", overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
             <div className="news-ticker-wrapper">
@@ -1775,8 +1799,10 @@ By Attorney & AI Innovator Khawer Rabbani
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
           {/* LEFT SIDEBAR - Document Tools */}
           {!isMobile && (
-            <div style={{ width: "220px", background: NAVY_SURFACE, borderRight: "1px solid " + NAVY_BORDER, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
+            <div style={{ width: "220px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
               
+              
+
               {/* Document Analyzer */}
               <div 
                 style={{ 
@@ -2289,6 +2315,13 @@ By Attorney & AI Innovator Khawer Rabbani
             background: `linear-gradient(135deg, ${GOLD}, #E5C887)`,
             color: NAVY,
             borderRadius: "4px",
+            fontSize: 9,
+            fontWeight: 700,
+            boxShadow: `0 2px 8px ${GOLD}40`,
+            border: `1px solid ${GOLD}`,
+            letterSpacing: "0.3px"
+          }}>
+            ✨ Designed & Developed by ARK Lex AI LLC.
           </div>
         </footer>
       </div>
@@ -2768,7 +2801,7 @@ By Attorney & AI Innovator Khawer Rabbani
       {showComparePopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
-            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+            <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #E8E8E0" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
                 <h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3>
@@ -3254,7 +3287,7 @@ By Attorney & AI Innovator Khawer Rabbani
 
               {/* RIGHT COLUMN - Chat History */}
               <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", background: NAVY_SURFACE }}>
-                <div style={{ padding: "20px", borderBottom: `1px solid ${NAVY_BORDER}` }}>
+                <div style={{ padding: "20px", borderBottom: "1px solid #E8E8E0" }}>
                   <h4 style={{ color: GOLD, fontSize: 14, margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>📜 Chat History</h4>
                   <p style={{ color: TEXT_MUTED, fontSize: 10, margin: "5px 0 0 0" }}>Your previous conversations</p>
                 </div>
