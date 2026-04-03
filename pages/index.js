@@ -249,10 +249,32 @@ export default function ARKLawAI() {
         </header>
 
 
-        {/* MAIN CONTENT - Fixed height with scroll */}
-        <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {/* MAIN CONTENT - Full height with scroll */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative" }}>
           
-          {/* Chat Container - Scrollable */}
+          {/* Watermark Logo - Subtle background */}
+          <div style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            opacity: 0.025,
+            pointerEvents: "none",
+            zIndex: 0,
+            userSelect: "none"
+          }}>
+            <img 
+              src="/ark-logo.png" 
+              alt="" 
+              style={{ 
+                width: isMobile ? "300px" : "600px", 
+                height: isMobile ? "300px" : "600px", 
+                filter: "grayscale(100%) brightness(1.2)"
+              }} 
+            />
+          </div>
+
+          {/* Chat Container - Scrollable, Full Height */}
           <div 
             ref={chatContainerRef}
             style={{ 
@@ -261,7 +283,9 @@ export default function ARKLawAI() {
               padding: isMobile ? "16px" : "24px 40px",
               maxWidth: "1000px",
               width: "100%",
-              margin: "0 auto"
+              margin: "0 auto",
+              position: "relative",
+              zIndex: 1
             }}
           >
             
