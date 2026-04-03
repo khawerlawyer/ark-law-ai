@@ -1,22 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-// ARK Law AI v4.0 - Professional Legal SaaS Dashboard
-// Design System
+// ARK Law AI v4.1 - Complete Professional Design
 const DESIGN = {
   colors: {
-    primary: "#1E3A5F",      // Professional navy
+    primary: "#1E3A5F",
     primaryLight: "#2D4A6F",
-    accent: "#C9A84C",       // Subtle gold
-    accentGreen: "#3EB489",  // Legal green
-    bg: "#F8F9FA",           // Light professional grey
+    accent: "#C9A84C",
+    accentGreen: "#3EB489",
+    bg: "#F8F9FA",
     white: "#FFFFFF",
     cardBg: "#FEFEFE",
     text: "#1A1A1A",
     textSecondary: "#6B7280",
     textMuted: "#9CA3AF",
     border: "#E5E7EB",
-    borderDark: "#D1D5DB",
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444"
@@ -27,25 +25,16 @@ const DESIGN = {
     lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
     xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
   },
-  spacing: {
-    xs: "4px",
-    sm: "8px",
-    md: "16px",
-    lg: "24px",
-    xl: "32px",
-    xxl: "48px"
-  },
   borderRadius: {
     sm: "6px",
     md: "10px",
     lg: "16px",
-    xl: "20px",
     full: "9999px"
   }
 };
 
 export default function ARKLawAI() {
-  // State Management - ALL from working version
+  // All state from working version
   const [user, setUser] = useState(null);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -53,7 +42,6 @@ export default function ARKLawAI() {
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [showDraftPopup, setShowDraftPopup] = useState(false);
   const [showComparePopup, setShowComparePopup] = useState(false);
-  const [showNewsPopup, setShowNewsPopup] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [userTokens, setUserTokens] = useState(500000);
   const [messages, setMessages] = useState([]);
@@ -62,42 +50,18 @@ export default function ARKLawAI() {
   const [isMobile, setIsMobile] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [draftContent, setDraftContent] = useState("");
-  const [draftTitle, setDraftTitle] = useState("");
-  const [draftType, setDraftType] = useState("affidavit");
-  const [doc1, setDoc1] = useState(null);
-  const [doc2, setDoc2] = useState(null);
-  const [comparisonResult, setComparisonResult] = useState("");
-  const [comparingDocs, setComparingDocs] = useState(false);
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
-  // Constants
-  const LEGAL_FEATURES = [
-    { id: "chat", icon: "💬", title: "AI Legal Chat", desc: "Ask any legal question", color: DESIGN.colors.primary },
-    { id: "draft", icon: "📝", title: "Draft Document", desc: "Generate legal documents", color: DESIGN.colors.accent },
-    { id: "research", icon: "🔍", title: "Legal Research", desc: "Search case law & statutes", color: DESIGN.colors.accentGreen },
-    { id: "translate", icon: "🌐", title: "Urdu ↔ English", desc: "Translate legal text", color: DESIGN.colors.primary },
-    { id: "compare", icon: "⚖️", title: "Compare Docs", desc: "Analyze differences", color: DESIGN.colors.accent }
+  const MENU_ITEMS = [
+    { id: "chat", label: "AI Chat", icon: "💬" },
+    { id: "draft", label: "Draft Document", icon: "📝" },
+    { id: "research", label: "Legal Research", icon: "🔍" },
+    { id: "compare", label: "Compare Docs", icon: "⚖️" },
+    { id: "translate", label: "Translate", icon: "🌐" }
   ];
 
-  const QUICK_PROMPTS = [
-    { text: "Draft a legal notice", icon: "📄" },
-    { text: "Explain Section 420 PPC", icon: "📚" },
-    { text: "Summarize a judgment", icon: "⚖️" },
-    { text: "Property inheritance laws", icon: "🏠" },
-    { text: "Employment contract terms", icon: "💼" },
-    { text: "Tenant rights in Pakistan", icon: "🔑" }
-  ];
-
-  const QUICK_ACTIONS = [
-    { text: "Draft Agreement", icon: "📋", action: () => { setDraftType("agreement"); setShowDraftPopup(true); } },
-    { text: "Summarize Judgment", icon: "⚖️", action: () => setInput("Please help me summarize a legal judgment") },
-    { text: "Legal Research", icon: "🔍", action: () => setInput("I need help with legal research on ") },
-    { text: "Translate Legal Text", icon: "🌐", action: () => setInput("Please translate this legal text from Urdu to English: ") },
-    { text: "Generate Petition", icon: "📜", action: () => { setDraftType("petition"); setShowDraftPopup(true); } }
-  ];
-
-  // Send Message Function - PRESERVED from working version
+  // Send Message - PRESERVED from working version
   const sendMessage = async () => {
     if (!input.trim() && uploadedFiles.length === 0) return;
     
@@ -109,7 +73,7 @@ export default function ARKLawAI() {
     let messageContent = input.trim();
     
     if (uploadedFiles.length > 0) {
-      messageContent += "\n\n📎 Attached files: " + uploadedFiles.map(f => f.name).join(", ");
+      messageContent += "\n\n📎 Attached: " + uploadedFiles.map(f => f.name).join(", ");
     }
 
     const updatedMessages = [...messages, { role: "user", content: messageContent }];
@@ -125,38 +89,31 @@ export default function ARKLawAI() {
         body: JSON.stringify({ messages: updatedMessages }),
       });
 
-      if (!res.ok) throw new Error("Failed to get response");
+      if (!res.ok) throw new Error("Failed");
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let accumulatedContent = "";
-
-      const streamingMessageIndex = updatedMessages.length;
+      let accumulated = "";
+      const idx = updatedMessages.length;
       setMessages([...updatedMessages, { role: "assistant", content: "" }]);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
         const chunk = decoder.decode(value, { stream: true });
         const lines = chunk.split('\n');
-
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') break;
-            
             try {
               const parsed = JSON.parse(data);
               if (parsed.content) {
-                accumulatedContent += parsed.content;
+                accumulated += parsed.content;
                 setMessages(prev => {
-                  const newMessages = [...prev];
-                  newMessages[streamingMessageIndex] = {
-                    role: "assistant",
-                    content: accumulatedContent
-                  };
-                  return newMessages;
+                  const newMsgs = [...prev];
+                  newMsgs[idx] = { role: "assistant", content: accumulated };
+                  return newMsgs;
                 });
               }
             } catch (e) {}
@@ -164,39 +121,18 @@ export default function ARKLawAI() {
         }
       }
     } catch (error) {
-      console.error("Error:", error);
       setMessages(prev => [...prev.slice(0, -1), {
         role: "assistant",
-        content: "⚠️ I apologize, but I encountered an error. Please try again or contact support if this persists."
+        content: "⚠️ Error occurred. Please try again."
       }]);
     } finally {
       setLoading(false);
     }
   };
 
-  const startVoiceInput = () => {
-    setIsListening(!isListening);
-    // Voice input logic from working version would go here
-  };
-
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setUploadedFiles(prev => [...prev, ...files]);
-    }
-  };
-
-  const removeFile = (index) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Effects
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) setSidebarOpen(true);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -204,1039 +140,279 @@ export default function ARKLawAI() {
   useEffect(() => {
     const greeting = {
       role: "assistant",
-      content: "السلام علیکم! Welcome to ARK Law AI - Your trusted Pakistani legal companion. How may I assist you today?",
+      content: "السلام علیکم! Welcome to ARK Law AI - Your trusted Pakistani legal companion.",
     };
     setMessages([greeting]);
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   return (
     <>
       <Head>
         <title>ARK Law AI - Professional Pakistani Legal Assistant</title>
-        <meta name="description" content="AI-powered legal research and document drafting for Pakistani law" />
       </Head>
 
-      <div style={{ 
-        minHeight: "100vh", 
-        background: DESIGN.colors.bg,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-      }}>
+      <div style={{ minHeight: "100vh", background: DESIGN.colors.bg, display: "flex", flexDirection: "column" }}>
         
         {/* HEADER */}
         <header style={{ 
           background: DESIGN.colors.white, 
-          padding: isMobile ? "12px 20px" : "16px 40px", 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
           borderBottom: "1px solid " + DESIGN.colors.border,
           boxShadow: DESIGN.shadows.sm,
           position: "sticky",
           top: 0,
           zIndex: 1000
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            {isMobile && (
-              <button 
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                style={{ 
-                  background: "none", 
-                  border: "none", 
-                  fontSize: "24px", 
-                  cursor: "pointer",
-                  padding: "4px"
-                }}
-              >
-                ☰
-              </button>
-            )}
+          {/* Logo Row */}
+          <div style={{ padding: isMobile ? "12px 20px" : "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
               <div>
-                <div style={{ fontSize: "18px", fontWeight: 700, color: DESIGN.colors.text }}>
-                  ARK Law AI
-                </div>
-                <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>
-                  Professional Legal Intelligence
-                </div>
+                <div style={{ fontSize: "18px", fontWeight: 700, color: DESIGN.colors.text }}>ARK Law AI</div>
+                <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>Professional Legal Intelligence</div>
               </div>
             </div>
+            
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {!user ? (
+                <>
+                  <button onClick={() => setShowLoginPopup(true)} style={{ padding: "10px 20px", background: "transparent", border: "1px solid " + DESIGN.colors.border, color: DESIGN.colors.text, fontWeight: 600, cursor: "pointer", fontSize: "14px", borderRadius: DESIGN.borderRadius.sm }}>
+                    Log in
+                  </button>
+                  <button onClick={() => setShowSignupPopup(true)} style={{ padding: "10px 20px", background: DESIGN.colors.primary, color: DESIGN.colors.white, border: "none", borderRadius: DESIGN.borderRadius.sm, fontWeight: 700, cursor: "pointer", fontSize: "14px", boxShadow: DESIGN.shadows.sm }}>
+                    Sign up free
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div style={{ padding: "8px 16px", background: DESIGN.colors.cardBg, borderRadius: DESIGN.borderRadius.sm, fontSize: "13px", fontWeight: 600, border: "1px solid " + DESIGN.colors.border }}>
+                    ⚡ {userTokens.toLocaleString()} Credits
+                  </div>
+                  <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "8px 16px", background: DESIGN.colors.primary, color: DESIGN.colors.white, border: "none", borderRadius: DESIGN.borderRadius.sm, fontWeight: 600, cursor: "pointer" }}>
+                    👤 {user.name}
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            {!user ? (
-              <>
-                <button 
-                  onClick={() => setShowLoginPopup(true)} 
-                  style={{ 
-                    padding: "10px 20px", 
-                    background: "transparent", 
-                    border: "1px solid " + DESIGN.colors.border, 
-                    color: DESIGN.colors.text, 
-                    fontWeight: 600, 
-                    cursor: "pointer", 
-                    fontSize: "14px",
-                    borderRadius: DESIGN.borderRadius.sm,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  Log in
-                </button>
-                <button 
-                  onClick={() => setShowSignupPopup(true)} 
-                  style={{ 
-                    padding: "10px 20px", 
-                    background: DESIGN.colors.primary, 
-                    color: DESIGN.colors.white, 
-                    border: "none", 
-                    borderRadius: DESIGN.borderRadius.sm, 
-                    fontWeight: 700, 
-                    cursor: "pointer", 
-                    fontSize: "14px",
-                    boxShadow: DESIGN.shadows.sm,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  Sign up free
-                </button>
-              </>
-            ) : (
-              <>
-                <div style={{ 
-                  padding: "8px 16px", 
-                  background: DESIGN.colors.cardBg, 
-                  borderRadius: DESIGN.borderRadius.sm, 
-                  fontSize: "13px", 
-                  fontWeight: 600,
-                  border: "1px solid " + DESIGN.colors.border,
+
+          {/* Menu Bar */}
+          <div style={{ 
+            padding: "0 40px", 
+            borderTop: "1px solid " + DESIGN.colors.border,
+            background: DESIGN.colors.cardBg,
+            display: "flex",
+            gap: "4px",
+            overflowX: "auto"
+          }}>
+            {MENU_ITEMS.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (item.id === "draft") setShowDraftPopup(true);
+                  else if (item.id === "compare") setShowComparePopup(true);
+                }}
+                style={{
+                  padding: "12px 20px",
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: "3px solid transparent",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  color: DESIGN.colors.textSecondary,
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px"
-                }}>
-                  <span style={{ color: DESIGN.colors.accent }}>⚡</span>
-                  <span>{userTokens.toLocaleString()} Credits</span>
-                </div>
-                <button 
-                  onClick={() => setShowMyAccountPopup(true)} 
-                  style={{ 
-                    padding: "8px 16px", 
-                    background: DESIGN.colors.primary, 
-                    color: DESIGN.colors.white, 
-                    border: "none", 
-                    borderRadius: DESIGN.borderRadius.sm, 
-                    fontWeight: 600, 
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px"
-                  }}
-                >
-                  <span>👤</span>
-                  <span>{user.name}</span>
-                </button>
-              </>
-            )}
+                  gap: "8px",
+                  whiteSpace: "nowrap",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderBottomColor = DESIGN.colors.primary;
+                  e.currentTarget.style.color = DESIGN.colors.primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderBottomColor = "transparent";
+                  e.currentTarget.style.color = DESIGN.colors.textSecondary;
+                }}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
           </div>
         </header>
 
 
-        {/* MAIN LAYOUT */}
-        <div style={{ 
-          maxWidth: "1600px", 
-          margin: "0 auto", 
-          padding: isMobile ? "16px" : "24px", 
-          display: "grid", 
-          gridTemplateColumns: isMobile ? "1fr" : (sidebarOpen ? "280px 1fr 320px" : "1fr 320px"),
-          gap: "24px",
-          alignItems: "start"
-        }}>
+        {/* MAIN CONTENT - Fixed height with scroll */}
+        <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           
-          {/* LEFT SIDEBAR - Navigation & Features */}
-          {(!isMobile || sidebarOpen) && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              
-              {/* Navigation Features */}
-              <div style={{ 
-                background: DESIGN.colors.white, 
-                borderRadius: DESIGN.borderRadius.lg, 
-                padding: "20px", 
-                border: "1px solid " + DESIGN.colors.border,
-                boxShadow: DESIGN.shadows.sm
-              }}>
-                <h3 style={{ 
-                  fontSize: "14px", 
-                  fontWeight: 700, 
-                  marginBottom: "16px",
-                  color: DESIGN.colors.text,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}>
-                  Legal Tools
-                </h3>
-                
-                {LEGAL_FEATURES.map((feature) => (
-                  <div 
-                    key={feature.id}
-                    onClick={() => {
-                      if (feature.id === "draft") setShowDraftPopup(true);
-                      if (feature.id === "compare") setShowComparePopup(true);
-                      if (feature.id === "translate") setInput("Please translate this legal text: ");
-                      if (feature.id === "research") setInput("I need legal research on ");
-                    }}
-                    style={{ 
-                      padding: "14px", 
-                      marginBottom: "8px",
-                      background: DESIGN.colors.cardBg,
-                      borderRadius: DESIGN.borderRadius.md,
-                      cursor: "pointer",
-                      border: "1px solid " + DESIGN.colors.border,
-                      transition: "all 0.2s",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateX(4px)";
-                      e.currentTarget.style.borderColor = feature.color;
-                      e.currentTarget.style.boxShadow = DESIGN.shadows.md;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateX(0)";
-                      e.currentTarget.style.borderColor = DESIGN.colors.border;
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  >
-                    <div style={{ 
-                      fontSize: "20px",
-                      width: "36px",
-                      height: "36px",
-                      background: feature.color + "15",
-                      borderRadius: DESIGN.borderRadius.sm,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}>
-                      {feature.icon}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "13px", fontWeight: 600, color: DESIGN.colors.text }}>{feature.title}</div>
-                      <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>{feature.desc}</div>
-                    </div>
-                    <div style={{ color: DESIGN.colors.textMuted, fontSize: "12px" }}>→</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Feature Cards */}
-              <div style={{ 
-                background: DESIGN.colors.white, 
-                borderRadius: DESIGN.borderRadius.lg, 
-                padding: "24px", 
-                border: "1px solid " + DESIGN.colors.border,
-                boxShadow: DESIGN.shadows.sm
-              }}>
-                <div style={{ marginBottom: "20px" }}>
-                  <div style={{ 
-                    width: "48px", 
-                    height: "48px", 
-                    background: DESIGN.colors.primary + "15", 
-                    borderRadius: DESIGN.borderRadius.md,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "24px",
-                    marginBottom: "12px"
-                  }}>
-                    💡
-                  </div>
-                  <h4 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px", color: DESIGN.colors.text }}>
-                    Smart Legal Insights
-                  </h4>
-                  <p style={{ fontSize: "12px", color: DESIGN.colors.textSecondary, lineHeight: "1.5", marginBottom: "12px" }}>
-                    Ask any legal question. Get accurate, data-backed answers from Pakistani law.
-                  </p>
-                  <button style={{
-                    width: "100%",
-                    padding: "10px",
-                    background: DESIGN.colors.primary + "10",
-                    border: "1px solid " + DESIGN.colors.primary + "30",
-                    borderRadius: DESIGN.borderRadius.sm,
-                    color: DESIGN.colors.primary,
-                    fontWeight: 600,
-                    fontSize: "12px",
-                    cursor: "pointer"
-                  }}>
-                    Explore Insights →
-                  </button>
-                </div>
-
-                <div style={{ marginBottom: "20px", paddingTop: "20px", borderTop: "1px solid " + DESIGN.colors.border }}>
-                  <div style={{ 
-                    width: "48px", 
-                    height: "48px", 
-                    background: DESIGN.colors.accentGreen + "15", 
-                    borderRadius: DESIGN.borderRadius.md,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "24px",
-                    marginBottom: "12px"
-                  }}>
-                    🛡️
-                  </div>
-                  <h4 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px", color: DESIGN.colors.text }}>
-                    Trusted Legal Data
-                  </h4>
-                  <p style={{ fontSize: "12px", color: DESIGN.colors.textSecondary, lineHeight: "1.5", marginBottom: "12px" }}>
-                    We connect to verified Pakistani legal sources for reliable information.
-                  </p>
-                  <button style={{
-                    width: "100%",
-                    padding: "10px",
-                    background: DESIGN.colors.accentGreen + "10",
-                    border: "1px solid " + DESIGN.colors.accentGreen + "30",
-                    borderRadius: DESIGN.borderRadius.sm,
-                    color: DESIGN.colors.accentGreen,
-                    fontWeight: 600,
-                    fontSize: "12px",
-                    cursor: "pointer"
-                  }}>
-                    View Sources →
-                  </button>
-                </div>
-
-                <div style={{ paddingTop: "20px", borderTop: "1px solid " + DESIGN.colors.border }}>
-                  <div style={{ 
-                    width: "48px", 
-                    height: "48px", 
-                    background: DESIGN.colors.accent + "15", 
-                    borderRadius: DESIGN.borderRadius.md,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "24px",
-                    marginBottom: "12px"
-                  }}>
-                    ⚡
-                  </div>
-                  <h4 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px", color: DESIGN.colors.text }}>
-                    Instant Drafting
-                  </h4>
-                  <p style={{ fontSize: "12px", color: DESIGN.colors.textSecondary, lineHeight: "1.5", marginBottom: "12px" }}>
-                    AI analyzes and drafts legal documents in seconds, not hours.
-                  </p>
-                  <button 
-                    onClick={() => setShowDraftPopup(true)}
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      background: DESIGN.colors.accent + "10",
-                      border: "1px solid " + DESIGN.colors.accent + "30",
-                      borderRadius: DESIGN.borderRadius.sm,
-                      color: DESIGN.colors.accent,
-                      fontWeight: 600,
-                      fontSize: "12px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Try Drafting →
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CENTER PANEL - Main Workspace */}
-          <div style={{ minHeight: "600px" }}>
+          {/* Chat Container - Scrollable */}
+          <div 
+            ref={chatContainerRef}
+            style={{ 
+              flex: 1,
+              overflowY: "auto",
+              padding: isMobile ? "16px" : "24px 40px",
+              maxWidth: "1000px",
+              width: "100%",
+              margin: "0 auto"
+            }}
+          >
             
-            {/* Welcome Screen */}
-            {messages.length <= 1 && (
+            {/* Welcome or Messages */}
+            {messages.length <= 1 ? (
               <div style={{ 
                 background: DESIGN.colors.white, 
                 borderRadius: DESIGN.borderRadius.lg, 
                 padding: isMobile ? "40px 24px" : "60px 40px", 
-                textAlign: "center", 
-                marginBottom: "24px", 
+                textAlign: "center",
                 border: "1px solid " + DESIGN.colors.border,
                 boxShadow: DESIGN.shadows.md
               }}>
-                <div style={{ 
-                  fontSize: "56px", 
-                  marginBottom: "20px",
-                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))"
-                }}>
-                  ⚖️
-                </div>
-                <h1 style={{ 
-                  fontSize: isMobile ? "28px" : "36px", 
-                  fontWeight: 800, 
-                  marginBottom: "12px",
-                  color: DESIGN.colors.text,
-                  lineHeight: "1.2"
-                }}>
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "80px", height: "80px", margin: "0 auto 20px", display: "block" }} />
+                <h1 style={{ fontSize: isMobile ? "28px" : "36px", fontWeight: 800, marginBottom: "12px", color: DESIGN.colors.text }}>
                   Hello! I'm ARK Law AI
                 </h1>
-                <p style={{ 
-                  fontSize: "16px", 
-                  color: DESIGN.colors.textSecondary, 
-                  marginBottom: "32px",
-                  maxWidth: "600px",
-                  margin: "0 auto 32px"
-                }}>
-                  Ask legal questions, draft documents, and analyze case law instantly with Pakistan's most advanced legal AI.
+                <p style={{ fontSize: "16px", color: DESIGN.colors.textSecondary, marginBottom: "32px", maxWidth: "600px", margin: "0 auto 32px" }}>
+                  Ask legal questions, draft documents, and analyze case law with Pakistan's most advanced legal AI.
                 </p>
-                
-                {/* Suggested Prompts */}
-                <div style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", 
-                  gap: "12px",
-                  maxWidth: "800px",
-                  margin: "0 auto"
-                }}>
-                  {QUICK_PROMPTS.map((prompt, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setInput(prompt.text)}
-                      style={{ 
-                        padding: "16px", 
-                        background: DESIGN.colors.cardBg, 
-                        border: "1px solid " + DESIGN.colors.border, 
-                        borderRadius: DESIGN.borderRadius.md, 
-                        fontSize: "13px", 
-                        cursor: "pointer",
-                        textAlign: "left",
-                        transition: "all 0.2s",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = DESIGN.colors.primary;
-                        e.currentTarget.style.boxShadow = DESIGN.shadows.md;
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = DESIGN.colors.border;
-                        e.currentTarget.style.boxShadow = "none";
-                        e.currentTarget.style.transform = "translateY(0)";
-                      }}
-                    >
-                      <span style={{ fontSize: "18px" }}>{prompt.icon}</span>
-                      <span style={{ fontWeight: 500, color: DESIGN.colors.text }}>{prompt.text}</span>
-                    </button>
-                  ))}
-                </div>
               </div>
-            )}
-
-
-            {/* Chat Messages */}
-            {messages.length > 1 && (
-              <div style={{ marginBottom: "24px" }}>
+            ) : (
+              <div>
                 {messages.slice(1).map((msg, i) => (
                   <div 
                     key={i} 
                     style={{ 
+                      marginBottom: "20px",
+                      display: "flex",
+                      gap: "12px",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    {msg.role === "assistant" && (
+                      <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />
+                    )}
+                    <div style={{ 
+                      flex: 1,
                       background: msg.role === "user" ? DESIGN.colors.primary + "08" : DESIGN.colors.white, 
                       borderRadius: DESIGN.borderRadius.lg, 
-                      padding: "20px 24px", 
-                      marginBottom: "16px", 
+                      padding: "16px 20px",
                       border: "1px solid " + DESIGN.colors.border,
                       borderLeft: "4px solid " + (msg.role === "user" ? DESIGN.colors.primary : DESIGN.colors.accent),
                       boxShadow: DESIGN.shadows.sm
-                    }}
-                  >
-                    <div style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: "10px", 
-                      marginBottom: "12px" 
                     }}>
-                      <div style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "50%",
-                        background: msg.role === "user" ? DESIGN.colors.primary : DESIGN.colors.accent,
-                        color: DESIGN.colors.white,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "14px",
-                        fontWeight: "bold"
-                      }}>
-                        {msg.role === "user" ? "👤" : "⚖️"}
-                      </div>
-                      <div style={{ 
-                        fontWeight: 700, 
-                        fontSize: "13px",
-                        color: DESIGN.colors.text 
-                      }}>
+                      <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "8px", color: DESIGN.colors.text }}>
                         {msg.role === "user" ? (user ? user.name : "You") : "ARK Law AI"}
                       </div>
+                      <div style={{ fontSize: "14px", lineHeight: "1.7", whiteSpace: "pre-wrap", color: DESIGN.colors.text }}>
+                        {msg.content}
+                      </div>
                     </div>
-                    <div style={{ 
-                      fontSize: "14px", 
-                      lineHeight: "1.7", 
-                      whiteSpace: "pre-wrap",
-                      color: DESIGN.colors.text,
-                      paddingLeft: "42px"
-                    }}>
-                      {msg.content}
-                    </div>
-                    
-                    {/* Feedback buttons for assistant messages */}
-                    {msg.role === "assistant" && i === messages.length - 2 && (
-                      <div style={{ 
-                        paddingLeft: "42px", 
-                        marginTop: "16px", 
-                        display: "flex", 
-                        gap: "8px",
-                        alignItems: "center"
-                      }}>
-                        <button style={{
-                          padding: "6px 12px",
-                          background: DESIGN.colors.cardBg,
-                          border: "1px solid " + DESIGN.colors.border,
-                          borderRadius: DESIGN.borderRadius.sm,
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px"
-                        }}>
-                          👍 Helpful
-                        </button>
-                        <button style={{
-                          padding: "6px 12px",
-                          background: DESIGN.colors.cardBg,
-                          border: "1px solid " + DESIGN.colors.border,
-                          borderRadius: DESIGN.borderRadius.sm,
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px"
-                        }}>
-                          👎 Not helpful
-                        </button>
+                    {msg.role === "user" && (
+                      <div style={{ width: "32px", height: "32px", background: DESIGN.colors.primary, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: DESIGN.colors.white, fontSize: "16px", flexShrink: 0, marginTop: "4px" }}>
+                        👤
                       </div>
                     )}
                   </div>
                 ))}
                 
-                {/* Loading State */}
                 {loading && (
-                  <div style={{ 
-                    background: DESIGN.colors.white, 
-                    borderRadius: DESIGN.borderRadius.lg, 
-                    padding: "20px 24px", 
-                    border: "1px solid " + DESIGN.colors.border,
-                    borderLeft: "4px solid " + DESIGN.colors.accent,
-                    boxShadow: DESIGN.shadows.sm,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px"
-                  }}>
-                    <div style={{ 
-                      width: "32px", 
-                      height: "32px", 
-                      borderRadius: "50%", 
-                      background: DESIGN.colors.accent,
-                      color: DESIGN.colors.white,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      animation: "pulse 1.5s ease-in-out infinite"
-                    }}>
-                      ⚖️
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: "13px", marginBottom: "4px" }}>
-                        ARK Law AI
-                      </div>
-                      <div style={{ fontSize: "12px", color: DESIGN.colors.textMuted }}>
-                        Analyzing legal data...
-                      </div>
+                  <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "20px" }}>
+                    <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />
+                    <div style={{ flex: 1, background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "16px 20px", border: "1px solid " + DESIGN.colors.border, borderLeft: "4px solid " + DESIGN.colors.accent }}>
+                      <div style={{ fontWeight: 600, fontSize: "13px", marginBottom: "8px" }}>ARK Law AI</div>
+                      <div style={{ fontSize: "12px", color: DESIGN.colors.textMuted }}>Analyzing legal data...</div>
                     </div>
                   </div>
                 )}
-                
-                <div ref={messagesEndRef} />
               </div>
             )}
+          </div>
 
-            {/* Input Area */}
-            <div style={{ 
-              background: DESIGN.colors.white, 
-              borderRadius: DESIGN.borderRadius.lg, 
-              padding: "20px", 
-              border: "1px solid " + DESIGN.colors.border,
-              boxShadow: DESIGN.shadows.lg,
-              position: "sticky",
-              bottom: isMobile ? "16px" : "24px"
-            }}>
-              
-              {/* File Uploads */}
+          {/* Input Area - Fixed at bottom */}
+          <div style={{ 
+            background: DESIGN.colors.white, 
+            borderTop: "1px solid " + DESIGN.colors.border,
+            padding: isMobile ? "16px" : "20px 40px",
+            boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.05)"
+          }}>
+            <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
               {uploadedFiles.length > 0 && (
-                <div style={{ 
-                  marginBottom: "12px", 
-                  padding: "12px", 
-                  background: DESIGN.colors.cardBg, 
-                  borderRadius: DESIGN.borderRadius.md,
-                  border: "1px solid " + DESIGN.colors.border
-                }}>
-                  <div style={{ fontSize: "11px", fontWeight: 600, marginBottom: "8px", color: DESIGN.colors.textMuted }}>
-                    ATTACHED FILES ({uploadedFiles.length})
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                    {uploadedFiles.map((file, i) => (
-                      <div 
-                        key={i} 
-                        style={{ 
-                          padding: "8px 12px", 
-                          background: DESIGN.colors.white, 
-                          border: "1px solid " + DESIGN.colors.border, 
-                          borderRadius: DESIGN.borderRadius.sm, 
-                          fontSize: "12px", 
-                          display: "flex", 
-                          alignItems: "center", 
-                          gap: "8px"
-                        }}
-                      >
-                        <span>📎</span>
-                        <span style={{ fontWeight: 500 }}>{file.name}</span>
-                        <button 
-                          onClick={() => removeFile(i)} 
-                          style={{ 
-                            background: "none", 
-                            border: "none", 
-                            cursor: "pointer", 
-                            color: DESIGN.colors.textMuted,
-                            fontWeight: "bold",
-                            padding: "0 4px"
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                <div style={{ marginBottom: "12px", padding: "12px", background: DESIGN.colors.cardBg, borderRadius: DESIGN.borderRadius.md, border: "1px solid " + DESIGN.colors.border }}>
+                  {uploadedFiles.map((file, i) => (
+                    <div key={i} style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", background: DESIGN.colors.white, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.sm, marginRight: "8px", fontSize: "12px" }}>
+                      📎 {file.name}
+                      <button onClick={() => setUploadedFiles(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+                    </div>
+                  ))}
                 </div>
               )}
               
-              {/* Usage Indicator */}
-              {user && (
-                <div style={{ 
-                  marginBottom: "12px", 
-                  padding: "8px 12px", 
-                  background: DESIGN.colors.cardBg,
-                  borderRadius: DESIGN.borderRadius.sm,
-                  fontSize: "11px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }}>
-                  <span style={{ color: DESIGN.colors.textMuted }}>Credits remaining:</span>
-                  <span style={{ fontWeight: 700, color: userTokens < 10000 ? DESIGN.colors.warning : DESIGN.colors.accentGreen }}>
-                    {userTokens.toLocaleString()} / 500,000
-                  </span>
-                </div>
-              )}
-
-              {/* Input Row */}
               <div style={{ display: "flex", gap: "12px", alignItems: "flex-end" }}>
-                <div style={{ flex: 1 }}>
-                  <textarea 
-                    value={input} 
-                    onChange={(e) => setInput(e.target.value)} 
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                      }
-                    }}
-                    placeholder="Ask your legal question here..." 
-                    style={{ 
-                      width: "100%",
-                      minHeight: "56px",
-                      maxHeight: "200px",
-                      padding: "16px", 
-                      border: "1px solid " + DESIGN.colors.border, 
-                      borderRadius: DESIGN.borderRadius.md, 
-                      fontSize: "14px", 
-                      outline: "none",
-                      resize: "vertical",
-                      fontFamily: "inherit"
-                    }} 
-                  />
-                </div>
+                <textarea 
+                  value={input} 
+                  onChange={(e) => setInput(e.target.value)} 
+                  onKeyPress={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                  placeholder="Ask your legal question..." 
+                  style={{ flex: 1, minHeight: "56px", maxHeight: "150px", padding: "16px", border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, fontSize: "14px", outline: "none", resize: "vertical", fontFamily: "inherit" }} 
+                />
                 
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <label style={{ 
-                    width: "48px", 
-                    height: "48px", 
-                    background: DESIGN.colors.cardBg, 
-                    border: "1px solid " + DESIGN.colors.border, 
-                    borderRadius: DESIGN.borderRadius.md, 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    cursor: "pointer",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = DESIGN.colors.primary + "10";
-                    e.currentTarget.style.borderColor = DESIGN.colors.primary;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = DESIGN.colors.cardBg;
-                    e.currentTarget.style.borderColor = DESIGN.colors.border;
-                  }}
-                  >
-                    <span style={{ fontSize: "20px" }}>📎</span>
-                    <input 
-                      type="file" 
-                      multiple 
-                      onChange={handleFileUpload}
-                      style={{ display: "none" }} 
-                    />
-                  </label>
-                  
-                  <button 
-                    onClick={startVoiceInput} 
-                    style={{ 
-                      width: "48px", 
-                      height: "48px", 
-                      background: isListening ? DESIGN.colors.error : DESIGN.colors.cardBg, 
-                      color: isListening ? DESIGN.colors.white : DESIGN.colors.text, 
-                      border: "1px solid " + (isListening ? DESIGN.colors.error : DESIGN.colors.border), 
-                      borderRadius: DESIGN.borderRadius.md, 
-                      cursor: "pointer", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    {isListening ? "🔴" : "🎤"}
-                  </button>
-                  
-                  <button 
-                    onClick={sendMessage} 
-                    disabled={loading || (!input.trim() && uploadedFiles.length === 0)}
-                    style={{ 
-                      width: "48px", 
-                      height: "48px", 
-                      background: loading || (!input.trim() && uploadedFiles.length === 0) 
-                        ? DESIGN.colors.border 
-                        : "linear-gradient(135deg, " + DESIGN.colors.primary + ", " + DESIGN.colors.accent + ")", 
-                      border: "none", 
-                      borderRadius: DESIGN.borderRadius.md, 
-                      cursor: loading || (!input.trim() && uploadedFiles.length === 0) ? "not-allowed" : "pointer", 
-                      color: DESIGN.colors.white,
-                      fontSize: "20px",
-                      fontWeight: "bold",
-                      boxShadow: loading || (!input.trim() && uploadedFiles.length === 0) ? "none" : DESIGN.shadows.md,
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
-              
-              {/* Disclaimer */}
-              <div style={{ 
-                marginTop: "12px", 
-                fontSize: "11px", 
-                color: DESIGN.colors.textMuted, 
-                textAlign: "center",
-                lineHeight: "1.4"
-              }}>
-                ⚠️ ARK Law AI is an AI-assisted legal tool and does not replace professional legal advice.
+                <label style={{ width: "48px", height: "48px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "20px" }}>
+                  📎
+                  <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
+                </label>
+                
+                <button onClick={() => setIsListening(!isListening)} style={{ width: "48px", height: "48px", background: isListening ? DESIGN.colors.error : DESIGN.colors.cardBg, color: isListening ? DESIGN.colors.white : DESIGN.colors.text, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, cursor: "pointer", fontSize: "20px" }}>
+                  {isListening ? "🔴" : "🎤"}
+                </button>
+                
+                <button onClick={sendMessage} disabled={loading || (!input.trim() && !uploadedFiles.length)} style={{ width: "48px", height: "48px", background: loading || (!input.trim() && !uploadedFiles.length) ? DESIGN.colors.border : "linear-gradient(135deg, " + DESIGN.colors.primary + ", " + DESIGN.colors.accent + ")", border: "none", borderRadius: DESIGN.borderRadius.md, cursor: loading ? "not-allowed" : "pointer", color: DESIGN.colors.white, fontSize: "20px", fontWeight: "bold" }}>
+                  →
+                </button>
               </div>
             </div>
           </div>
-
-
-          {/* RIGHT SIDEBAR - Upgrade & Quick Actions */}
-          {!isMobile && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              
-              {/* Upgrade to Pro */}
-              <div style={{ 
-                background: "linear-gradient(135deg, " + DESIGN.colors.accent + " 0%, #E5C887 100%)", 
-                borderRadius: DESIGN.borderRadius.lg, 
-                padding: "28px 24px",
-                boxShadow: DESIGN.shadows.lg,
-                position: "relative",
-                overflow: "hidden"
-              }}>
-                <div style={{
-                  position: "absolute",
-                  top: "-20px",
-                  right: "-20px",
-                  width: "100px",
-                  height: "100px",
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: "50%"
-                }} />
-                
-                <div style={{ position: "relative", zIndex: 1 }}>
-                  <div style={{ fontSize: "32px", marginBottom: "12px" }}>👑</div>
-                  <h3 style={{ 
-                    fontSize: "20px", 
-                    fontWeight: 800, 
-                    marginBottom: "8px",
-                    color: DESIGN.colors.navy
-                  }}>
-                    Upgrade to Pro
-                  </h3>
-                  <p style={{ 
-                    fontSize: "13px", 
-                    marginBottom: "20px", 
-                    opacity: 0.9,
-                    color: DESIGN.colors.navy,
-                    lineHeight: "1.5"
-                  }}>
-                    Unlock advanced insights, deeper data sources, and priority access.
-                  </p>
-                  
-                  <div style={{ marginBottom: "20px" }}>
-                    {[
-                      "✓ Unlimited queries",
-                      "✓ Advanced data sources", 
-                      "✓ Priority support",
-                      "✓ API access",
-                      "✓ Team collaboration"
-                    ].map((benefit, i) => (
-                      <div 
-                        key={i}
-                        style={{ 
-                          fontSize: "13px", 
-                          marginBottom: "8px",
-                          color: DESIGN.colors.navy,
-                          fontWeight: 500,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px"
-                        }}
-                      >
-                        <span style={{ fontSize: "16px" }}>✓</span>
-                        <span>{benefit.slice(2)}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <button 
-                    onClick={() => setShowUpgradePopup(true)}
-                    style={{ 
-                      width: "100%", 
-                      padding: "14px", 
-                      background: DESIGN.colors.white, 
-                      color: DESIGN.colors.navy, 
-                      border: "none", 
-                      borderRadius: DESIGN.borderRadius.md, 
-                      fontWeight: 700, 
-                      cursor: "pointer", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center", 
-                      gap: "8px",
-                      fontSize: "14px",
-                      boxShadow: DESIGN.shadows.md,
-                      transition: "all 0.2s"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = DESIGN.shadows.lg;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = DESIGN.shadows.md;
-                    }}
-                  >
-                    <span>✨</span> Go Pro
-                  </button>
-                  
-                  <div style={{ 
-                    marginTop: "12px", 
-                    fontSize: "11px", 
-                    textAlign: "center", 
-                    opacity: 0.8,
-                    color: DESIGN.colors.navy
-                  }}>
-                    Cancel anytime.
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Legal Actions */}
-              <div style={{ 
-                background: DESIGN.colors.white, 
-                borderRadius: DESIGN.borderRadius.lg, 
-                padding: "24px", 
-                border: "1px solid " + DESIGN.colors.border,
-                boxShadow: DESIGN.shadows.sm
-              }}>
-                <h3 style={{ 
-                  fontSize: "16px", 
-                  fontWeight: 700, 
-                  marginBottom: "8px",
-                  color: DESIGN.colors.text
-                }}>
-                  Quick Legal Actions
-                </h3>
-                <p style={{ 
-                  fontSize: "12px", 
-                  color: DESIGN.colors.textMuted, 
-                  marginBottom: "16px" 
-                }}>
-                  Try these examples to get started
-                </p>
-                
-                {QUICK_ACTIONS.map((action, i) => (
-                  <button 
-                    key={i}
-                    onClick={action.action}
-                    style={{ 
-                      width: "100%", 
-                      padding: "14px 16px", 
-                      background: DESIGN.colors.cardBg, 
-                      border: "1px solid " + DESIGN.colors.border, 
-                      borderRadius: DESIGN.borderRadius.md, 
-                      marginBottom: "10px", 
-                      fontSize: "13px", 
-                      cursor: "pointer", 
-                      textAlign: "left", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "space-between",
-                      transition: "all 0.2s"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = DESIGN.colors.primary + "08";
-                      e.currentTarget.style.borderColor = DESIGN.colors.primary;
-                      e.currentTarget.style.transform = "translateX(4px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = DESIGN.colors.cardBg;
-                      e.currentTarget.style.borderColor = DESIGN.colors.border;
-                      e.currentTarget.style.transform = "translateX(0)";
-                    }}
-                  >
-                    <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span style={{ fontSize: "18px" }}>{action.icon}</span>
-                      <span style={{ fontWeight: 500, color: DESIGN.colors.text }}>{action.text}</span>
-                    </span>
-                    <span style={{ color: DESIGN.colors.textMuted, fontSize: "16px" }}>→</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
         </div>
 
         {/* FOOTER */}
         <footer style={{ 
-          background: DESIGN.colors.primary, 
-          color: DESIGN.colors.white, 
-          padding: isMobile ? "32px 20px" : "48px 40px", 
-          marginTop: "80px" 
+          padding: "12px 40px", 
+          borderTop: "1px solid " + DESIGN.colors.border, 
+          fontSize: "11px", 
+          color: DESIGN.colors.textMuted,
+          background: DESIGN.colors.white,
+          position: "relative"
         }}>
-          <div style={{ 
-            maxWidth: "1600px", 
-            margin: "0 auto", 
-            display: "grid", 
-            gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr 1fr 1fr", 
-            gap: "40px" 
-          }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
-                <span style={{ fontSize: "20px", fontWeight: 700 }}>ARK Law AI</span>
-              </div>
-              <p style={{ fontSize: "14px", opacity: 0.8, lineHeight: "1.6" }}>
-                AI-powered legal insights. Trusted data. Professional decisions for Pakistani law.
-              </p>
-            </div>
-            
-            <div>
-              <h4 style={{ fontSize: "14px", fontWeight: 700, marginBottom: "12px", opacity: 0.6 }}>
-                PRODUCT
-              </h4>
-              <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2" }}>
-                <div style={{ cursor: "pointer" }}>Features</div>
-                <div style={{ cursor: "pointer" }}>Sources</div>
-                <div style={{ cursor: "pointer" }}>Enterprise</div>
-                <div style={{ cursor: "pointer" }}>Pricing</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 style={{ fontSize: "14px", fontWeight: 700, marginBottom: "12px", opacity: 0.6 }}>
-                COMPANY
-              </h4>
-              <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2" }}>
-                <div style={{ cursor: "pointer" }}>About Us</div>
-                <div style={{ cursor: "pointer" }}>Careers</div>
-                <div style={{ cursor: "pointer" }}>Blog</div>
-                <div style={{ cursor: "pointer" }}>Contact</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 style={{ fontSize: "14px", fontWeight: 700, marginBottom: "12px", opacity: 0.6 }}>
-                RESOURCES
-              </h4>
-              <div style={{ fontSize: "13px", opacity: 0.8, lineHeight: "2" }}>
-                <div style={{ cursor: "pointer" }}>Docs</div>
-                <div style={{ cursor: "pointer" }}>Guides</div>
-                <div style={{ cursor: "pointer" }}>API</div>
-                <div style={{ cursor: "pointer" }}>Support</div>
-              </div>
-            </div>
+          <div style={{ textAlign: "center", marginBottom: "4px" }}>
+            ⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer
+          </div>
+          <div style={{ textAlign: "center", color: DESIGN.colors.accent, fontSize: "10px" }}>
+            This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan
           </div>
           
           <div style={{ 
-            textAlign: "center", 
-            marginTop: "40px", 
-            paddingTop: "20px", 
-            borderTop: "1px solid rgba(255,255,255,0.1)", 
-            fontSize: "13px", 
-            opacity: 0.7 
+            position: "absolute", 
+            bottom: "12px", 
+            right: "40px",
+            padding: "6px 16px",
+            background: "linear-gradient(135deg, " + DESIGN.colors.accent + ", #E5C887)",
+            color: DESIGN.colors.primary,
+            borderRadius: DESIGN.borderRadius.sm,
+            fontSize: "10px",
+            fontWeight: 700,
+            boxShadow: DESIGN.shadows.sm
           }}>
-            © 2025 ARK Law AI. All rights reserved. | Built for Pakistani Legal Professionals
+            ✨ Designed & Developed by ARK Lex AI LLC.
           </div>
         </footer>
 
       </div>
-
-      <style jsx global>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-        
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-      `}</style>
 
       {/* LOGIN POPUP */}
       {showLoginPopup && (
