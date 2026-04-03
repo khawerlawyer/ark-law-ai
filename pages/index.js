@@ -1429,7 +1429,7 @@ By Attorney & AI Innovator Khawer Rabbani
       <div style={{ minHeight: "100vh", background: "#F5F5F0" }}>
         
         {/* HEADER */}
-        <header style={{ background: "#FFFFFF", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${"#E8E8E0"}`, position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: "#FFFFFF", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #E8E8E0", position: "sticky", top: 0, zIndex: 100 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
             <span style={{ fontSize: "20px", fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</span>
@@ -1450,7 +1450,7 @@ By Attorney & AI Innovator Khawer Rabbani
         </header>
 
         {/* BANNER */}
-        <div style={{ background: "#F5F5F0", padding: "12px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", borderBottom: `1px solid ${"#E8E8E0"}` }}>
+        <div style={{ background: "#F5F5F0", padding: "12px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", borderBottom: "1px solid #E8E8E0" }}>
           <span style={{ background: "#C4D600", color: "#2C3E1F", padding: "4px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: 700 }}>New</span>
           <span style={{ fontSize: "14px", color: "#2C3E1F" }}>ARK Law AI just got smarter! Explore improved answers and Pro features.</span>
           <button onClick={() => setShowUpgradePopup(true)} style={{ background: "transparent", border: "none", color: "#5A7A3D", fontWeight: 600, cursor: "pointer" }}>See what's new →</button>
@@ -1501,7 +1501,7 @@ By Attorney & AI Innovator Khawer Rabbani
             {messages.length > 1 && (
               <div style={{ marginBottom: "24px" }}>
                 {messages.slice(1).map((msg, i) => (
-                  <div key={i} style={{ marginBottom: "16px", background: msg.role === "user" ? `${"#5A7A3D"}10` : "#FFFFFF", borderLeft: `4px solid ${msg.role === "user" ? "#5A7A3D" : "#C9A84C"}` }}>
+                  <div key={i} style={{ background: msg.role === "user" ? "#5A7A3D10" : "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0", marginBottom: "16px", borderLeft: (msg.role === "user" ? "4px solid #5A7A3D" : "4px solid #C9A84C") }}>
                     <div style={{ fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{msg.content}</div>
                   </div>
                 ))}
@@ -1521,7 +1521,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
               )}
               <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask anything about Pakistani law..." style={{ flex: 1, padding: "14px 16px", border: `1px solid ${"#E8E8E0"}`, borderRadius: "10px", fontSize: "14px", outline: "none" }} />
+                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask anything about Pakistani law..." style={{ flex: 1, padding: "14px 16px", border: "1px solid #E8E8E0", borderRadius: "10px", fontSize: "14px", outline: "none" }} />
                 <label style={{ width: "44px", height: "44px", background: "#F5F5F0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                   <span>📎</span>
                   <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
@@ -1535,7 +1535,7 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* RIGHT */}
           {!isMobile && (
             <div>
-              <div style={{ background: `linear-gradient(135deg, ${"#C9A84C"}, #E5C887)`, marginBottom: "24px" }}>
+              <div style={{ background: "linear-gradient(135deg, #C9A84C, #E5C887)", marginBottom: "24px" }}>
                 <div style={{ fontSize: "24px", marginBottom: "12px" }}>👑</div>
                 <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#0D1B2A" }}>Upgrade to Pro</h3>
                 <p style={{ fontSize: "13px", marginBottom: "16px", color: "#0D1B2A" }}>Unlock advanced features</p>
@@ -1544,7 +1544,7 @@ By Attorney & AI Innovator Khawer Rabbani
               <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "16px" }}>Quick Queries</h3>
                 {QUICK_QUERIES_PK.map((q, i) => (
-                  <button key={i} onClick={() => setInput(q)} style={{ width: "100%", padding: "12px 16px", background: "#FFFFFF", border: `1px solid ${"#E8E8E0"}`, borderRadius: "8px", marginBottom: "8px", cursor: "pointer", textAlign: "left" }}><span>🔍</span> {q}</button>
+                  <button key={i} onClick={() => setInput(q)} style={{ width: "100%", padding: "12px 16px", background: "#FFFFFF", border: "1px solid #E8E8E0", borderRadius: "8px", marginBottom: "8px", cursor: "pointer", textAlign: "left" }}><span>🔍</span> {q}</button>
                 ))}
               </div>
             </div>
