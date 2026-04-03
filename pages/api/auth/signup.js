@@ -1,8 +1,4 @@
-// Initialize global users array - this persists across requests during server runtime
-if (typeof global.arkLawUsers === 'undefined') {
-  global.arkLawUsers = [];
-  console.log('✅ Initialized arkLawUsers array');
-}
+import { readUsers, writeUsers, findUserByEmail } from '../../../lib/userDatabase';
 
 function hashPassword(password) {
   return Buffer.from(password).toString('base64');
@@ -43,10 +39,9 @@ export default async function handler(req, res) {
     }
 
     console.log('📝 Signup attempt for:', email);
-    console.log('📊 Current users in database:', global.arkLawUsers.length);
 
     // Check if user already exists
-    const existingUser = global.arkLawUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const existingUser = findUserByEmail(email);
     if (existingUser) {
       console.log('❌ User already exists:', email);
       return res.status(400).json({ error: 'An account with this email already exists' });
@@ -54,7 +49,7 @@ export default async function handler(req, res) {
 
     // Create new user
     const newUser = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       email: email.toLowerCase(),
       password: hashPassword(password),
       name,
@@ -64,15 +59,22 @@ export default async function handler(req, res) {
       city,
       province,
       country,
+      tokens: 500000, // Start with 500K tokens
+      chatHistory: [], // Empty chat history
       createdAt: new Date().toISOString(),
     };
 
-    // Add to global array
-    global.arkLawUsers.push(newUser);
+    // Add to file database
+    const users = readUsers();
+    users.push(newUser);
+    const saved = writeUsers(users);
+
+    if (!saved) {
+      return res.status(500).json({ error: 'Failed to save user data' });
+    }
 
     console.log('✅ User created successfully:', email);
-    console.log('📊 Total users now:', global.arkLawUsers.length);
-    console.log('👥 All users:', global.arkLawUsers.map(u => u.email));
+    console.log('📊 Total users now:', users.length);
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = newUser;
