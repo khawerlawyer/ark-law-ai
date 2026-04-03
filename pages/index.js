@@ -255,20 +255,7 @@ export default function ARKLawAI() {
               </button>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{
-                width: "40px",
-                height: "40px",
-                background: "linear-gradient(135deg, " + DESIGN.colors.primary + ", " + DESIGN.colors.accent + ")",
-                borderRadius: DESIGN.borderRadius.md,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: DESIGN.colors.white,
-                fontWeight: "bold",
-                fontSize: "18px"
-              }}>
-                ⚖
-              </div>
+              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
               <div>
                 <div style={{ fontSize: "18px", fontWeight: 700, color: DESIGN.colors.text }}>
                   ARK Law AI
@@ -1173,18 +1160,7 @@ export default function ARKLawAI() {
           }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-                <div style={{
-                  width: "40px",
-                  height: "40px",
-                  background: DESIGN.colors.accent,
-                  borderRadius: DESIGN.borderRadius.md,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "20px"
-                }}>
-                  ⚖
-                </div>
+                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
                 <span style={{ fontSize: "20px", fontWeight: 700 }}>ARK Law AI</span>
               </div>
               <p style={{ fontSize: "14px", opacity: 0.8, lineHeight: "1.6" }}>
