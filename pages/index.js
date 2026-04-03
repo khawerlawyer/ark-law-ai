@@ -1,19 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-// DataNexus color scheme with ARK branding
-const COLORS = {
-  primary: "#5A7A3D",
-  primaryLight: "#C4D600",
-  background: "#F5F5F0",
-  cardBg: "#FAFAF8",
-  white: "#FFFFFF",
-  text: { primary: "#2C3E1F", secondary: "#6B7C5E", muted: "#9CA89F" },
-  gray: { 50: "#FAFAF8", 100: "#F5F5F0", 200: "#E8E8E0", 300: "#D4D4C8", 400: "#A8A89F", 500: "#7C7C73", 600: "#5C5C54", 700: "#3F3F38", 800: "#2C2C26", 900: "#1A1A16" },
-  gold: "#C9A84C",
-  navy: "#0D1B2A"
-};
-
 const GOLD = "#C9A84C";
 const NAVY = "#0D1B2A";
 const NAVY_MID = "#162032";
@@ -1425,47 +1412,14 @@ By Attorney & AI Innovator Khawer Rabbani
         }
         html, body {
           height: 100%;
+          overflow: hidden;
           margin: 0;
           padding: 0;
-          background: ${COLORS.background};
         }
         #__next {
           height: 100%;
+          overflow: hidden;
         }
-        
-        .card {
-          background: ${COLORS.cardBg};
-          border-radius: 16px;
-          padding: 24px;
-          border: 1px solid ${COLORS.gray[200]};
-          transition: all 0.2s;
-        }
-        
-        .card:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .btn-lime {
-          background: ${COLORS.primaryLight};
-          color: ${COLORS.text.primary};
-          font-weight: 700;
-          border: none;
-          padding: 10px 24px;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        
-        .badge-new {
-          background: ${COLORS.primaryLight};
-          color: ${COLORS.text.primary};
-          padding: 4px 12px;
-          border-radius: 6px;
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-        
         @keyframes scroll {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
@@ -1523,47 +1477,99 @@ By Attorney & AI Innovator Khawer Rabbani
         }
       `}</style>
 
-      <div style={{ minHeight: "100vh", background: COLORS.background, color: COLORS.text.primary, fontFamily: "Segoe UI, Tahoma, sans-serif" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
         {/* HEADER */}
-        <header style={{ background: COLORS.white, padding: "16px 40px", borderBottom: `1px solid ${COLORS.gray[200]}`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           {/* LEFT - LOGO */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-            <span style={{ fontSize: "20px", fontWeight: 700, color: COLORS.text.primary }}>ARK Law AI</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
+              <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div 
+                onClick={() => setShowLinkedInPopup(true)}
+                style={{ 
+                  fontSize: 8, 
+                  color: ACCENT_PK, 
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
+                onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
+              >
+                by Attorney & AI Innovator Khawer Rabbani
+              </div>
+            </div>
           </div>
 
-          {/* RIGHT - AUTH BUTTONS */}
+          {/* CENTER - USER INFO & BANNER */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            
+            {/* Open for All Banner */}
+            <div style={{ 
+              padding: "6px 20px", 
+              background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, 
+              color: NAVY, 
+              border: `2px solid ${GOLD}`, 
+              borderRadius: "4px", 
+              fontSize: 11, 
+              fontWeight: 700, 
+              boxShadow: `0 0 15px rgba(201,168,76,0.5)`,
+              animation: "glow 2s ease-in-out infinite",
+              textAlign: "center",
+              letterSpacing: "0.3px",
+              whiteSpace: "nowrap",
+              lineHeight: "1.4"
+            }}>
+              ✨ Open for All! ✨<br/>
+              <span style={{ fontSize: 8, fontWeight: 600 }}>Sign-up Recommended for Best Results</span>
+            </div>
+            
+            {/* Contact Email */}
+            <a href="mailto:contact@arklaw.ai" style={{ 
+              fontSize: 11, 
+              color: ACCENT_PK, 
+              textDecoration: "none", 
+              padding: "6px 0px", 
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = GOLD;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = ACCENT_PK;
+            }}
+            >
+              <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
+              📧 contact@arklaw.ai
+            </a>
+            
+            {/* Auth Buttons or User Info */}
             {!user ? (
               <>
                 <button 
                   onClick={() => setShowLoginPopup(true)}
                   style={{ 
-                    padding: "8px 20px", 
-                    background: "transparent", 
-                    color: COLORS.text.secondary, 
-                    border: "none", 
-                    borderRadius: "8px", 
+                    padding: "6px 16px", 
+                    background: GOLD, 
+                    color: NAVY, 
+                    border: `2px solid ${GOLD}`, 
+                    borderRadius: "4px", 
                     cursor: "pointer", 
-                    fontSize: 14, 
-                    fontWeight: 600
+                    fontSize: 11, 
+                    fontWeight: 600,
+                    transition: "all 0.2s"
                   }}
                 >
-                  Log in
+                  Login
                 </button>
-                <button 
-                  onClick={() => setShowSignupPopup(true)}
-                  className="btn-lime"
-                  style={{ 
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px"
-                  }}
-                >
-                  <span>👤</span> Sign up
-                </button>
-              </>
-            ) : (
+                <div style={{ position: "relative" }}>
+                  <button 
                     onClick={() => setShowSignupPopup(true)}
                     style={{ 
                       padding: "8px 20px", 
