@@ -13,8 +13,8 @@ const COLORS = {
   navy: "#0D1B2A"
 };
 
-const GOLD = COLORS.gold;
-const NAVY = COLORS.navy;
+const GOLD = "#C9A84C";
+const NAVY = "#0D1B2A";
 const NAVY_MID = "#162032";
 const NAVY_SURFACE = "#1E2D40";
 const NAVY_BORDER = "#2B3F57";
@@ -1426,69 +1426,34 @@ By Attorney & AI Innovator Khawer Rabbani
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      <style>{`
-        * { 
-          margin: 0; 
-          padding: 0; 
-          box-sizing: border-box; 
-        }
-        body { 
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-          background: #F5F5F0; 
-        }
-        .card { 
-          background: #FAFAF8; 
-          border-radius: 16px; 
-          padding: 24px; 
-          border: 1px solid #E8E8E0; 
-        }
-        .btn-lime { 
-          background: #C4D600; 
-          color: #2C3E1F; 
-          border: none; 
-          padding: 10px 24px; 
-          border-radius: 8px; 
-          font-weight: 700; 
-          cursor: pointer; 
-        }
-        .badge-new { 
-          background: #C4D600; 
-          color: #2C3E1F; 
-          padding: 4px 12px; 
-          border-radius: 6px; 
-          font-size: 11px; 
-          font-weight: 700; 
-        }
-      `}</style>
-
-      <div style={{ minHeight: "100vh", background: COLORS.background }}>
+      <div style={{ minHeight: "100vh", background: "#F5F5F0" }}>
         
         {/* HEADER */}
-        <header style={{ background: COLORS.white, padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${COLORS.gray[200]}`, position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ background: "#FFFFFF", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${"#E8E8E0"}`, position: "sticky", top: 0, zIndex: 100 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-            <span style={{ fontSize: "20px", fontWeight: 700, color: COLORS.text.primary }}>ARK Law AI</span>
+            <span style={{ fontSize: "20px", fontWeight: 700, color: "#2C3E1F" }}>ARK Law AI</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "8px 20px", background: "transparent", border: "none", color: COLORS.text.secondary, fontWeight: 600, cursor: "pointer" }}>Log in</button>
-                <button onClick={() => setShowSignupPopup(true)} className="btn-lime" style={{ display: "flex", alignItems: "center", gap: "6px" }}><span>👤</span> Sign up</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "8px 20px", background: "transparent", border: "none", color: "#6B7C5E", fontWeight: 600, cursor: "pointer" }}>Log in</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ background: "#C4D600", color: "#2C3E1F", border: "none", padding: "10px 24px", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }} style={{ display: "flex", alignItems: "center", gap: "6px" }}><span>👤</span> Sign up</button>
               </>
             ) : (
               <>
-                <div style={{ padding: "8px 16px", background: COLORS.gray[100], borderRadius: "8px", fontSize: "13px", fontWeight: 600 }}>{userTokens.toLocaleString()} Credits</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "8px 16px", background: COLORS.primary, color: COLORS.white, border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer" }}>{user.name}</button>
+                <div style={{ padding: "8px 16px", background: "#F5F5F0", borderRadius: "8px", fontSize: "13px", fontWeight: 600 }}>{userTokens.toLocaleString()} Credits</div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "8px 16px", background: "#5A7A3D", color: "#FFFFFF", border: "none", borderRadius: "8px", fontWeight: 600, cursor: "pointer" }}>{user.name}</button>
               </>
             )}
           </div>
         </header>
 
         {/* BANNER */}
-        <div style={{ background: COLORS.gray[100], padding: "12px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", borderBottom: `1px solid ${COLORS.gray[200]}` }}>
-          <span className="badge-new">New</span>
-          <span style={{ fontSize: "14px", color: COLORS.text.primary }}>ARK Law AI just got smarter! Explore improved answers and Pro features.</span>
-          <button onClick={() => setShowUpgradePopup(true)} style={{ background: "transparent", border: "none", color: COLORS.primary, fontWeight: 600, cursor: "pointer" }}>See what's new →</button>
+        <div style={{ background: "#F5F5F0", padding: "12px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", borderBottom: `1px solid ${"#E8E8E0"}` }}>
+          <span style={{ background: "#C4D600", color: "#2C3E1F", padding: "4px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: 700 }}>New</span>
+          <span style={{ fontSize: "14px", color: "#2C3E1F" }}>ARK Law AI just got smarter! Explore improved answers and Pro features.</span>
+          <button onClick={() => setShowUpgradePopup(true)} style={{ background: "transparent", border: "none", color: "#5A7A3D", fontWeight: 600, cursor: "pointer" }}>See what's new →</button>
         </div>
 
         {/* MAIN */}
@@ -1497,27 +1462,27 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* LEFT */}
           {!isMobile && (
             <div>
-              <div className="card" style={{ marginBottom: "24px" }}>
+              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0", marginBottom: "24px" }}>
                 <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Meet the Founder</h3>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <img src="/khawer-profile.jpeg" alt="Khawer" style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover" }} />
                   <div>
                     <div style={{ fontWeight: 600, fontSize: "13px" }}>Khawer Rizvi</div>
-                    <div style={{ fontSize: "11px", color: COLORS.text.muted }}>Founder & CEO</div>
+                    <div style={{ fontSize: "11px", color: "#9CA89F" }}>Founder & CEO</div>
                   </div>
                 </div>
               </div>
-              <div className="card">
+              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
                 <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Features</h3>
-                <div onClick={() => setShowDraftPopup(true)} style={{ padding: "16px", background: COLORS.gray[100], borderRadius: "12px", marginBottom: "12px", cursor: "pointer" }}>
+                <div onClick={() => setShowDraftPopup(true)} style={{ padding: "16px", background: "#F5F5F0", borderRadius: "12px", marginBottom: "12px", cursor: "pointer" }}>
                   <div style={{ fontSize: "20px", marginBottom: "8px" }}>📊</div>
                   <div style={{ fontWeight: 700, fontSize: "14px" }}>Draft Documents</div>
-                  <div style={{ fontSize: "12px", color: COLORS.text.muted }}>Create legal documents</div>
+                  <div style={{ fontSize: "12px", color: "#9CA89F" }}>Create legal documents</div>
                 </div>
-                <div onClick={() => setShowComparePopup(true)} style={{ padding: "16px", background: COLORS.gray[100], borderRadius: "12px", cursor: "pointer" }}>
+                <div onClick={() => setShowComparePopup(true)} style={{ padding: "16px", background: "#F5F5F0", borderRadius: "12px", cursor: "pointer" }}>
                   <div style={{ fontSize: "20px", marginBottom: "8px" }}>⚖️</div>
                   <div style={{ fontWeight: 700, fontSize: "14px" }}>Compare Documents</div>
-                  <div style={{ fontSize: "12px", color: COLORS.text.muted }}>Analyze differences</div>
+                  <div style={{ fontSize: "12px", color: "#9CA89F" }}>Analyze differences</div>
                 </div>
               </div>
             </div>
@@ -1526,17 +1491,17 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* CENTER */}
           <div>
             {messages.length <= 1 && (
-              <div className="card" style={{ textAlign: "center", padding: "60px 40px", marginBottom: "24px" }}>
+              <div style={{ textAlign: "center", padding: "60px 40px", marginBottom: "24px" }}>
                 <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚖️</div>
-                <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "16px", color: COLORS.text.primary }}>Hello! I'm ARK Law AI</h1>
-                <p style={{ fontSize: "16px", color: COLORS.text.secondary, marginBottom: "32px" }}>Ask questions, get insights, and explore Pakistani law.</p>
+                <h1 style={{ fontSize: "32px", fontWeight: 800, marginBottom: "16px", color: "#2C3E1F" }}>Hello! I'm ARK Law AI</h1>
+                <p style={{ fontSize: "16px", color: "#6B7C5E", marginBottom: "32px" }}>Ask questions, get insights, and explore Pakistani law.</p>
               </div>
             )}
 
             {messages.length > 1 && (
               <div style={{ marginBottom: "24px" }}>
                 {messages.slice(1).map((msg, i) => (
-                  <div key={i} className="card" style={{ marginBottom: "16px", background: msg.role === "user" ? `${COLORS.primary}10` : COLORS.white, borderLeft: `4px solid ${msg.role === "user" ? COLORS.primary : COLORS.gold}` }}>
+                  <div key={i} style={{ marginBottom: "16px", background: msg.role === "user" ? `${"#5A7A3D"}10` : "#FFFFFF", borderLeft: `4px solid ${msg.role === "user" ? "#5A7A3D" : "#C9A84C"}` }}>
                     <div style={{ fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>{msg.content}</div>
                   </div>
                 ))}
@@ -1544,11 +1509,11 @@ By Attorney & AI Innovator Khawer Rabbani
               </div>
             )}
 
-            <div className="card">
+            <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
               {uploadedFiles.length > 0 && (
-                <div style={{ marginBottom: "16px", padding: "12px", background: COLORS.gray[100], borderRadius: "8px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ marginBottom: "16px", padding: "12px", background: "#F5F5F0", borderRadius: "8px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
                   {uploadedFiles.map((file, i) => (
-                    <div key={i} style={{ padding: "6px 12px", background: COLORS.white, borderRadius: "6px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <div key={i} style={{ padding: "6px 12px", background: "#FFFFFF", borderRadius: "6px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{file.name}</span>
                       <button onClick={() => setUploadedFiles(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer" }}>✕</button>
                     </div>
@@ -1556,13 +1521,13 @@ By Attorney & AI Innovator Khawer Rabbani
                 </div>
               )}
               <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask anything about Pakistani law..." style={{ flex: 1, padding: "14px 16px", border: `1px solid ${COLORS.gray[200]}`, borderRadius: "10px", fontSize: "14px", outline: "none" }} />
-                <label style={{ width: "44px", height: "44px", background: COLORS.gray[100], borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder="Ask anything about Pakistani law..." style={{ flex: 1, padding: "14px 16px", border: `1px solid ${"#E8E8E0"}`, borderRadius: "10px", fontSize: "14px", outline: "none" }} />
+                <label style={{ width: "44px", height: "44px", background: "#F5F5F0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                   <span>📎</span>
                   <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
                 </label>
-                <button onClick={startVoiceInput} style={{ width: "44px", height: "44px", background: isListening ? COLORS.primary : COLORS.gray[100], color: isListening ? COLORS.white : COLORS.text.primary, borderRadius: "10px", border: "none", cursor: "pointer" }}>🎤</button>
-                <button onClick={() => sendMessage()} disabled={loading} style={{ width: "44px", height: "44px", background: COLORS.primary, color: COLORS.white, borderRadius: "10px", border: "none", cursor: "pointer", opacity: loading ? 0.6 : 1 }}>➤</button>
+                <button onClick={startVoiceInput} style={{ width: "44px", height: "44px", background: isListening ? "#5A7A3D" : "#F5F5F0", color: isListening ? "#FFFFFF" : "#2C3E1F", borderRadius: "10px", border: "none", cursor: "pointer" }}>🎤</button>
+                <button onClick={() => sendMessage()} disabled={loading} style={{ width: "44px", height: "44px", background: "#5A7A3D", color: "#FFFFFF", borderRadius: "10px", border: "none", cursor: "pointer", opacity: loading ? 0.6 : 1 }}>➤</button>
               </div>
             </div>
           </div>
@@ -1570,16 +1535,16 @@ By Attorney & AI Innovator Khawer Rabbani
           {/* RIGHT */}
           {!isMobile && (
             <div>
-              <div className="card" style={{ background: `linear-gradient(135deg, ${COLORS.gold}, #E5C887)`, marginBottom: "24px" }}>
+              <div style={{ background: `linear-gradient(135deg, ${"#C9A84C"}, #E5C887)`, marginBottom: "24px" }}>
                 <div style={{ fontSize: "24px", marginBottom: "12px" }}>👑</div>
-                <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: COLORS.navy }}>Upgrade to Pro</h3>
-                <p style={{ fontSize: "13px", marginBottom: "16px", color: COLORS.navy }}>Unlock advanced features</p>
-                <button onClick={() => setShowUpgradePopup(true)} style={{ width: "100%", padding: "12px", background: COLORS.white, color: COLORS.navy, border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}>✨ Go Pro</button>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, marginBottom: "8px", color: "#0D1B2A" }}>Upgrade to Pro</h3>
+                <p style={{ fontSize: "13px", marginBottom: "16px", color: "#0D1B2A" }}>Unlock advanced features</p>
+                <button onClick={() => setShowUpgradePopup(true)} style={{ width: "100%", padding: "12px", background: "#FFFFFF", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}>✨ Go Pro</button>
               </div>
-              <div className="card">
+              <div style={{ background: "#FAFAF8", borderRadius: "16px", padding: "24px", border: "1px solid #E8E8E0" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "16px" }}>Quick Queries</h3>
                 {QUICK_QUERIES_PK.map((q, i) => (
-                  <button key={i} onClick={() => setInput(q)} style={{ width: "100%", padding: "12px 16px", background: COLORS.white, border: `1px solid ${COLORS.gray[200]}`, borderRadius: "8px", marginBottom: "8px", cursor: "pointer", textAlign: "left" }}><span>🔍</span> {q}</button>
+                  <button key={i} onClick={() => setInput(q)} style={{ width: "100%", padding: "12px 16px", background: "#FFFFFF", border: `1px solid ${"#E8E8E0"}`, borderRadius: "8px", marginBottom: "8px", cursor: "pointer", textAlign: "left" }}><span>🔍</span> {q}</button>
                 ))}
               </div>
             </div>
@@ -1588,7 +1553,7 @@ By Attorney & AI Innovator Khawer Rabbani
         </div>
 
         {/* FOOTER */}
-        <footer style={{ background: COLORS.navy, color: COLORS.white, padding: "40px", marginTop: "60px", textAlign: "center" }}>
+        <footer style={{ background: "#0D1B2A", color: "#FFFFFF", padding: "40px", marginTop: "60px", textAlign: "center" }}>
           <div style={{ fontSize: "20px", fontWeight: 700, marginBottom: "16px" }}>ARK Law AI</div>
           <div style={{ fontSize: "13px", opacity: 0.7 }}>© 2025 ARK Law AI. All rights reserved. | ✨ Designed by ARK Lex AI LLC</div>
         </footer>
