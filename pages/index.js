@@ -183,7 +183,18 @@ export default function App() {
     const savedUser = localStorage.getItem('arklaw_user');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        
+        // Load user's tokens
+        if (userData.tokens !== undefined) {
+          setUserTokens(userData.tokens);
+        }
+        
+        // Load chat history
+        if (userData.chatHistory && userData.chatHistory.length > 0) {
+          setChatHistory(userData.chatHistory);
+        }
       } catch (e) {
         console.error('Failed to parse user data');
       }
