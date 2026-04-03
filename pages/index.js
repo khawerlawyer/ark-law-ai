@@ -1780,32 +1780,100 @@ By Attorney & AI Innovator Khawer Rabbani
           )}
 
           {/* CHAT AREA */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
-            {/* Watermark Logo */}
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
-              <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
-            </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: NAVY, position: "relative" }}>
             
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", position: "relative", zIndex: 1 }}>
-              {messages.map((msg, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
+            {/* Messages or Welcome Screen */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+              
+              {/* WELCOME SCREEN - Show when no messages */}
+              {messages.length <= 1 && (
+                <div style={{ 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  alignItems: "center", 
+                  justifyContent: "center", 
+                  height: "100%",
+                  gap: "30px",
+                  paddingBottom: "100px"
+                }}>
+                  
+                  {/* Sparkling Icon */}
+                  <div style={{ position: "relative" }}>
+                    <svg width="120" height="120" viewBox="0 0 120 120" style={{ filter: "drop-shadow(0 0 30px rgba(201, 168, 76, 0.5))" }}>
+                      {/* Main star */}
+                      <path d="M60 10 L67 40 L95 45 L72 65 L78 95 L60 80 L42 95 L48 65 L25 45 L53 40 Z" 
+                            fill="url(#starGradient)" 
+                            stroke={GOLD} 
+                            strokeWidth="2"/>
+                      {/* Small top-right sparkle */}
+                      <circle cx="90" cy="25" r="4" fill={GOLD} opacity="0.8">
+                        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Small bottom-left sparkle */}
+                      <circle cx="30" cy="85" r="3" fill={GOLD} opacity="0.8">
+                        <animate attributeName="opacity" values="1;0.3;1" dur="2.5s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Small top-left sparkle */}
+                      <circle cx="35" cy="30" r="3" fill={ACCENT_PK} opacity="0.8">
+                        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/>
+                      </circle>
+                      <defs>
+                        <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: GOLD, stopOpacity: 1 }} />
+                          <stop offset="50%" style={{ stopColor: "#E5C887", stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: ACCENT_PK, stopOpacity: 0.8 }} />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+
+                  {/* Greeting Text */}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ color: ACCENT_PK, fontSize: "16px", fontWeight: 600, marginBottom: "15px", letterSpacing: "0.5px" }}>
+                      Hello, Welcome!
+                    </div>
+                    <h1 style={{ 
+                      color: CREAM, 
+                      fontSize: "48px", 
+                      fontWeight: 700, 
+                      margin: "0 0 20px 0",
+                      letterSpacing: "-0.5px"
+                    }}>
+                      How can I assist you today?
+                    </h1>
+                    <p style={{ 
+                      color: TEXT_MUTED, 
+                      fontSize: "16px", 
+                      maxWidth: "600px",
+                      margin: "0 auto",
+                      lineHeight: "1.6"
+                    }}>
+                      Ask me anything about legal matters, case analysis, or document review
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* MESSAGES - Show when conversation started */}
+              {messages.length > 1 && messages.map((msg, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px", marginBottom: "12px" }}>
                   {msg.role === "assistant" && (
                     <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
                   )}
                   <div style={{ maxWidth: "70%", position: "relative" }}>
-                    <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                    <div style={{ padding: "12px 16px", borderRadius: "12px", background: msg.role === "user" ? GOLD : NAVY_SURFACE, color: msg.role === "user" ? NAVY : CREAM, fontSize: 14, lineHeight: "1.6", boxShadow: msg.role === "user" ? `0 2px 8px ${GOLD}40` : "0 2px 8px rgba(0,0,0,0.3)", border: msg.role === "assistant" ? `1px solid ${NAVY_BORDER}` : "none" }}>
                       {renderMessageContent(msg.content)}
                     </div>
                     {msg.role === "assistant" && (
                       <button
                         onClick={() => speakText(msg.content, i)}
                         style={{
-                          marginTop: "6px",
+                          marginTop: "8px",
                           padding: "6px 12px",
-                          background: currentSpeakingIndex === i ? ACCENT_PK : GOLD,
-                          color: NAVY,
-                          border: "none",
-                          borderRadius: "4px",
+                          background: currentSpeakingIndex === i ? ACCENT_PK : `${GOLD}20`,
+                          color: currentSpeakingIndex === i ? NAVY : GOLD,
+                          border: `1px solid ${currentSpeakingIndex === i ? ACCENT_PK : GOLD}`,
+                          borderRadius: "6px",
                           cursor: "pointer",
                           fontSize: 11,
                           fontWeight: 600,
@@ -1814,8 +1882,16 @@ By Attorney & AI Innovator Khawer Rabbani
                           gap: "6px",
                           transition: "all 0.2s"
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = "scale(1.05)";
+                          e.currentTarget.style.background = currentSpeakingIndex === i ? ACCENT_PK : GOLD;
+                          e.currentTarget.style.color = NAVY;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "scale(1)";
+                          e.currentTarget.style.background = currentSpeakingIndex === i ? ACCENT_PK : `${GOLD}20`;
+                          e.currentTarget.style.color = currentSpeakingIndex === i ? NAVY : GOLD;
+                        }}
                       >
                         {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
                       </button>
@@ -1823,69 +1899,119 @@ By Attorney & AI Innovator Khawer Rabbani
                   </div>
                 </div>
               ))}
+              
               {loading && (
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px" }}>
+                  <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, animation: "pulse 2s infinite" }} />
+                  <div style={{ color: TEXT_MUTED, fontSize: 13 }}>ARK is thinking...</div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* INPUT AREA */}
-            <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px" }}>
-              <button 
-                onClick={startVoiceInput}
-                disabled={loading || isListening}
-                style={{ 
-                  padding: "10px 16px", 
-                  background: isListening ? ACCENT_PK : NAVY_SURFACE, 
-                  color: isListening ? NAVY : TEXT_PRIMARY,
-                  border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, 
-                  borderRadius: "4px", 
-                  cursor: loading || isListening ? "not-allowed" : "pointer", 
-                  fontWeight: 600, 
-                  fontSize: 16,
-                  transition: "all 0.3s",
-                  animation: isListening ? "pulse 1.5s infinite" : "none"
-                }}
-                title="Click to speak your question"
-              >
-                {isListening ? "🎤 Listening..." : "🎤"}
-              </button>
-              <input 
-                type="text" 
-                value={input} 
-                onChange={(e) => setInput(e.target.value)} 
-                onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
-                placeholder={isListening ? "Listening..." : "Ask ARK Law AI or click mic to speak..."} 
-                style={{ 
-                  flex: 1, 
-                  padding: "10px", 
-                  background: NAVY_SURFACE, 
-                  border: `1px solid ${NAVY_BORDER}`, 
-                  color: TEXT_PRIMARY, 
-                  borderRadius: "4px", 
-                  fontSize: 13 
-                }} 
-              />
-              <button 
-                onClick={() => sendMessage()} 
-                disabled={loading || isListening} 
-                style={{ 
-                  padding: "10px 20px", 
-                  background: GOLD, 
-                  color: NAVY, 
-                  border: "none", 
-                  borderRadius: "4px", 
-                  cursor: loading || isListening ? "not-allowed" : "pointer", 
-                  fontWeight: 600, 
-                  fontSize: 13,
-                  opacity: loading || isListening ? 0.5 : 1
-                }}
-              >
-                SEND
-              </button>
+            {/* INPUT AREA - Modern centered design */}
+            <div style={{ 
+              padding: "20px", 
+              borderTop: `1px solid ${NAVY_BORDER}`, 
+              display: "flex", 
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
+              <div style={{ 
+                width: "100%", 
+                maxWidth: "900px", 
+                display: "flex", 
+                gap: "12px",
+                alignItems: "center"
+              }}>
+                <button 
+                  onClick={startVoiceInput}
+                  disabled={loading || isListening}
+                  style={{ 
+                    padding: "14px 18px", 
+                    background: isListening ? ACCENT_PK : NAVY_SURFACE, 
+                    color: isListening ? NAVY : GOLD,
+                    border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, 
+                    borderRadius: "12px", 
+                    cursor: loading || isListening ? "not-allowed" : "pointer", 
+                    fontWeight: 600, 
+                    fontSize: 18,
+                    transition: "all 0.3s",
+                    animation: isListening ? "pulse 1.5s infinite" : "none",
+                    boxShadow: isListening ? `0 0 20px ${ACCENT_PK}60` : "none"
+                  }}
+                  title="Click to speak your question"
+                  onMouseEnter={(e) => !loading && !isListening && (e.currentTarget.style.background = `${GOLD}20`)}
+                  onMouseLeave={(e) => !loading && !isListening && (e.currentTarget.style.background = NAVY_SURFACE)}
+                >
+                  {isListening ? "🎤" : "🎤"}
+                </button>
+                
+                <div style={{ flex: 1, position: "relative" }}>
+                  <input 
+                    type="text" 
+                    value={input} 
+                    onChange={(e) => setInput(e.target.value)} 
+                    onKeyPress={(e) => e.key === "Enter" && !loading && !isListening && sendMessage()} 
+                    placeholder={isListening ? "Listening..." : "Ask anything"} 
+                    style={{ 
+                      width: "100%",
+                      padding: "16px 80px 16px 20px", 
+                      background: NAVY_SURFACE, 
+                      border: `1px solid ${NAVY_BORDER}`, 
+                      color: CREAM, 
+                      borderRadius: "12px", 
+                      fontSize: 15,
+                      outline: "none",
+                      transition: "all 0.3s"
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = GOLD;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${GOLD}20`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = NAVY_BORDER;
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                  <button 
+                    onClick={() => sendMessage()} 
+                    disabled={loading || isListening || !input.trim()} 
+                    style={{ 
+                      position: "absolute",
+                      right: "8px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      padding: "10px 20px", 
+                      background: (!loading && !isListening && input.trim()) ? GOLD : `${GOLD}40`, 
+                      color: NAVY, 
+                      border: "none", 
+                      borderRadius: "8px", 
+                      cursor: (loading || isListening || !input.trim()) ? "not-allowed" : "pointer", 
+                      fontWeight: 700, 
+                      fontSize: 14,
+                      transition: "all 0.2s",
+                      opacity: (loading || isListening || !input.trim()) ? 0.5 : 1
+                    }}
+                    onMouseEnter={(e) => !loading && !isListening && input.trim() && (e.currentTarget.style.transform = "translateY(-50%) scale(1.05)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(-50%) scale(1)")}
+                  >
+                    ➤
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Disclaimer at bottom */}
+            <div style={{ 
+              padding: "12px 20px", 
+              textAlign: "center", 
+              fontSize: "11px", 
+              color: TEXT_MUTED,
+              borderTop: `1px solid ${NAVY_BORDER}`,
+              background: `${NAVY}dd`
+            }}>
+              ⚠️ Information provided is not legal advice. Please consult a licensed attorney for personalized guidance.
             </div>
           </div>
 
@@ -2605,27 +2731,40 @@ By Attorney & AI Innovator Khawer Rabbani
               e.preventDefault();
               const formData = new FormData(e.target);
               
+              const email = formData.get('email');
+              const password = formData.get('password');
+              
               try {
-                const res = await fetch('/api/auth/login', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                  }),
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                  localStorage.setItem('arklaw_user', JSON.stringify(data.user));
-                  setUser(data.user);
-                  setShowLoginPopup(false);
-                  alert(`Welcome back, ${data.user.name}!`);
-                } else {
-                  alert(data.error || 'Invalid email or password');
+                // Get all users from localStorage
+                const allUsers = JSON.parse(localStorage.getItem('arklaw_all_users') || '[]');
+                
+                // Find user by email
+                const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+                
+                if (!user) {
+                  alert('Invalid email or password');
+                  return;
                 }
+                
+                // Check password
+                const encodedPassword = btoa(password);
+                if (user.password !== encodedPassword) {
+                  alert('Invalid email or password');
+                  return;
+                }
+                
+                // Login successful
+                const userWithoutPassword = { ...user };
+                delete userWithoutPassword.password;
+                
+                localStorage.setItem('arklaw_user', JSON.stringify(userWithoutPassword));
+                setUser(userWithoutPassword);
+                setShowLoginPopup(false);
+                
+                console.log('✅ Login successful:', email);
+                alert(`Welcome back, ${user.name}!`);
               } catch (error) {
+                console.error('Login error:', error);
                 alert('Login failed. Please try again.');
               }
             }}>
@@ -2668,33 +2807,52 @@ By Attorney & AI Innovator Khawer Rabbani
               e.preventDefault();
               const formData = new FormData(e.target);
               
+              const email = formData.get('email');
+              const password = formData.get('password');
+              const name = formData.get('name');
+              const age = formData.get('age');
+              const profession = formData.get('profession');
+              const barOfPractice = formData.get('barOfPractice');
+              const city = formData.get('city');
+              const province = formData.get('province');
+              const country = formData.get('country');
+              
               try {
-                const res = await fetch('/api/auth/signup', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                    name: formData.get('name'),
-                    age: formData.get('age'),
-                    profession: formData.get('profession'),
-                    barOfPractice: formData.get('barOfPractice'),
-                    city: formData.get('city'),
-                    province: formData.get('province'),
-                    country: formData.get('country'),
-                  }),
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                  setShowSignupPopup(false);
-                  alert('Account created successfully! Please login with your credentials.');
-                  setShowLoginPopup(true);
-                } else {
-                  alert(data.error || 'Signup failed. Please try again.');
+                // Check if user already exists in localStorage
+                const allUsers = JSON.parse(localStorage.getItem('arklaw_all_users') || '[]');
+                const existingUser = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+                
+                if (existingUser) {
+                  alert('An account with this email already exists. Please login instead.');
+                  return;
                 }
+                
+                // Create new user
+                const newUser = {
+                  id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                  email: email.toLowerCase(),
+                  password: btoa(password), // Simple encoding
+                  name,
+                  age: parseInt(age),
+                  profession,
+                  barOfPractice: barOfPractice || '',
+                  city,
+                  province,
+                  country,
+                  createdAt: new Date().toISOString(),
+                };
+                
+                // Save to all users list
+                allUsers.push(newUser);
+                localStorage.setItem('arklaw_all_users', JSON.stringify(allUsers));
+                
+                console.log('✅ User created and saved to localStorage:', email);
+                
+                setShowSignupPopup(false);
+                alert('Account created successfully! Please login with your credentials.');
+                setShowLoginPopup(true);
               } catch (error) {
+                console.error('Signup error:', error);
                 alert('Signup failed. Please try again.');
               }
             }}>
