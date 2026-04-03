@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-// ARK Law AI v4.1 - Complete Professional Design
+// ARK Law AI v4.2 - DataNexus Layout with Traditional Menu
 const DESIGN = {
   colors: {
     primary: "#1E3A5F",
-    primaryLight: "#2D4A6F",
     accent: "#C9A84C",
     accentGreen: "#3EB489",
     bg: "#F8F9FA",
@@ -22,19 +21,17 @@ const DESIGN = {
   shadows: {
     sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
     md: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-    xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
+    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
   },
   borderRadius: {
     sm: "6px",
     md: "10px",
-    lg: "16px",
-    full: "9999px"
+    lg: "16px"
   }
 };
 
 export default function ARKLawAI() {
-  // All state from working version
+  // State
   const [user, setUser] = useState(null);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -49,19 +46,24 @@ export default function ARKLawAI() {
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
   const MENU_ITEMS = [
-    { id: "chat", label: "AI Chat", icon: "💬" },
-    { id: "draft", label: "Draft Document", icon: "📝" },
-    { id: "research", label: "Legal Research", icon: "🔍" },
-    { id: "compare", label: "Compare Docs", icon: "⚖️" },
-    { id: "translate", label: "Translate", icon: "🌐" }
+    { label: "Home", href: "#" },
+    { label: "About Us", href: "#about" },
+    { label: "Features", href: "#features" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Resources", href: "#resources" },
+    { label: "Contact Us", href: "#contact" }
   ];
 
-  // Send Message - PRESERVED from working version
+  const QUICK_PROMPTS = [
+    { text: "Draft a legal notice", icon: "📄" },
+    { text: "Explain Section 420 PPC", icon: "📚" },
+    { text: "Summarize a judgment", icon: "⚖️" }
+  ];
+
+  // Send Message
   const sendMessage = async () => {
     if (!input.trim() && uploadedFiles.length === 0) return;
     
@@ -71,7 +73,6 @@ export default function ARKLawAI() {
     }
 
     let messageContent = input.trim();
-    
     if (uploadedFiles.length > 0) {
       messageContent += "\n\n📎 Attached: " + uploadedFiles.map(f => f.name).join(", ");
     }
@@ -168,7 +169,7 @@ export default function ARKLawAI() {
           top: 0,
           zIndex: 1000
         }}>
-          {/* Logo Row */}
+          {/* Logo & Auth Row */}
           <div style={{ padding: isMobile ? "12px 20px" : "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "40px", height: "40px" }} />
@@ -210,13 +211,10 @@ export default function ARKLawAI() {
             gap: "4px",
             overflowX: "auto"
           }}>
-            {MENU_ITEMS.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (item.id === "draft") setShowDraftPopup(true);
-                  else if (item.id === "compare") setShowComparePopup(true);
-                }}
+            {MENU_ITEMS.map((item, i) => (
+              <a
+                key={i}
+                href={item.href}
                 style={{
                   padding: "12px 20px",
                   background: "transparent",
@@ -226,9 +224,7 @@ export default function ARKLawAI() {
                   fontSize: "14px",
                   fontWeight: 500,
                   color: DESIGN.colors.textSecondary,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
+                  textDecoration: "none",
                   whiteSpace: "nowrap",
                   transition: "all 0.2s"
                 }}
@@ -241,18 +237,17 @@ export default function ARKLawAI() {
                   e.currentTarget.style.color = DESIGN.colors.textSecondary;
                 }}
               >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+                {item.label}
+              </a>
             ))}
           </div>
         </header>
 
 
-        {/* MAIN CONTENT - Full height with scroll */}
+        {/* MAIN LAYOUT - 3 Column DataNexus Style */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative" }}>
           
-          {/* Watermark Logo - Subtle background */}
+          {/* Watermark Logo */}
           <div style={{
             position: "absolute",
             top: "50%",
@@ -260,159 +255,219 @@ export default function ARKLawAI() {
             transform: "translate(-50%, -50%)",
             opacity: 0.025,
             pointerEvents: "none",
-            zIndex: 0,
-            userSelect: "none"
+            zIndex: 0
           }}>
-            <img 
-              src="/ark-logo.png" 
-              alt="" 
-              style={{ 
-                width: isMobile ? "300px" : "600px", 
-                height: isMobile ? "300px" : "600px", 
-                filter: "grayscale(100%) brightness(1.2)"
-              }} 
-            />
+            <img src="/ark-logo.png" alt="" style={{ width: isMobile ? "300px" : "600px", height: isMobile ? "300px" : "600px", filter: "grayscale(100%) brightness(1.2)" }} />
           </div>
 
-          {/* Chat Container - Scrollable, Full Height */}
-          <div 
-            ref={chatContainerRef}
-            style={{ 
-              flex: 1,
-              overflowY: "auto",
-              padding: isMobile ? "16px" : "24px 40px",
-              maxWidth: "1000px",
-              width: "100%",
-              margin: "0 auto",
-              position: "relative",
-              zIndex: 1
-            }}
-          >
+          {/* 3-Column Grid */}
+          <div style={{ 
+            flex: 1,
+            display: "grid", 
+            gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 320px",
+            gap: "24px",
+            padding: isMobile ? "16px" : "24px 40px",
+            maxWidth: "1600px",
+            margin: "0 auto",
+            width: "100%",
+            position: "relative",
+            zIndex: 1,
+            overflow: "hidden"
+          }}>
             
-            {/* Welcome or Messages */}
-            {messages.length <= 1 ? (
-              <div style={{ 
-                background: DESIGN.colors.white, 
-                borderRadius: DESIGN.borderRadius.lg, 
-                padding: isMobile ? "40px 24px" : "60px 40px", 
-                textAlign: "center",
-                border: "1px solid " + DESIGN.colors.border,
-                boxShadow: DESIGN.shadows.md
-              }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "80px", height: "80px", margin: "0 auto 20px", display: "block" }} />
-                <h1 style={{ fontSize: isMobile ? "28px" : "36px", fontWeight: 800, marginBottom: "12px", color: DESIGN.colors.text }}>
-                  Hello! I'm ARK Law AI
-                </h1>
-                <p style={{ fontSize: "16px", color: DESIGN.colors.textSecondary, marginBottom: "32px", maxWidth: "600px", margin: "0 auto 32px" }}>
-                  Ask legal questions, draft documents, and analyze case law with Pakistan's most advanced legal AI.
-                </p>
-              </div>
-            ) : (
-              <div>
-                {messages.slice(1).map((msg, i) => (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      marginBottom: "20px",
-                      display: "flex",
-                      gap: "12px",
-                      alignItems: "flex-start"
-                    }}
-                  >
-                    {msg.role === "assistant" && (
-                      <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />
-                    )}
-                    <div style={{ 
-                      flex: 1,
-                      background: msg.role === "user" ? DESIGN.colors.primary + "08" : DESIGN.colors.white, 
-                      borderRadius: DESIGN.borderRadius.lg, 
-                      padding: "16px 20px",
-                      border: "1px solid " + DESIGN.colors.border,
-                      borderLeft: "4px solid " + (msg.role === "user" ? DESIGN.colors.primary : DESIGN.colors.accent),
-                      boxShadow: DESIGN.shadows.sm
-                    }}>
-                      <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "8px", color: DESIGN.colors.text }}>
-                        {msg.role === "user" ? (user ? user.name : "You") : "ARK Law AI"}
-                      </div>
-                      <div style={{ fontSize: "14px", lineHeight: "1.7", whiteSpace: "pre-wrap", color: DESIGN.colors.text }}>
-                        {msg.content}
-                      </div>
-                    </div>
-                    {msg.role === "user" && (
-                      <div style={{ width: "32px", height: "32px", background: DESIGN.colors.primary, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: DESIGN.colors.white, fontSize: "16px", flexShrink: 0, marginTop: "4px" }}>
-                        👤
-                      </div>
-                    )}
-                  </div>
-                ))}
+            {/* LEFT SIDEBAR - Feature Buttons */}
+            {!isMobile && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto" }}>
                 
-                {loading && (
-                  <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "20px" }}>
-                    <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />
-                    <div style={{ flex: 1, background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "16px 20px", border: "1px solid " + DESIGN.colors.border, borderLeft: "4px solid " + DESIGN.colors.accent }}>
-                      <div style={{ fontWeight: 600, fontSize: "13px", marginBottom: "8px" }}>ARK Law AI</div>
-                      <div style={{ fontSize: "12px", color: DESIGN.colors.textMuted }}>Analyzing legal data...</div>
+                {/* Feature Cards */}
+                <div style={{ background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "20px", border: "1px solid " + DESIGN.colors.border, boxShadow: DESIGN.shadows.sm }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: 700, marginBottom: "16px", color: DESIGN.colors.text, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Legal Tools
+                  </h3>
+                  
+                  <button onClick={() => setShowDraftPopup(true)} style={{ width: "100%", padding: "16px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, marginBottom: "12px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ fontSize: "24px", width: "40px", height: "40px", background: DESIGN.colors.accent + "15", borderRadius: DESIGN.borderRadius.sm, display: "flex", alignItems: "center", justifyContent: "center" }}>📝</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: DESIGN.colors.text }}>Draft Document</div>
+                      <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>Generate legal documents</div>
                     </div>
+                  </button>
+
+                  <button onClick={() => setShowComparePopup(true)} style={{ width: "100%", padding: "16px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, marginBottom: "12px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ fontSize: "24px", width: "40px", height: "40px", background: DESIGN.colors.primary + "15", borderRadius: DESIGN.borderRadius.sm, display: "flex", alignItems: "center", justifyContent: "center" }}>⚖️</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: DESIGN.colors.text }}>Compare Documents</div>
+                      <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>Analyze differences</div>
+                    </div>
+                  </button>
+
+                  <button style={{ width: "100%", padding: "16px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ fontSize: "24px", width: "40px", height: "40px", background: DESIGN.colors.accentGreen + "15", borderRadius: DESIGN.borderRadius.sm, display: "flex", alignItems: "center", justifyContent: "center" }}>🔍</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: DESIGN.colors.text }}>Legal Research</div>
+                      <div style={{ fontSize: "11px", color: DESIGN.colors.textMuted }}>Search case law</div>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Info Cards */}
+                <div style={{ background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "24px", border: "1px solid " + DESIGN.colors.border, boxShadow: DESIGN.shadows.sm }}>
+                  <div style={{ width: "48px", height: "48px", background: DESIGN.colors.primary + "15", borderRadius: DESIGN.borderRadius.md, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", marginBottom: "12px" }}>💡</div>
+                  <h4 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "6px", color: DESIGN.colors.text }}>Smart Legal Insights</h4>
+                  <p style={{ fontSize: "12px", color: DESIGN.colors.textSecondary, lineHeight: "1.5", marginBottom: "12px" }}>Ask anything. Get accurate, data-backed answers from Pakistani law.</p>
+                  <button style={{ width: "100%", padding: "10px", background: DESIGN.colors.primary + "10", border: "1px solid " + DESIGN.colors.primary + "30", borderRadius: DESIGN.borderRadius.sm, color: DESIGN.colors.primary, fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
+                    Explore Insights →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* CENTER - Chat Area */}
+            <div style={{ display: "flex", flexDirection: "column", minHeight: 0 }}>
+              
+              {/* Chat Messages - Scrollable */}
+              <div ref={chatContainerRef} style={{ flex: 1, overflowY: "auto", marginBottom: "20px" }}>
+                
+                {messages.length <= 1 ? (
+                  <div style={{ background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: isMobile ? "40px 24px" : "60px 40px", textAlign: "center", border: "1px solid " + DESIGN.colors.border, boxShadow: DESIGN.shadows.md }}>
+                    <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "80px", height: "80px", margin: "0 auto 20px", display: "block" }} />
+                    <h1 style={{ fontSize: isMobile ? "28px" : "36px", fontWeight: 800, marginBottom: "12px", color: DESIGN.colors.text }}>Hello! I'm ARK Law AI</h1>
+                    <p style={{ fontSize: "16px", color: DESIGN.colors.textSecondary, marginBottom: "32px" }}>Ask legal questions, draft documents, and analyze case law with Pakistan's most advanced legal AI.</p>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "12px" }}>
+                      {QUICK_PROMPTS.map((prompt, i) => (
+                        <button key={i} onClick={() => setInput(prompt.text)} style={{ padding: "16px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: "10px" }}>
+                          <span style={{ fontSize: "18px" }}>{prompt.icon}</span>
+                          <span style={{ fontWeight: 500, fontSize: "13px" }}>{prompt.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {messages.slice(1).map((msg, i) => (
+                      <div key={i} style={{ marginBottom: "20px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                        {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />}
+                        <div style={{ flex: 1, background: msg.role === "user" ? DESIGN.colors.primary + "08" : DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "16px 20px", border: "1px solid " + DESIGN.colors.border, borderLeft: "4px solid " + (msg.role === "user" ? DESIGN.colors.primary : DESIGN.colors.accent), boxShadow: DESIGN.shadows.sm }}>
+                          <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "8px", color: DESIGN.colors.text }}>
+                            {msg.role === "user" ? (user ? user.name : "You") : "ARK Law AI"}
+                          </div>
+                          <div style={{ fontSize: "14px", lineHeight: "1.7", whiteSpace: "pre-wrap", color: DESIGN.colors.text }}>{msg.content}</div>
+                        </div>
+                        {msg.role === "user" && <div style={{ width: "32px", height: "32px", background: DESIGN.colors.primary, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: DESIGN.colors.white, fontSize: "16px", flexShrink: 0, marginTop: "4px" }}>👤</div>}
+                      </div>
+                    ))}
+                    
+                    {loading && (
+                      <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                        <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", flexShrink: 0, marginTop: "4px" }} />
+                        <div style={{ flex: 1, background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "16px 20px", border: "1px solid " + DESIGN.colors.border, borderLeft: "4px solid " + DESIGN.colors.accent }}>
+                          <div style={{ fontWeight: 600, fontSize: "13px", marginBottom: "8px" }}>ARK Law AI</div>
+                          <div style={{ fontSize: "12px", color: DESIGN.colors.textMuted }}>Analyzing legal data...</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
-          </div>
 
-          {/* Input Area - Fixed at bottom */}
-          <div style={{ 
-            background: DESIGN.colors.white, 
-            borderTop: "1px solid " + DESIGN.colors.border,
-            padding: isMobile ? "16px" : "20px 40px",
-            boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.05)"
-          }}>
-            <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-              {uploadedFiles.length > 0 && (
-                <div style={{ marginBottom: "12px", padding: "12px", background: DESIGN.colors.cardBg, borderRadius: DESIGN.borderRadius.md, border: "1px solid " + DESIGN.colors.border }}>
-                  {uploadedFiles.map((file, i) => (
-                    <div key={i} style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", background: DESIGN.colors.white, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.sm, marginRight: "8px", fontSize: "12px" }}>
-                      📎 {file.name}
-                      <button onClick={() => setUploadedFiles(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: "bold" }}>✕</button>
-                    </div>
-                  ))}
+              {/* Input Area */}
+              <div style={{ background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "20px", border: "1px solid " + DESIGN.colors.border, boxShadow: DESIGN.shadows.lg }}>
+                {uploadedFiles.length > 0 && (
+                  <div style={{ marginBottom: "12px", padding: "12px", background: DESIGN.colors.cardBg, borderRadius: DESIGN.borderRadius.md, border: "1px solid " + DESIGN.colors.border }}>
+                    {uploadedFiles.map((file, i) => (
+                      <div key={i} style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", background: DESIGN.colors.white, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.sm, marginRight: "8px", fontSize: "12px" }}>
+                        📎 {file.name}
+                        <button onClick={() => setUploadedFiles(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div style={{ display: "flex", gap: "12px", alignItems: "flex-end" }}>
+                  <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }} placeholder="Ask your legal question..." style={{ flex: 1, minHeight: "56px", maxHeight: "150px", padding: "16px", border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, fontSize: "14px", outline: "none", resize: "vertical", fontFamily: "inherit" }} />
+                  
+                  <label style={{ width: "48px", height: "48px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "20px" }}>
+                    📎
+                    <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
+                  </label>
+                  
+                  <button onClick={() => setIsListening(!isListening)} style={{ width: "48px", height: "48px", background: isListening ? DESIGN.colors.error : DESIGN.colors.cardBg, color: isListening ? DESIGN.colors.white : DESIGN.colors.text, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, cursor: "pointer", fontSize: "20px" }}>
+                    {isListening ? "🔴" : "🎤"}
+                  </button>
+                  
+                  <button onClick={sendMessage} disabled={loading || (!input.trim() && !uploadedFiles.length)} style={{ width: "48px", height: "48px", background: loading || (!input.trim() && !uploadedFiles.length) ? DESIGN.colors.border : "linear-gradient(135deg, " + DESIGN.colors.primary + ", " + DESIGN.colors.accent + ")", border: "none", borderRadius: DESIGN.borderRadius.md, cursor: loading ? "not-allowed" : "pointer", color: DESIGN.colors.white, fontSize: "20px", fontWeight: "bold" }}>→</button>
                 </div>
-              )}
-              
-              <div style={{ display: "flex", gap: "12px", alignItems: "flex-end" }}>
-                <textarea 
-                  value={input} 
-                  onChange={(e) => setInput(e.target.value)} 
-                  onKeyPress={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                  placeholder="Ask your legal question..." 
-                  style={{ flex: 1, minHeight: "56px", maxHeight: "150px", padding: "16px", border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, fontSize: "14px", outline: "none", resize: "vertical", fontFamily: "inherit" }} 
-                />
                 
-                <label style={{ width: "48px", height: "48px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "20px" }}>
-                  📎
-                  <input type="file" multiple onChange={(e) => { const files = Array.from(e.target.files); if (files.length) setUploadedFiles(prev => [...prev, ...files]); }} style={{ display: "none" }} />
-                </label>
-                
-                <button onClick={() => setIsListening(!isListening)} style={{ width: "48px", height: "48px", background: isListening ? DESIGN.colors.error : DESIGN.colors.cardBg, color: isListening ? DESIGN.colors.white : DESIGN.colors.text, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, cursor: "pointer", fontSize: "20px" }}>
-                  {isListening ? "🔴" : "🎤"}
-                </button>
-                
-                <button onClick={sendMessage} disabled={loading || (!input.trim() && !uploadedFiles.length)} style={{ width: "48px", height: "48px", background: loading || (!input.trim() && !uploadedFiles.length) ? DESIGN.colors.border : "linear-gradient(135deg, " + DESIGN.colors.primary + ", " + DESIGN.colors.accent + ")", border: "none", borderRadius: DESIGN.borderRadius.md, cursor: loading ? "not-allowed" : "pointer", color: DESIGN.colors.white, fontSize: "20px", fontWeight: "bold" }}>
-                  →
-                </button>
+                <div style={{ marginTop: "12px", fontSize: "11px", color: DESIGN.colors.textMuted, textAlign: "center" }}>
+                  ⚠️ ARK Law AI is an AI-assisted legal tool and does not replace professional legal advice.
+                </div>
               </div>
             </div>
+
+
+            {/* RIGHT SIDEBAR - Upgrade & Quick Actions */}
+            {!isMobile && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px", overflowY: "auto" }}>
+                
+                {/* Upgrade to Pro */}
+                <div style={{ background: "linear-gradient(135deg, " + DESIGN.colors.accent + ", #E5C887)", borderRadius: DESIGN.borderRadius.lg, padding: "28px 24px", boxShadow: DESIGN.shadows.lg, position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", top: "-20px", right: "-20px", width: "100px", height: "100px", background: "rgba(255,255,255,0.1)", borderRadius: "50%" }} />
+                  
+                  <div style={{ position: "relative", zIndex: 1 }}>
+                    <div style={{ fontSize: "32px", marginBottom: "12px" }}>👑</div>
+                    <h3 style={{ fontSize: "20px", fontWeight: 800, marginBottom: "8px", color: DESIGN.colors.primary }}>Upgrade to Pro</h3>
+                    <p style={{ fontSize: "13px", marginBottom: "20px", opacity: 0.9, color: DESIGN.colors.primary, lineHeight: "1.5" }}>
+                      Unlock advanced insights, deeper data sources, and priority access.
+                    </p>
+                    
+                    <div style={{ marginBottom: "20px" }}>
+                      {["✓ Unlimited queries", "✓ Advanced data sources", "✓ Priority support"].map((benefit, i) => (
+                        <div key={i} style={{ fontSize: "13px", marginBottom: "8px", color: DESIGN.colors.primary, fontWeight: 500 }}>
+                          {benefit}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button onClick={() => setShowUpgradePopup(true)} style={{ width: "100%", padding: "14px", background: DESIGN.colors.white, color: DESIGN.colors.primary, border: "none", borderRadius: DESIGN.borderRadius.md, fontWeight: 700, cursor: "pointer", fontSize: "14px", boxShadow: DESIGN.shadows.md }}>
+                      ✨ Go Pro
+                    </button>
+                    
+                    <div style={{ marginTop: "12px", fontSize: "11px", textAlign: "center", opacity: 0.8, color: DESIGN.colors.primary }}>
+                      Cancel anytime.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Legal Actions */}
+                <div style={{ background: DESIGN.colors.white, borderRadius: DESIGN.borderRadius.lg, padding: "24px", border: "1px solid " + DESIGN.colors.border, boxShadow: DESIGN.shadows.sm }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "8px", color: DESIGN.colors.text }}>Quick Legal Actions</h3>
+                  <p style={{ fontSize: "12px", color: DESIGN.colors.textMuted, marginBottom: "16px" }}>Try these examples to get started</p>
+                  
+                  {[
+                    { text: "Draft Agreement", icon: "📋", action: () => { setShowDraftPopup(true); } },
+                    { text: "Summarize Judgment", icon: "⚖️", action: () => setInput("Please help me summarize a judgment") },
+                    { text: "Legal Research", icon: "🔍", action: () => setInput("I need legal research on ") },
+                    { text: "Translate Text", icon: "🌐", action: () => setInput("Please translate: ") },
+                    { text: "Generate Petition", icon: "📜", action: () => { setShowDraftPopup(true); } }
+                  ].map((action, i) => (
+                    <button key={i} onClick={action.action} style={{ width: "100%", padding: "14px 16px", background: DESIGN.colors.cardBg, border: "1px solid " + DESIGN.colors.border, borderRadius: DESIGN.borderRadius.md, marginBottom: "10px", fontSize: "13px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span style={{ fontSize: "18px" }}>{action.icon}</span>
+                        <span style={{ fontWeight: 500 }}>{action.text}</span>
+                      </span>
+                      <span style={{ color: DESIGN.colors.textMuted }}>→</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
 
         {/* FOOTER */}
-        <footer style={{ 
-          padding: "12px 40px", 
-          borderTop: "1px solid " + DESIGN.colors.border, 
-          fontSize: "11px", 
-          color: DESIGN.colors.textMuted,
-          background: DESIGN.colors.white,
-          position: "relative"
-        }}>
+        <footer style={{ padding: "12px 40px", borderTop: "1px solid " + DESIGN.colors.border, fontSize: "11px", color: DESIGN.colors.textMuted, background: DESIGN.colors.white, position: "relative" }}>
           <div style={{ textAlign: "center", marginBottom: "4px" }}>
             ⚠️ For legal information only — not a substitute for consulting a qualified Pakistani lawyer
           </div>
@@ -420,18 +475,7 @@ export default function ARKLawAI() {
             This AI Initiative is Dedicated to the Legacy, Legal Acumen and Wisdom of Honorable Mr. Justice S. A. Rabbani, Legendary Jurist of Pakistan
           </div>
           
-          <div style={{ 
-            position: "absolute", 
-            bottom: "12px", 
-            right: "40px",
-            padding: "6px 16px",
-            background: "linear-gradient(135deg, " + DESIGN.colors.accent + ", #E5C887)",
-            color: DESIGN.colors.primary,
-            borderRadius: DESIGN.borderRadius.sm,
-            fontSize: "10px",
-            fontWeight: 700,
-            boxShadow: DESIGN.shadows.sm
-          }}>
+          <div style={{ position: "absolute", bottom: "12px", right: "40px", padding: "6px 16px", background: "linear-gradient(135deg, " + DESIGN.colors.accent + ", #E5C887)", color: DESIGN.colors.primary, borderRadius: DESIGN.borderRadius.sm, fontSize: "10px", fontWeight: 700, boxShadow: DESIGN.shadows.sm }}>
             ✨ Designed & Developed by ARK Lex AI LLC.
           </div>
         </footer>
