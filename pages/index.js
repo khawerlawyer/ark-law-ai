@@ -294,18 +294,86 @@ export default function App() {
 
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
-    if (!userMessage.trim()) return;
+    if (!userMessage.trim() && uploadedFiles.length === 0) return;
 
-    // Deduct tokens (estimate: ~100 tokens per message)
-    const tokensToDeduct = 100;
+    // Deduct tokens (estimate: ~100 tokens per message + 500 per file)
+    const tokensToDeduct = 100 + (uploadedFiles.length * 500);
     if (userTokens > 0) {
       setUserTokens(prev => Math.max(0, prev - tokensToDeduct));
     }
 
-    const updatedMessages = [...messages, { role: "user", content: userMessage }];
+    // Process uploaded files
+    let fileContents = [];
+    if (uploadedFiles.length > 0) {
+      for (const file of uploadedFiles) {
+        try {
+          // Read file as base64 for images
+          if (file.type.startsWith('image/')) {
+            const base64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            });
+            
+            fileContents.push({
+              type: 'image',
+              name: file.name,
+              data: base64
+            });
+          } 
+          // Read text files
+          else if (file.type.includes('text') || file.name.endsWith('.txt')) {
+            const text = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsText(file);
+            });
+            
+            fileContents.push({
+              type: 'text',
+              name: file.name,
+              data: text
+            });
+          }
+          // For PDFs and other documents
+          else {
+            fileContents.push({
+              type: 'document',
+              name: file.name,
+              size: file.size,
+              message: `[Document: ${file.name} (${(file.size / 1024).toFixed(1)} KB) - Content extraction not yet supported. Please describe what you need help with regarding this document.]`
+            });
+          }
+        } catch (error) {
+          console.error('Error reading file:', error);
+        }
+      }
+    }
+
+    // Build user message content
+    let messageContent = userMessage.trim();
+    
+    // Add file information to message
+    if (fileContents.length > 0) {
+      messageContent += "\n\n📎 Attached Files:\n";
+      fileContents.forEach(file => {
+        if (file.type === 'text') {
+          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
+        } else if (file.type === 'document') {
+          messageContent += `\n${file.message}\n`;
+        } else if (file.type === 'image') {
+          messageContent += `\n[Image: ${file.name}]\n`;
+        }
+      });
+    }
+
+    const updatedMessages = [...messages, { role: "user", content: messageContent }];
 
     setMessages(updatedMessages);
     setInput("");
+    setUploadedFiles([]); // Clear uploaded files after sending
     setLoading(true);
 
     // Add empty assistant message for streaming
@@ -2166,7 +2234,7 @@ By Attorney & AI Innovator Khawer Rabbani
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
                 onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
-                placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s) attached...` : "Ask ARK Law AI or click mic to speak..."} 
+                placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} 
                 style={{ 
                   flex: 1, 
                   padding: "10px", 
