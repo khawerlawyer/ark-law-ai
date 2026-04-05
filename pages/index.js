@@ -14,7 +14,6 @@ const CREAM = "#F5F1E8";
 const POPUP_DARK = "#0A1118";
 
 export default function App() {
-  // Auth state
   const [user, setUser] = useState(null);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -22,8 +21,7 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [userTokens, setUserTokens] = useState(500000); // Starting tokens - 500K FREE!
-  
+  const [userTokens, setUserTokens] = useState(500000);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,8 +45,6 @@ export default function App() {
   const [newsItems, setNewsItems] = useState([]);
   const [showComparePopup, setShowComparePopup] = useState(false);
   const [doc1, setDoc1] = useState(null);
-  
-  // Voice functionality state
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [currentSpeakingIndex, setCurrentSpeakingIndex] = useState(null);
@@ -71,69 +67,6 @@ export default function App() {
     { id: "constitution", label: "Constitutional Law", icon: "📜" },
   ];
 
-  const CONDUCT_PK = [
-    { 
-      text: "Maintain integrity and honesty in all professional dealings", 
-      source: "https://www.pbc.org.pk/rules-and-regulations",
-      title: "Professional Integrity - Pakistan Bar Council"
-    },
-    { 
-      text: "Provide competent and ethical legal counsel", 
-      source: "https://www.pbc.org.pk/code-of-conduct",
-      title: "Competence & Ethics - Legal Practitioners Act"
-    },
-    { 
-      text: "Protect client confidentiality and privilege", 
-      source: "https://www.pbc.org.pk/rules-and-regulations",
-      title: "Confidentiality Rules - Bar Council"
-    },
-    { 
-      text: "Avoid conflicts of interest", 
-      source: "https://www.pbc.org.pk/code-of-conduct",
-      title: "Conflict of Interest - Professional Standards"
-    },
-    { 
-      text: "Charge fair and reasonable fees", 
-      source: "https://www.pbc.org.pk/rules-and-regulations",
-      title: "Fee Guidelines - Pakistan Bar Council"
-    },
-    { 
-      text: "Respect the rule of law and Constitution", 
-      source: "https://www.supremecourt.gov.pk/",
-      title: "Constitutional Obligations - Supreme Court"
-    },
-    { 
-      text: "Promote access to justice for all", 
-      source: "https://www.pbc.org.pk/",
-      title: "Access to Justice - Bar Council Mission"
-    },
-    { 
-      text: "Continue professional development and training", 
-      source: "https://www.pbc.org.pk/",
-      title: "CPD Requirements - Pakistan Bar Council"
-    },
-    { 
-      text: "Treat opposing counsel with respect and courtesy", 
-      source: "https://www.pbc.org.pk/code-of-conduct",
-      title: "Professional Courtesy - Code of Conduct"
-    },
-    { 
-      text: "Disclose material facts and evidence", 
-      source: "https://www.pbc.org.pk/rules-and-regulations",
-      title: "Disclosure Obligations - Bar Rules"
-    },
-    { 
-      text: "Never mislead courts or clients", 
-      source: "https://www.pbc.org.pk/code-of-conduct",
-      title: "Truthfulness Standards - Professional Ethics"
-    },
-    { 
-      text: "Uphold the honour and dignity of the profession", 
-      source: "https://www.pbc.org.pk/",
-      title: "Professional Honor - Pakistan Bar Council"
-    },
-  ];
-
   const QUICK_QUERIES_PK = [
     "What are my rights as a tenant in Pakistan?",
     "How do I file an FIR in Pakistan?",
@@ -145,22 +78,6 @@ export default function App() {
     "Explain contract law in Pakistan",
   ];
 
-  const DOCUMENT_TYPES = [
-    "affidavit",
-    "contract",
-    "nda",
-    "will",
-    "trust",
-    "deed",
-    "lease",
-    "employment",
-    "settlement",
-    "power-of-attorney",
-    "divorce",
-    "complaint",
-  ];
-
-  // Mobile detection
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -168,7 +85,6 @@ export default function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-send greeting on mount
   useEffect(() => {
     const greeting = {
       role: "assistant",
@@ -178,31 +94,22 @@ export default function App() {
     setNameAsked(true);
   }, []);
 
-  // Load user from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('arklaw_user');
     if (savedUser) {
       try {
         const userData = JSON.parse(savedUser);
         setUser(userData);
-        if (userData.tokens !== undefined) {
-          setUserTokens(userData.tokens);
-        }
-        if (userData.chatHistory && userData.chatHistory.length > 0) {
-          setChatHistory(userData.chatHistory);
-        }
-      } catch (e) {
-        console.error('Failed to parse user data');
-      }
+        if (userData.tokens !== undefined) setUserTokens(userData.tokens);
+        if (userData.chatHistory && userData.chatHistory.length > 0) setChatHistory(userData.chatHistory);
+      } catch (e) { console.error('Failed to parse user data'); }
     }
   }, []);
 
-  // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Save chat history when NEW messages are added
   useEffect(() => {
     if (user && messages.length > 1) {
       const userMessages = messages.filter(m => m.role === 'user');
@@ -224,7 +131,6 @@ export default function App() {
     }
   }, [messages, user]);
 
-  // Load chat history when user logs in
   useEffect(() => {
     if (user) {
       const history = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
@@ -234,127 +140,62 @@ export default function App() {
     }
   }, [user]);
 
-  // Fetch news on mount
-  useEffect(() => {
-    fetchNewsHeadlines();
-  }, []);
+  useEffect(() => { fetchNewsHeadlines(); }, []);
 
   const newsDatabase = [
-    {
-      headline: "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights",
-      source: "Supreme Court of Pakistan Official Records",
-      fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions."
-    },
-    {
-      headline: "🇵🇰 New Tax Amendment Affects Business Sector",
-      source: "Federal Board of Revenue (FBR)",
-      fullText: "The Federal Board of Revenue has announced new amendments to the Income Tax Ordinance, 2001, effective immediately. Key changes include: (1) Modified tax rates for small and medium enterprises, (2) Enhanced deductions for research and development, (3) Stricter compliance requirements for corporate entities. Businesses are advised to consult with tax professionals to ensure compliance. The FBR has set a grace period of 30 days for voluntary compliance."
-    },
-    {
-      headline: "🇵🇰 Family Court Interprets Guardianship Laws",
-      source: "District Court - Family Division",
-      fullText: "In a significant judgment, the Family Court has clarified provisions of the Guardians and Wards Act, 1890. The court ruled that guardianship decisions must prioritize the best interests of the child above all considerations. The judgment emphasizes that courts must conduct thorough investigations, hear all parties, and consider the child's wishes in guardianship matters. This ruling affects all guardianship petitions pending in courts across Pakistan."
-    },
-    {
-      headline: "🇵🇰 Labour Ministry Issues New Worker Protection Guidelines",
-      source: "Ministry of Labour, Employment & Manpower",
-      fullText: "The Labour Ministry has issued comprehensive guidelines under the Workers' Compensation Act for improved worker protection. New provisions include: (1) Enhanced compensation for workplace injuries, (2) Mandatory insurance coverage for all workers, (3) Faster claim processing mechanisms. Employers must comply within 60 days. Non-compliance may result in penalties and legal action. Workers can file complaints through the ministry's online portal."
-    },
-    {
-      headline: "🇵🇰 High Court Decision on Property Disputes",
-      source: "Lahore High Court - Civil Division",
-      fullText: "The Lahore High Court has established important guidelines for resolving property disputes under the Transfer of Property Act, 1882. The judgment clarifies that possession must be clearly established through documentary evidence, witness testimony, or adverse possession principles. Courts are directed to expedite property cases to reduce pending litigation. The ruling also addresses issues of land grabbing and unlawful occupation."
-    },
-    {
-      headline: "🇵🇰 Procedural Changes in Criminal Courts",
-      source: "Supreme Judicial Council",
-      fullText: "New procedural rules have been implemented in criminal courts across Pakistan to expedite trials under the Code of Criminal Procedure, 1898. Changes include: (1) Mandatory video conferencing for witness examination, (2) Electronic filing of documents, (3) Stricter time limits for adjournments. These reforms aim to reduce case backlogs and ensure speedy justice. All courts must implement these procedures immediately."
-    }
+    { headline: "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights", source: "Supreme Court of Pakistan Official Records", fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions." },
+    { headline: "🇵🇰 New Tax Amendment Affects Business Sector", source: "Federal Board of Revenue (FBR)", fullText: "The Federal Board of Revenue has announced new amendments to the Income Tax Ordinance, 2001, effective immediately. Key changes include: (1) Modified tax rates for small and medium enterprises, (2) Enhanced deductions for research and development, (3) Stricter compliance requirements for corporate entities. Businesses are advised to consult with tax professionals to ensure compliance. The FBR has set a grace period of 30 days for voluntary compliance." },
+    { headline: "🇵🇰 Family Court Interprets Guardianship Laws", source: "District Court - Family Division", fullText: "In a significant judgment, the Family Court has clarified provisions of the Guardians and Wards Act, 1890. The court ruled that guardianship decisions must prioritize the best interests of the child above all considerations. The judgment emphasizes that courts must conduct thorough investigations, hear all parties, and consider the child's wishes in guardianship matters. This ruling affects all guardianship petitions pending in courts across Pakistan." },
+    { headline: "🇵🇰 Labour Ministry Issues New Worker Protection Guidelines", source: "Ministry of Labour, Employment & Manpower", fullText: "The Labour Ministry has issued comprehensive guidelines under the Workers' Compensation Act for improved worker protection. New provisions include: (1) Enhanced compensation for workplace injuries, (2) Mandatory insurance coverage for all workers, (3) Faster claim processing mechanisms. Employers must comply within 60 days. Non-compliance may result in penalties and legal action. Workers can file complaints through the ministry's online portal." },
+    { headline: "🇵🇰 High Court Decision on Property Disputes", source: "Lahore High Court - Civil Division", fullText: "The Lahore High Court has established important guidelines for resolving property disputes under the Transfer of Property Act, 1882. The judgment clarifies that possession must be clearly established through documentary evidence, witness testimony, or adverse possession principles. Courts are directed to expedite property cases to reduce pending litigation. The ruling also addresses issues of land grabbing and unlawful occupation." },
+    { headline: "🇵🇰 Procedural Changes in Criminal Courts", source: "Supreme Judicial Council", fullText: "New procedural rules have been implemented in criminal courts across Pakistan to expedite trials under the Code of Criminal Procedure, 1898. Changes include: (1) Mandatory video conferencing for witness examination, (2) Electronic filing of documents, (3) Stricter time limits for adjournments. These reforms aim to reduce case backlogs and ensure speedy justice. All courts must implement these procedures immediately." }
   ];
 
-  const fetchNewsHeadlines = async () => {
-    setNewsItems(newsDatabase.map(item => item.headline));
-  };
+  const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
     if (!userMessage.trim() && uploadedFiles.length === 0) return;
-
     const tokensToDeduct = 100 + (uploadedFiles.length * 500);
-    if (userTokens > 0) {
-      setUserTokens(prev => Math.max(0, prev - tokensToDeduct));
-    }
-
+    if (userTokens > 0) setUserTokens(prev => Math.max(0, prev - tokensToDeduct));
     let fileContents = [];
     if (uploadedFiles.length > 0) {
       for (const file of uploadedFiles) {
         try {
           if (file.type.startsWith('image/')) {
-            const base64 = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsDataURL(file);
-            });
+            const base64 = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
             fileContents.push({ type: 'image', name: file.name, data: base64 });
           } else if (file.type.includes('text') || file.name.endsWith('.txt')) {
-            const text = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsText(file);
-            });
+            const text = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsText(file); });
             fileContents.push({ type: 'text', name: file.name, data: text });
           } else {
-            fileContents.push({
-              type: 'document',
-              name: file.name,
-              size: file.size,
-              message: `[Document: ${file.name} (${(file.size / 1024).toFixed(1)} KB) - Content extraction not yet supported. Please describe what you need help with regarding this document.]`
-            });
+            fileContents.push({ type: 'document', name: file.name, size: file.size, message: `[Document: ${file.name} (${(file.size / 1024).toFixed(1)} KB) - Content extraction not yet supported.]` });
           }
-        } catch (error) {
-          console.error('Error reading file:', error);
-        }
+        } catch (error) { console.error('Error reading file:', error); }
       }
     }
-
     let messageContent = userMessage.trim();
     if (fileContents.length > 0) {
       messageContent += "\n\n📎 Attached Files:\n";
       fileContents.forEach(file => {
-        if (file.type === 'text') {
-          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
-        } else if (file.type === 'document') {
-          messageContent += `\n${file.message}\n`;
-        } else if (file.type === 'image') {
-          messageContent += `\n[Image: ${file.name}]\n`;
-        }
+        if (file.type === 'text') messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
+        else if (file.type === 'document') messageContent += `\n${file.message}\n`;
+        else if (file.type === 'image') messageContent += `\n[Image: ${file.name}]\n`;
       });
     }
-
     const updatedMessages = [...messages, { role: "user", content: messageContent }];
     setMessages(updatedMessages);
     setInput("");
     setUploadedFiles([]);
     setLoading(true);
-
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
-
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updatedMessages }),
-      });
-
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: updatedMessages }) });
       if (!res.ok) throw new Error("Failed to get response");
-
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -364,105 +205,49 @@ export default function App() {
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') break;
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.content) {
-                accumulatedContent += parsed.content;
-                setMessages(prev => {
-                  const newMessages = [...prev];
-                  newMessages[streamingMessageIndex] = { role: "assistant", content: accumulatedContent };
-                  return newMessages;
-                });
-              }
-            } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const newMessages = [...prev]; newMessages[streamingMessageIndex] = { role: "assistant", content: accumulatedContent }; return newMessages; }); } } catch (e) {}
           }
         }
       }
-
       setLoading(false);
-      
       if (user) {
-        const historyItem = {
-          id: Date.now() + Math.random(),
-          question: userMessage.substring(0, 100) + (userMessage.length > 100 ? '...' : ''),
-          timestamp: new Date().toISOString(),
-        };
+        const historyItem = { id: Date.now() + Math.random(), question: userMessage.substring(0, 100) + (userMessage.length > 100 ? '...' : ''), timestamp: new Date().toISOString() };
         const existingHistory = JSON.parse(localStorage.getItem(`chat_history_${user.id}`) || '[]');
         const updatedHistory = [...existingHistory, historyItem].slice(-50);
         localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(updatedHistory));
         setChatHistory(updatedHistory);
       }
     } catch (error) {
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        newMessages[streamingMessageIndex] = {
-          role: "assistant",
-          content: `❌ Error: ${error.message}. Please try again.`,
-        };
-        return newMessages;
-      });
+      setMessages((prev) => { const newMessages = [...prev]; newMessages[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return newMessages; });
       setLoading(false);
     }
   };
 
   const startVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Voice recognition is not supported in your browser. Please use Chrome or Edge.');
-      return;
-    }
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) { alert('Voice recognition not supported. Please use Chrome or Edge.'); return; }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.lang = 'en-US'; recognition.continuous = false; recognition.interimResults = false;
     recognition.onstart = () => setIsListening(true);
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      setIsListening(false);
-    };
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-      if (event.error === 'no-speech') alert('No speech detected. Please try again.');
-    };
+    recognition.onresult = (event) => { setInput(event.results[0][0].transcript); setIsListening(false); };
+    recognition.onerror = (event) => { setIsListening(false); if (event.error === 'no-speech') alert('No speech detected.'); };
     recognition.onend = () => setIsListening(false);
     recognition.start();
   };
 
   const speakText = (text, messageIndex) => {
-    if (isSpeaking && currentSpeakingIndex === messageIndex) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setCurrentSpeakingIndex(null);
-      return;
-    }
+    if (isSpeaking && currentSpeakingIndex === messageIndex) { window.speechSynthesis.cancel(); setIsSpeaking(false); setCurrentSpeakingIndex(null); return; }
     window.speechSynthesis.cancel();
     const cleanText = text.replace(/[•\n]/g, ' ').replace(/\s+/g, ' ').trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.85;
-    utterance.pitch = 1.1;
-    utterance.volume = 1.0;
-    utterance.lang = 'en-IN';
-
+    utterance.rate = 0.85; utterance.pitch = 1.1; utterance.volume = 1.0; utterance.lang = 'en-IN';
     const setVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = 
-        voices.find(v => (v.lang.includes('en-IN') || v.lang.includes('en-PK')) && 
-                        (v.name.toLowerCase().includes('female') || v.name.includes('Heera') || v.name.includes('Swara'))) ||
-        voices.find(v => v.name.includes('Veena') || v.name.includes('Heera') || v.name.includes('Swara') || v.name.includes('Neerja')) ||
-        voices.find(v => v.lang.includes('en-IN')) ||
-        voices.find(v => v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('male')) ||
-        voices.find(v => v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen')) ||
-        voices.find(v => v.name.includes('Microsoft Zira')) ||
-        voices.find(v => v.name.includes('Google US English Female')) ||
-        voices.find(v => v.lang.includes('en'));
+      const femaleVoice = voices.find(v => (v.lang.includes('en-IN') || v.lang.includes('en-PK')) && (v.name.toLowerCase().includes('female') || v.name.includes('Heera') || v.name.includes('Swara'))) || voices.find(v => v.name.includes('Veena') || v.name.includes('Heera') || v.name.includes('Swara') || v.name.includes('Neerja')) || voices.find(v => v.lang.includes('en-IN')) || voices.find(v => v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('male')) || voices.find(v => v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen')) || voices.find(v => v.name.includes('Microsoft Zira')) || voices.find(v => v.name.includes('Google US English Female')) || voices.find(v => v.lang.includes('en'));
       if (femaleVoice) utterance.voice = femaleVoice;
     };
     setVoice();
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = setVoice;
-    }
+    if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoice;
     utterance.onstart = () => { setIsSpeaking(true); setCurrentSpeakingIndex(messageIndex); };
     utterance.onend = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
     utterance.onerror = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
@@ -472,51 +257,27 @@ export default function App() {
   const handleNewsClick = async (headline) => {
     const newsItem = newsDatabase.find(item => item.headline === headline);
     if (newsItem) {
-      setSelectedNews(newsItem);
-      setShowNewsPopup(true);
-      setNewsLoading(true);
-      setNewsAnalysis("");
+      setSelectedNews(newsItem); setShowNewsPopup(true); setNewsLoading(true); setNewsAnalysis("");
       try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: [{
-              role: "user",
-              content: `Analyze this legal news from Pakistan and explain its legal significance and impact:\n\nHeadline: ${newsItem.headline}\n\nFull Text: ${newsItem.fullText}\n\nProvide a concise analysis of how this affects Pakistani citizens and businesses, relevant statutes, and practical implications.`,
-            }],
-          }),
-        });
+        const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: `Analyze this legal news from Pakistan:\n\nHeadline: ${newsItem.headline}\n\nFull Text: ${newsItem.fullText}\n\nProvide a concise analysis of how this affects Pakistani citizens and businesses, relevant statutes, and practical implications.` }] }) });
         const data = await res.json();
         setNewsAnalysis(data.reply);
-      } catch (error) {
-        setNewsAnalysis("Unable to analyze this news item. Please try again.");
-      } finally {
-        setNewsLoading(false);
-      }
+      } catch (error) { setNewsAnalysis("Unable to analyze this news item. Please try again."); }
+      finally { setNewsLoading(false); }
     }
   };
 
   const generateDocument = async (requirements) => {
-    setDraftGenerating(true);
-    setDraftStep("generating");
+    setDraftGenerating(true); setDraftStep("generating");
     try {
       const prompt = `You are an expert Pakistani legal document drafter. Generate a complete, professionally formatted legal document based on these requirements:\n\nDocument Type: ${draftType}\nRequirements: ${JSON.stringify(requirements, null, 2)}\n\nCRITICAL INSTRUCTIONS:\n1. Follow Pakistani legal document format and conventions\n2. Include all necessary legal clauses as per Pakistani law\n3. Use proper Pakistani legal terminology\n4. Include all standard sections for this document type\n5. Add witness and notary sections where applicable\n6. Format with proper headings, numbering, and structure\n7. Make it court-ready and professionally formatted\n8. Include all parties' complete details\n9. Add governing law as Pakistani law\n10. Include jurisdiction clauses (Pakistani courts)\n\nGenerate the COMPLETE document text ready for immediate use.`;
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
-      });
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }) });
       const data = await res.json();
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) {
-      alert("Failed to generate document. Please try again.");
-      setDraftStep("gathering-info");
-    } finally {
-      setDraftGenerating(false);
-    }
+    } catch (error) { alert("Failed to generate document. Please try again."); setDraftStep("gathering-info"); }
+    finally { setDraftGenerating(false); }
   };
 
   const downloadDraft = (format) => {
@@ -526,9 +287,7 @@ export default function App() {
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `ARK_${draftType}_${Date.now()}.${format === "doc" ? "doc" : "docx"}`;
-    a.click();
+    a.href = url; a.download = `ARK_${draftType}_${Date.now()}.${format === "doc" ? "doc" : "docx"}`; a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -536,64 +295,31 @@ export default function App() {
     if (!doc1 || !doc2) { alert("Please upload both documents"); return; }
     if (!compareFocus.trim()) { alert("Please specify a focal point for comparison"); return; }
     const maxSize = 5 * 1024 * 1024;
-    if (doc1.size > maxSize) { alert(`Document 1 is too large (${(doc1.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB.`); return; }
-    if (doc2.size > maxSize) { alert(`Document 2 is too large (${(doc2.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB.`); return; }
-    setComparingDocs(true);
-    setComparisonResult("");
+    if (doc1.size > maxSize) { alert(`Document 1 is too large. Maximum size is 5MB.`); return; }
+    if (doc2.size > maxSize) { alert(`Document 2 is too large. Maximum size is 5MB.`); return; }
+    setComparingDocs(true); setComparisonResult("");
     try {
-      const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const readFileAsBase64 = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file); });
       const doc1Base64 = await readFileAsBase64(doc1);
       const doc2Base64 = await readFileAsBase64(doc2);
-      const getMediaType = (filename) => {
-        const ext = filename.toLowerCase().split('.').pop();
-        if (ext === 'pdf') return 'application/pdf';
-        if (ext === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        return 'application/msword';
-      };
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [{
-            role: "user",
-            content: [
-              { type: "document", source: { type: "base64", media_type: getMediaType(doc1.name), data: doc1Base64 } },
-              { type: "document", source: { type: "base64", media_type: getMediaType(doc2.name), data: doc2Base64 } },
-              { type: "text", text: `Compare these two documents with focal point: "${compareFocus}". Provide a comprehensive comparison report covering key differences, similarities, legal implications under Pakistani law, risk assessment, and recommendations.` }
-            ]
-          }],
-        }),
-      });
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        if (res.status === 413) throw new Error(`Files are too large. Try compressing the PDFs (max 5MB each).`);
-        throw new Error(errorData.error || `API returned status ${res.status}`);
-      }
+      const getMediaType = (filename) => { const ext = filename.toLowerCase().split('.').pop(); if (ext === 'pdf') return 'application/pdf'; if (ext === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; return 'application/msword'; };
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: [{ type: "document", source: { type: "base64", media_type: getMediaType(doc1.name), data: doc1Base64 } }, { type: "document", source: { type: "base64", media_type: getMediaType(doc2.name), data: doc2Base64 } }, { type: "text", text: `Compare these two documents with focal point: "${compareFocus}". Provide a comprehensive comparison report covering key differences, similarities, legal implications under Pakistani law, risk assessment, and recommendations.` }] }] }) });
+      if (!res.ok) { const errorData = await res.json().catch(() => ({})); if (res.status === 413) throw new Error(`Files are too large. Try compressing the PDFs (max 5MB each).`); throw new Error(errorData.error || `API returned status ${res.status}`); }
       const data = await res.json();
       if (!data.reply) throw new Error("No response received from AI");
       setComparisonResult(data.reply);
-    } catch (error) {
-      setComparisonResult(`❌ Error comparing documents: ${error.message}`);
-    } finally {
-      setComparingDocs(false);
-    }
+    } catch (error) { setComparisonResult(`❌ Error comparing documents: ${error.message}`); }
+    finally { setComparingDocs(false); }
   };
 
   const downloadComparisonPDF = () => {
     if (!comparisonResult) return;
     const timestamp = new Date().toLocaleDateString("en-PK");
-    const pdfContent = `ARK LAW AI - LEGAL DOCUMENT COMPARISON REPORT\n${"=".repeat(80)}\n\nDate: ${timestamp}\nFocal Point: ${compareFocus}\nDocument 1: ${doc1?.name || "Document 1"}\nDocument 2: ${doc2?.name || "Document 2"}\n\n${"=".repeat(80)}\n\n${comparisonResult}\n\n${"=".repeat(80)}\nGenerated by: ARK Law AI - The Legal Intelligence Engine`.trim();
+    const pdfContent = `ARK LAW AI - LEGAL DOCUMENT COMPARISON REPORT\n${"=".repeat(80)}\n\nDate: ${timestamp}\nFocal Point: ${compareFocus}\nDocument 1: ${doc1?.name || "Document 1"}\nDocument 2: ${doc2?.name || "Document 2"}\n\n${"=".repeat(80)}\n\n${comparisonResult}\n\n${"=".repeat(80)}\nGenerated by: ARK Law AI`.trim();
     const blob = new Blob([pdfContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `ARK_Document_Comparison_${Date.now()}.txt`;
-    a.click();
+    a.href = url; a.download = `ARK_Document_Comparison_${Date.now()}.txt`; a.click();
     URL.revokeObjectURL(url);
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`<!DOCTYPE html><html><head><title>ARK Law AI - Document Comparison Report</title><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.6;color:#000;max-width:800px;margin:0 auto;padding:20px;}.header{text-align:center;border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:30px;}.header h1{color:#0D1B2A;font-size:24pt;}.content{white-space:pre-wrap;text-align:justify;}.footer{margin-top:50px;padding-top:20px;border-top:2px solid #C9A84C;text-align:center;font-size:9pt;color:#666;}</style></head><body><div class="header"><h1>ARK LAW AI</h1><h2>LEGAL DOCUMENT COMPARISON REPORT</h2></div><div class="content">${comparisonResult.replace(/\n/g, '<br>')}</div><div class="footer"><p>Generated by ARK Law AI</p></div></body></html>`);
@@ -615,30 +341,15 @@ export default function App() {
     const lines = content.split('\n');
     const elements = [];
     let currentParagraph = [];
-    
     const parseMarkdown = (text) => {
-      const parts = [];
-      let remaining = text;
-      let key = 0;
+      const parts = []; let remaining = text; let key = 0;
       while (remaining.length > 0) {
         const boldItalicMatch = remaining.match(/^\*\*\*(.+?)\*\*\*/);
-        if (boldItalicMatch) {
-          parts.push(<strong key={key++} style={{ fontStyle: 'italic' }}>{boldItalicMatch[1]}</strong>);
-          remaining = remaining.slice(boldItalicMatch[0].length);
-          continue;
-        }
+        if (boldItalicMatch) { parts.push(<strong key={key++} style={{ fontStyle: 'italic' }}>{boldItalicMatch[1]}</strong>); remaining = remaining.slice(boldItalicMatch[0].length); continue; }
         const boldMatch = remaining.match(/^\*\*(.+?)\*\*/);
-        if (boldMatch) {
-          parts.push(<strong key={key++}>{boldMatch[1]}</strong>);
-          remaining = remaining.slice(boldMatch[0].length);
-          continue;
-        }
+        if (boldMatch) { parts.push(<strong key={key++}>{boldMatch[1]}</strong>); remaining = remaining.slice(boldMatch[0].length); continue; }
         const italicMatch = remaining.match(/^\*(.+?)\*/);
-        if (italicMatch) {
-          parts.push(<em key={key++}>{italicMatch[1]}</em>);
-          remaining = remaining.slice(italicMatch[0].length);
-          continue;
-        }
+        if (italicMatch) { parts.push(<em key={key++}>{italicMatch[1]}</em>); remaining = remaining.slice(italicMatch[0].length); continue; }
         const nextSpecial = remaining.search(/\*/);
         if (nextSpecial === -1) { parts.push(remaining); break; }
         else if (nextSpecial > 0) { parts.push(remaining.slice(0, nextSpecial)); remaining = remaining.slice(nextSpecial); }
@@ -646,59 +357,26 @@ export default function App() {
       }
       return parts;
     };
-    
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
       const imageMatch = trimmedLine.match(/!\[([^\]]*)\]\(([^)]+)\)/);
       const urlMatch = trimmedLine.match(/^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp))$/i);
       if (imageMatch || urlMatch) {
-        if (currentParagraph.length > 0) {
-          elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
-          currentParagraph = [];
-        }
+        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>); currentParagraph = []; }
         const imgUrl = imageMatch ? imageMatch[2] : urlMatch[1];
         const imgAlt = imageMatch ? imageMatch[1] : 'Image';
-        elements.push(
-          <div key={`img-${index}`} style={{ marginBottom: '16px', marginTop: '16px' }}>
-            <img src={imgUrl} alt={imgAlt} style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', border: `2px solid ${GOLD}`, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} onError={(e) => { e.target.style.display = 'none'; }} />
-          </div>
-        );
+        elements.push(<div key={`img-${index}`} style={{ marginBottom: '16px', marginTop: '16px' }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', border: `2px solid ${GOLD}`, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} onError={(e) => { e.target.style.display = 'none'; }} /></div>);
       } else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
-        if (currentParagraph.length > 0) {
-          elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
-          currentParagraph = [];
-        }
-        const bulletText = trimmedLine.substring(1).trim();
-        elements.push(
-          <div key={`bullet-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px', lineHeight: '1.6' }}>
-            <span style={{ color: GOLD, fontWeight: 'bold', flexShrink: 0 }}>•</span>
-            <span>{parseMarkdown(bulletText)}</span>
-          </div>
-        );
-      } else if (trimmedLine.length > 0 && (
-        (trimmedLine.startsWith('***') && trimmedLine.endsWith('***')) ||
-        (trimmedLine.endsWith(':') && trimmedLine.length < 60)
-      )) {
-        if (currentParagraph.length > 0) {
-          elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
-          currentParagraph = [];
-        }
-        const headerText = trimmedLine.replace(/^\*\*\*|\*\*\*$/g, '');
-        elements.push(<h3 key={`h-${index}`} style={{ fontWeight: 'bold', fontStyle: 'italic', color: '#0D1B2A', marginTop: '16px', marginBottom: '8px', fontSize: '15px' }}>{headerText}</h3>);
+        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>); currentParagraph = []; }
+        elements.push(<div key={`bullet-${index}`} style={{ display: 'flex', gap: '8px', marginBottom: '8px', lineHeight: '1.6' }}><span style={{ color: GOLD, fontWeight: 'bold', flexShrink: 0 }}>•</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
+      } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith('***') && trimmedLine.endsWith('***')) || (trimmedLine.endsWith(':') && trimmedLine.length < 60))) {
+        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>); currentParagraph = []; }
+        elements.push(<h3 key={`h-${index}`} style={{ fontWeight: 'bold', fontStyle: 'italic', color: '#0D1B2A', marginTop: '16px', marginBottom: '8px', fontSize: '15px' }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, '')}</h3>);
       } else if (trimmedLine.length === 0) {
-        if (currentParagraph.length > 0) {
-          elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
-          currentParagraph = [];
-        }
-      } else {
-        currentParagraph.push(trimmedLine);
-      }
+        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>); currentParagraph = []; }
+      } else { currentParagraph.push(trimmedLine); }
     });
-    
-    if (currentParagraph.length > 0) {
-      elements.push(<p key="p-final" style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
-    }
-    
+    if (currentParagraph.length > 0) elements.push(<p key="p-final" style={{ marginBottom: '12px', lineHeight: '1.6' }}>{parseMarkdown(currentParagraph.join(' '))}</p>);
     return <div style={{ whiteSpace: 'normal' }}>{elements}</div>;
   };
 
@@ -706,7 +384,7 @@ export default function App() {
     <>
       <Head>
         <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law. Open for all - utilize and get benefit." />
+        <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
@@ -714,46 +392,24 @@ export default function App() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
         #__next { height: 100%; overflow: hidden; }
-        @keyframes scroll {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .news-ticker-content {
-          animation: scroll 120s linear infinite;
-          will-change: transform;
-        }
-        @keyframes conductScroll {
-          0% { transform: translateY(0%); }
-          100% { transform: translateY(-50%); }
-        }
-        @keyframes flagWave {
-          0%, 100% { transform: perspective(400px) rotateY(0deg); }
-          25% { transform: perspective(400px) rotateY(-15deg); }
-          50% { transform: perspective(400px) rotateY(0deg); }
-          75% { transform: perspective(400px) rotateY(15deg); }
-        }
-        .conduct-ticker { animation: conductScroll 60s linear infinite; will-change: transform; }
-        .conduct-ticker:hover { animation-play-state: paused; }
+        @keyframes scroll { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .news-ticker-content { animation: scroll 120s linear infinite; will-change: transform; }
+        @keyframes flagWave { 0%, 100% { transform: perspective(400px) rotateY(0deg); } 25% { transform: perspective(400px) rotateY(-15deg); } 50% { transform: perspective(400px) rotateY(0deg); } 75% { transform: perspective(400px) rotateY(15deg); } }
         .pakistan-flag { animation: flagWave 3s ease-in-out infinite; transform-origin: left center; display: inline-block; }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); }
-          50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); }
-        }
-        @keyframes glowPulse {
-          0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.8), 0 0 40px rgba(201,168,76,0.4); transform: scale(1); }
-          50% { box-shadow: 0 0 30px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6); transform: scale(1.02); }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.8; }
-        }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); } 50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); } }
+        @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.7); transform: scale(1); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.9); transform: scale(1.02); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
         @media (max-width: 768px) { .desktop-only { display: none; } }
       `}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
-        
-        {/* HEADER */}
+
+        {/* ═══════════════════════════════════════════════════════
+            HEADER
+            LEFT: Logo  |  CENTER: Contact email  |  RIGHT: Flag + Lang + Auth
+        ════════════════════════════════════════════════════════ */}
         <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+
           {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
@@ -761,129 +417,78 @@ export default function App() {
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
               <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div 
-                onClick={() => setShowLinkedInPopup(true)}
-                style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", transition: "all 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
-              >
+              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
                 by Attorney & AI Innovator Khawer Rabbani
               </div>
             </div>
           </div>
 
-          {/* CENTER - USER INFO & BANNER */}
+          {/* CENTER - Contact email only */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {/* Open for All Banner */}
-            <div style={{ padding: "6px 20px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "4px", fontSize: 11, fontWeight: 700, boxShadow: "0 0 15px rgba(201,168,76,0.5)", animation: "glow 2s ease-in-out infinite", textAlign: "center", letterSpacing: "0.3px", whiteSpace: "nowrap", lineHeight: "1.4" }}>
-              ✨ Open for All! ✨<br/>
-              <span style={{ fontSize: 8, fontWeight: 600 }}>Sign-up Recommended for Best Results</span>
-            </div>
-            
-            {/* Contact Email */}
-            <a href="mailto:contact@arklaw.ai" style={{ fontSize: 11, color: ACCENT_PK, textDecoration: "none", padding: "6px 0px", display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }}
-              onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-              onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}
-            >
+            <a href="mailto:contact@arklaw.ai" style={{ fontSize: 11, color: ACCENT_PK, textDecoration: "none", display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
               <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
               📧 contact@arklaw.ai
             </a>
-            
-            {/* Auth Buttons or User Info */}
-            {!user ? (
-              <>
-                <button 
-                  onClick={() => setShowLoginPopup(true)}
-                  style={{ padding: "6px 16px", background: GOLD, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s" }}
-                >
-                  Login
-                </button>
-                <div style={{ position: "relative" }}>
-                  <button 
-                    onClick={() => setShowSignupPopup(true)}
-                    style={{ padding: "8px 20px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "6px", cursor: "pointer", fontSize: 12, fontWeight: 700, transition: "all 0.3s", boxShadow: "0 0 20px rgba(201,168,76,0.8), 0 0 40px rgba(201,168,76,0.4)", animation: "glowPulse 2s infinite" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 0 30px " + GOLD + ", 0 0 60px " + GOLD + "60"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 0 20px rgba(201,168,76,0.8), 0 0 40px rgba(201,168,76,0.4)"; }}
-                  >
-                    ✨ Sign Up - Get 500K Credits FREE!
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Token Counter */}
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "6px 15px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                    <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: 700, color: GOLD }}>
-                      {Math.round((userTokens/500000)*100)}%
-                    </div>
-                  </div>
-                  <div style={{ fontSize: "13px", fontWeight: 700, color: GOLD }}>{userTokens.toLocaleString()} Credits</div>
-                </div>
-                <div style={{ padding: "6px 15px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `2px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>
-                  👤 {user.name}
-                </div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "6px 16px", background: GOLD, color: NAVY, border: `2px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s" }}>
-                  My Account
-                </button>
-              </>
-            )}
           </div>
 
-          {/* RIGHT - PAKISTAN FLAG & LANGUAGE TOGGLE */}
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          {/* RIGHT - Flag + Language + Auth buttons */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+
+            {/* Pakistan Flag */}
             <div className="pakistan-flag" style={{ width: "56px", height: "38px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "visible", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", perspective: "400px" }}>
               <svg viewBox="0 0 56 38" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%", overflow: "visible" }}>
                 <defs>
-                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
-                    <stop offset="50%" style={{ stopColor: "#01A550", stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: "#01863F", stopOpacity: 1 }} />
-                  </linearGradient>
-                  <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style={{ stopColor: "#F8F8F8", stopOpacity: 1 }} />
-                    <stop offset="50%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} />
-                    <stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 1 }} />
-                  </linearGradient>
-                  <filter id="shadow">
-                    <feDropShadow dx="0.5" dy="0.5" stdDeviation="0.8" floodOpacity="0.4"/>
-                  </filter>
-                  <clipPath id="flagClip">
-                    <path>
-                      <animate attributeName="d" 
-                        values="M 0 0 L 56 0 L 56 38 L 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 Q 14 -2 28 0 T 56 0 L 56 38 Q 42 40 28 38 T 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 L 56 0 L 56 38 L 0 38 Z"
-                        dur="2.5s" repeatCount="indefinite"/>
-                    </path>
-                  </clipPath>
+                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style={{ stopColor: "#01863F", stopOpacity: 1 }} /><stop offset="50%" style={{ stopColor: "#01A550", stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: "#01863F", stopOpacity: 1 }} /></linearGradient>
+                  <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style={{ stopColor: "#F8F8F8", stopOpacity: 1 }} /><stop offset="50%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 1 }} /></linearGradient>
+                  <filter id="shadow"><feDropShadow dx="0.5" dy="0.5" stdDeviation="0.8" floodOpacity="0.4"/></filter>
+                  <clipPath id="flagClip"><path><animate attributeName="d" values="M 0 0 L 56 0 L 56 38 L 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 Q 14 -2 28 0 T 56 0 L 56 38 Q 42 40 28 38 T 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 L 56 0 L 56 38 L 0 38 Z" dur="2.5s" repeatCount="indefinite"/></path></clipPath>
                 </defs>
                 <g clipPath="url(#flagClip)">
                   <rect x="0" y="0" width="56" height="38" fill="url(#greenGradient)"/>
                   <rect x="0" y="0" width="14" height="38" fill="url(#whiteGradient)"/>
-                  <g filter="url(#shadow)">
-                    <circle cx="32" cy="19" r="8.5" fill="#FFFFFF"/>
-                    <circle cx="34.5" cy="19" r="7.5" fill="url(#greenGradient)"/>
-                  </g>
-                  <g transform="translate(42, 19)" filter="url(#shadow)">
-                    <polygon points="0,-6.5 2,-2 7,-2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2 -2,-2" fill="#FFFFFF" stroke="#F5F5F5" strokeWidth="0.3"/>
-                  </g>
-                  <g opacity="0.25">
-                    <path fill="#FFFFFF">
-                      <animate attributeName="d" 
-                        values="M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z;M 14 0 Q 24 -3 35 0 T 56 0 L 56 38 Q 45 41 35 38 T 14 38 Z;M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z"
-                        dur="2s" repeatCount="indefinite"/>
-                    </path>
-                  </g>
-                  <g opacity="0.15">
-                    <rect x="0" y="0" width="56" height="38" fill="url(#whiteGradient)">
-                      <animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/>
-                    </rect>
-                  </g>
+                  <g filter="url(#shadow)"><circle cx="32" cy="19" r="8.5" fill="#FFFFFF"/><circle cx="34.5" cy="19" r="7.5" fill="url(#greenGradient)"/></g>
+                  <g transform="translate(42, 19)" filter="url(#shadow)"><polygon points="0,-6.5 2,-2 7,-2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2 -2,-2" fill="#FFFFFF" stroke="#F5F5F5" strokeWidth="0.3"/></g>
+                  <g opacity="0.25"><path fill="#FFFFFF"><animate attributeName="d" values="M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z;M 14 0 Q 24 -3 35 0 T 56 0 L 56 38 Q 45 41 35 38 T 14 38 Z;M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z" dur="2s" repeatCount="indefinite"/></path></g>
+                  <g opacity="0.15"><rect x="0" y="0" width="56" height="38" fill="url(#whiteGradient)"><animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/></rect></g>
                 </g>
                 <line x1="0" y1="0" x2="0" y2="38" stroke="#333" strokeWidth="0.5" opacity="0.3"/>
               </svg>
             </div>
-            <button style={{ padding: "6px 12px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>EN</button>
-            <button style={{ padding: "6px 12px", background: NAVY_SURFACE, color: TEXT_MUTED, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
+
+            {/* Language toggles */}
+            <button style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
+            <button style={{ padding: "5px 10px", background: NAVY_SURFACE, color: TEXT_MUTED, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
+
+            {/* Divider */}
+            <div style={{ width: "1px", height: "24px", background: NAVY_BORDER, margin: "0 2px" }} />
+
+            {/* Auth: Login / Signup OR token + name + My Account */}
+            {!user ? (
+              <>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: GOLD, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = GOLD; }}>
+                  Login
+                </button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, animation: "glowPulse 2s infinite", whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+                  ✨ Sign Up Free
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Token Counter (compact) */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                  </div>
+                  <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                </div>
+                <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>
+                  👤 {user.name}
+                </div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
+                  My Account
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -891,101 +496,89 @@ export default function App() {
         <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
           <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
           <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div className="news-ticker-wrapper">
-              <div className="news-ticker-content" style={{ display: "flex", gap: "80px", whiteSpace: "nowrap", width: "max-content" }}>
-                {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
-                  <button key={`news-1-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none", whiteSpace: "nowrap" }}>{item}</button>
-                ))}
-                {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
-                  <button key={`news-2-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, textDecoration: "none", whiteSpace: "nowrap" }}>{item}</button>
-                ))}
-              </div>
+            <div className="news-ticker-content" style={{ display: "flex", gap: "80px", whiteSpace: "nowrap", width: "max-content" }}>
+              {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
+                <button key={`news-1-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, whiteSpace: "nowrap" }}>{item}</button>
+              ))}
+              {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
+                <button key={`news-2-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, whiteSpace: "nowrap" }}>{item}</button>
+              ))}
             </div>
           </div>
         </div>
 
         {/* BODY */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-          
-          {/* LEFT SIDEBAR */}
+
+          {/* ═══ LEFT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "220px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
-              
-              <div style={{ display: "flex", gap: "10px", marginBottom: "10px", justifyContent: "center" }}>
+            <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+
+              {/* Photos */}
+              <div style={{ display: "flex", gap: "8px", marginBottom: "6px", justifyContent: "center" }}>
                 <div style={{ textAlign: "center" }}>
-                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "50px", height: "50px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
-                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600, marginTop: "3px" }}>FOUNDER OF</div>
-                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600 }}>PAKISTAN</div>
-                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>Quaid-e-Azam</div>
-                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>M. A. Jinnah</div>
+                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
+                  <div style={{ fontSize: 7, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>FOUNDER OF PAKISTAN</div>
+                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
                 </div>
                 <div style={{ textAlign: "center" }}>
-                  <img src="/rabbani.jpeg" alt="Justice Rabbani" style={{ width: "50px", height: "50px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600, marginTop: "3px" }}>HONORABLE</div>
-                  <div style={{ fontSize: 8, color: ACCENT_PK, fontWeight: 600 }}>JUSTICE</div>
-                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>S. A. Rabbani</div>
-                  <div style={{ fontSize: 7, color: TEXT_MUTED }}>Fmr. Judge, Superior Courts</div>
-                  <div style={{ fontSize: 6, color: ACCENT_PK, marginTop: "2px", fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
+                  <img src="/rabbani.jpeg" alt="Justice Rabbani" style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div style={{ fontSize: 7, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>HON. JUSTICE</div>
+                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>S. A. Rabbani</div>
+                  <div style={{ fontSize: 5, color: ACCENT_PK, fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
                 </div>
               </div>
 
-              {/* Document Analyzer */}
-              <div style={{ padding: "15px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 4px 15px ${GOLD}40` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`; }}
+              {/* ── CARD: Analyze Documents ── */}
+              <div style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
               >
-                <div style={{ width: "50px", height: "50px", margin: "0 auto 10px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>📂</div>
-                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>Analyze Documents</div>
-                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>Upload legal documents for analysis</div>
-                <input type="file" accept=".pdf,.docx,.doc" style={{ width: "100%", fontSize: 10, padding: "6px", background: "white", border: `2px solid ${NAVY}`, borderRadius: "6px", color: NAVY, cursor: "pointer", fontWeight: 600 }} onChange={(e) => { const file = e.target.files?.[0]; if (file) { alert("Feature coming soon: Document analysis"); } }} />
+                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📂</div>
+                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Analyze Documents</div>
+                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Upload legal documents for analysis</div>
+                <input type="file" accept=".pdf,.docx,.doc" style={{ width: "100%", fontSize: 9, padding: "4px", background: "white", border: `1px solid ${NAVY}`, borderRadius: "4px", color: NAVY, cursor: "pointer", fontWeight: 600 }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert("Feature coming soon: Document analysis"); }} />
               </div>
 
-              {/* Document Comparison */}
-              <div onClick={() => setShowComparePopup(true)} style={{ padding: "15px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 4px 15px ${GOLD}40` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`; }}
+              {/* ── CARD: Compare Documents ── */}
+              <div onClick={() => setShowComparePopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
               >
-                <div style={{ width: "50px", height: "50px", margin: "0 auto 10px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>⚖️</div>
-                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>Compare Documents</div>
-                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>Upload 2 documents to compare</div>
-                <div style={{ padding: "8px 16px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "6px", fontSize: 12, fontWeight: 700, color: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>Start Comparing</div>
+                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>⚖️</div>
+                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Compare Documents</div>
+                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Upload 2 documents to compare</div>
+                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>Start Comparing</div>
               </div>
 
-              {/* Document Drafting */}
-              <div onClick={() => setShowDraftPopup(true)} style={{ padding: "15px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 4px 15px ${GOLD}40` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`; }}
+              {/* ── CARD: Draft Documents ── */}
+              <div onClick={() => setShowDraftPopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
               >
-                <div style={{ width: "50px", height: "50px", margin: "0 auto 10px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>✍️</div>
-                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>Draft Documents</div>
-                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>Create contracts, affidavits & more</div>
-                <div style={{ padding: "8px 16px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "6px", fontSize: 12, fontWeight: 700, color: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>Start Drafting</div>
+                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✍️</div>
+                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Draft Documents</div>
+                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Create contracts, affidavits & more</div>
+                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>Start Drafting</div>
               </div>
             </div>
           )}
 
-          {/* CHAT AREA */}
+          {/* ═══ CHAT AREA ═══ */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
-            {/* Watermark Logo */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
-            
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", position: "relative", zIndex: 1 }}>
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
-                  {msg.role === "assistant" && (
-                    <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  )}
+                  {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />}
                   <div style={{ maxWidth: "70%", position: "relative" }}>
                     <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
                       {renderMessageContent(msg.content)}
                     </div>
                     {msg.role === "assistant" && (
-                      <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "6px 12px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", transition: "all 0.2s" }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                      >
+                      <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
                         {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
                       </button>
                     )}
@@ -1001,75 +594,60 @@ export default function App() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* UPLOADED FILES DISPLAY */}
+            {/* Uploaded files */}
             {uploadedFiles.length > 0 && (
-              <div style={{ padding: "10px 15px", borderTop: `1px solid ${NAVY_BORDER}`, background: `${NAVY_SURFACE}aa`, display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
-                <span style={{ fontSize: 11, color: TEXT_MUTED, fontWeight: 600 }}>📎 Attached Files ({uploadedFiles.length}):</span>
+              <div style={{ padding: "8px 12px", borderTop: `1px solid ${NAVY_BORDER}`, background: `${NAVY_SURFACE}aa`, display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
+                <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>📎 Attached ({uploadedFiles.length}):</span>
                 {uploadedFiles.map((file, index) => (
-                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 10px", background: NAVY_SURFACE, border: `1px solid ${GOLD}`, borderRadius: "4px", fontSize: 11, color: CREAM }}>
-                    <span>{file.name}</span>
-                    <span style={{ color: TEXT_MUTED }}>({(file.size / 1024).toFixed(1)} KB)</span>
-                    <button onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== index))} style={{ background: "none", border: "none", color: GOLD, cursor: "pointer", fontSize: 14, padding: "0 4px", lineHeight: 1 }}>✕</button>
+                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px", padding: "3px 8px", background: NAVY_SURFACE, border: `1px solid ${GOLD}`, borderRadius: "4px", fontSize: 10, color: CREAM }}>
+                    <span>{file.name}</span><span style={{ color: TEXT_MUTED }}>({(file.size / 1024).toFixed(1)} KB)</span>
+                    <button onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== index))} style={{ background: "none", border: "none", color: GOLD, cursor: "pointer", fontSize: 12, padding: "0 2px", lineHeight: 1 }}>✕</button>
                   </div>
                 ))}
-                <button onClick={() => setUploadedFiles([])} style={{ padding: "4px 10px", background: `${GOLD}20`, border: `1px solid ${GOLD}`, borderRadius: "4px", color: GOLD, fontSize: 10, fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.color = GOLD; }}
-                >Clear All</button>
+                <button onClick={() => setUploadedFiles([])} style={{ padding: "3px 8px", background: `${GOLD}20`, border: `1px solid ${GOLD}`, borderRadius: "4px", color: GOLD, fontSize: 9, fontWeight: 600, cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.color = GOLD; }}>Clear All</button>
               </div>
             )}
 
-            {/* INPUT AREA */}
-            <div style={{ padding: "15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
-              <button onClick={startVoiceInput} disabled={loading || isListening} style={{ padding: "10px 16px", background: isListening ? ACCENT_PK : NAVY_SURFACE, color: isListening ? NAVY : TEXT_PRIMARY, border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 16, transition: "all 0.3s", animation: isListening ? "pulse 1.5s infinite" : "none" }} title="Click to speak your question">
-                {isListening ? "🎤 Listening..." : "🎤"}
-              </button>
-              <label htmlFor="file-upload" style={{ padding: "10px 16px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 16, transition: "all 0.3s", display: "flex", alignItems: "center", gap: "6px" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.borderColor = GOLD; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = NAVY_SURFACE; e.currentTarget.style.borderColor = NAVY_BORDER; }}
-                title="Upload files, images, or documents"
-              >
+            {/* Input */}
+            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
+              <button onClick={startVoiceInput} disabled={loading || isListening} style={{ padding: "9px 14px", background: isListening ? ACCENT_PK : NAVY_SURFACE, color: isListening ? NAVY : TEXT_PRIMARY, border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 15, animation: isListening ? "pulse 1.5s infinite" : "none" }} title="Click to speak">{isListening ? "🎤 Listening..." : "🎤"}</button>
+              <label htmlFor="file-upload" style={{ padding: "9px 14px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 15, display: "flex", alignItems: "center" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.borderColor = GOLD; }} onMouseLeave={(e) => { e.currentTarget.style.background = NAVY_SURFACE; e.currentTarget.style.borderColor = NAVY_BORDER; }} title="Upload files">
                 📎
                 <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + ' file(s) uploaded: ' + files.map(f => f.name).join(', ')); } }} style={{ display: "none" }} />
               </label>
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} style={{ flex: 1, padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 13 }} />
-              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "10px 20px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1 }}>
-                SEND
-              </button>
+              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} style={{ flex: 1, padding: "9px 12px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 13 }} />
+              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1 }}>SEND</button>
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
+          {/* ═══ RIGHT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "220px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px" }}>
-              
-              {/* UPGRADE TO PRO BOX */}
-              <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "15px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 4px 15px ${GOLD}40` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 6px 20px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 15px ${GOLD}40`; }}
+            <div style={{ width: "200px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+
+              {/* ── CARD: Upgrade to Pro ── */}
+              <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
               >
-                <div style={{ width: "50px", height: "50px", margin: "0 auto 10px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>✨</div>
-                <div style={{ fontSize: 14, color: NAVY, fontWeight: 700, marginBottom: "6px" }}>Upgrade to Pro</div>
-                <div style={{ fontSize: 10, color: `${NAVY}cc`, marginBottom: "10px" }}>Get more tools, faster AI, and exclusive features</div>
-                <div style={{ padding: "8px 16px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "6px", fontSize: 12, fontWeight: 700, color: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>✨ Upgrade Now</div>
+                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✨</div>
+                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Upgrade to Pro</div>
+                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Get more tools, faster AI, and exclusive features</div>
+                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>✨ Upgrade Now</div>
               </div>
 
-              {/* QUICK QUERIES */}
+              {/* Quick Queries */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "8px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "7px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
                 {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "6px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = TEXT_PRIMARY; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = NAVY; e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.color = TEXT_SECONDARY; }}
-                  >{query}</button>
+                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "7px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "5px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = TEXT_PRIMARY; }} onMouseLeave={(e) => { e.currentTarget.style.background = NAVY; e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.color = TEXT_SECONDARY; }}>{query}</button>
                 ))}
               </div>
 
               {/* Practice Areas */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
                 {PRACTICE_AREAS_PK.map((area) => (
-                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "4px", borderRadius: "4px", fontSize: 10, textAlign: "left" }}>
+                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "5px 7px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "3px", borderRadius: "4px", fontSize: 9, textAlign: "left" }}>
                     {area.icon} {area.label}
                   </button>
                 ))}
@@ -1078,59 +656,24 @@ export default function App() {
           )}
         </div>
 
-        {/* FOOTER - Compact, Navy-themed */}
-        <footer style={{ 
-          background: NAVY_MID,
-          borderTop: `1px solid ${NAVY_BORDER}`,
-          color: TEXT_SECONDARY,
-          padding: "8px 20px",
-          flexShrink: 0
-        }}>
-          <div style={{ 
-            maxWidth: "1600px",
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "6px"
-          }}>
-            {/* Left - Logo + Dedication */}
+        {/* FOOTER */}
+        <footer style={{ background: NAVY_MID, borderTop: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, padding: "8px 20px", flexShrink: 0 }}>
+          <div style={{ maxWidth: "1600px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "6px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: "1", minWidth: "180px" }}>
               <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "20px", height: "20px", opacity: 0.85 }} />
-              <span style={{ fontSize: "9px", color: GOLD, fontStyle: "italic", lineHeight: "1.3" }}>
-                Dedicated to the Legacy of Hon. Justice S. A. Rabbani, Legendary Jurist of Pakistan
-              </span>
+              <span style={{ fontSize: "9px", color: GOLD, fontStyle: "italic", lineHeight: "1.3" }}>Dedicated to the Legacy of Hon. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
             </div>
-
-            {/* Center - Links */}
             <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
               {["Features", "About Us", "Docs", "Contact"].map((link) => (
-                <span key={link} style={{ fontSize: "10px", color: TEXT_MUTED, cursor: "pointer", transition: "color 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                  onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}
-                >{link}</span>
+                <span key={link} style={{ fontSize: "10px", color: TEXT_MUTED, cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}>{link}</span>
               ))}
             </div>
-
-            {/* Right - Copyright + Social */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: "1", justifyContent: "flex-end", minWidth: "180px" }}>
-              <span style={{ fontSize: "9px", color: TEXT_MUTED }}>
-                © 2025 ARK Lex AI LLC. All rights reserved.
-              </span>
+              <span style={{ fontSize: "9px", color: TEXT_MUTED }}>© 2025 ARK Lex AI LLC. All rights reserved.</span>
               <div style={{ display: "flex", gap: "8px" }}>
-                <a href="https://twitter.com/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                  onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}
-                >🐦</a>
-                <a href="https://linkedin.com/company/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                  onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}
-                >💼</a>
-                <a href="https://github.com/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = GOLD}
-                  onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}
-                >💻</a>
+                <a href="https://twitter.com/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}>🐦</a>
+                <a href="https://linkedin.com/company/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}>💼</a>
+                <a href="https://github.com/arklawai" target="_blank" rel="noopener noreferrer" style={{ color: TEXT_MUTED, fontSize: "13px", textDecoration: "none" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = TEXT_MUTED}>💻</a>
               </div>
             </div>
           </div>
@@ -1138,7 +681,8 @@ export default function App() {
 
       </div>
 
-      {/* SUCCESS POPUP */}
+      {/* ═══ POPUPS ═══ */}
+
       {showSuccessPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "12px", border: `2px solid ${ACCENT_PK}`, maxWidth: "450px", textAlign: "center" }}>
@@ -1153,17 +697,13 @@ export default function App() {
         </div>
       )}
 
-      {/* NEWS POPUP */}
       {showNewsPopup && selectedNews && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: "0 0 30px rgba(201,168,76,0.2)" }}>
             <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
-                <div>
-                  <div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div>
-                </div>
+                <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div><div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div></div>
               </div>
               <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
             </div>
@@ -1181,11 +721,7 @@ export default function App() {
               <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }}></div>
               <div>
                 <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>⚖️ Legal Analysis & Impact:</h4>
-                {newsLoading ? (
-                  <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>⏳ Analyzing legal significance...</div>
-                ) : (
-                  <div style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>{newsAnalysis}</div>
-                )}
+                {newsLoading ? <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>⏳ Analyzing legal significance...</div> : <div style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "flex-end" }}>
@@ -1195,17 +731,13 @@ export default function App() {
         </div>
       )}
 
-      {/* DOCUMENT DRAFTING POPUP */}
       {showDraftPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: NAVY_SURFACE, borderRadius: "12px", width: "90%", maxWidth: "800px", maxHeight: "90vh", overflow: "auto", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
             <div style={{ background: `linear-gradient(135deg, ${NAVY}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
-                <div>
-                  <h3 style={{ color: GOLD, margin: 0, fontSize: 18 }}>✍️ AI Legal Document Drafting</h3>
-                  <div style={{ color: ACCENT_PK, fontSize: 10, marginTop: "3px" }}>Powered by ARK Law AI - Pakistani Law Compliant</div>
-                </div>
+                <div><h3 style={{ color: GOLD, margin: 0, fontSize: 18 }}>✍️ AI Legal Document Drafting</h3><div style={{ color: ACCENT_PK, fontSize: 10, marginTop: "3px" }}>Powered by ARK Law AI - Pakistani Law Compliant</div></div>
               </div>
               <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
             </div>
@@ -1232,12 +764,9 @@ export default function App() {
                     <div style={{ color: ACCENT_PK, fontSize: 11, fontWeight: 600, marginBottom: "8px" }}>ℹ️ How It Works:</div>
                     <div style={{ color: TEXT_SECONDARY, fontSize: 11, lineHeight: "1.6" }}>1. Select the document type<br/>2. Provide required information<br/>3. AI generates a complete, court-ready document<br/>4. Edit and download in Word or PDF format</div>
                   </div>
-                  <button onClick={() => { if (!draftType) { alert("Please select a document type"); return; } setDraftStep("gathering-info"); }} disabled={!draftType} style={{ width: "100%", padding: "14px", background: draftType ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY_BORDER, color: NAVY, border: "none", borderRadius: "6px", cursor: draftType ? "pointer" : "not-allowed", fontWeight: 700, fontSize: 14 }}>
-                    Next: Provide Information →
-                  </button>
+                  <button onClick={() => { if (!draftType) { alert("Please select a document type"); return; } setDraftStep("gathering-info"); }} disabled={!draftType} style={{ width: "100%", padding: "14px", background: draftType ? `linear-gradient(135deg, ${GOLD}, #E5C887)` : NAVY_BORDER, color: NAVY, border: "none", borderRadius: "6px", cursor: draftType ? "pointer" : "not-allowed", fontWeight: 700, fontSize: 14 }}>Next: Provide Information →</button>
                 </div>
               )}
-
               {draftStep === "gathering-info" && (
                 <div>
                   <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>📝 Step 2: Provide Document Information</h4>
@@ -1320,13 +849,10 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
                     <button onClick={() => setDraftStep("type-selection")} style={{ flex: 1, padding: "12px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>← Back</button>
-                    <button onClick={() => generateDocument(draftRequirements)} disabled={draftGenerating} style={{ flex: 2, padding: "12px", background: draftGenerating ? NAVY_BORDER : `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: draftGenerating ? TEXT_MUTED : "white", border: "none", borderRadius: "6px", cursor: draftGenerating ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 14 }}>
-                      {draftGenerating ? "⏳ Generating Document..." : "🚀 Generate Document with AI"}
-                    </button>
+                    <button onClick={() => generateDocument(draftRequirements)} disabled={draftGenerating} style={{ flex: 2, padding: "12px", background: draftGenerating ? NAVY_BORDER : `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: draftGenerating ? TEXT_MUTED : "white", border: "none", borderRadius: "6px", cursor: draftGenerating ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 14 }}>{draftGenerating ? "⏳ Generating Document..." : "🚀 Generate Document with AI"}</button>
                   </div>
                 </div>
               )}
-
               {draftStep === "generating" && (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
                   <img src="/ark-logo.png" alt="ARK" style={{ width: "80px", height: "80px", marginBottom: "20px", opacity: 0.8, animation: "pulse 2s infinite" }} />
@@ -1340,15 +866,14 @@ export default function App() {
                   </div>
                 </div>
               )}
-
               {draftStep === "completed" && (
                 <div>
                   <h4 style={{ color: GOLD, fontSize: 15, marginBottom: "8px", fontWeight: 700 }}>✅ Document Generated Successfully!</h4>
-                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "15px" }}>Your {draftType} has been generated. You can edit it below and download in Word or PDF format.</p>
+                  <p style={{ color: TEXT_MUTED, fontSize: 11, marginBottom: "15px" }}>Your {draftType} has been generated. Edit and download below.</p>
                   <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} style={{ width: "100%", height: "400px", padding: "15px", background: "white", border: `2px solid ${GOLD}`, color: "#000", borderRadius: "6px", marginBottom: "15px", fontSize: 13, fontFamily: "'Times New Roman', serif", lineHeight: "1.8", whiteSpace: "pre-wrap" }} />
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px", padding: "10px", background: NAVY, borderRadius: "4px" }}>
                     <div style={{ color: TEXT_MUTED, fontSize: 11 }}>📝 Words: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.split(/\s+/).filter(Boolean).length}</span></div>
-                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>📊 Characters: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.length}</span></div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 11 }}>📊 Chars: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{draftContent.length}</span></div>
                     <div style={{ color: TEXT_MUTED, fontSize: 11 }}>📄 Pages: <span style={{ color: ACCENT_PK, fontWeight: 600 }}>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</span></div>
                   </div>
                   <div style={{ background: `${GOLD}15`, padding: "12px", borderRadius: "6px", borderLeft: `4px solid ${GOLD}`, marginBottom: "20px" }}>
@@ -1367,15 +892,11 @@ export default function App() {
         </div>
       )}
 
-      {/* DOCUMENT COMPARISON POPUP */}
       {showComparePopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "600px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}` }}>
             <div style={{ background: NAVY, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${NAVY_BORDER}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} />
-                <h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3>
-              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px" }} /><h3 style={{ color: GOLD, margin: 0 }}>⚖️ Compare Legal Documents</h3></div>
               <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 24, cursor: "pointer" }}>✕</button>
             </div>
             <div style={{ padding: "20px" }}>
@@ -1396,33 +917,18 @@ export default function App() {
                 <label style={{ color: GOLD, fontSize: 12, fontWeight: 600, display: "block", marginBottom: "8px" }}>🎯 Focal Point for Comparison</label>
                 <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses, termination conditions..." style={{ width: "100%", padding: "10px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 12 }} />
               </div>
-              {comparingDocs && (
-                <div style={{ marginBottom: "15px", padding: "20px", background: NAVY, borderRadius: "6px", border: `1px solid ${GOLD}`, textAlign: "center" }}>
-                  <div style={{ color: GOLD, fontSize: 14, fontWeight: 600, marginBottom: "10px" }}>⏳ Analyzing Documents...</div>
-                  <div style={{ color: TEXT_MUTED, fontSize: 11 }}>AI is comparing the documents</div>
-                </div>
-              )}
-              {comparisonResult && !comparingDocs && (
-                <div style={{ marginBottom: "15px", padding: "15px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}` }}>
-                  <div style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "10px" }}>📊 Comparison Report</div>
-                  <div style={{ color: TEXT_PRIMARY, fontSize: 11, lineHeight: "1.6", whiteSpace: "pre-wrap", maxHeight: "400px", overflowY: "auto" }}>{comparisonResult}</div>
-                </div>
-              )}
+              {comparingDocs && <div style={{ marginBottom: "15px", padding: "20px", background: NAVY, borderRadius: "6px", border: `1px solid ${GOLD}`, textAlign: "center" }}><div style={{ color: GOLD, fontSize: 14, fontWeight: 600, marginBottom: "10px" }}>⏳ Analyzing Documents...</div><div style={{ color: TEXT_MUTED, fontSize: 11 }}>AI is comparing the documents</div></div>}
+              {comparisonResult && !comparingDocs && <div style={{ marginBottom: "15px", padding: "15px", background: NAVY, borderRadius: "6px", border: `1px solid ${ACCENT_PK}` }}><div style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "10px" }}>📊 Comparison Report</div><div style={{ color: TEXT_PRIMARY, fontSize: 11, lineHeight: "1.6", whiteSpace: "pre-wrap", maxHeight: "400px", overflowY: "auto" }}>{comparisonResult}</div></div>}
               <div style={{ display: "flex", gap: "10px" }}>
                 <button onClick={() => { setShowComparePopup(false); setDoc1(null); setDoc2(null); setCompareFocus(""); setComparisonResult(""); }} style={{ flex: 1, padding: "10px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 12 }}>Close</button>
-                <button onClick={compareDocuments} disabled={comparingDocs} style={{ flex: 1, padding: "10px", background: comparingDocs ? NAVY_BORDER : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 12 }}>
-                  {comparingDocs ? "⏳ Analyzing..." : "🔍 Compare Documents"}
-                </button>
-                {comparisonResult && (
-                  <button onClick={downloadComparisonPDF} style={{ flex: 1, padding: "10px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>📄 Download PDF</button>
-                )}
+                <button onClick={compareDocuments} disabled={comparingDocs} style={{ flex: 1, padding: "10px", background: comparingDocs ? NAVY_BORDER : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 12 }}>{comparingDocs ? "⏳ Analyzing..." : "🔍 Compare Documents"}</button>
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{ flex: 1, padding: "10px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>📄 Download PDF</button>}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* PROFILE POPUP - KHAWER RABBANI */}
       {showLinkedInPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "1000px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}>
@@ -1431,11 +937,7 @@ export default function App() {
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "50px", height: "50px" }} />
                 <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                   <img src="/khawer-profile.jpeg" alt="Khawer Rabbani" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div>
-                    <div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div>
-                    <div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div>
-                    <div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & CEO, ARK LAW AI</div>
-                  </div>
+                  <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div><div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div><div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & CEO, ARK LAW AI</div></div>
                 </div>
               </div>
               <button onClick={() => setShowLinkedInPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
@@ -1455,22 +957,17 @@ export default function App() {
         </div>
       )}
 
-      {/* LOGIN POPUP */}
       {showLoginPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
           <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} />
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>Login to ARK Law AI</h2>
-              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} /><h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>Login to ARK Law AI</h2></div>
               <button onClick={() => setShowLoginPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
             <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
-              const email = formData.get('email');
-              const password = formData.get('password');
+              const email = formData.get('email'); const password = formData.get('password');
               try {
                 const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
                 const data = await res.json();
@@ -1479,201 +976,90 @@ export default function App() {
                 localStorage.setItem('arklaw_user', JSON.stringify(userWithoutPassword));
                 setUser(userWithoutPassword);
                 setUserTokens(userWithoutPassword.tokens || 500000);
-                if (userWithoutPassword.chatHistory && userWithoutPassword.chatHistory.length > 0) {
-                  setChatHistory(userWithoutPassword.chatHistory);
-                }
+                if (userWithoutPassword.chatHistory && userWithoutPassword.chatHistory.length > 0) setChatHistory(userWithoutPassword.chatHistory);
                 setShowLoginPopup(false);
                 alert('Welcome back, ' + userWithoutPassword.name + '! You have ' + (userWithoutPassword.tokens?.toLocaleString() || '500,000') + ' credits.');
-              } catch (error) {
-                alert('Login failed. Please try again.');
-              }
+              } catch (error) { alert('Login failed. Please try again.'); }
             }}>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
-              </div>
-              <div style={{ marginBottom: "25px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label>
-                <input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" />
-              </div>
+              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label><input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" /></div>
+              <div style={{ marginBottom: "25px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label><input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" /></div>
               <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px" }}>Login</button>
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12 }}>
-                Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span>
-              </p>
+              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12 }}>Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
             </form>
           </div>
         </div>
       )}
 
-      {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
           <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} />
-                <h2 style={{ color: GOLD, margin: 0, fontSize: "22px" }}>Join ARK Law AI</h2>
-              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}><img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} /><h2 style={{ color: GOLD, margin: 0, fontSize: "22px" }}>Join ARK Law AI</h2></div>
               <button onClick={() => setShowSignupPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
             <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
               try {
-                const res = await fetch('/api/auth/signup', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.get('email'),
-                    password: formData.get('password'),
-                    name: formData.get('name'),
-                    age: formData.get('age'),
-                    profession: formData.get('profession'),
-                    barOfPractice: formData.get('barOfPractice'),
-                    city: formData.get('city'),
-                    province: formData.get('province'),
-                    country: formData.get('country'),
-                  }),
-                });
+                const res = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: formData.get('email'), password: formData.get('password'), name: formData.get('name'), age: formData.get('age'), profession: formData.get('profession'), barOfPractice: formData.get('barOfPractice'), city: formData.get('city'), province: formData.get('province'), country: formData.get('country') }) });
                 const data = await res.json();
-                if (res.ok) {
-                  setShowSignupPopup(false);
-                  alert('Account created! You have been awarded 500,000 FREE credits! Please login.');
-                  setShowLoginPopup(true);
-                } else {
-                  alert(data.error || 'Signup failed. Please try again.');
-                }
-              } catch (error) {
-                alert('Signup failed. Please try again.');
-              }
+                if (res.ok) { setShowSignupPopup(false); alert('Account created! You have been awarded 500,000 FREE credits! Please login.'); setShowLoginPopup(true); }
+                else { alert(data.error || 'Signup failed. Please try again.'); }
+              } catch (error) { alert('Signup failed. Please try again.'); }
             }}>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label>
-                <input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" />
-              </div>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label>
-                <input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" />
-              </div>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label>
-                <input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" />
-              </div>
+              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label><input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" /></div>
+              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label><input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" /></div>
+              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label><input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" /></div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label>
-                  <input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label>
-                  <select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}>
-                    <option value="">Select...</option>
-                    <option>Lawyer</option>
-                    <option>Legal Assistant</option>
-                    <option>Paralegal</option>
-                    <option>Law Clerk</option>
-                    <option>Court Researcher</option>
-                    <option>Law Student</option>
-                    <option>Judge</option>
-                  </select>
-                </div>
+                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label><input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
+                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label><select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}><option value="">Select...</option><option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option></select></div>
               </div>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label>
-                <input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-              </div>
+              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label><input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label>
-                  <input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
-                <div>
-                  <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label>
-                  <input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-                </div>
+                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label><input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
+                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label><input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
               </div>
-              <div style={{ marginBottom: "25px" }}>
-                <label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label>
-                <input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} />
-              </div>
+              <div style={{ marginBottom: "25px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label><input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
               <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer" }}>Create Account</button>
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12, marginTop: "15px" }}>
-                Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span>
-              </p>
+              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12, marginTop: "15px" }}>Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span></p>
             </form>
           </div>
         </div>
       )}
 
-      {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
           <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: `3px solid ${GOLD}`, maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: `0 0 40px ${GOLD}50` }}>
             <div style={{ padding: "25px 35px", borderBottom: `2px solid ${NAVY_BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px", filter: `drop-shadow(0 0 10px ${GOLD}60)` }} />
-                <div>
-                  <h2 style={{ color: GOLD, margin: 0, fontSize: "22px", fontWeight: 700 }}>ARK Law AI</h2>
-                  <p style={{ color: ACCENT_PK, margin: "4px 0 0 0", fontSize: "12px" }}>My Account</p>
-                </div>
+                <div><h2 style={{ color: GOLD, margin: 0, fontSize: "22px", fontWeight: 700 }}>ARK Law AI</h2><p style={{ color: ACCENT_PK, margin: "4px 0 0 0", fontSize: "12px" }}>My Account</p></div>
               </div>
               <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
             <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
               <div style={{ flex: "0 0 60%", padding: "30px", overflowY: "auto", borderRight: `2px solid ${NAVY_BORDER}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "25px" }}>
-                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY }}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 style={{ color: CREAM, margin: 0, fontSize: "24px", fontWeight: 700 }}>{user.name}</h3>
-                    <p style={{ color: TEXT_MUTED, margin: "5px 0 0 0", fontSize: "12px" }}>⭐ Member since {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                  </div>
+                  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "36px", fontWeight: 700, color: NAVY }}>{user.name.charAt(0).toUpperCase()}</div>
+                  <div><h3 style={{ color: CREAM, margin: 0, fontSize: "24px", fontWeight: 700 }}>{user.name}</h3><p style={{ color: TEXT_MUTED, margin: "5px 0 0 0", fontSize: "12px" }}>⭐ Member since {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p></div>
                 </div>
                 <div style={{ background: NAVY_SURFACE, padding: "20px", borderRadius: "8px", marginBottom: "20px", border: `1px solid ${NAVY_BORDER}` }}>
                   <h4 style={{ color: ACCENT_PK, fontSize: 14, marginBottom: "15px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>Account Information</h4>
                   <div style={{ display: "grid", gap: "14px" }}>
-                    <div>
-                      <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Email Address</label>
-                      <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.email}</div>
-                    </div>
+                    <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Email Address</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.email}</div></div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                      <div>
-                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Age</label>
-                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.age}</div>
-                      </div>
-                      <div>
-                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Profession</label>
-                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.profession}</div>
-                      </div>
+                      <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Age</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.age}</div></div>
+                      <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Profession</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.profession}</div></div>
                     </div>
-                    {user.barOfPractice && (
-                      <div>
-                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Bar of Practice</label>
-                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.barOfPractice}</div>
-                      </div>
-                    )}
+                    {user.barOfPractice && <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Bar of Practice</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.barOfPractice}</div></div>}
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                      <div>
-                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>City</label>
-                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.city}</div>
-                      </div>
-                      <div>
-                        <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Province</label>
-                        <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.province}</div>
-                      </div>
+                      <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>City</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.city}</div></div>
+                      <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Province</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.province}</div></div>
                     </div>
-                    <div>
-                      <label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Country</label>
-                      <div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.country}</div>
-                    </div>
+                    <div><label style={{ color: TEXT_MUTED, fontSize: 10, display: "block", marginBottom: "4px", textTransform: "uppercase" }}>Country</label><div style={{ color: CREAM, fontSize: 14, fontWeight: 600 }}>{user.country}</div></div>
                   </div>
                 </div>
-                <button onClick={() => { localStorage.removeItem('arklaw_user'); localStorage.removeItem(`chat_history_${user.id}`); setUser(null); setChatHistory([]); setShowMyAccountPopup(false); alert('You have been logged out successfully.'); }}
-                  style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #DC2626, #991B1B)", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 15, cursor: "pointer", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                  onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
-                >🚪 Logout</button>
+                <button onClick={() => { localStorage.removeItem('arklaw_user'); localStorage.removeItem(`chat_history_${user.id}`); setUser(null); setChatHistory([]); setShowMyAccountPopup(false); alert('You have been logged out successfully.'); }} style={{ width: "100%", padding: "14px", background: "linear-gradient(135deg, #DC2626, #991B1B)", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 15, cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"} onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}>🚪 Logout</button>
               </div>
               <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", background: NAVY_SURFACE }}>
                 <div style={{ padding: "20px", borderBottom: `1px solid ${NAVY_BORDER}` }}>
@@ -1690,15 +1076,9 @@ export default function App() {
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       {chatHistory.slice().reverse().map((item, idx) => (
-                        <div key={item.id || idx} style={{ background: NAVY, padding: "12px", borderRadius: "6px", border: `1px solid ${NAVY_BORDER}`, cursor: "pointer", transition: "all 0.2s" }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = `${NAVY}dd`; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.background = NAVY; }}
-                        >
+                        <div key={item.id || idx} style={{ background: NAVY, padding: "12px", borderRadius: "6px", border: `1px solid ${NAVY_BORDER}`, cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = `${NAVY}dd`; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.background = NAVY; }}>
                           <div style={{ color: CREAM, fontSize: 12, lineHeight: "1.4", marginBottom: "6px" }}>{item.question}</div>
-                          <div style={{ color: TEXT_MUTED, fontSize: 9, display: "flex", alignItems: "center", gap: "5px" }}>
-                            <span>🕒</span>
-                            {new Date(item.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                          </div>
+                          <div style={{ color: TEXT_MUTED, fontSize: 9, display: "flex", alignItems: "center", gap: "5px" }}><span>🕒</span>{new Date(item.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
                         </div>
                       ))}
                     </div>
@@ -1710,14 +1090,10 @@ export default function App() {
         </div>
       )}
 
-      {/* UPGRADE TO PRO POPUP */}
       {showUpgradePopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
           <div style={{ background: NAVY, padding: "40px", borderRadius: "16px", width: "90%", maxWidth: "500px", border: `3px solid ${GOLD}`, boxShadow: `0 0 40px ${GOLD}60`, textAlign: "center", position: "relative" }}>
-            <button onClick={() => setShowUpgradePopup(false)} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", color: GOLD, fontSize: 32, cursor: "pointer", lineHeight: 1, transition: "all 0.2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "rotate(90deg)"; e.currentTarget.style.color = ACCENT_PK; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "rotate(0deg)"; e.currentTarget.style.color = GOLD; }}
-            >✕</button>
+            <button onClick={() => setShowUpgradePopup(false)} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", color: GOLD, fontSize: 32, cursor: "pointer", lineHeight: 1, transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "rotate(90deg)"; e.currentTarget.style.color = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "rotate(0deg)"; e.currentTarget.style.color = GOLD; }}>✕</button>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", marginBottom: "30px" }}>
               <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "100px", height: "100px", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
               <h2 style={{ color: GOLD, margin: 0, fontSize: "32px", fontWeight: 800, letterSpacing: "1px" }}>ARK Law AI</h2>
@@ -1732,10 +1108,7 @@ export default function App() {
             <div style={{ marginTop: "30px", textAlign: "left", background: NAVY_SURFACE, padding: "20px", borderRadius: "10px", border: `1px solid ${NAVY_BORDER}` }}>
               <div style={{ color: GOLD, fontSize: "14px", fontWeight: 700, marginBottom: "15px" }}>✨ Pro Features:</div>
               {["Priority AI Response Time","Advanced Document Analysis","Unlimited Chat History","Export Chat as PDF","Premium Legal Templates","24/7 Priority Support"].map((feature, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", color: TEXT_MUTED, fontSize: "13px" }}>
-                  <span style={{ color: ACCENT_PK, fontSize: "16px" }}>✓</span>
-                  {feature}
-                </div>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", color: TEXT_MUTED, fontSize: "13px" }}><span style={{ color: ACCENT_PK, fontSize: "16px" }}>✓</span>{feature}</div>
               ))}
             </div>
           </div>
