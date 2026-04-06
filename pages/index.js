@@ -398,6 +398,26 @@ export default function App() {
         @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.7); transform: scale(1); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.9); transform: scale(1.02); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
         @media (max-width: 768px) { .desktop-only { display: none; } }
+
+        /* ── Law Animation Strip ── */
+        @keyframes lawScroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .law-anim-track { animation: lawScroll 28s linear infinite; display: flex; align-items: center; gap: 0; width: max-content; will-change: transform; }
+        .law-anim-track:hover { animation-play-state: paused; }
+
+        @keyframes scalesBob  { 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-3px) rotate(2deg); } }
+        @keyframes hammerSwing{ 0%,100%{ transform:rotate(0deg) translateX(0); } 40%{ transform:rotate(-28deg) translateX(2px); } 70%{ transform:rotate(8deg) translateX(-1px); } }
+        @keyframes scrollUnroll{ 0%{ clip-path:inset(0 100% 0 0); opacity:0; } 60%{ opacity:1; } 100%{ clip-path:inset(0 0% 0 0); opacity:1; } }
+        @keyframes aiPulseRing { 0%,100%{ transform:scale(1);   opacity:0.7; } 50%{ transform:scale(1.18); opacity:1; } }
+        @keyframes brainSpark  { 0%,100%{ filter:drop-shadow(0 0 2px #C9A84C); } 50%{ filter:drop-shadow(0 0 8px #FFD700); } }
+        @keyframes gavel3d     { 0%,100%{ transform:rotateZ(0deg) rotateY(0deg); } 35%{ transform:rotateZ(-35deg) rotateY(20deg); } 65%{ transform:rotateZ(10deg) rotateY(-10deg); } }
+        @keyframes floatDoc    { 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-4px) rotate(1deg); } }
+        @keyframes neonBlink   { 0%,100%{ opacity:1; } 45%,55%{ opacity:0.4; } }
+        @keyframes orbitDot    { 0%{ transform:rotate(0deg)   translateX(12px) rotate(0deg);   } 100%{ transform:rotate(360deg) translateX(12px) rotate(-360deg); } }
+        @keyframes typeCursor  { 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+        @keyframes pillPulse   { 0%,100%{ transform:scaleX(1);   } 50%{ transform:scaleX(1.06); } }
       `}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
@@ -418,6 +438,109 @@ export default function App() {
               <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
                 by Attorney & AI Innovator Khawer Rabbani
               </div>
+            </div>
+          </div>
+
+          {/* CENTER - Scrolling Law Animation Strip */}
+          <div style={{ flex: 1, overflow: "hidden", margin: "0 16px", height: "48px", display: "flex", alignItems: "center", borderRadius: "8px", border: `1px solid ${GOLD}50`, background: `linear-gradient(135deg, ${NAVY}08, ${GOLD}08)` }}>
+            <div className="law-anim-track">
+              {/* Render items twice for seamless infinite loop */}
+              {[0, 1].map(copyIdx => (
+                <div key={copyIdx} style={{ display: "flex", alignItems: "center", gap: "0" }}>
+
+                  {/* ① Scales of Justice */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <svg width="32" height="32" viewBox="0 0 32 32" style={{ animation:"scalesBob 2.4s ease-in-out infinite", flexShrink:0 }}>
+                      <line x1="16" y1="4" x2="16" y2="28" stroke={GOLD} strokeWidth="1.5"/>
+                      <line x1="6" y1="10" x2="26" y2="10" stroke={GOLD} strokeWidth="1.5"/>
+                      <ellipse cx="16" cy="4" rx="2" ry="2" fill={GOLD}/>
+                      <path d="M6 10 L2 19 Q6 22 10 19 Z" fill="none" stroke={GOLD} strokeWidth="1.2"/>
+                      <path d="M26 10 L22 19 Q26 22 30 19 Z" fill="none" stroke={GOLD} strokeWidth="1.2"/>
+                      <line x1="10" y1="28" x2="22" y2="28" stroke={GOLD} strokeWidth="2"/>
+                    </svg>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Justice & Balance</span>
+                  </div>
+
+                  {/* ② AI Brain Pulse */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <div style={{ position:"relative", width:30, height:30, flexShrink:0 }}>
+                      <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:`1.5px solid ${ACCENT_PK}`, animation:"aiPulseRing 2s ease-in-out infinite" }}/>
+                      <div style={{ position:"absolute", inset:4, borderRadius:"50%", border:`1px solid ${GOLD}`, animation:"aiPulseRing 2s ease-in-out infinite 0.3s" }}/>
+                      <svg width="30" height="30" viewBox="0 0 30 30" style={{ position:"absolute", inset:0, animation:"brainSpark 2s ease-in-out infinite" }}>
+                        <text x="15" y="20" textAnchor="middle" fontSize="14" fill={NAVY}>⚖</text>
+                      </svg>
+                    </div>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>AI Legal Intelligence</span>
+                  </div>
+
+                  {/* ③ Gavel Strike */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <svg width="32" height="32" viewBox="0 0 32 32" style={{ animation:"hammerSwing 1.8s ease-in-out infinite", transformOrigin:"28px 28px", flexShrink:0 }}>
+                      <rect x="4" y="4" width="14" height="8" rx="2" fill={NAVY} stroke={GOLD} strokeWidth="1.2"/>
+                      <line x1="14" y1="12" x2="24" y2="24" stroke={NAVY} strokeWidth="4" strokeLinecap="round"/>
+                      <line x1="14" y1="12" x2="24" y2="24" stroke={GOLD} strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="4" y1="28" x2="22" y2="28" stroke={NAVY} strokeWidth="2.5" strokeLinecap="round"/>
+                    </svg>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Court Proceedings</span>
+                  </div>
+
+                  {/* ④ Scrolling Document */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <svg width="26" height="32" viewBox="0 0 26 32" style={{ animation:"floatDoc 2.2s ease-in-out infinite", flexShrink:0 }}>
+                      <rect x="2" y="2" width="22" height="28" rx="3" fill="white" stroke={GOLD} strokeWidth="1.5"/>
+                      <rect x="2" y="2" width="22" height="6" rx="3" fill={NAVY}/>
+                      <line x1="6" y1="14" x2="20" y2="14" stroke={GOLD} strokeWidth="1.2"/>
+                      <line x1="6" y1="18" x2="20" y2="18" stroke={NAVY_BORDER} strokeWidth="1"/>
+                      <line x1="6" y1="22" x2="16" y2="22" stroke={NAVY_BORDER} strokeWidth="1"/>
+                      <circle cx="21" cy="26" r="3" fill={ACCENT_PK}/>
+                      <text x="21" y="28" textAnchor="middle" fontSize="4" fill="white" fontWeight="bold">✓</text>
+                    </svg>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Legal Documents</span>
+                  </div>
+
+                  {/* ⑤ Pakistani Law Badge */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <div style={{ width:30, height:30, borderRadius:"50%", background:NAVY, display:"flex", alignItems:"center", justifyContent:"center", animation:"pillPulse 2s ease-in-out infinite", flexShrink:0, border:`2px solid ${GOLD}` }}>
+                      <span style={{ fontSize:14 }}>🇵🇰</span>
+                    </div>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Pakistani Law</span>
+                  </div>
+
+                  {/* ⑥ AI Orbiting Node */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <div style={{ position:"relative", width:30, height:30, flexShrink:0 }}>
+                      <div style={{ position:"absolute", inset:8, borderRadius:"50%", background:NAVY, border:`2px solid ${GOLD}` }}/>
+                      <div style={{ position:"absolute", top:"50%", left:"50%", marginTop:-15, marginLeft:-15, width:30, height:30 }}>
+                        <div style={{ position:"absolute", top:"50%", left:"50%", width:6, height:6, marginTop:-3, marginLeft:-3, borderRadius:"50%", background:ACCENT_PK, animation:"orbitDot 1.6s linear infinite" }}/>
+                      </div>
+                    </div>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Smart Analysis</span>
+                  </div>
+
+                  {/* ⑦ Constitution Scroll */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <svg width="26" height="32" viewBox="0 0 26 32" style={{ animation:"floatDoc 2.8s ease-in-out infinite 0.4s", flexShrink:0 }}>
+                      <path d="M4 4 Q4 2 6 2 L22 2 Q24 2 24 4 L24 28 Q24 30 22 30 L6 30 Q4 30 4 28 Z" fill={CREAM} stroke={GOLD} strokeWidth="1.5"/>
+                      <path d="M4 6 Q2 6 2 8 L2 28 Q2 30 4 30" fill="none" stroke={GOLD} strokeWidth="1.5"/>
+                      <line x1="8" y1="10" x2="20" y2="10" stroke={NAVY} strokeWidth="1.2"/>
+                      <line x1="8" y1="14" x2="20" y2="14" stroke={NAVY} strokeWidth="1"/>
+                      <line x1="8" y1="18" x2="17" y2="18" stroke={NAVY} strokeWidth="1"/>
+                      <text x="13" y="27" textAnchor="middle" fontSize="6" fill={GOLD} fontWeight="bold">آئین</text>
+                    </svg>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Constitution 1973</span>
+                  </div>
+
+                  {/* ⑧ Typing AI */}
+                  <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"0 22px", borderRight:`1px solid ${GOLD}30` }}>
+                    <div style={{ background:NAVY, borderRadius:6, padding:"4px 8px", display:"flex", alignItems:"center", gap:4, flexShrink:0 }}>
+                      <span style={{ fontSize:9, color:GOLD, fontFamily:"monospace", letterSpacing:1 }}>ARK</span>
+                      <span style={{ width:1.5, height:12, background:GOLD, display:"inline-block", animation:"typeCursor 1s step-end infinite" }}/>
+                    </div>
+                    <span style={{ fontSize:10, color:NAVY, fontWeight:600, whiteSpace:"nowrap" }}>Drafting Docs</span>
+                  </div>
+
+                </div>
+              ))}
             </div>
           </div>
 
