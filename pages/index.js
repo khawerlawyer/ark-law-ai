@@ -392,8 +392,7 @@ export default function App() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
         #__next { height: 100%; overflow: hidden; }
-        @keyframes scroll { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
-        .news-ticker-content { animation: scroll 120s linear infinite; will-change: transform; }
+
 
         @keyframes glow { 0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); } 50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); } }
         @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.7); transform: scale(1); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.9); transform: scale(1.02); } }
@@ -407,16 +406,16 @@ export default function App() {
             HEADER
             LEFT: Logo  |  CENTER: Contact email  |  RIGHT: Flag + Lang + Auth
         ════════════════════════════════════════════════════════ */}
-        <header style={{ background: NAVY, padding: "8px 20px", borderBottom: `1px solid ${NAVY_BORDER}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <header style={{ background: CREAM, padding: "8px 20px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
 
           {/* LEFT - LOGO */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: TEXT_PRIMARY }}>The Legal Intelligence Engine</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+              <div style={{ fontSize: 10, color: NAVY }}>The Legal Intelligence Engine</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
+              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
                 by Attorney & AI Innovator Khawer Rabbani
               </div>
             </div>
@@ -426,16 +425,16 @@ export default function App() {
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
 
             {/* Language toggles */}
-            <button style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
-            <button style={{ padding: "5px 10px", background: NAVY_SURFACE, color: TEXT_MUTED, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
+            <button style={{ padding: "5px 10px", background: NAVY, color: CREAM, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
+            <button style={{ padding: "5px 10px", background: "transparent", color: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
 
             {/* Divider */}
-            <div style={{ width: "1px", height: "24px", background: NAVY_BORDER, margin: "0 2px" }} />
+            <div style={{ width: "1px", height: "24px", background: NAVY_BORDER, margin: "0 2px", opacity: 0.4 }} />
 
             {/* Auth: Login / Signup OR token + name + My Account */}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: GOLD, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = GOLD; }}>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: NAVY, border: `1px solid ${NAVY}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = NAVY; e.currentTarget.style.color = CREAM; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = NAVY; }}>
                   Login
                 </button>
                 <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, animation: "glowPulse 2s infinite", whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
@@ -445,7 +444,7 @@ export default function App() {
             ) : (
               <>
                 {/* Token Counter (compact) */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
                   <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
                   </div>
@@ -462,27 +461,12 @@ export default function App() {
           </div>
         </header>
 
-        {/* NEWS TICKER */}
-        <div style={{ background: NAVY_MID, borderBottom: `1px solid ${NAVY_BORDER}`, overflow: "hidden", display: "flex", alignItems: "center", height: "28px", padding: "5px 20px", flexShrink: 0 }}>
-          <span style={{ color: GOLD, fontWeight: 600, flexShrink: 0, marginRight: "20px", fontSize: 12, whiteSpace: "nowrap" }}>⚖ LEGAL NEWS</span>
-          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <div className="news-ticker-content" style={{ display: "flex", gap: "80px", whiteSpace: "nowrap", width: "max-content" }}>
-              {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
-                <button key={`news-1-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, whiteSpace: "nowrap" }}>{item}</button>
-              ))}
-              {(newsItems.length > 0 ? newsItems : ["🇵🇰 Supreme Court Ruling on Constitutional Rights","🇵🇰 New Tax Amendment Affects Business Sector","🇵🇰 Family Court Interprets Guardianship Laws","🇵🇰 Labour Ministry Issues Worker Protection Guidelines","🇵🇰 High Court Decision on Property Disputes","🇵🇰 Procedural Changes in Criminal Courts"]).map((item, i) => (
-                <button key={`news-2-${i}`} onClick={() => newsItems.length > 0 ? handleNewsClick(item) : null} style={{ background: "none", border: "none", color: ACCENT_PK, cursor: newsItems.length > 0 ? "pointer" : "default", fontSize: 12, padding: "0", flexShrink: 0, fontWeight: 500, whiteSpace: "nowrap" }}>{item}</button>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* BODY */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
           {/* ═══ LEFT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "200px", background: NAVY_SURFACE, borderRight: `1px solid ${NAVY_BORDER}`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
 
               {/* Photos */}
               <div style={{ display: "flex", gap: "8px", marginBottom: "6px", justifyContent: "center" }}>
@@ -592,7 +576,7 @@ export default function App() {
 
           {/* ═══ RIGHT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "200px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ width: "200px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
 
               {/* ── CARD: Upgrade to Pro ── */}
               <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
@@ -609,7 +593,7 @@ export default function App() {
               <div>
                 <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "7px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
                 {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "7px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_SECONDARY, cursor: "pointer", marginBottom: "5px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = TEXT_PRIMARY; }} onMouseLeave={(e) => { e.currentTarget.style.background = NAVY; e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.color = TEXT_SECONDARY; }}>{query}</button>
+                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "7px 8px", background: "white", border: `1px solid ${NAVY_BORDER}`, color: NAVY, cursor: "pointer", marginBottom: "5px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.color = NAVY; }}>{query}</button>
                 ))}
               </div>
 
@@ -617,7 +601,7 @@ export default function App() {
               <div>
                 <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
                 {PRACTICE_AREAS_PK.map((area) => (
-                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "5px 7px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, cursor: "pointer", marginBottom: "3px", borderRadius: "4px", fontSize: 9, textAlign: "left" }}>
+                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "5px 7px", background: "white", border: `1px solid ${NAVY_BORDER}`, color: NAVY, cursor: "pointer", marginBottom: "3px", borderRadius: "4px", fontSize: 9, textAlign: "left", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = NAVY; }}>
                     {area.icon} {area.label}
                   </button>
                 ))}
