@@ -394,8 +394,7 @@ export default function App() {
         #__next { height: 100%; overflow: hidden; }
         @keyframes scroll { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
         .news-ticker-content { animation: scroll 120s linear infinite; will-change: transform; }
-        @keyframes flagWave { 0%, 100% { transform: perspective(400px) rotateY(0deg); } 25% { transform: perspective(400px) rotateY(-15deg); } 50% { transform: perspective(400px) rotateY(0deg); } 75% { transform: perspective(400px) rotateY(15deg); } }
-        .pakistan-flag { animation: flagWave 3s ease-in-out infinite; transform-origin: left center; display: inline-block; }
+
         @keyframes glow { 0%, 100% { box-shadow: 0 0 15px rgba(201,168,76,0.5); } 50% { box-shadow: 0 0 25px rgba(201,168,76,0.8); } }
         @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.7); transform: scale(1); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.9); transform: scale(1.02); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
@@ -423,37 +422,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* CENTER - Contact email only */}
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <a href="mailto:contact@arklaw.ai" style={{ fontSize: 11, color: ACCENT_PK, textDecoration: "none", display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
-              <span style={{ color: TEXT_MUTED, fontSize: 10 }}>Contact us:</span>
-              📧 contact@arklaw.ai
-            </a>
-          </div>
-
-          {/* RIGHT - Flag + Language + Auth buttons */}
+          {/* RIGHT - Language + Auth buttons */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-
-            {/* Pakistan Flag */}
-            <div className="pakistan-flag" style={{ width: "56px", height: "38px", border: "1px solid rgba(201,168,76,0.3)", borderRadius: "2px", overflow: "visible", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", perspective: "400px" }}>
-              <svg viewBox="0 0 56 38" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%", overflow: "visible" }}>
-                <defs>
-                  <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style={{ stopColor: "#01863F", stopOpacity: 1 }} /><stop offset="50%" style={{ stopColor: "#01A550", stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: "#01863F", stopOpacity: 1 }} /></linearGradient>
-                  <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style={{ stopColor: "#F8F8F8", stopOpacity: 1 }} /><stop offset="50%" style={{ stopColor: "#FFFFFF", stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: "#F0F0F0", stopOpacity: 1 }} /></linearGradient>
-                  <filter id="shadow"><feDropShadow dx="0.5" dy="0.5" stdDeviation="0.8" floodOpacity="0.4"/></filter>
-                  <clipPath id="flagClip"><path><animate attributeName="d" values="M 0 0 L 56 0 L 56 38 L 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 Q 14 -2 28 0 T 56 0 L 56 38 Q 42 40 28 38 T 0 38 Z;M 0 0 Q 14 2 28 0 T 56 0 L 56 38 Q 42 36 28 38 T 0 38 Z;M 0 0 L 56 0 L 56 38 L 0 38 Z" dur="2.5s" repeatCount="indefinite"/></path></clipPath>
-                </defs>
-                <g clipPath="url(#flagClip)">
-                  <rect x="0" y="0" width="56" height="38" fill="url(#greenGradient)"/>
-                  <rect x="0" y="0" width="14" height="38" fill="url(#whiteGradient)"/>
-                  <g filter="url(#shadow)"><circle cx="32" cy="19" r="8.5" fill="#FFFFFF"/><circle cx="34.5" cy="19" r="7.5" fill="url(#greenGradient)"/></g>
-                  <g transform="translate(42, 19)" filter="url(#shadow)"><polygon points="0,-6.5 2,-2 7,-2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2 -2,-2" fill="#FFFFFF" stroke="#F5F5F5" strokeWidth="0.3"/></g>
-                  <g opacity="0.25"><path fill="#FFFFFF"><animate attributeName="d" values="M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z;M 14 0 Q 24 -3 35 0 T 56 0 L 56 38 Q 45 41 35 38 T 14 38 Z;M 14 0 Q 24 3 35 0 T 56 0 L 56 38 Q 45 35 35 38 T 14 38 Z" dur="2s" repeatCount="indefinite"/></path></g>
-                  <g opacity="0.15"><rect x="0" y="0" width="56" height="38" fill="url(#whiteGradient)"><animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/></rect></g>
-                </g>
-                <line x1="0" y1="0" x2="0" y2="38" stroke="#333" strokeWidth="0.5" opacity="0.3"/>
-              </svg>
-            </div>
 
             {/* Language toggles */}
             <button style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
@@ -530,9 +500,9 @@ export default function App() {
               </div>
 
               {/* ── CARD: Analyze Documents ── */}
-              <div style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+              <div style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
               >
                 <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📂</div>
                 <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Analyze Documents</div>
@@ -541,9 +511,9 @@ export default function App() {
               </div>
 
               {/* ── CARD: Compare Documents ── */}
-              <div onClick={() => setShowComparePopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+              <div onClick={() => setShowComparePopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
               >
                 <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>⚖️</div>
                 <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Compare Documents</div>
@@ -552,9 +522,9 @@ export default function App() {
               </div>
 
               {/* ── CARD: Draft Documents ── */}
-              <div onClick={() => setShowDraftPopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+              <div onClick={() => setShowDraftPopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
               >
                 <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✍️</div>
                 <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Draft Documents</div>
@@ -625,9 +595,9 @@ export default function App() {
             <div style={{ width: "200px", background: NAVY_SURFACE, borderLeft: `1px solid ${NAVY_BORDER}`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
 
               {/* ── CARD: Upgrade to Pro ── */}
-              <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "10px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, borderRadius: "8px", border: `2px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}40` }}
+              <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}40`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
               >
                 <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✨</div>
                 <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Upgrade to Pro</div>
@@ -661,7 +631,12 @@ export default function App() {
           <div style={{ maxWidth: "1600px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "6px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: "1", minWidth: "180px" }}>
               <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "20px", height: "20px", opacity: 0.85 }} />
-              <span style={{ fontSize: "9px", color: GOLD, fontStyle: "italic", lineHeight: "1.3" }}>Dedicated to the Legacy of Hon. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span style={{ fontSize: "9px", color: GOLD, fontStyle: "italic", lineHeight: "1.3" }}>Dedicated to the Legacy of Hon. Justice S. A. Rabbani, Legendary Jurist of Pakistan</span>
+                <a href="mailto:contact@arklaw.ai" style={{ fontSize: "9px", color: ACCENT_PK, textDecoration: "none", display: "flex", alignItems: "center", gap: "4px", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = GOLD} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
+                  <span style={{ color: TEXT_MUTED }}>Contact us:</span> 📧 contact@arklaw.ai
+                </a>
+              </div>
             </div>
             <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
               {["Features", "About Us", "Docs", "Contact"].map((link) => (
