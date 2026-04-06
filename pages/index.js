@@ -606,46 +606,49 @@ export default function App() {
                 </div>
               </div>
 
-              {/* ── 3 MINI TOOL CARDS (50% smaller = horizontal row style) ── */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px", flexShrink: 0 }}>
+              {/* ── 3 TOOL CARDS — clean list style ── */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
 
                 {/* Analyze */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
-                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>📂</div>
+                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Analyze Docs</div>
-                    <label style={{ fontSize: 7, color: ACCENT_PK, cursor: "pointer", whiteSpace: "nowrap" }}>
-                      Upload ↑
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Analyze Documents</div>
+                    <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
+                      Upload to analyze ↑
                       <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert("Feature coming soon: Document analysis"); }} />
                     </label>
                   </div>
+                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
                 </div>
 
                 {/* Compare */}
-                <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
-                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>⚖️</div>
+                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Compare Docs</div>
-                    <div style={{ fontSize: 7, color: ACCENT_PK }}>Upload 2 to compare</div>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Compare Documents</div>
+                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>Upload 2 docs to compare</div>
                   </div>
+                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
                 </div>
 
                 {/* Draft */}
-                <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
-                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>✍️</div>
+                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Draft Docs</div>
-                    <div style={{ fontSize: 7, color: ACCENT_PK }}>Contracts, affidavits…</div>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Draft Documents</div>
+                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>Contracts, affidavits & more</div>
                   </div>
+                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
                 </div>
               </div>
 
@@ -799,37 +802,99 @@ export default function App() {
 
           {/* ═══ RIGHT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "200px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ width: "220px", background: "white", borderLeft: "1px solid #E8E8E4", display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
-              {/* ── CARD: Upgrade to Pro (50% smaller, horizontal) ── */}
-              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20`, flexShrink: 0 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+              {/* ── Upgrade to Pro (slim strip at top) ── */}
+              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: `linear-gradient(135deg, ${NAVY}, #1A3050)`, cursor: "pointer", flexShrink: 0, transition: "opacity 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
               >
-                <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>✨</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Upgrade to Pro</div>
-                  <div style={{ fontSize: 7, color: ACCENT_PK }}>Faster AI & more tools</div>
+                <span style={{ fontSize: 13 }}>✨</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, lineHeight: 1.2 }}>Upgrade to Pro</div>
+                  <div style={{ fontSize: 8, color: "#8AABB8" }}>Faster AI & exclusive tools</div>
                 </div>
-                <div style={{ fontSize: 7, padding: "2px 5px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, borderRadius: "3px", color: NAVY, fontWeight: 700, flexShrink: 0 }}>GO PRO</div>
+                <div style={{ fontSize: 8, padding: "2px 7px", background: GOLD, borderRadius: "10px", color: NAVY, fontWeight: 700, whiteSpace: "nowrap" }}>GO PRO</div>
               </div>
 
-              {/* Quick Queries */}
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "7px", textAlign: "center" }}>💬 QUICK LEGAL QUERIES</div>
-                {QUICK_QUERIES_PK.map((query, i) => (
-                  <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "block", width: "100%", padding: "7px 8px", background: "white", border: `1px solid ${NAVY_BORDER}`, color: NAVY, cursor: "pointer", marginBottom: "5px", borderRadius: "4px", fontSize: 9, textAlign: "left", lineHeight: "1.4", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = NAVY_BORDER; e.currentTarget.style.color = NAVY; }}>{query}</button>
-                ))}
-              </div>
+              {/* Scrollable content */}
+              <div style={{ flex: 1, overflowY: "auto", padding: "14px 10px" }}>
 
-              {/* Practice Areas */}
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: GOLD, marginBottom: "6px" }}>⚖️ PRACTICE AREAS</div>
-                {PRACTICE_AREAS_PK.map((area) => (
-                  <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "block", width: "100%", padding: "5px 7px", background: "white", border: `1px solid ${NAVY_BORDER}`, color: NAVY, cursor: "pointer", marginBottom: "3px", borderRadius: "4px", fontSize: 9, textAlign: "left", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = NAVY; }}>
-                    {area.icon} {area.label}
-                  </button>
-                ))}
+                {/* ── QUICK QUERIES section ── */}
+                <div style={{ marginBottom: "20px" }}>
+                  {/* Section header */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                    <span style={{ fontSize: 14 }}>💡</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A" }}>Quick Queries</span>
+                  </div>
+                  <p style={{ fontSize: 9, color: "#888", margin: "0 0 10px 0", lineHeight: 1.4 }}>Click any question to get started</p>
+
+                  {/* Query list */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    {QUICK_QUERIES_PK.map((query, i) => (
+                      <button
+                        key={i}
+                        onClick={() => sendMessage(query, true)}
+                        style={{
+                          display: "flex", alignItems: "flex-start", gap: "8px",
+                          width: "100%", padding: "8px 10px",
+                          background: "white", border: "1px solid #EFEFEB",
+                          borderRadius: "8px", cursor: "pointer",
+                          textAlign: "left", fontSize: 10, color: "#2D2D2D",
+                          lineHeight: 1.4, fontWeight: 400,
+                          transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)"
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; e.currentTarget.style.color = "#2D2D2D"; }}
+                      >
+                        <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#E8F5EE", border: "1px solid #C2E0CE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>
+                          <span style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 700 }}>?</span>
+                        </div>
+                        <span style={{ flex: 1 }}>{query}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div style={{ height: "1px", background: "#EBEBEB", margin: "0 0 16px 0" }} />
+
+                {/* ── PRACTICE AREAS section ── */}
+                <div>
+                  {/* Section header */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+                    <span style={{ fontSize: 14 }}>⚖️</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", textTransform: "uppercase", letterSpacing: "0.4px" }}>Practice Areas</span>
+                  </div>
+
+                  {/* Areas list */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    {PRACTICE_AREAS_PK.map((area) => (
+                      <button
+                        key={area.id}
+                        onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "10px",
+                          width: "100%", padding: "9px 10px",
+                          background: "white", border: "1px solid #EFEFEB",
+                          borderRadius: "8px", cursor: "pointer",
+                          textAlign: "left", fontSize: 11, color: "#1A1A1A",
+                          fontWeight: 500, transition: "all 0.15s",
+                          boxShadow: "0 1px 2px rgba(0,0,0,0.04)"
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; }}
+                      >
+                        <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "#EEF7F2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", flexShrink: 0 }}>
+                          {area.icon}
+                        </div>
+                        <span style={{ flex: 1 }}>{area.label}</span>
+                        <span style={{ color: "#BBBBBB", fontSize: 13, fontWeight: 300 }}>›</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
