@@ -33,6 +33,7 @@ export default function App() {
   const [showDraftPopup,     setShowDraftPopup]     = useState(false);
   const [showComparePopup,   setShowComparePopup]   = useState(false);
   const [showLinkedInPopup,  setShowLinkedInPopup]  = useState(false);
+  const [showComingSoon,     setShowComingSoon]     = useState(false);
 
   // ─── News state ─────────────────────────────────────────────────────────────
   const [newsItems,          setNewsItems]          = useState([]);
@@ -500,17 +501,17 @@ export default function App() {
           100% { transform: translateX(-100%); }
         }
         @keyframes goldGlow {
-          0%, 100% { text-shadow: 0 0 6px #C9A84C, 0 0 14px #C9A84C99, 0 0 26px #FFD70055; }
-          50%       { text-shadow: 0 0 12px #FFD700, 0 0 24px #C9A84Cdd, 0 0 42px #FFD70099; }
+          0%, 100% { text-shadow: 0 0 8px #C9A84C, 0 0 18px #C9A84Caa, 0 0 32px #FFD70066, 0 0 50px #FFD70033; }
+          50%       { text-shadow: 0 0 14px #FFD700, 0 0 28px #C9A84Cff, 0 0 50px #FFD700bb, 0 0 80px #FFD70055; }
         }
         .verse-track {
           display: inline-block;
           white-space: nowrap;
-          animation: verseScroll 61s linear infinite;
+          animation: verseScroll 180s linear infinite;
           will-change: transform;
         }
         .verse-track:hover { animation-play-state: paused; cursor: default; }
-        .verse-text { animation: goldGlow 2.4s ease-in-out infinite; }
+        .verse-text { animation: goldGlow 2.8s ease-in-out infinite; }
 
         /* ── [CHANGE 3] Metric counter pulse ── */
         @keyframes counterPop { 0%{ transform:scale(1); } 50%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
@@ -522,16 +523,16 @@ export default function App() {
         {/* ══════════════════════════════════════════════════════════════════
             HEADER
         ═══════════════════════════════════════════════════════════════════ */}
-        <header style={{ background: CREAM, padding: "8px 20px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
+        <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
 
           {/* LEFT — Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: NAVY }}>The Legal Intelligence Engine</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              <div style={{ fontSize: 10, color: "#9DB89A" }}>The Legal Intelligence Engine</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline" }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
+              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
                 by Attorney & AI Innovator Khawer Rabbani
               </div>
             </div>
@@ -561,7 +562,7 @@ export default function App() {
             {/* Scrolling verse */}
             <div style={{ overflow: "hidden", width: "100%", padding: "0 42px" }}>
               <span className="verse-track">
-                <span className="verse-text" style={{ fontSize: 11, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.04em", fontWeight: 500 }}>
+                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
                   {QURAN_VERSE}
                 </span>
               </span>
@@ -570,12 +571,12 @@ export default function App() {
 
           {/* RIGHT — Language + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
-            <button style={{ padding: "5px 10px", background: NAVY, color: CREAM, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
-            <button style={{ padding: "5px 10px", background: "transparent", color: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.4 }} title="Urdu — Coming Soon">اردو</button>
-            <div style={{ width: "1px", height: "24px", background: NAVY_BORDER, margin: "0 2px", opacity: 0.4 }} />
+            <button style={{ padding: "5px 10px", background: "#2A432A", color: "#E8D97A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
+            <button style={{ padding: "5px 10px", background: "transparent", color: "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.5 }} title="Urdu — Coming Soon">اردو</button>
+            <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: NAVY, border: `1px solid ${NAVY}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = NAVY; e.currentTarget.style.color = CREAM; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = NAVY; }}>Login</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: "#E8D97A", border: "1px solid #E8D97A88", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.borderColor = "#E8D97A"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "#E8D97A88"; }}>Login</button>
                 <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, animation: "glowPulse 2s infinite", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>✨ Sign Up Free</button>
               </>
             ) : (
@@ -845,79 +846,74 @@ export default function App() {
         {/* ══════════════════════════════════════════════════════════════════
             FOOTER — matches screenshot: dark olive/green, columns, social icons
         ═══════════════════════════════════════════════════════════════════ */}
+        {/* ══════════════════════════════════════════════════════════════════
+            FOOTER — same height as header, dark green, all links → coming soon
+        ═══════════════════════════════════════════════════════════════════ */}
         <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
-          {/* Main footer row */}
-          <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "14px 28px 10px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "20px" }}>
+          <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "6px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
 
-            {/* LEFT — Logo + tagline */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px", minWidth: "160px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "24px", height: "24px", opacity: 0.95 }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia, serif", letterSpacing: "0.3px" }}>ARK LAW AI</span>
+            {/* LEFT — Logo + tagline compact */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "20px", height: "20px", opacity: 0.95 }} />
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia, serif", lineHeight: 1.1 }}>ARK LAW AI</div>
+                <div style={{ fontSize: 7.5, color: "#8BAA87", lineHeight: 1.2 }}>AI-Powered Legal Intelligence · Built for Pakistan</div>
               </div>
-              <div style={{ fontSize: 9, color: "#8BAA87", lineHeight: 1.5 }}>AI-Powered Legal Intelligence</div>
-              <div style={{ fontSize: 9, color: "#8BAA87", lineHeight: 1.5 }}>Trusted by Professionals. Built for Pakistan.</div>
             </div>
 
-            {/* CENTER — Three link columns */}
-            <div style={{ display: "flex", gap: "32px", flex: 1, justifyContent: "center" }}>
+            {/* CENTER — Three link columns inline */}
+            <div style={{ display: "flex", gap: "28px", alignItems: "flex-start", flex: 1, justifyContent: "center" }}>
 
               {/* PRODUCT column */}
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "7px" }}>Product</div>
+                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Product</div>
                 {["Features", "Document Analysis", "AI Drafting"].map(link => (
-                  <div key={link} style={{ marginBottom: "4px" }}>
-                    <span style={{ fontSize: 9.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                  <div key={link} style={{ marginBottom: "2px" }}>
+                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
                   </div>
                 ))}
               </div>
 
               {/* COMPANY column */}
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "7px" }}>Company</div>
+                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Company</div>
                 {["About Us", "Careers", "Blog"].map(link => (
-                  <div key={link} style={{ marginBottom: "4px" }}>
-                    <span style={{ fontSize: 9.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                  <div key={link} style={{ marginBottom: "2px" }}>
+                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
                   </div>
                 ))}
               </div>
 
               {/* RESOURCES column */}
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "7px" }}>Resources</div>
+                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Resources</div>
                 {["Help Center", "Guides", "Legal Updates"].map(link => (
-                  <div key={link} style={{ marginBottom: "4px" }}>
-                    <span style={{ fontSize: 9.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                  <div key={link} style={{ marginBottom: "2px" }}>
+                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* RIGHT — Social icons */}
-            <div style={{ display: "flex", gap: "8px", alignItems: "flex-start", paddingTop: "2px" }}>
-              {[
-                { href: "https://twitter.com/arklawai",         label: "Twitter",  svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-                { href: "https://linkedin.com/company/arklawai", label: "LinkedIn", svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-                { href: "https://youtube.com/@arklawai",          label: "YouTube",  svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
-              ].map(({ href, label, svg }) => (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                  style={{ width: "28px", height: "28px", borderRadius: "6px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", textDecoration: "none", transition: "all 0.18s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; e.currentTarget.style.borderColor = "#E8D97A55"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; e.currentTarget.style.borderColor = "#3A5A38"; }}
-                >
-                  {svg}
-                </a>
-              ))}
+            {/* RIGHT — Social icons + copyright stacked */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
+              <div style={{ display: "flex", gap: "5px" }}>
+                {[
+                  { label: "Twitter",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+                  { label: "LinkedIn", svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                  { label: "YouTube",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
+                ].map(({ label, svg }) => (
+                  <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
+                    style={{ width: "22px", height: "22px", borderRadius: "5px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", cursor: "pointer", transition: "all 0.18s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; e.currentTarget.style.borderColor = "#E8D97A55"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; e.currentTarget.style.borderColor = "#3A5A38"; }}
+                  >
+                    {svg}
+                  </button>
+                ))}
+              </div>
+              <span style={{ fontSize: 7.5, color: "#6A8A68" }}>© 2025 ARK Law AI LLC. All rights reserved.</span>
             </div>
-          </div>
-
-          {/* Bottom bar — thin divider + copyright + credit */}
-          <div style={{ borderTop: "1px solid #2E4A2C", padding: "6px 28px", maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 8.5, color: "#6A8A68" }}>© 2025 ARK Law AI LLC. All rights reserved.</span>
-            <span style={{ fontSize: 8.5, color: "#6A8A68" }}>
-              <span style={{ color: GOLD, marginRight: "3px" }}>✦</span>
-              Designed &amp; Developed by ARK Law AI LLC.
-            </span>
           </div>
         </footer>
 
@@ -1357,6 +1353,43 @@ export default function App() {
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", color: TEXT_MUTED, fontSize: "13px" }}><span style={{ color: ACCENT_PK, fontSize: "16px" }}>✓</span>{feature}</div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* ── Coming Soon popup — triggered by all footer links & social icons ── */}
+      {showComingSoon && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowComingSoon(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0D1B2A", borderRadius: "16px", padding: "48px 40px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #C9A84C", boxShadow: "0 0 60px rgba(201,168,76,0.35), 0 0 120px rgba(201,168,76,0.12)", position: "relative" }}>
+            {/* Close button */}
+            <button onClick={() => setShowComingSoon(false)} style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: "#C9A84C", fontSize: 26, cursor: "pointer", lineHeight: 1, transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "rotate(90deg)"} onMouseLeave={(e) => e.currentTarget.style.transform = "rotate(0deg)"}>✕</button>
+
+            {/* Logo */}
+            <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "72px", height: "72px", marginBottom: "18px", filter: "drop-shadow(0 0 16px rgba(201,168,76,0.6))" }} />
+
+            {/* Brand name */}
+            <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#C9A84C", marginBottom: "6px", letterSpacing: "1px", textShadow: "0 0 20px rgba(201,168,76,0.5)" }}>ARK LAW AI</div>
+            <div style={{ fontSize: 11, color: "#3EB489", marginBottom: "28px", fontStyle: "italic" }}>Pakistan's Legal Intelligence Engine</div>
+
+            {/* Decorative divider */}
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "28px" }} />
+
+            {/* Message */}
+            <div style={{ fontSize: 28, marginBottom: "12px" }}>🚀</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#FAF6EE", marginBottom: "10px" }}>Coming Very Soon!</div>
+            <div style={{ fontSize: 13, color: "#B8C4D0", lineHeight: 1.7, marginBottom: "28px" }}>
+              We're working hard to bring you something amazing.<br/>
+              <span style={{ color: "#C9A84C", fontWeight: 600 }}>Please stay tuned.</span>
+            </div>
+
+            {/* Decorative divider */}
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "24px" }} />
+
+            {/* OK button */}
+            <button onClick={() => setShowComingSoon(false)} style={{ padding: "11px 40px", background: "linear-gradient(135deg, #C9A84C, #FFD700)", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", letterSpacing: "0.5px", boxShadow: "0 4px 16px rgba(201,168,76,0.4)", transition: "transform 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+              ⚖️ Got it!
+            </button>
           </div>
         </div>
       )}
