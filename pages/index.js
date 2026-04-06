@@ -34,6 +34,7 @@ export default function App() {
   const [showComparePopup,   setShowComparePopup]   = useState(false);
   const [showLinkedInPopup,  setShowLinkedInPopup]  = useState(false);
   const [showComingSoon,     setShowComingSoon]     = useState(false);
+  const [isUrdu,             setIsUrdu]             = useState(false);
 
   // ─── News state ─────────────────────────────────────────────────────────────
   const [newsItems,          setNewsItems]          = useState([]);
@@ -112,6 +113,58 @@ export default function App() {
     "What is a power of attorney?",
     "Explain contract law in Pakistan",
   ];
+
+  // ── Urdu translations for UI labels and queries ──────────────────────────
+  const UR = {
+    appTagline:      "پاکستان کا قانونی ذہانت انجن",
+    appSubtitle:     "قانونی پیشہ ور افراد کے لیے · پاکستان کے لیے",
+    byLine:          "از وکیل و اے آئی انوویٹر خاور ربانی",
+    sessions:        "آپ اور ARK LAW سیشنز",
+    newBtn:          "+ نیا",
+    analyzeTitle:    "دستاویز تجزیہ",
+    analyzeSubtitle: "تجزیہ کے لیے اپلوڈ کریں ↑",
+    compareTitle:    "دستاویز موازنہ",
+    compareSubtitle: "2 دستاویزیں موازنہ کے لیے",
+    draftTitle:      "دستاویز ڈرافٹ",
+    draftSubtitle:   "معاہدے، حلف نامے وغیرہ",
+    quickLabel:      "فوری سوالات",
+    quickSub:        "کوئی بھی سوال کلک کریں",
+    areasLabel:      "قانونی شعبہ جات",
+    upgradeTitle:    "پرو میں اپ گریڈ کریں",
+    upgradeSub:      "تیز AI اور خصوصی ٹولز",
+    goPro:           "پرو لیں",
+    placeholder:     "ARK Law AI سے پوچھیں یا مائیک کلک کریں...",
+    send:            "بھیجیں",
+    login:           "لاگ ان",
+    signup:          "✨ مفت سائن اپ",
+    greeting:        "ARK Law AI میں خوش آمدید — پاکستانی قانون کا آپ کا قابل اعتماد ساتھی۔\n\nآج میں آپ کی کیسے مدد کر سکتا ہوں؟",
+    newChat:         "نیا سیشن",
+    listening:       "سن رہا ہوں...",
+    thinking:        "ARK سوچ رہا ہے...",
+    listen:          "🔊 سنیں",
+    stop:            "⏸️ رکیں",
+    myAccount:       "میرا اکاؤنٹ",
+    quickQueries: [
+      "پاکستان میں کرایہ دار کے طور پر میرے کیا حقوق ہیں؟",
+      "پاکستان میں FIR کیسے درج کروائیں؟",
+      "پاکستان میں طلاق کا طریقہ کار کیا ہے؟",
+      "پاکستان میں وراثت کے قوانین کی وضاحت کریں",
+      "پاکستان میں ملازمت کے حقوق کیا ہیں؟",
+      "پاکستان میں وصیت کا مسودہ کیسے تیار کریں؟",
+      "توکیل نامہ کیا ہوتا ہے؟",
+      "پاکستان میں معاہدے کا قانون بیان کریں",
+    ],
+    practiceAreas: [
+      "عمومی قانون",
+      "فوجداری قانون",
+      "کارپوریٹ و تجارتی",
+      "خاندانی قانون",
+      "جائیداد و زمین",
+      "محنت کے قوانین",
+      "ٹیکس",
+      "آئینی قانون",
+    ],
+  };
 
   const newsDatabase = [
     { headline: "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights", source: "Supreme Court of Pakistan Official Records", fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions." },
@@ -540,9 +593,9 @@ export default function App() {
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: "#9DB89A" }}>The Legal Intelligence Engine</div>
+              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
+              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", direction: isUrdu ? "rtl" : "ltr" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
                 by Attorney & AI Innovator Khawer Rabbani
               </div>
             </div>
@@ -584,8 +637,8 @@ export default function App() {
 
           {/* RIGHT — Language + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
-            <button style={{ padding: "5px 10px", background: "#2A432A", color: "#E8D97A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>EN</button>
-            <button style={{ padding: "5px 10px", background: "transparent", color: "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, opacity: 0.5 }} title="Urdu — Coming Soon">اردو</button>
+            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
             {!user ? (
               <>
@@ -640,11 +693,11 @@ export default function App() {
                   onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
                   <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Analyze Documents</div>
+                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.analyzeTitle : "Analyze Documents"}</div>
                     <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
-                      Upload to analyze ↑
-                      <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert("Feature coming soon: Document analysis"); }} />
+                      {isUrdu ? UR.analyzeSubtitle : "Upload to analyze ↑"}
+                      <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert(isUrdu ? "یہ فیچر جلد آ رہا ہے" : "Feature coming soon: Document analysis"); }} />
                     </label>
                   </div>
                   <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
@@ -656,9 +709,9 @@ export default function App() {
                   onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
                   <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Compare Documents</div>
-                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>Upload 2 docs to compare</div>
+                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.compareTitle : "Compare Documents"}</div>
+                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.compareSubtitle : "Upload 2 docs to compare"}</div>
                   </div>
                   <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
                 </div>
@@ -669,9 +722,9 @@ export default function App() {
                   onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}
                 >
                   <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>Draft Documents</div>
-                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>Contracts, affidavits & more</div>
+                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.draftTitle : "Draft Documents"}</div>
+                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
                   </div>
                   <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
                 </div>
@@ -683,15 +736,15 @@ export default function App() {
               {/* ─── [CHANGE 1] Chat History Panel ─────────────────────── */}
               <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 Human & AI Discussion Points</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: isUrdu ? "rtl" : "ltr" }}>💬 {isUrdu ? UR.sessions : "You & ARK LAW Sessions"}</span>
                   {/* [CHANGE 1] New button: creates fresh session, keeps old ones intact */}
                   <button
                     onClick={startNewChat}
-                    style={{ fontSize: 8, padding: "2px 8px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "opacity 0.15s" }}
+                    style={{ fontSize: 8, padding: "2px 8px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "opacity 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
                     onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
                     onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-                    title="New Chat"
-                  >+ New</button>
+                    title={isUrdu ? "نیا سیشن" : "New Chat"}
+                  >{isUrdu ? UR.newBtn : "+ New"}</button>
                 </div>
 
                 {/* Session list — never refreshes; clicking loads session */}
@@ -755,8 +808,8 @@ export default function App() {
                         {renderMessageContent(msg.content)}
                       </div>
                       {msg.role === "assistant" && (
-                        <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-                          {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
+                        <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+                          {currentSpeakingIndex === i ? (isUrdu ? UR.stop : "⏸️ Stop") : (isUrdu ? UR.listen : "🔊 Listen")}
                         </button>
                       )}
                     </div>
@@ -765,7 +818,7 @@ export default function App() {
                 {loading && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{isUrdu ? UR.thinking : "ARK is thinking..."}</div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -793,8 +846,8 @@ export default function App() {
                 📎
                 <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + " file(s) uploaded: " + files.map(f => f.name).join(", ")); } }} style={{ display: "none" }} />
               </label>
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13 }} />
-              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1 }}>SEND</button>
+              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")} style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
+              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1, fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.send : "SEND"}</button>
             </div>
           </div>
 
@@ -803,27 +856,27 @@ export default function App() {
             <div style={{ width: "220px", background: "white", borderLeft: "1px solid #E8E8E4", display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
               {/* Upgrade to Pro strip */}
-              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: `linear-gradient(135deg, ${NAVY}, #1A3050)`, cursor: "pointer", flexShrink: 0, transition: "opacity 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
+              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: `linear-gradient(135deg, ${NAVY}, #1A3050)`, cursor: "pointer", flexShrink: 0, transition: "opacity 0.2s", direction: isUrdu ? "rtl" : "ltr" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
                 <span style={{ fontSize: 13 }}>✨</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, lineHeight: 1.2 }}>Upgrade to Pro</div>
-                  <div style={{ fontSize: 8, color: "#8AABB8" }}>Faster AI & exclusive tools</div>
+                  <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, lineHeight: 1.2 }}>{isUrdu ? UR.upgradeTitle : "Upgrade to Pro"}</div>
+                  <div style={{ fontSize: 8, color: "#8AABB8" }}>{isUrdu ? UR.upgradeSub : "Faster AI & exclusive tools"}</div>
                 </div>
-                <div style={{ fontSize: 8, padding: "2px 7px", background: GOLD, borderRadius: "10px", color: NAVY, fontWeight: 700, whiteSpace: "nowrap" }}>GO PRO</div>
+                <div style={{ fontSize: 8, padding: "2px 7px", background: GOLD, borderRadius: "10px", color: NAVY, fontWeight: 700, whiteSpace: "nowrap", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.goPro : "GO PRO"}</div>
               </div>
 
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 10px" }}>
 
                 {/* Quick Queries */}
-                <div style={{ marginBottom: "20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                <div style={{ marginBottom: "20px", direction: isUrdu ? "rtl" : "ltr" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", flexDirection: isUrdu ? "row-reverse" : "row" }}>
                     <span style={{ fontSize: 14 }}>💡</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A" }}>Quick Queries</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.quickLabel : "Quick Queries"}</span>
                   </div>
-                  <p style={{ fontSize: 9, color: "#888", margin: "0 0 10px 0", lineHeight: 1.4 }}>Click any question to get started</p>
+                  <p style={{ fontSize: 9, color: "#888", margin: "0 0 10px 0", lineHeight: 1.4, fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? "شروع کرنے کے لیے کوئی سوال کلک کریں" : "Click any question to get started"}</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    {QUICK_QUERIES_PK.map((query, i) => (
-                      <button key={i} onClick={() => sendMessage(query, true)} style={{ display: "flex", alignItems: "flex-start", gap: "8px", width: "100%", padding: "8px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#2D2D2D", lineHeight: 1.4, fontWeight: 400, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; e.currentTarget.style.color = "#2D2D2D"; }}>
+                    {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).map((query, i) => (
+                      <button key={i} onClick={() => sendMessage(isUrdu ? QUICK_QUERIES_PK[i] : query, true)} style={{ display: "flex", alignItems: "flex-start", gap: "8px", width: "100%", padding: "8px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 10, color: "#2D2D2D", lineHeight: 1.4, fontWeight: 400, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; e.currentTarget.style.color = "#2D2D2D"; }}>
                         <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#E8F5EE", border: "1px solid #C2E0CE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>
                           <span style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 700 }}>?</span>
                         </div>
@@ -836,17 +889,17 @@ export default function App() {
                 <div style={{ height: "1px", background: "#EBEBEB", margin: "0 0 16px 0" }} />
 
                 {/* Practice Areas */}
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+                <div style={{ direction: isUrdu ? "rtl" : "ltr" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px", flexDirection: isUrdu ? "row-reverse" : "row" }}>
                     <span style={{ fontSize: 14 }}>⚖️</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", textTransform: "uppercase", letterSpacing: "0.4px" }}>Practice Areas</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", textTransform: "uppercase", letterSpacing: "0.4px", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</span>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    {PRACTICE_AREAS_PK.map((area) => (
-                      <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "9px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: "left", fontSize: 11, color: "#1A1A1A", fontWeight: 500, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; }}>
+                    {PRACTICE_AREAS_PK.map((area, i) => (
+                      <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "9px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 11, color: "#1A1A1A", fontWeight: 500, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", flexDirection: isUrdu ? "row-reverse" : "row", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; }}>
                         <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "#EEF7F2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", flexShrink: 0 }}>{area.icon}</div>
-                        <span style={{ flex: 1 }}>{area.label}</span>
-                        <span style={{ color: "#BBBBBB", fontSize: 13, fontWeight: 300 }}>›</span>
+                        <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
+                        <span style={{ color: "#BBBBBB", fontSize: 13, fontWeight: 300 }}>{isUrdu ? "‹" : "›"}</span>
                       </button>
                     ))}
                   </div>
