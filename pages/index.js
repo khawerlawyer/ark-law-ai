@@ -82,6 +82,11 @@ export default function App() {
   const [isMobile,           setIsMobile]           = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
 
+  // Current date — computed once on mount so AI always knows today's date
+  const currentDate = useRef(
+    new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+  );
+
   const messagesEndRef    = useRef(null);
   const lastSavedCountRef = useRef(0);
 
@@ -300,7 +305,7 @@ export default function App() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: updatedMessages }) });
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: `[SYSTEM CONTEXT — do not repeat this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering any date-related questions.]\n\n` }, ...updatedMessages] }) });
       if (!res.ok) throw new Error("Failed to get response");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -495,23 +500,28 @@ export default function App() {
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
         @media (max-width:768px){ .desktop-only{ display:none; } }
 
-        /* ── [CHANGE 2] Quran verse scrolling animation — deep blue bg, glowing gold text, 60% slower ── */
+        /* ── [CHANGE 2] Quran verse scrolling animation — starts immediately, seamless infinite loop ── */
         @keyframes verseScroll {
-          0%   { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+          0%   { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
         }
         @keyframes goldGlow {
           0%, 100% { text-shadow: 0 0 8px #C9A84C, 0 0 18px #C9A84Caa, 0 0 32px #FFD70066, 0 0 50px #FFD70033; }
           50%       { text-shadow: 0 0 14px #FFD700, 0 0 28px #C9A84Cff, 0 0 50px #FFD700bb, 0 0 80px #FFD70055; }
         }
+        .verse-outer {
+          overflow: hidden;
+          width: 100%;
+          padding: 0 42px;
+        }
         .verse-track {
-          display: inline-block;
+          display: inline-flex;
           white-space: nowrap;
           animation: verseScroll 180s linear infinite;
           will-change: transform;
         }
         .verse-track:hover { animation-play-state: paused; cursor: default; }
-        .verse-text { animation: goldGlow 2.8s ease-in-out infinite; }
+        .verse-text { animation: goldGlow 2.8s ease-in-out infinite; display: inline-block; padding-right: 80px; }
 
         /* ── [CHANGE 3] Metric counter pulse ── */
         @keyframes counterPop { 0%{ transform:scale(1); } 50%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
@@ -559,9 +569,12 @@ export default function App() {
             <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to left, #0A1F44, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
               <span style={{ fontSize: 16, color: GOLD, textShadow: `0 0 8px ${GOLD}` }}>☪</span>
             </div>
-            {/* Scrolling verse */}
-            <div style={{ overflow: "hidden", width: "100%", padding: "0 42px" }}>
+            {/* Scrolling verse — two copies for seamless loop starting immediately */}
+            <div className="verse-outer">
               <span className="verse-track">
+                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
+                  {QURAN_VERSE}
+                </span>
                 <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
                   {QURAN_VERSE}
                 </span>
@@ -780,7 +793,7 @@ export default function App() {
                 📎
                 <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + " file(s) uploaded: " + files.map(f => f.name).join(", ")); } }} style={{ display: "none" }} />
               </label>
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} style={{ flex: 1, padding: "9px 12px", background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, color: TEXT_PRIMARY, borderRadius: "4px", fontSize: 13 }} />
+              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? "Listening..." : uploadedFiles.length > 0 ? `Ask about your ${uploadedFiles.length} attached file(s)...` : "Ask ARK Law AI or click mic to speak..."} style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13 }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1 }}>SEND</button>
             </div>
           </div>
