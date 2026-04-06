@@ -683,7 +683,7 @@ export default function App() {
               {/* ─── [CHANGE 1] Chat History Panel ─────────────────────── */}
               <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 Chats</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 Human & AI Discussion Points</span>
                   {/* [CHANGE 1] New button: creates fresh session, keeps old ones intact */}
                   <button
                     onClick={startNewChat}
@@ -925,7 +925,7 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <span style={{ fontSize: 7.5, color: "#6A8A68" }}>© 2025 ARK Law AI LLC. All rights reserved.</span>
+              <span style={{ fontSize: 7.5, color: "#6A8A68" }}>© 2026 ARK Lex AI LLC. All rights reserved.</span>
             </div>
           </div>
         </footer>
@@ -1346,26 +1346,36 @@ export default function App() {
       )}
 
       {showUpgradePopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "40px", borderRadius: "16px", width: "90%", maxWidth: "500px", border: `3px solid ${GOLD}`, boxShadow: `0 0 40px ${GOLD}60`, textAlign: "center", position: "relative" }}>
-            <button onClick={() => setShowUpgradePopup(false)} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", color: GOLD, fontSize: 32, cursor: "pointer", lineHeight: 1, transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "rotate(90deg)"; e.currentTarget.style.color = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "rotate(0deg)"; e.currentTarget.style.color = GOLD; }}>✕</button>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", marginBottom: "30px" }}>
-              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "100px", height: "100px", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
-              <h2 style={{ color: GOLD, margin: 0, fontSize: "32px", fontWeight: 800, letterSpacing: "1px" }}>ARK Law AI</h2>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowUpgradePopup(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0D1B2A", borderRadius: "16px", padding: "48px 40px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #C9A84C", boxShadow: "0 0 60px rgba(201,168,76,0.35), 0 0 120px rgba(201,168,76,0.12)", position: "relative" }}>
+            <button onClick={() => setShowUpgradePopup(false)} style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: "#C9A84C", fontSize: 26, cursor: "pointer", lineHeight: 1, transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "rotate(90deg)"} onMouseLeave={(e) => e.currentTarget.style.transform = "rotate(0deg)"}>✕</button>
+
+            <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "72px", height: "72px", marginBottom: "18px", filter: "drop-shadow(0 0 16px rgba(201,168,76,0.6))" }} />
+            <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#C9A84C", marginBottom: "6px", letterSpacing: "1px", textShadow: "0 0 20px rgba(201,168,76,0.5)" }}>ARK LAW AI</div>
+            <div style={{ fontSize: 11, color: "#3EB489", marginBottom: "28px", fontStyle: "italic" }}>Pakistan's Legal Intelligence Engine</div>
+
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "28px" }} />
+
+            <div style={{ fontSize: 28, marginBottom: "12px" }}>✨</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#FAF6EE", marginBottom: "10px" }}>Upgrade to Pro</div>
+            <div style={{ fontSize: 13, color: "#B8C4D0", lineHeight: 1.7, marginBottom: "20px" }}>
+              More tools, faster AI, and exclusive features.<br/>
+              <span style={{ color: "#C9A84C", fontWeight: 600 }}>Coming Very Soon — Please stay tuned.</span>
             </div>
-            <div style={{ width: "80px", height: "80px", margin: "0 auto 20px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", boxShadow: "0 8px 20px rgba(74, 144, 226, 0.4)", animation: "pulse 2s infinite" }}>✨</div>
-            <h3 style={{ color: CREAM, fontSize: "28px", fontWeight: 700, margin: "0 0 15px 0" }}>Upgrade to Pro</h3>
-            <p style={{ color: TEXT_MUTED, fontSize: "16px", lineHeight: "1.6", marginBottom: "30px" }}>Get more tools, faster AI, and exclusive features</p>
-            <div style={{ display: "inline-block", padding: "20px 40px", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, borderRadius: "12px", boxShadow: `0 4px 20px ${GOLD}40` }}>
-              <div style={{ fontSize: "24px", fontWeight: 800, color: NAVY, marginBottom: "5px" }}>🚀 COMING SOON</div>
-              <div style={{ fontSize: "13px", color: `${NAVY}cc` }}>Stay tuned for exciting updates!</div>
-            </div>
-            <div style={{ marginTop: "30px", textAlign: "left", background: NAVY_SURFACE, padding: "20px", borderRadius: "10px", border: `1px solid ${NAVY_BORDER}` }}>
-              <div style={{ color: GOLD, fontSize: "14px", fontWeight: 700, marginBottom: "15px" }}>✨ Pro Features:</div>
-              {["Priority AI Response Time","Advanced Document Analysis","Unlimited Chat History","Export Chat as PDF","Premium Legal Templates","24/7 Priority Support"].map((feature, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", color: TEXT_MUTED, fontSize: "13px" }}><span style={{ color: ACCENT_PK, fontSize: "16px" }}>✓</span>{feature}</div>
+
+            <div style={{ textAlign: "left", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "10px", padding: "16px 20px", marginBottom: "24px" }}>
+              {["Priority AI Response Time", "Advanced Document Analysis", "Unlimited Chat History", "Export Chat as PDF", "Premium Legal Templates", "24/7 Priority Support"].map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: i < 5 ? "10px" : 0, color: "#B8C4D0", fontSize: "12px" }}>
+                  <span style={{ color: "#3EB489", fontSize: "14px", flexShrink: 0 }}>✓</span>{f}
+                </div>
               ))}
             </div>
+
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "24px" }} />
+
+            <button onClick={() => setShowUpgradePopup(false)} style={{ padding: "11px 40px", background: "linear-gradient(135deg, #C9A84C, #FFD700)", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", letterSpacing: "0.5px", boxShadow: "0 4px 16px rgba(201,168,76,0.4)", transition: "transform 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+              ⚖️ Got it!
+            </button>
           </div>
         </div>
       )}
