@@ -589,86 +589,186 @@ export default function App() {
 
           {/* ═══ LEFT SIDEBAR ═══ */}
           {!isMobile && (
-            <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: "0", overflow: "hidden" }}>
 
-              {/* Photos */}
-              <div style={{ display: "flex", gap: "8px", marginBottom: "6px", justifyContent: "center" }}>
+              {/* ── Photos (compact) ── */}
+              <div style={{ display: "flex", gap: "6px", marginBottom: "6px", justifyContent: "center", flexShrink: 0 }}>
                 <div style={{ textAlign: "center" }}>
-                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
-                  <div style={{ fontSize: 7, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>FOUNDER OF PAKISTAN</div>
-                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
+                  <img src="/jinnah.jpeg" alt="Jinnah" style={{ width: "36px", height: "36px", borderRadius: "50%", border: `2px solid ${ACCENT_PK}` }} />
+                  <div style={{ fontSize: 6, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>FOUNDER OF PAKISTAN</div>
+                  <div style={{ fontSize: 5, color: TEXT_MUTED }}>Quaid-e-Azam M. A. Jinnah</div>
                 </div>
                 <div style={{ textAlign: "center" }}>
-                  <img src="/rabbani.jpeg" alt="Justice Rabbani" style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div style={{ fontSize: 7, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>HON. JUSTICE</div>
-                  <div style={{ fontSize: 6, color: TEXT_MUTED }}>S. A. Rabbani</div>
+                  <img src="/rabbani.jpeg" alt="Justice Rabbani" style={{ width: "36px", height: "36px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                  <div style={{ fontSize: 6, color: ACCENT_PK, fontWeight: 600, marginTop: "2px" }}>HON. JUSTICE</div>
+                  <div style={{ fontSize: 5, color: TEXT_MUTED }}>S. A. Rabbani</div>
                   <div style={{ fontSize: 5, color: ACCENT_PK, fontStyle: "italic" }}>Inspiration for ARK LAW AI</div>
                 </div>
               </div>
 
-              {/* ── CARD: Analyze Documents ── */}
-              <div style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
-              >
-                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📂</div>
-                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Analyze Documents</div>
-                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Upload legal documents for analysis</div>
-                <input type="file" accept=".pdf,.docx,.doc" style={{ width: "100%", fontSize: 9, padding: "4px", background: "white", border: `1px solid ${NAVY}`, borderRadius: "4px", color: NAVY, cursor: "pointer", fontWeight: 600 }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert("Feature coming soon: Document analysis"); }} />
+              {/* ── 3 MINI TOOL CARDS (50% smaller = horizontal row style) ── */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", flexShrink: 0 }}>
+
+                {/* Analyze */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                >
+                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>📂</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Analyze Docs</div>
+                    <label style={{ fontSize: 7, color: ACCENT_PK, cursor: "pointer", whiteSpace: "nowrap" }}>
+                      Upload ↑
+                      <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert("Feature coming soon: Document analysis"); }} />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Compare */}
+                <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                >
+                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>⚖️</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Compare Docs</div>
+                    <div style={{ fontSize: 7, color: ACCENT_PK }}>Upload 2 to compare</div>
+                  </div>
+                </div>
+
+                {/* Draft */}
+                <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20` }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
+                >
+                  <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>✍️</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Draft Docs</div>
+                    <div style={{ fontSize: 7, color: ACCENT_PK }}>Contracts, affidavits…</div>
+                  </div>
+                </div>
               </div>
 
-              {/* ── CARD: Compare Documents ── */}
-              <div onClick={() => setShowComparePopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
-              >
-                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>⚖️</div>
-                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Compare Documents</div>
-                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Upload 2 documents to compare</div>
-                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>Start Comparing</div>
-              </div>
+              {/* ── DIVIDER ── */}
+              <div style={{ height: "1px", background: `${GOLD}40`, margin: "6px 0", flexShrink: 0 }} />
 
-              {/* ── CARD: Draft Documents ── */}
-              <div onClick={() => setShowDraftPopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
-              >
-                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✍️</div>
-                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Draft Documents</div>
-                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Create contracts, affidavits & more</div>
-                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>Start Drafting</div>
+              {/* ── CHAT HISTORY (like ChatGPT / Claude) ── */}
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 Chats</span>
+                  <button
+                    onClick={() => {
+                      setMessages([{ role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" }]);
+                    }}
+                    style={{ fontSize: 8, padding: "2px 6px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700 }}
+                    title="New Chat"
+                  >+ New</button>
+                </div>
+
+                {/* Chat instances list */}
+                <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "3px" }}>
+                  {/* Current active chat */}
+                  {messages.filter(m => m.role === "user").length > 0 ? (
+                    <>
+                      {/* Group messages into "sessions" — for now show each user message as a chat entry */}
+                      <div style={{ fontSize: 8, color: TEXT_MUTED, padding: "2px 4px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" }}>Today</div>
+                      {messages
+                        .filter(m => m.role === "user")
+                        .slice()
+                        .reverse()
+                        .slice(0, 20)
+                        .map((msg, idx) => (
+                          <div
+                            key={idx}
+                            title={msg.content}
+                            style={{
+                              padding: "5px 7px",
+                              borderRadius: "5px",
+                              background: idx === 0 ? `${GOLD}20` : "transparent",
+                              border: idx === 0 ? `1px solid ${GOLD}50` : "1px solid transparent",
+                              cursor: "pointer",
+                              transition: "all 0.15s",
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "5px",
+                            }}
+                            onMouseEnter={(e) => { if (idx !== 0) { e.currentTarget.style.background = `${NAVY}08`; e.currentTarget.style.borderColor = `${NAVY_BORDER}`; } }}
+                            onMouseLeave={(e) => { if (idx !== 0) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; } }}
+                          >
+                            <span style={{ fontSize: 9, flexShrink: 0, marginTop: "1px" }}>💬</span>
+                            <span style={{ fontSize: 8, color: NAVY, lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                              {msg.content.substring(0, 60)}{msg.content.length > 60 ? "…" : ""}
+                            </span>
+                          </div>
+                        ))
+                      }
+                    </>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "20px 8px", color: TEXT_MUTED }}>
+                      <div style={{ fontSize: 20, marginBottom: "6px", opacity: 0.4 }}>💬</div>
+                      <div style={{ fontSize: 8, lineHeight: 1.5 }}>Your chats will appear here. Start a conversation!</div>
+                    </div>
+                  )}
+
+                  {/* Saved chat history from localStorage (logged-in users) */}
+                  {chatHistory.length > 0 && messages.filter(m => m.role === "user").length === 0 && (
+                    <>
+                      <div style={{ fontSize: 8, color: TEXT_MUTED, padding: "2px 4px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px", marginTop: "4px" }}>Previous</div>
+                      {chatHistory.slice().reverse().slice(0, 15).map((item, idx) => (
+                        <div
+                          key={item.id || idx}
+                          title={item.question}
+                          style={{ padding: "5px 7px", borderRadius: "5px", background: "transparent", border: "1px solid transparent", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "flex-start", gap: "5px" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = `${NAVY}08`; e.currentTarget.style.borderColor = NAVY_BORDER; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
+                        >
+                          <span style={{ fontSize: 9, flexShrink: 0, marginTop: "1px" }}>🕒</span>
+                          <span style={{ fontSize: 8, color: NAVY, lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                            {item.question}
+                          </span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {/* ═══ CHAT AREA ═══ */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+            {/* Watermark */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", position: "relative", zIndex: 1 }}>
-              {messages.map((msg, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
-                  {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />}
-                  <div style={{ maxWidth: "70%", position: "relative" }}>
-                    <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-                      {renderMessageContent(msg.content)}
+
+            {/* Messages — flex column-reverse so newest is at bottom, scrolls upward */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", gap: "12px", position: "relative", zIndex: 1 }}>
+              {/* Reverse-render so last message shows at bottom */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {messages.map((msg, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
+                    {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />}
+                    <div style={{ maxWidth: "70%", position: "relative" }}>
+                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                        {renderMessageContent(msg.content)}
+                      </div>
+                      {msg.role === "assistant" && (
+                        <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
+                          {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
+                        </button>
+                      )}
                     </div>
-                    {msg.role === "assistant" && (
-                      <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-                        {currentSpeakingIndex === i ? "⏸️ Stop" : "🔊 Listen"}
-                      </button>
-                    )}
                   </div>
-                </div>
-              ))}
-              {loading && (
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
+                ))}
+                {loading && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>ARK is thinking...</div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
             </div>
 
             {/* Uploaded files */}
@@ -701,15 +801,17 @@ export default function App() {
           {!isMobile && (
             <div style={{ width: "200px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
 
-              {/* ── CARD: Upgrade to Pro ── */}
-              <div onClick={() => setShowUpgradePopup(true)} style={{ padding: "10px", background: CREAM, borderRadius: "8px", border: `1px solid ${GOLD}`, textAlign: "center", cursor: "pointer", transition: "all 0.3s", boxShadow: `0 3px 10px ${GOLD}30` }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; e.currentTarget.style.boxShadow = `0 5px 15px ${GOLD}60`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 3px 10px ${GOLD}30`; }}
+              {/* ── CARD: Upgrade to Pro (50% smaller, horizontal) ── */}
+              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 7px", background: "white", borderRadius: "6px", border: `1px solid ${GOLD}`, cursor: "pointer", transition: "all 0.2s", boxShadow: `0 1px 4px ${GOLD}20`, flexShrink: 0 }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.boxShadow = `0 2px 8px ${GOLD}50`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.boxShadow = `0 1px 4px ${GOLD}20`; }}
               >
-                <div style={{ width: "38px", height: "38px", margin: "0 auto 6px", background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>✨</div>
-                <div style={{ fontSize: 11, color: NAVY, fontWeight: 700, marginBottom: "3px" }}>Upgrade to Pro</div>
-                <div style={{ fontSize: 9, color: `${NAVY}cc`, marginBottom: "7px" }}>Get more tools, faster AI, and exclusive features</div>
-                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #FFD700, #4A90E2)", borderRadius: "4px", fontSize: 10, fontWeight: 700, color: "white" }}>✨ Upgrade Now</div>
+                <div style={{ width: "22px", height: "22px", flexShrink: 0, background: "linear-gradient(135deg, #4A90E2, #6B5CE7)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px" }}>✨</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 9, color: NAVY, fontWeight: 700, lineHeight: 1.2 }}>Upgrade to Pro</div>
+                  <div style={{ fontSize: 7, color: ACCENT_PK }}>Faster AI & more tools</div>
+                </div>
+                <div style={{ fontSize: 7, padding: "2px 5px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, borderRadius: "3px", color: NAVY, fontWeight: 700, flexShrink: 0 }}>GO PRO</div>
               </div>
 
               {/* Quick Queries */}
