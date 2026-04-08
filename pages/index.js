@@ -583,10 +583,6 @@ export default function App() {
           0%   { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
         }
-        @keyframes goldGlow {
-          0%, 100% { text-shadow: 0 0 6px #A07828, 0 0 14px #C9A84C88, 0 0 24px #C9A84C44; }
-          50%       { text-shadow: 0 0 10px #8B6520, 0 0 20px #C9A84Ccc, 0 0 36px #C9A84C66; }
-        }
         .verse-outer {
           overflow: hidden;
           width: 100%;
@@ -599,7 +595,7 @@ export default function App() {
           will-change: transform;
         }
         .verse-track:hover { animation-play-state: paused; cursor: default; }
-        .verse-text { animation: goldGlow 2.8s ease-in-out infinite; display: inline-block; padding-right: 80px; }
+        .verse-text { display: inline-block; padding-right: 80px; }
 
         /* ── [CHANGE 3] Metric counter pulse ── */
         @keyframes counterPop { 0%{ transform:scale(1); } 50%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
@@ -647,10 +643,10 @@ export default function App() {
             {/* Scrolling verse — two copies for seamless loop starting immediately */}
             <div className="verse-outer">
               <span className="verse-track">
-                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
+                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
                   {QURAN_VERSE}
                 </span>
-                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: GOLD, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
+                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
                   {QURAN_VERSE}
                 </span>
               </span>
@@ -863,9 +859,52 @@ export default function App() {
 
             {/* Input row */}
             <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
-              <button onClick={startVoiceInput} disabled={loading || isListening} style={{ padding: "9px 14px", background: isListening ? ACCENT_PK : NAVY_SURFACE, color: isListening ? NAVY : TEXT_PRIMARY, border: `1px solid ${isListening ? ACCENT_PK : NAVY_BORDER}`, borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 15, animation: isListening ? "pulse 1.5s infinite" : "none" }} title="Click to speak">{isListening ? "🎤 Listening..." : "🎤"}</button>
-              <label htmlFor="file-upload" style={{ padding: "9px 14px", background: NAVY_SURFACE, color: TEXT_PRIMARY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 15, display: "flex", alignItems: "center" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.borderColor = GOLD; }} onMouseLeave={(e) => { e.currentTarget.style.background = NAVY_SURFACE; e.currentTarget.style.borderColor = NAVY_BORDER; }} title="Upload files">
-                📎
+              {/* Mic button — clean SVG icon */}
+              <button
+                onClick={startVoiceInput}
+                disabled={loading || isListening}
+                title={isListening ? "Listening..." : "Click to speak"}
+                style={{
+                  width: "38px", height: "38px",
+                  background: isListening ? LIGHT_GREEN : "white",
+                  border: `1px solid ${isListening ? LIGHT_GREEN : GOLD}60`,
+                  borderRadius: "6px",
+                  cursor: loading || isListening ? "not-allowed" : "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, transition: "all 0.2s",
+                  animation: isListening ? "pulse 1.5s infinite" : "none",
+                  boxShadow: isListening ? `0 0 0 3px ${LIGHT_GREEN}30` : "none",
+                }}
+                onMouseEnter={(e) => { if (!isListening && !loading) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; } }}
+                onMouseLeave={(e) => { if (!isListening) { e.currentTarget.style.borderColor = `${GOLD}60`; e.currentTarget.style.background = "white"; } }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isListening ? "white" : NAVY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="2" width="6" height="12" rx="3"/>
+                  <path d="M5 10a7 7 0 0 0 14 0"/>
+                  <line x1="12" y1="17" x2="12" y2="22"/>
+                  <line x1="9" y1="22" x2="15" y2="22"/>
+                </svg>
+              </button>
+
+              {/* Attach button — clean SVG icon */}
+              <label
+                htmlFor="file-upload"
+                title="Attach files"
+                style={{
+                  width: "38px", height: "38px",
+                  background: "white",
+                  border: `1px solid ${GOLD}60`,
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0, transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${GOLD}60`; e.currentTarget.style.background = "white"; }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                </svg>
                 <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + " file(s) uploaded: " + files.map(f => f.name).join(", ")); } }} style={{ display: "none" }} />
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")} style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
