@@ -360,7 +360,7 @@ export default function App() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: `[SYSTEM CONTEXT — do not repeat this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering any date-related questions.]\n\n` }, ...updatedMessages] }) });
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: `[SYSTEM CONTEXT — do not repeat this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering any date-related questions. IMPORTANT: whenever you include a professional advice or disclaimer section at the end of your response, always title it exactly "Professional Disclaimer by ARK LAW AI" — never use "Professional Advice" or any other heading for that section.]\n\n` }, ...updatedMessages] }) });
       if (!res.ok) throw new Error("Failed to get response");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -593,23 +593,7 @@ export default function App() {
         @media (max-width:768px){ .desktop-only{ display:none; } }
 
         /* ── [CHANGE 2] Quran verse scrolling animation — starts immediately, seamless infinite loop ── */
-        @keyframes verseScroll {
-          0%   { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .verse-outer {
-          overflow: hidden;
-          width: 100%;
-          padding: 0 42px;
-        }
-        .verse-track {
-          display: inline-flex;
-          white-space: nowrap;
-          animation: verseScroll 180s linear infinite;
-          will-change: transform;
-        }
-        .verse-track:hover { animation-play-state: paused; cursor: default; }
-        .verse-text { display: inline-block; padding-right: 80px; }
+        /* ── Quran verse — static, centered, wrapping ── */
 
         /* ── [CHANGE 3] Metric counter pulse ── */
         @keyframes counterPop { 0%{ transform:scale(1); } 50%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
@@ -633,11 +617,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* ─── [CHANGE 2] CENTER — Quran verse animation strip ───────── */}
+          {/* ─── CENTER — Quran verse static, centered, wrapping ───────── */}
           <div style={{
             flex: 1,
-            overflow: "hidden",
-            height: "52px",
             display: "flex",
             alignItems: "center",
             borderRadius: "10px",
@@ -645,24 +627,20 @@ export default function App() {
             background: CREAM,
             boxShadow: `0 1px 6px ${GOLD}20`,
             position: "relative",
+            minHeight: "44px",
           }}>
             {/* Decorative left accent */}
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
-              <span style={{ fontSize: 16, color: GOLD, textShadow: `0 0 8px ${GOLD}` }}>☪</span>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             {/* Decorative right accent */}
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
-              <span style={{ fontSize: 16, color: GOLD, textShadow: `0 0 8px ${GOLD}` }}>☪</span>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
-            {/* Scrolling verse — two copies for seamless loop starting immediately */}
-            <div className="verse-outer">
-              <span className="verse-track">
-                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
-                  {QURAN_VERSE}
-                </span>
-                <span className="verse-text" style={{ fontSize: 14, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.05em", fontWeight: 700 }}>
-                  {QURAN_VERSE}
-                </span>
+            {/* Static centered verse — wraps to fit the space */}
+            <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 10, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.45, letterSpacing: "0.03em", fontWeight: 600, textAlign: "center", display: "block" }}>
+                {QURAN_VERSE}
               </span>
             </div>
           </div>
@@ -836,7 +814,7 @@ export default function App() {
                   <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
                     {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />}
                     <div style={{ maxWidth: "70%", position: "relative" }}>
-                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? GOLD : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? "#E8E0CC" : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
                         {renderMessageContent(msg.content)}
                       </div>
                       {msg.role === "assistant" && (
