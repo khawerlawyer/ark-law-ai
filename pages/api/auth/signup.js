@@ -1,141 +1,120 @@
-import fs from 'fs';
-import path from 'path';
+// pages/api/auth/signup.js
+// ─────────────────────────────────────────────────────────────────────────────
+// Pure Node.js — ZERO external dependencies.
+// Passwords hashed with built-in crypto (PBKDF2).
+// Users saved permanently to data/users.json in your project.
+//
+// SETUP (one time):
+//   1. Create an empty file at:  data/users.json  with contents:  []
+//   2. That's it — no npm install needed.
+//
+// NOTE: On Vercel, the filesystem is read-only in production.
+// This works perfectly for local dev. For Vercel production, use the
+// GitHub-based signup.js provided separately (same API, same format).
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Path to store users data
-const DATA_DIR = path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
+import fs   from "fs";
+import path from "path";
+import crypto from "crypto";
 
-// Ensure data directory exists
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
+// Path to the users JSON file — sits in your project root /data/ folder
+const USERS_FILE = path.join(process.cwd(), "data", "users.json");
 
-// Read users from file
-function readUsers() {
-  ensureDataDir();
-  
-  try {
-    if (fs.existsSync(USERS_FILE)) {
-      const data = fs.readFileSync(USERS_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Error reading users file:', error);
-  }
-  
-  return [];
-}
-
-// Write users to file
-function writeUsers(users) {
-  ensureDataDir();
-  
-  try {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error('Error writing users file:', error);
-    return false;
-  }
-}
-
-// Find user by email
-function findUserByEmail(email) {
-  const users = readUsers();
-  return users.find(u => u.email.toLowerCase() === email.toLowerCase());
-}
-
+// ── Hash password using built-in crypto (PBKDF2 — secure, no npm needed) ────
 function hashPassword(password) {
-  return Buffer.from(password).toString('base64');
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex");
+  return `${salt}:${hash}`;
 }
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+// ── Read users from JSON file ─────────────────────────────────────────────────
+function readUsers() {
+  try {
+    if (!fs.existsSync(USERS_FILE)) {
+      // Auto-create the file if it doesn't exist
+      fs.mkdirSync(path.dirname(USERS_FILE), { recursive: true });
+      fs.writeFileSync(USERS_FILE, "[]", "utf8");
+    }
+    const raw = fs.readFileSync(USERS_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+// ── Write users to JSON file ──────────────────────────────────────────────────
+function writeUsers(users) {
+  fs.mkdirSync(path.dirname(USERS_FILE), { recursive: true });
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), "utf8");
+}
+
+// ── Handler ───────────────────────────────────────────────────────────────────
+export default function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const {
+    email, password, name, age,
+    profession, barOfPractice,
+    city, province, country,
+  } = req.body;
+
+  // ── Validation ────────────────────────────────────────────────────────────
+  if (!email || !password || !name || !age || !profession || !city || !province || !country) {
+    return res.status(400).json({ error: "All required fields must be filled." });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters." });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: "Please enter a valid email address." });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
   try {
-    const {
-      email,
-      password,
-      name,
-      age,
-      profession,
-      barOfPractice,
-      city,
-      province,
-      country,
-    } = req.body;
+    const users = readUsers();
 
-    // Validate required fields
-    if (!email || !password || !name || !age || !profession || !city || !province || !country) {
-      return res.status(400).json({ error: 'All required fields must be filled' });
+    // ── Check duplicate ───────────────────────────────────────────────────
+    if (users.find(u => u.email === normalizedEmail)) {
+      return res.status(409).json({
+        error: "An account with this email already exists. Please login.",
+      });
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
+    // ── Hash password ─────────────────────────────────────────────────────
+    const passwordHash = hashPassword(password);
 
-    // Validate password length
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    }
-
-    console.log('📝 Signup attempt for:', email);
-
-    // Check if user already exists
-    const existingUser = findUserByEmail(email);
-    if (existingUser) {
-      console.log('❌ User already exists:', email);
-      return res.status(400).json({ error: 'An account with this email already exists' });
-    }
-
-    // Create new user
+    // ── Build user record ─────────────────────────────────────────────────
     const newUser = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      email: email.toLowerCase(),
-      password: hashPassword(password),
-      name,
-      age: parseInt(age),
-      profession,
-      barOfPractice: barOfPractice || '',
-      city,
-      province,
-      country,
-      tokens: 500000, // Start with 500K tokens
-      chatHistory: [], // Empty chat history
-      createdAt: new Date().toISOString(),
+      id:            `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      email:         normalizedEmail,
+      passwordHash,                          // never returned to client
+      name:          name.trim(),
+      age:           parseInt(age, 10),
+      profession:    profession.trim(),
+      barOfPractice: barOfPractice?.trim() || "",
+      city:          city.trim(),
+      province:      province.trim(),
+      country:       (country || "Pakistan").trim(),
+      tokens:        500000,
+      createdAt:     new Date().toISOString(),
+      lastLogin:     null,
     };
 
-    // Add to file database
-    const users = readUsers();
-    users.push(newUser);
-    const saved = writeUsers(users);
+    // ── Save to file ──────────────────────────────────────────────────────
+    writeUsers([...users, newUser]);
 
-    if (!saved) {
-      return res.status(500).json({ error: 'Failed to save user data' });
-    }
-
-    console.log('✅ User created successfully:', email);
-    console.log('📊 Total users now:', users.length);
-
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = newUser;
-
+    // ── Return safe user (no passwordHash) ───────────────────────────────
+    const { passwordHash: _removed, ...safeUser } = newUser;
     return res.status(201).json({
-      success: true,
-      message: 'Account created successfully',
-      user: userWithoutPassword,
+      message: "Account created! You have been awarded 500,000 FREE credits.",
+      user: safeUser,
     });
-  } catch (error) {
-    console.error('❌ Signup error:', error);
-    return res.status(500).json({ 
-      error: 'An error occurred during signup',
-      details: error.message 
-    });
+
+  } catch (err) {
+    console.error("Signup error:", err);
+    return res.status(500).json({ error: "Signup failed. Please try again." });
   }
 }
