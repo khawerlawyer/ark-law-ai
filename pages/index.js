@@ -400,34 +400,48 @@ export default function App() {
   const speakText = (text, messageIndex) => {
     if (isSpeaking && currentSpeakingIndex === messageIndex) { window.speechSynthesis.cancel(); setIsSpeaking(false); setCurrentSpeakingIndex(null); return; }
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[•\n]/g, " ").replace(/\s+/g, " ").trim();
+    // Strip ALL markdown/formatting symbols so TTS never says "asterisk", "hash" etc.
+    const cleanText = text
+      .replace(/#{1,6}\s*/g, "")           // headings ##
+      .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")  // bold/italic **text**
+      .replace(/\*+/g, "")                 // stray asterisks
+      .replace(/_([^_]+)_/g, "$1")         // italic _text_
+      .replace(/`{1,3}[^`]*`{1,3}/g, "")  // inline code
+      .replace(/~~([^~]+)~~/g, "$1")       // strikethrough
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links [text](url)
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, "")    // images
+      .replace(/^[-*+]\s+/gm, "")          // list bullets
+      .replace(/^\d+\.\s+/gm, "")          // numbered lists
+      .replace(/^>\s+/gm, "")              // blockquotes
+      .replace(/[-]{3,}/g, ". ")           // horizontal rules
+      .replace(/[•·]/g, " ")               // bullet characters
+      .replace(/\n+/g, " ")                // newlines → space
+      .replace(/\s{2,}/g, " ")             // collapse multiple spaces
+      .trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    // Slightly slower, deeper pitch for a measured authoritative male voice
-    utterance.rate = 0.82; utterance.pitch = 0.88; utterance.volume = 1.0; utterance.lang = "en-IN";
+    // Professional American male — clear, authoritative, legal tone
+    utterance.rate = 0.88; utterance.pitch = 0.92; utterance.volume = 1.0; utterance.lang = "en-US";
     const selectVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      // Priority chain: male South Asian → male Indian English → male British/US
       const maleVoice =
-        // 1. Named male South Asian / Pakistani voices (Chrome/Edge on Windows)
-        voices.find(v => v.name === "Microsoft Arjun Online (Natural) - en-IN") ||
-        voices.find(v => v.name === "Microsoft Prabhat - en-IN") ||
-        voices.find(v => v.name === "Microsoft Arjun - en-IN") ||
-        voices.find(v => v.name.includes("Arjun")) ||
-        voices.find(v => v.name.includes("Prabhat")) ||
-        voices.find(v => v.name.includes("Ravi")) ||
-        voices.find(v => v.name.includes("Hemant")) ||
-        // 2. Any male en-IN voice
-        voices.find(v => v.lang === "en-IN" && v.name.toLowerCase().includes("male")) ||
-        voices.find(v => v.lang === "en-IN" && !v.name.toLowerCase().includes("female") &&
-          !["Heera","Swara","Neerja","Priya","Pooja","Aditi"].some(n => v.name.includes(n))) ||
-        voices.find(v => v.lang === "en-IN") ||
-        // 3. Male en-GB as fallback (British has a formal legal tone)
-        voices.find(v => v.lang === "en-GB" && (v.name.includes("Daniel") || v.name.includes("George") || v.name.includes("Malcolm"))) ||
-        voices.find(v => v.lang === "en-GB" && !v.name.toLowerCase().includes("female")) ||
-        // 4. Male en-US as last resort
-        voices.find(v => v.lang === "en-US" && (v.name.includes("David") || v.name.includes("Mark") || v.name.includes("Eric") || v.name.includes("Guy") || v.name.includes("Reed"))) ||
-        voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") &&
-          !["Samantha","Victoria","Karen","Zira","Susan","Linda","Jenny","Aria","Ana","Emma","Isabella"].some(n => v.name.includes(n))) ||
+        // 1. Best named American male voices (Chrome/Edge on Windows/Mac)
+        voices.find(v => v.name === "Microsoft Guy Online (Natural) - en-US") ||
+        voices.find(v => v.name === "Microsoft Davis Online (Natural) - en-US") ||
+        voices.find(v => v.name === "Microsoft Ryan Online (Natural) - en-US") ||
+        voices.find(v => v.name === "Microsoft Eric - en-US") ||
+        voices.find(v => v.name === "Microsoft Mark - en-US") ||
+        voices.find(v => v.name.includes("Guy") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("Davis") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("Reed") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("Eric") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("David") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("Mark") && v.lang === "en-US") ||
+        voices.find(v => v.name.includes("Alex") && v.lang === "en-US") ||
+        // 2. Any en-US voice that isn't a known female name
+        voices.find(v => v.lang === "en-US" && !["Samantha","Zira","Susan","Linda","Jenny","Aria","Ana","Emma","Isabella","Ava","Michelle","Monica","Siri"].some(n => v.name.includes(n))) ||
+        // 3. Any en-US voice
+        voices.find(v => v.lang === "en-US") ||
+        // 4. Any English voice
         voices.find(v => v.lang.startsWith("en"));
       if (maleVoice) utterance.voice = maleVoice;
     };
@@ -609,13 +623,34 @@ export default function App() {
         ═══════════════════════════════════════════════════════════════════ */}
         <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
 
-          {/* LEFT — Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+          {/* LEFT — Logo + footer link columns below */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", flexShrink: 0 }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px", marginTop: "2px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 16, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              <div style={{ fontSize: 9, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
+              <div style={{ fontSize: 8, color: GOLD, fontStyle: "italic", marginBottom: "4px" }}>میرا فاضل دوست</div>
+              {/* Footer link columns moved here */}
+              <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontSize: 7.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>Product</div>
+                  {["Features", "Document Analysis", "AI Drafting"].map(link => (
+                    <div key={link}><span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span></div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: 7.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>Company</div>
+                  {["About Us", "Careers", "Blog"].map(link => (
+                    <div key={link}><span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span></div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: 7.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>Resources</div>
+                  {["Help Center", "Guides", "Legal Updates"].map(link => (
+                    <div key={link}><span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span></div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -653,8 +688,25 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT — Language + Auth */}
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+          {/* RIGHT — Social icons + copyright + Language + Auth */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
+            {/* Social icons + copyright row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              {[
+                { label: "Twitter",  svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+                { label: "LinkedIn", svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                { label: "YouTube",  svg: <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
+              ].map(({ label, svg }) => (
+                <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
+                  style={{ width: "18px", height: "18px", borderRadius: "4px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", cursor: "pointer", transition: "all 0.18s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; }}
+                >{svg}</button>
+              ))}
+              <span style={{ fontSize: 7, color: "#6A8A68", marginLeft: "4px", whiteSpace: "nowrap" }}>© 2026 ARK Lex AI LLC. All rights reserved.</span>
+            </div>
+            {/* Language + Auth row */}
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
             <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
             <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
@@ -675,7 +727,8 @@ export default function App() {
                 <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
               </>
             )}
-          </div>
+            </div>{/* end Language+Auth row */}
+          </div>{/* end right column */}
         </header>
 
         {/* ══════════════════════════════════════════════════════════════════
@@ -970,79 +1023,6 @@ export default function App() {
           )}
         </div>
 
-        {/* ══════════════════════════════════════════════════════════════════
-            FOOTER — matches screenshot: dark olive/green, columns, social icons
-        ═══════════════════════════════════════════════════════════════════ */}
-        {/* ══════════════════════════════════════════════════════════════════
-            FOOTER — same height as header, dark green, all links → coming soon
-        ═══════════════════════════════════════════════════════════════════ */}
-        <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
-          <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "6px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
-
-            {/* LEFT — Logo + tagline compact */}
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "20px", height: "20px", opacity: 0.95 }} />
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia, serif", lineHeight: 1.1 }}>ARK LAW AI</div>
-                <div style={{ fontSize: 7.5, color: "#8BAA87", lineHeight: 1.2 }}>AI-Powered Legal Intelligence · Built for Pakistan</div>
-              </div>
-            </div>
-
-            {/* CENTER — Three link columns inline */}
-            <div style={{ display: "flex", gap: "28px", alignItems: "flex-start", flex: 1, justifyContent: "center" }}>
-
-              {/* PRODUCT column */}
-              <div>
-                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Product</div>
-                {["Features", "Document Analysis", "AI Drafting"].map(link => (
-                  <div key={link} style={{ marginBottom: "2px" }}>
-                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* COMPANY column */}
-              <div>
-                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Company</div>
-                {["About Us", "Careers", "Blog"].map(link => (
-                  <div key={link} style={{ marginBottom: "2px" }}>
-                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* RESOURCES column */}
-              <div>
-                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "3px" }}>Resources</div>
-                {["Help Center", "Guides", "Legal Updates"].map(link => (
-                  <div key={link} style={{ marginBottom: "2px" }}>
-                    <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8.5, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* RIGHT — Social icons + copyright stacked */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
-              <div style={{ display: "flex", gap: "5px" }}>
-                {[
-                  { label: "Twitter",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-                  { label: "LinkedIn", svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-                  { label: "YouTube",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
-                ].map(({ label, svg }) => (
-                  <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
-                    style={{ width: "22px", height: "22px", borderRadius: "5px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", cursor: "pointer", transition: "all 0.18s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; e.currentTarget.style.borderColor = "#E8D97A55"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; e.currentTarget.style.borderColor = "#3A5A38"; }}
-                  >
-                    {svg}
-                  </button>
-                ))}
-              </div>
-              <span style={{ fontSize: 7.5, color: "#6A8A68" }}>© 2026 ARK Lex AI LLC. All rights reserved.</span>
-            </div>
-          </div>
-        </footer>
 
       </div>{/* end root flex column */}
 
