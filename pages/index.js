@@ -986,52 +986,48 @@ export default function App() {
 
 
         {/* ══════════════════════════════════════════════════════════════════
-            FOOTER — dark green bar, left side + right side only, chat extends to bottom
+            FOOTER — ultra compact single row, ~75% smaller height
         ═══════════════════════════════════════════════════════════════════ */}
         <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
-          <div style={{ padding: "6px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+          <div style={{ padding: "3px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", minHeight: 0 }}>
 
-            {/* LEFT — Logo + tagline + three link columns */}
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1 }}>
-              <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "22px", height: "22px", opacity: 0.9, flexShrink: 0, marginTop: "2px" }} />
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia, serif", lineHeight: 1.1, marginBottom: "2px" }}>ARK LAW AI</div>
-                <div style={{ fontSize: 7.5, color: "#8BAA87", marginBottom: "5px" }}>AI-Powered Legal Intelligence · Built for Pakistan</div>
-                <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-                  {[
-                    { heading: "Product",   links: ["Features", "Document Analysis", "AI Drafting"] },
-                    { heading: "Company",   links: ["About Us", "Careers", "Blog"] },
-                    { heading: "Resources", links: ["Help Center", "Guides", "Legal Updates"] },
-                  ].map(({ heading, links }) => (
-                    <div key={heading}>
-                      <div style={{ fontSize: 8, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "3px" }}>{heading}</div>
-                      {links.map(link => (
-                        <div key={link} style={{ marginBottom: "1px" }}>
-                          <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 8, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
-                        </div>
-                      ))}
-                    </div>
+            {/* LEFT — logo + name + all link columns inline */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, flexWrap: "wrap", rowGap: "0" }}>
+              <img src="/ark-logo.png" alt="ARK" style={{ width: "14px", height: "14px", opacity: 0.85, flexShrink: 0 }} />
+              <span style={{ fontSize: 8, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia,serif", whiteSpace: "nowrap" }}>ARK LAW AI</span>
+              <span style={{ color: "#3A5A38", fontSize: 8 }}>|</span>
+              {[
+                { heading: "Product",   links: ["Features", "Document Analysis", "AI Drafting"] },
+                { heading: "Company",   links: ["About Us", "Careers", "Blog"] },
+                { heading: "Resources", links: ["Help Center", "Guides", "Legal Updates"] },
+              ].map(({ heading, links }, gi) => (
+                <div key={heading} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  {gi > 0 && <span style={{ color: "#3A5A38", fontSize: 8 }}>|</span>}
+                  <span style={{ fontSize: 7, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.4px" }}>{heading}:</span>
+                  {links.map((link, li) => (
+                    <span key={link} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+                      {li > 0 && <span style={{ color: "#3A5A38", fontSize: 7 }}>·</span>}
+                      <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 7, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                    </span>
                   ))}
                 </div>
-              </div>
+              ))}
             </div>
 
-            {/* RIGHT — Social icons + copyright */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px", flexShrink: 0 }}>
-              <div style={{ display: "flex", gap: "5px" }}>
-                {[
-                  { label: "Twitter",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-                  { label: "LinkedIn", svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-                  { label: "YouTube",  svg: <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
-                ].map(({ label, svg }) => (
-                  <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
-                    style={{ width: "22px", height: "22px", borderRadius: "5px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", cursor: "pointer", transition: "all 0.18s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; e.currentTarget.style.borderColor = "#E8D97A55"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; e.currentTarget.style.borderColor = "#3A5A38"; }}
-                  >{svg}</button>
-                ))}
-              </div>
-              <span style={{ fontSize: 7.5, color: "#6A8A68", whiteSpace: "nowrap" }}>© 2026 ARK Lex AI LLC. All rights reserved.</span>
+            {/* RIGHT — social icons + copyright inline */}
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexShrink: 0 }}>
+              {[
+                { label: "Twitter",  svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+                { label: "LinkedIn", svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                { label: "YouTube",  svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
+              ].map(({ label, svg }) => (
+                <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
+                  style={{ width: "16px", height: "16px", borderRadius: "3px", background: "#2A432A", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9DB89A", cursor: "pointer", transition: "all 0.18s", padding: 0 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.color = "#9DB89A"; }}
+                >{svg}</button>
+              ))}
+              <span style={{ fontSize: 6.5, color: "#6A8A68", whiteSpace: "nowrap" }}>© 2026 ARK Lex AI LLC.</span>
             </div>
 
           </div>
