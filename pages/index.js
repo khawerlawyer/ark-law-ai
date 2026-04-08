@@ -1292,12 +1292,18 @@ export default function App() {
       )}
 
       {showLoginPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "35px", borderRadius: "12px", width: "90%", maxWidth: "450px", border: `3px solid ${GOLD}`, boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "45px", height: "45px" }} /><h2 style={{ color: GOLD, margin: 0, fontSize: "20px" }}>Login to ARK Law AI</h2></div>
-              <button onClick={() => setShowLoginPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 26, cursor: "pointer", lineHeight: 1 }}>✕</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }} onClick={() => setShowLoginPopup(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#1B2E1A", padding: "32px", borderRadius: "14px", width: "90%", maxWidth: "420px", border: `2px solid ${GOLD}60`, boxShadow: "0 0 40px rgba(201,168,76,0.25)", position: "relative" }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+              <img src="/ark-logo.png" alt="ARK" style={{ width: "42px", height: "42px", filter: "drop-shadow(0 0 8px rgba(201,168,76,0.4))" }} />
+              <div>
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+                <div style={{ fontSize: 11, color: "#9DB89A" }}>Login to your account</div>
+              </div>
+              <button onClick={() => setShowLoginPopup(false)} style={{ marginLeft: "auto", background: "none", border: "none", color: "#9DB89A", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>✕</button>
             </div>
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C60, transparent)", marginBottom: "24px" }} />
             <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -1313,22 +1319,34 @@ export default function App() {
                 alert("Welcome back, " + data.user.name + "! You have " + (data.user.tokens?.toLocaleString() || "500,000") + " credits.");
               } catch (error) { alert("Login failed. Please try again."); }
             }}>
-              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address</label><input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" /></div>
-              <div style={{ marginBottom: "25px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password</label><input name="password" type="password" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Enter your password" /></div>
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${GOLD}, #E5C887)`, color: NAVY, border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: "15px" }}>Login</button>
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12 }}>Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ color: "#D4C97A", fontSize: 12, display: "block", marginBottom: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" }}>Email Address</label>
+                <input name="email" type="email" required style={{ width: "100%", padding: "11px 14px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 14, outline: "none", boxSizing: "border-box" }} placeholder="your.email@example.com" />
+              </div>
+              <div style={{ marginBottom: "22px" }}>
+                <label style={{ color: "#D4C97A", fontSize: 12, display: "block", marginBottom: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" }}>Password</label>
+                <input name="password" type="password" required style={{ width: "100%", padding: "11px 14px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 14, outline: "none", boxSizing: "border-box" }} placeholder="Enter your password" />
+              </div>
+              <button type="submit" style={{ width: "100%", padding: "13px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 15, cursor: "pointer", marginBottom: "14px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Login</button>
+              <p style={{ textAlign: "center", color: "#8BAA87", fontSize: 12 }}>Don't have an account? <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
             </form>
           </div>
         </div>
       )}
 
       {showSignupPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
-          <div style={{ background: NAVY, padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "600px", border: `3px solid ${GOLD}`, maxHeight: "90vh", overflowY: "auto", boxShadow: `0 0 30px ${GOLD}50` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}><img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "50px", height: "50px" }} /><h2 style={{ color: GOLD, margin: 0, fontSize: "22px" }}>Join ARK Law AI</h2></div>
-              <button onClick={() => setShowSignupPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer", lineHeight: 1 }}>✕</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }} onClick={() => setShowSignupPopup(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#1B2E1A", padding: "28px 32px", borderRadius: "14px", width: "90%", maxWidth: "560px", border: `2px solid ${GOLD}60`, boxShadow: "0 0 40px rgba(201,168,76,0.25)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+              <img src="/ark-logo.png" alt="ARK" style={{ width: "42px", height: "42px", filter: "drop-shadow(0 0 8px rgba(201,168,76,0.4))", flexShrink: 0 }} />
+              <div>
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+                <div style={{ fontSize: 11, color: "#9DB89A" }}>Create your free account</div>
+              </div>
+              <button onClick={() => setShowSignupPopup(false)} style={{ marginLeft: "auto", background: "none", border: "none", color: "#9DB89A", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>✕</button>
             </div>
+            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C60, transparent)", marginBottom: "20px" }} />
             <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -1336,28 +1354,38 @@ export default function App() {
                 const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), age: formData.get("age"), profession: formData.get("profession"), barOfPractice: formData.get("barOfPractice"), city: formData.get("city"), province: formData.get("province"), country: formData.get("country") }) });
                 const data = await res.json();
                 if (res.ok) {
-                  bumpUserCount(); // [CHANGE 3] increment user metric
+                  bumpUserCount();
                   setShowSignupPopup(false);
                   alert("Account created! You have been awarded 500,000 FREE credits! Please login.");
                   setShowLoginPopup(true);
                 } else { alert(data.error || "Signup failed. Please try again."); }
-              } catch (error) { alert("Signup failed. Please try again."); }
+              } catch (error) { alert("Signup failed: " + error.message); }
             }}>
-              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Email Address (Username) *</label><input name="email" type="email" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="your.email@example.com" /></div>
-              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Password *</label><input name="password" type="password" required minLength={6} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Minimum 6 characters" /></div>
-              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Full Name *</label><input name="name" type="text" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} placeholder="Your full name" /></div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Age *</label><input name="age" type="number" required min={18} max={100} style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
-                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Profession *</label><select name="profession" required style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }}><option value="">Select...</option><option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option></select></div>
-              </div>
-              <div style={{ marginBottom: "18px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Bar of Practice (Optional)</label><input name="barOfPractice" type="text" placeholder="e.g., Punjab Bar Council" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
-                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>City *</label><input name="city" type="text" required placeholder="e.g., Lahore" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
-                <div><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Province/State *</label><input name="province" type="text" required placeholder="e.g., Punjab" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
-              </div>
-              <div style={{ marginBottom: "25px" }}><label style={{ color: GOLD, fontSize: 13, display: "block", marginBottom: "6px", fontWeight: 600 }}>Country *</label><input name="country" type="text" required defaultValue="Pakistan" style={{ width: "100%", padding: "12px", background: NAVY_SURFACE, border: `2px solid ${NAVY_BORDER}`, borderRadius: "6px", color: CREAM, fontSize: 14 }} /></div>
-              <button type="submit" style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: 16, cursor: "pointer" }}>Create Account</button>
-              <p style={{ textAlign: "center", color: TEXT_MUTED, fontSize: 12, marginTop: "15px" }}>Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: GOLD, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span></p>
+              {/* Shared input/label styles */}
+              {(() => {
+                const inp = { width: "100%", padding: "10px 13px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 13, boxSizing: "border-box", outline: "none" };
+                const lbl = { color: "#D4C97A", fontSize: 11, display: "block", marginBottom: "5px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" };
+                const row = { marginBottom: "14px" };
+                return (
+                  <>
+                    <div style={row}><label style={lbl}>Email Address *</label><input name="email" type="email" required style={inp} placeholder="your.email@example.com" /></div>
+                    <div style={row}><label style={lbl}>Password * (min 6 chars)</label><input name="password" type="password" required minLength={6} style={inp} placeholder="Minimum 6 characters" /></div>
+                    <div style={row}><label style={lbl}>Full Name *</label><input name="name" type="text" required style={inp} placeholder="Your full name" /></div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                      <div><label style={lbl}>Age *</label><input name="age" type="number" required min={18} max={100} style={inp} /></div>
+                      <div><label style={lbl}>Profession *</label><select name="profession" required style={{...inp, cursor: "pointer"}}><option value="">Select...</option><option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option></select></div>
+                    </div>
+                    <div style={row}><label style={lbl}>Bar of Practice (Optional)</label><input name="barOfPractice" type="text" style={inp} placeholder="e.g., Punjab Bar Council" /></div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                      <div><label style={lbl}>City *</label><input name="city" type="text" required style={inp} placeholder="e.g., Lahore" /></div>
+                      <div><label style={lbl}>Province *</label><input name="province" type="text" required style={inp} placeholder="e.g., Punjab" /></div>
+                    </div>
+                    <div style={{ marginBottom: "20px" }}><label style={lbl}>Country *</label><input name="country" type="text" required defaultValue="Pakistan" style={inp} /></div>
+                  </>
+                );
+              })()}
+              <button type="submit" style={{ width: "100%", padding: "13px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 15, cursor: "pointer", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Create Account — 500,000 Free Credits ✨</button>
+              <p style={{ textAlign: "center", color: "#8BAA87", fontSize: 12, marginTop: "14px" }}>Already have an account? <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span></p>
             </form>
           </div>
         </div>
