@@ -1,93 +1,86 @@
-import fs from 'fs';
-import path from 'path';
+// pages/api/auth/login.js
+// ─────────────────────────────────────────────────────────────────────────────
+// Pure Node.js — ZERO external dependencies.
+// Reads users from data/users.json, verifies PBKDF2 password hash.
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Path to store users data
-const DATA_DIR = path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
+import fs   from "fs";
+import path from "path";
+import crypto from "crypto";
 
-// Ensure data directory exists
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+const USERS_FILE = path.join(process.cwd(), "data", "users.json");
+
+// ── Verify password against stored PBKDF2 hash ───────────────────────────────
+function verifyPassword(password, storedHash) {
+  try {
+    const [salt, hash] = storedHash.split(":");
+    const verify = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex");
+    return verify === hash;
+  } catch {
+    return false;
   }
 }
 
-// Read users from file
+// ── Read users from JSON file ─────────────────────────────────────────────────
 function readUsers() {
-  ensureDataDir();
-  
   try {
-    if (fs.existsSync(USERS_FILE)) {
-      const data = fs.readFileSync(USERS_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Error reading users file:', error);
+    if (!fs.existsSync(USERS_FILE)) return [];
+    const raw = fs.readFileSync(USERS_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
   }
-  
-  return [];
 }
 
-// Find user by email
-function findUserByEmail(email) {
-  const users = readUsers();
-  return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+// ── Write users to JSON file ──────────────────────────────────────────────────
+function writeUsers(users) {
+  fs.mkdirSync(path.dirname(USERS_FILE), { recursive: true });
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), "utf8");
 }
 
-function hashPassword(password) {
-  return Buffer.from(password).toString('base64');
-}
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+// ── Handler ───────────────────────────────────────────────────────────────────
+export default function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
   try {
-    const { email, password } = req.body;
+    const users = readUsers();
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    console.log('🔐 Login attempt for:', email);
-    
-    const allUsers = readUsers();
-    console.log('📊 Total users in database:', allUsers.length);
-
-    // Find user
-    const user = findUserByEmail(email);
-    
+    // ── Find user ─────────────────────────────────────────────────────────
+    const user = users.find(u => u.email === normalizedEmail);
     if (!user) {
-      console.log('❌ User not found:', email);
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    console.log('✅ User found:', user.email);
-
-    // Check password
-    const hashedPassword = hashPassword(password);
-    
-    if (user.password !== hashedPassword) {
-      console.log('❌ Password mismatch');
-      return res.status(401).json({ error: 'Invalid email or password' });
+    // ── Verify password ───────────────────────────────────────────────────
+    const valid = verifyPassword(password, user.passwordHash);
+    if (!valid) {
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    console.log('✅ Login successful for:', user.email);
+    // ── Update lastLogin in file ──────────────────────────────────────────
+    const updatedUsers = users.map(u =>
+      u.email === normalizedEmail
+        ? { ...u, lastLogin: new Date().toISOString() }
+        : u
+    );
+    writeUsers(updatedUsers);
 
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
+    // ── Return safe user (no passwordHash) ───────────────────────────────
+    const { passwordHash: _removed, ...safeUser } = { ...user, lastLogin: new Date().toISOString() };
+    return res.status(200).json({ message: "Login successful", user: safeUser });
 
-    return res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      user: userWithoutPassword,
-    });
-  } catch (error) {
-    console.error('❌ Login error:', error);
-    return res.status(500).json({ 
-      error: 'An error occurred during login',
-      details: error.message 
-    });
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ error: "Login failed. Please try again." });
   }
 }
