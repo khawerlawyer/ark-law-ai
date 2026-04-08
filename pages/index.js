@@ -13,6 +13,8 @@ const TEXT_SECONDARY = "#B8C4D0";
 const TEXT_MUTED   = "#6E8099";
 const CREAM        = "#F5F1E8";
 const POPUP_DARK   = "#0A1118";
+const LIGHT_GREEN  = "#4CAF7D";   // light green for action buttons
+const LG_HOVER     = "#3D9B6A";   // darker on hover
 
 // ─── [CHANGE 2] Quran verse text for top-bar animation ────────────────────────
 const QURAN_VERSE =
@@ -400,14 +402,37 @@ export default function App() {
     window.speechSynthesis.cancel();
     const cleanText = text.replace(/[•\n]/g, " ").replace(/\s+/g, " ").trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.85; utterance.pitch = 1.1; utterance.volume = 1.0; utterance.lang = "en-IN";
-    const setVoice = () => {
+    // Slightly slower, deeper pitch for a measured authoritative male voice
+    utterance.rate = 0.82; utterance.pitch = 0.88; utterance.volume = 1.0; utterance.lang = "en-IN";
+    const selectVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = voices.find(v => (v.lang.includes("en-IN") || v.lang.includes("en-PK")) && (v.name.toLowerCase().includes("female") || v.name.includes("Heera") || v.name.includes("Swara"))) || voices.find(v => v.name.includes("Veena") || v.name.includes("Heera") || v.name.includes("Swara") || v.name.includes("Neerja")) || voices.find(v => v.lang.includes("en-IN")) || voices.find(v => v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("male")) || voices.find(v => v.name.includes("Samantha") || v.name.includes("Victoria") || v.name.includes("Karen")) || voices.find(v => v.name.includes("Microsoft Zira")) || voices.find(v => v.lang.includes("en"));
-      if (femaleVoice) utterance.voice = femaleVoice;
+      // Priority chain: male South Asian → male Indian English → male British/US
+      const maleVoice =
+        // 1. Named male South Asian / Pakistani voices (Chrome/Edge on Windows)
+        voices.find(v => v.name === "Microsoft Arjun Online (Natural) - en-IN") ||
+        voices.find(v => v.name === "Microsoft Prabhat - en-IN") ||
+        voices.find(v => v.name === "Microsoft Arjun - en-IN") ||
+        voices.find(v => v.name.includes("Arjun")) ||
+        voices.find(v => v.name.includes("Prabhat")) ||
+        voices.find(v => v.name.includes("Ravi")) ||
+        voices.find(v => v.name.includes("Hemant")) ||
+        // 2. Any male en-IN voice
+        voices.find(v => v.lang === "en-IN" && v.name.toLowerCase().includes("male")) ||
+        voices.find(v => v.lang === "en-IN" && !v.name.toLowerCase().includes("female") &&
+          !["Heera","Swara","Neerja","Priya","Pooja","Aditi"].some(n => v.name.includes(n))) ||
+        voices.find(v => v.lang === "en-IN") ||
+        // 3. Male en-GB as fallback (British has a formal legal tone)
+        voices.find(v => v.lang === "en-GB" && (v.name.includes("Daniel") || v.name.includes("George") || v.name.includes("Malcolm"))) ||
+        voices.find(v => v.lang === "en-GB" && !v.name.toLowerCase().includes("female")) ||
+        // 4. Male en-US as last resort
+        voices.find(v => v.lang === "en-US" && (v.name.includes("David") || v.name.includes("Mark") || v.name.includes("Eric") || v.name.includes("Guy") || v.name.includes("Reed"))) ||
+        voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") &&
+          !["Samantha","Victoria","Karen","Zira","Susan","Linda","Jenny","Aria","Ana","Emma","Isabella"].some(n => v.name.includes(n))) ||
+        voices.find(v => v.lang.startsWith("en"));
+      if (maleVoice) utterance.voice = maleVoice;
     };
-    setVoice();
-    if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = setVoice;
+    selectVoice();
+    if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = selectVoice;
     utterance.onstart = () => { setIsSpeaking(true);  setCurrentSpeakingIndex(messageIndex); };
     utterance.onend   = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
     utterance.onerror = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
@@ -559,8 +584,8 @@ export default function App() {
           100% { transform: translateX(-50%); }
         }
         @keyframes goldGlow {
-          0%, 100% { text-shadow: 0 0 8px #C9A84C, 0 0 18px #C9A84Caa, 0 0 32px #FFD70066, 0 0 50px #FFD70033; }
-          50%       { text-shadow: 0 0 14px #FFD700, 0 0 28px #C9A84Cff, 0 0 50px #FFD700bb, 0 0 80px #FFD70055; }
+          0%, 100% { text-shadow: 0 0 6px #A07828, 0 0 14px #C9A84C88, 0 0 24px #C9A84C44; }
+          50%       { text-shadow: 0 0 10px #8B6520, 0 0 20px #C9A84Ccc, 0 0 36px #C9A84C66; }
         }
         .verse-outer {
           overflow: hidden;
@@ -595,9 +620,6 @@ export default function App() {
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
               <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
-              <div onClick={() => setShowLinkedInPopup(true)} style={{ fontSize: 8, color: ACCENT_PK, cursor: "pointer", textDecoration: "underline", direction: isUrdu ? "rtl" : "ltr" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = ACCENT_PK}>
-                by Attorney & AI Innovator Khawer Rabbani
-              </div>
             </div>
           </div>
 
@@ -609,17 +631,17 @@ export default function App() {
             display: "flex",
             alignItems: "center",
             borderRadius: "10px",
-            border: `1px solid #1A4A8A`,
-            background: `linear-gradient(135deg, #0A1F44, #0D2B5E, #0A1F44)`,
-            boxShadow: `0 2px 12px rgba(10,31,68,0.5), inset 0 1px 3px rgba(255,255,255,0.05)`,
+            border: `1px solid ${GOLD}50`,
+            background: CREAM,
+            boxShadow: `0 1px 6px ${GOLD}20`,
             position: "relative",
           }}>
             {/* Decorative left accent */}
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to right, #0A1F44, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
               <span style={{ fontSize: 16, color: GOLD, textShadow: `0 0 8px ${GOLD}` }}>☪</span>
             </div>
             {/* Decorative right accent */}
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to left, #0A1F44, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "38px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
               <span style={{ fontSize: 16, color: GOLD, textShadow: `0 0 8px ${GOLD}` }}>☪</span>
             </div>
             {/* Scrolling verse — two copies for seamless loop starting immediately */}
@@ -642,8 +664,8 @@ export default function App() {
             <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: "transparent", color: "#E8D97A", border: "1px solid #E8D97A88", borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#2A432A"; e.currentTarget.style.borderColor = "#E8D97A"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "#E8D97A88"; }}>Login</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: `linear-gradient(135deg, ${GOLD}, #FFD700)`, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, animation: "glowPulse 2s infinite", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>✨ Sign Up Free</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
               </>
             ) : (
               <>
@@ -740,9 +762,9 @@ export default function App() {
                   {/* [CHANGE 1] New button: creates fresh session, keeps old ones intact */}
                   <button
                     onClick={startNewChat}
-                    style={{ fontSize: 8, padding: "2px 8px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "opacity 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
-                    onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
-                    onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                    style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
+                    onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}
                     title={isUrdu ? "نیا سیشن" : "New Chat"}
                   >{isUrdu ? UR.newBtn : "+ New"}</button>
                 </div>
@@ -847,13 +869,13 @@ export default function App() {
                 <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + " file(s) uploaded: " + files.map(f => f.name).join(", ")); } }} style={{ display: "none" }} />
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()} placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")} style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
-              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.5 : 1, fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.send : "SEND"}</button>
+              <button onClick={() => sendMessage()} disabled={loading || isListening} style={{ padding: "9px 18px", background: loading || isListening ? "#9DB89A" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }} onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.send : "SEND"}</button>
             </div>
           </div>
 
           {/* ── RIGHT SIDEBAR ─────────────────────────────────────────────── */}
           {!isMobile && (
-            <div style={{ width: "220px", background: "white", borderLeft: "1px solid #E8E8E4", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
               {/* Upgrade to Pro strip */}
               <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: `linear-gradient(135deg, ${NAVY}, #1A3050)`, cursor: "pointer", flexShrink: 0, transition: "opacity 0.2s", direction: isUrdu ? "rtl" : "ltr" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
@@ -862,7 +884,7 @@ export default function App() {
                   <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, lineHeight: 1.2 }}>{isUrdu ? UR.upgradeTitle : "Upgrade to Pro"}</div>
                   <div style={{ fontSize: 8, color: "#8AABB8" }}>{isUrdu ? UR.upgradeSub : "Faster AI & exclusive tools"}</div>
                 </div>
-                <div style={{ fontSize: 8, padding: "2px 7px", background: GOLD, borderRadius: "10px", color: NAVY, fontWeight: 700, whiteSpace: "nowrap", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.goPro : "GO PRO"}</div>
+                <div style={{ fontSize: 8, padding: "2px 7px", background: LIGHT_GREEN, borderRadius: "10px", color: "white", fontWeight: 700, whiteSpace: "nowrap", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.goPro : "GO PRO"}</div>
               </div>
 
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 10px" }}>
@@ -876,7 +898,7 @@ export default function App() {
                   <p style={{ fontSize: 9, color: "#888", margin: "0 0 10px 0", lineHeight: 1.4, fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? "شروع کرنے کے لیے کوئی سوال کلک کریں" : "Click any question to get started"}</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                     {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).map((query, i) => (
-                      <button key={i} onClick={() => sendMessage(isUrdu ? QUICK_QUERIES_PK[i] : query, true)} style={{ display: "flex", alignItems: "flex-start", gap: "8px", width: "100%", padding: "8px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 10, color: "#2D2D2D", lineHeight: 1.4, fontWeight: 400, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; e.currentTarget.style.color = "#2D2D2D"; }}>
+                      <button key={i} onClick={() => sendMessage(isUrdu ? QUICK_QUERIES_PK[i] : query, true)} style={{ display: "flex", alignItems: "flex-start", gap: "8px", width: "100%", padding: "8px 10px", background: "white", border: `1px solid ${GOLD}25`, borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 10, color: "#2D2D2D", lineHeight: 1.4, fontWeight: 400, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}25`; e.currentTarget.style.color = "#2D2D2D"; }}>
                         <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#E8F5EE", border: "1px solid #C2E0CE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>
                           <span style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 700 }}>?</span>
                         </div>
@@ -896,7 +918,7 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                     {PRACTICE_AREAS_PK.map((area, i) => (
-                      <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "9px 10px", background: "white", border: "1px solid #EFEFEB", borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 11, color: "#1A1A1A", fontWeight: 500, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", flexDirection: isUrdu ? "row-reverse" : "row", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#EFEFEB"; }}>
+                      <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)} style={{ display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "9px 10px", background: "white", border: `1px solid ${GOLD}25`, borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 11, color: "#1A1A1A", fontWeight: 500, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", flexDirection: isUrdu ? "row-reverse" : "row", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}25`; }}>
                         <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "#EEF7F2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", flexShrink: 0 }}>{area.icon}</div>
                         <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                         <span style={{ color: "#BBBBBB", fontSize: 13, fontWeight: 300 }}>{isUrdu ? "‹" : "›"}</span>
