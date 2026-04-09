@@ -755,6 +755,7 @@ export default function App() {
               </div>
             </div>
           </div>
+          </div>{/* end left sidebar panel */}
 
           {/* CHAT AREA */}
           <div className={isMobile ? `ark-panel${mobileTab === "chat" ? " active" : ""}` : ""} style={{ flex: isMobile ? undefined : 1, width: isMobile ? "100%" : undefined, display: isMobile ? (mobileTab === "chat" ? "flex" : "none") : "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
