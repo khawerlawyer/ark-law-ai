@@ -1,142 +1,60 @@
-// pages/api/auth/signup.js
-// Works in ALL environments:
-// - Local dev: saves to data/users.json
-// - Vercel (no env vars): saves to /tmp/users.json (writable, shared in same region)
-// - Vercel (with GIST_TOKEN + GIST_ID): saves to GitHub Gist (permanent)
-
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-
-// ─── Storage helpers ──────────────────────────────────────────────────────────
-
-function getFilePath() {
-  // /tmp is writable on Vercel; use data/users.json locally
-  try {
-    const localPath = path.join(process.cwd(), "data", "users.json");
-    fs.mkdirSync(path.dirname(localPath), { recursive: true });
-    return localPath;
-  } catch {
-    return "/tmp/ark_users.json";
-  }
-}
-
-function readUsersFromFile() {
-  try {
-    const file = getFilePath();
-    if (fs.existsSync(file)) {
-      const raw = fs.readFileSync(file, "utf8").trim();
-      if (raw) return JSON.parse(raw);
-    }
-  } catch {}
-  // Also check /tmp as fallback
-  try {
-    if (fs.existsSync("/tmp/ark_users.json")) {
-      const raw = fs.readFileSync("/tmp/ark_users.json", "utf8").trim();
-      if (raw) return JSON.parse(raw);
-    }
-  } catch {}
-  return [];
-}
-
-function writeUsersToFile(users) {
-  const json = JSON.stringify(users, null, 2);
-  // Try project data dir first
-  try {
-    const localPath = path.join(process.cwd(), "data", "users.json");
-    fs.mkdirSync(path.dirname(localPath), { recursive: true });
-    fs.writeFileSync(localPath, json, "utf8");
-  } catch {}
-  // Always also write to /tmp (works on Vercel)
-  try {
-    fs.writeFileSync("/tmp/ark_users.json", json, "utf8");
-  } catch {}
-}
-
-async function readUsersFromGist() {
-  const res = await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
-    headers: { Authorization: `Bearer ${process.env.GIST_TOKEN}`, Accept: "application/vnd.github+json" },
-  });
-  if (!res.ok) throw new Error(`Gist read failed: ${res.status}`);
-  const data = await res.json();
-  return JSON.parse(data.files["users.json"]?.content || "[]");
-}
-
-async function writeUsersToGist(users) {
-  await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
-    method: "PATCH",
-    headers: { Authorization: `Bearer ${process.env.GIST_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
-    body: JSON.stringify({ files: { "users.json": { content: JSON.stringify(users, null, 2) } } }),
-  });
-}
-
-async function readUsers() {
-  if (process.env.GIST_TOKEN && process.env.GIST_ID) return readUsersFromGist();
-  return readUsersFromFile();
-}
-
-async function writeUsers(users) {
-  if (process.env.GIST_TOKEN && process.env.GIST_ID) {
-    await writeUsersToGist(users);
-    writeUsersToFile(users); // local backup too
-  } else {
-    writeUsersToFile(users);
-  }
-}
-
-// ─── Password hashing (built-in crypto, no npm) ───────────────────────────────
-
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex");
-  return `${salt}:${hash}`;
-}
-
-// ─── Handler ──────────────────────────────────────────────────────────────────
+// ARK Law AI — Signup handler using Clerk backend API
+// Clerk stores users permanently in the cloud — works across all Vercel instances
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { email, password, name, age, profession, barOfPractice, city, province, country } = req.body;
+  const { name, email, password, profession, city } = req.body;
 
-  if (!email || !password || !name || !age || !profession || !city || !province || !country)
-    return res.status(400).json({ error: "All required fields must be filled." });
-  if (password.length < 6)
-    return res.status(400).json({ error: "Password must be at least 6 characters." });
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return res.status(400).json({ error: "Please enter a valid email address." });
-
-  const normalizedEmail = email.toLowerCase().trim();
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Name, email and password are required" });
+  }
 
   try {
-    const users = await readUsers();
+    // Create user via Clerk Backend API
+    const response = await fetch("https://api.clerk.com/v1/users", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        first_name: name.split(" ")[0],
+        last_name: name.split(" ").slice(1).join(" ") || "",
+        email_address: [email],
+        password: password,
+        // Store extra fields in public metadata
+        public_metadata: {
+          profession: profession || "",
+          city: city || "",
+          signupDate: new Date().toISOString(),
+          tokens: 500000,
+        },
+      }),
+    });
 
-    if (users.find(u => u.email === normalizedEmail))
-      return res.status(409).json({ error: "An account with this email already exists. Please login." });
+    const data = await response.json();
 
-    const newUser = {
-      id:            `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-      email:         normalizedEmail,
-      passwordHash:  hashPassword(password),
-      name:          name.trim(),
-      age:           parseInt(age, 10),
-      profession:    profession.trim(),
-      barOfPractice: barOfPractice?.trim() || "",
-      city:          city.trim(),
-      province:      province.trim(),
-      country:       (country || "Pakistan").trim(),
-      tokens:        500000,
-      createdAt:     new Date().toISOString(),
-      lastLogin:     null,
-    };
+    if (!response.ok) {
+      // Clerk returns errors array
+      const msg = data.errors?.[0]?.long_message || data.errors?.[0]?.message || "Signup failed";
+      return res.status(400).json({ error: msg });
+    }
 
-    await writeUsers([...users, newUser]);
-
-    const { passwordHash: _, ...safeUser } = newUser;
-    return res.status(201).json({ message: "Account created!", user: safeUser });
-
+    // Return safe user object (no password)
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: data.id,
+        name: `${data.first_name} ${data.last_name}`.trim(),
+        email: data.email_addresses?.[0]?.email_address || email,
+        profession: profession || "",
+        city: city || "",
+        tokens: 500000,
+      },
+    });
   } catch (err) {
     console.error("Signup error:", err);
-    return res.status(500).json({ error: `Signup failed: ${err.message}` });
+    return res.status(500).json({ error: "Server error. Please try again." });
   }
 }
