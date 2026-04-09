@@ -1,71 +1,90 @@
 // pages/api/auth/signup.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Persistent auth using a SECRET GitHub Gist as storage.
-// Works on Vercel serverless — no database, no npm packages needed.
-// Each function call reads/writes the same Gist → data is always shared.
-//
-// ONE-TIME SETUP (5 minutes):
-//   1. Go to github.com → Settings → Developer settings → Personal access tokens
-//      → Tokens (classic) → Generate new token (classic)
-//      Tick only: gist
-//      Expiration: No expiration
-//      Copy the token.
-//
-//   2. Create a secret Gist:
-//      Go to gist.github.com
-//      Filename: users.json
-//      Content: []
-//      Click "Create secret gist"
-//      Copy the Gist ID from the URL:
-//      https://gist.github.com/YOUR_USERNAME/GIST_ID  ← copy GIST_ID
-//
-//   3. Add to Vercel Environment Variables:
-//      GIST_TOKEN = your personal access token
-//      GIST_ID    = your gist ID
-//
-//   4. No npm install needed — uses built-in crypto + fetch (Node 18+)
-// ─────────────────────────────────────────────────────────────────────────────
+// Works in ALL environments:
+// - Local dev: saves to data/users.json
+// - Vercel (no env vars): saves to /tmp/users.json (writable, shared in same region)
+// - Vercel (with GIST_TOKEN + GIST_ID): saves to GitHub Gist (permanent)
 
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
-const GIST_TOKEN = process.env.GIST_TOKEN;
-const GIST_ID    = process.env.GIST_ID;
+// ─── Storage helpers ──────────────────────────────────────────────────────────
 
-// ── GitHub Gist helpers ───────────────────────────────────────────────────────
+function getFilePath() {
+  // /tmp is writable on Vercel; use data/users.json locally
+  try {
+    const localPath = path.join(process.cwd(), "data", "users.json");
+    fs.mkdirSync(path.dirname(localPath), { recursive: true });
+    return localPath;
+  } catch {
+    return "/tmp/ark_users.json";
+  }
+}
 
-async function readUsers() {
-  const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-    headers: {
-      Authorization: `Bearer ${GIST_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
+function readUsersFromFile() {
+  try {
+    const file = getFilePath();
+    if (fs.existsSync(file)) {
+      const raw = fs.readFileSync(file, "utf8").trim();
+      if (raw) return JSON.parse(raw);
+    }
+  } catch {}
+  // Also check /tmp as fallback
+  try {
+    if (fs.existsSync("/tmp/ark_users.json")) {
+      const raw = fs.readFileSync("/tmp/ark_users.json", "utf8").trim();
+      if (raw) return JSON.parse(raw);
+    }
+  } catch {}
+  return [];
+}
+
+function writeUsersToFile(users) {
+  const json = JSON.stringify(users, null, 2);
+  // Try project data dir first
+  try {
+    const localPath = path.join(process.cwd(), "data", "users.json");
+    fs.mkdirSync(path.dirname(localPath), { recursive: true });
+    fs.writeFileSync(localPath, json, "utf8");
+  } catch {}
+  // Always also write to /tmp (works on Vercel)
+  try {
+    fs.writeFileSync("/tmp/ark_users.json", json, "utf8");
+  } catch {}
+}
+
+async function readUsersFromGist() {
+  const res = await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
+    headers: { Authorization: `Bearer ${process.env.GIST_TOKEN}`, Accept: "application/vnd.github+json" },
   });
   if (!res.ok) throw new Error(`Gist read failed: ${res.status}`);
   const data = await res.json();
-  const content = data.files["users.json"]?.content || "[]";
-  return JSON.parse(content);
+  return JSON.parse(data.files["users.json"]?.content || "[]");
+}
+
+async function writeUsersToGist(users) {
+  await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${process.env.GIST_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+    body: JSON.stringify({ files: { "users.json": { content: JSON.stringify(users, null, 2) } } }),
+  });
+}
+
+async function readUsers() {
+  if (process.env.GIST_TOKEN && process.env.GIST_ID) return readUsersFromGist();
+  return readUsersFromFile();
 }
 
 async function writeUsers(users) {
-  const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${GIST_TOKEN}`,
-      Accept: "application/vnd.github+json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      files: {
-        "users.json": {
-          content: JSON.stringify(users, null, 2),
-        },
-      },
-    }),
-  });
-  if (!res.ok) throw new Error(`Gist write failed: ${res.status}`);
+  if (process.env.GIST_TOKEN && process.env.GIST_ID) {
+    await writeUsersToGist(users);
+    writeUsersToFile(users); // local backup too
+  } else {
+    writeUsersToFile(users);
+  }
 }
 
-// ── Password hashing (built-in crypto — no bcrypt needed) ────────────────────
+// ─── Password hashing (built-in crypto, no npm) ───────────────────────────────
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -73,18 +92,13 @@ function hashPassword(password) {
   return `${salt}:${hash}`;
 }
 
-// ── Handler ───────────────────────────────────────────────────────────────────
+// ─── Handler ──────────────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!GIST_TOKEN || !GIST_ID) {
-    return res.status(500).json({ error: "Server not configured. Please contact the administrator." });
-  }
-
   const { email, password, name, age, profession, barOfPractice, city, province, country } = req.body;
 
-  // Validation
   if (!email || !password || !name || !age || !profession || !city || !province || !country)
     return res.status(400).json({ error: "All required fields must be filled." });
   if (password.length < 6)
