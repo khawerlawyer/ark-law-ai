@@ -664,7 +664,6 @@ export default function App() {
 
           {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
           <div className={isMobile ? `ark-panel${mobileTab === "left" ? " active" : ""}` : ""} style={{ width: isMobile ? "100%" : "200px", background: CREAM, borderRight: isMobile ? "none" : `1px solid ${GOLD}40`, padding: "8px", display: isMobile ? (mobileTab === "left" ? "flex" : "none") : "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-          <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
               {/* Justice Rabbani dedication box */}
               <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
                 <img
@@ -960,7 +959,8 @@ export default function App() {
             </div>
           </div>
         </footer>
-      </div>
+      </div>{/* end body */}
+      </div>{/* end root */}
 
       {/* ════════════════════════════════════════════════════════════════════
           POPUPS
