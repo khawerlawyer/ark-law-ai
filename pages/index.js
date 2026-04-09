@@ -26,10 +26,7 @@ export default function App() {
   const [showLoginPopup,     setShowLoginPopup]     = useState(false);
   // ── FORGOT PASSWORD states ──
   const [showForgotPopup,    setShowForgotPopup]    = useState(false);
-  const [forgotEmail,        setForgotEmail]        = useState("");
   const [forgotSent,         setForgotSent]         = useState(false);
-  const [forgotLoading,      setForgotLoading]      = useState(false);
-  const [forgotError,        setForgotError]        = useState("");
 
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   const [showUpgradePopup,   setShowUpgradePopup]   = useState(false);
@@ -296,28 +293,12 @@ export default function App() {
     setMetricUsers(next);
   };
 
-  // ── FORGOT PASSWORD handler — calls Clerk API to send reset email ──
-  const handleForgotPassword = async () => {
-    if (!forgotEmail.trim()) { setForgotError("Please enter your email address."); return; }
-    setForgotLoading(true);
-    setForgotError("");
-    try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setForgotError(data.error || "Failed to send reset email. Please try again.");
-      } else {
-        setForgotSent(true);
-      }
-    } catch (err) {
-      setForgotError("Network error. Please try again.");
-    } finally {
-      setForgotLoading(false);
-    }
+  // ── FORGOT PASSWORD handler ──
+  // Opens Clerk's Account Portal sign-in page in a new tab.
+  // Clerk's built-in "Forgot password?" link on that page handles the reset email.
+  const handleForgotPassword = () => {
+    window.open("https://grand-lab-78.accounts.dev/sign-in#/forgot-password", "_blank", "noopener,noreferrer");
+    setForgotSent(true);
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1429,41 +1410,31 @@ export default function App() {
             <div style={{ position: "relative", zIndex: 1 }}>
               {!forgotSent ? (
                 <>
-                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "18px" }}>
-                    Enter your registered email address and we'll send you a password reset link.
+                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "24px" }}>
+                    Click the button below to open the secure password reset page in a new tab. Enter your registered email there and Clerk will send you a reset link instantly.
                   </p>
-                  <div style={popupRow}>
-                    <label style={popupLbl}>Email Address</label>
-                    <input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} className="ark-input" style={popupInp} placeholder="your.email@example.com" />
-                  </div>
-                  {forgotError && (
-                    <div style={{ fontSize: 12, color: "#C0392B", background: "#FDE8E8", border: "1px solid #F5C6C6", borderRadius: "6px", padding: "8px 12px", marginBottom: "14px" }}>
-                      ⚠️ {forgotError}
-                    </div>
-                  )}
-                  <button onClick={handleForgotPassword} disabled={forgotLoading}
-                    style={{ width: "100%", padding: "12px", background: forgotLoading ? "#9DB89A" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: forgotLoading ? "not-allowed" : "pointer", marginBottom: "10px", transition: "background 0.2s" }}
-                    onMouseEnter={(e) => { if (!forgotLoading) e.currentTarget.style.background = LG_HOVER; }}
-                    onMouseLeave={(e) => { if (!forgotLoading) e.currentTarget.style.background = LIGHT_GREEN; }}>
-                    {forgotLoading ? "⏳ Sending..." : "Send Reset Email"}
+                  <button onClick={handleForgotPassword}
+                    style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
+                    onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
+                    🔐 Open Password Reset Page
                   </button>
                 </>
               ) : (
                 <div style={{ textAlign: "center", padding: "10px 0 20px" }}>
-                  <div style={{ fontSize: 44, marginBottom: "14px" }}>✉️</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: "10px" }}>Check Your Email</div>
-                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "20px" }}>
-                    A password reset link has been sent to <strong>{forgotEmail}</strong>.<br/>
-                    Please check your inbox (and spam folder).
+                  <div style={{ fontSize: 44, marginBottom: "14px" }}>✅</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: "10px" }}>Reset Page Opened</div>
+                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "8px" }}>
+                    A new tab has opened with the password reset page.
                   </p>
-                  <div style={{ fontSize: 11, color: "#6A8A66", marginBottom: "20px" }}>
-                    The link will expire in 1 hour.
-                  </div>
+                  <p style={{ fontSize: 12, color: "#6A8A66", lineHeight: 1.5, marginBottom: "20px" }}>
+                    Enter your email there — Clerk will send a reset link to your inbox immediately.
+                  </p>
                 </div>
               )}
 
               {/* Cancel / Back button */}
-              <button onClick={() => { setShowForgotPopup(false); setShowLoginPopup(true); setForgotSent(false); setForgotEmail(""); setForgotError(""); }} className="cancel-btn"
+              <button onClick={() => { setShowForgotPopup(false); setShowLoginPopup(true); setForgotSent(false); }} className="cancel-btn"
                 style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
                 {forgotSent ? "← Back to Login" : "Cancel"}
               </button>
