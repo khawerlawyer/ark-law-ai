@@ -68,6 +68,9 @@ export default function App() {
   const [messages,           setMessages]           = useState([]);
   const [input,              setInput]              = useState("");
   const [loading,            setLoading]            = useState(false);
+  // reactions: { [msgIndex]: { like: bool, dislike: bool, emoji: string|null } }
+  const [reactions,          setReactions]          = useState({});
+  const [showEmojiPicker,    setShowEmojiPicker]    = useState(null); // msgIndex or null
   const [uploadedFiles,      setUploadedFiles]      = useState([]);
 
   // ─── [CHANGE 1] Chat sessions: array of { id, title, messages } ─────────────
@@ -186,7 +189,10 @@ export default function App() {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Close emoji picker on outside click
+    const handleClickOutside = () => setShowEmojiPicker(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => { window.removeEventListener("resize", handleResize); document.removeEventListener("click", handleClickOutside); };
   }, []);
 
   // Initial greeting — creates first session
@@ -360,7 +366,14 @@ export default function App() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: `[SYSTEM CONTEXT — do not repeat this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering any date-related questions. IMPORTANT: whenever you include a professional advice or disclaimer section at the end of your response, always title it exactly "Professional Disclaimer by ARK LAW AI" — never use "Professional Advice" or any other heading for that section.]\n\n` }, ...updatedMessages] }) });
+      // Inject date + instructions into the LAST user message (avoids consecutive user roles)
+      const systemNote = `[Context for ARK Law AI only — do not mention this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering date-related questions. Whenever you include a disclaimer section, title it exactly "Professional Disclaimer by ARK LAW AI".]\n\n`;
+      const messagesWithContext = updatedMessages.map((m, idx) =>
+        idx === updatedMessages.length - 1 && m.role === "user"
+          ? { ...m, content: systemNote + (typeof m.content === "string" ? m.content : JSON.stringify(m.content)) }
+          : m
+      );
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) throw new Error("Failed to get response");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -818,9 +831,74 @@ export default function App() {
                         {renderMessageContent(msg.content)}
                       </div>
                       {msg.role === "assistant" && (
-                        <button onClick={() => speakText(msg.content, i)} style={{ marginTop: "6px", padding: "5px 10px", background: currentSpeakingIndex === i ? ACCENT_PK : GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "5px", transition: "all 0.2s", fontFamily: isUrdu ? "serif" : "inherit" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-                          {currentSpeakingIndex === i ? (isUrdu ? UR.stop : "⏸️ Stop") : (isUrdu ? UR.listen : "🔊 Listen")}
-                        </button>
+                        {/* Action bar: speaker icon + like + dislike + emoji */}
+                        <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", position: "relative" }}>
+
+                          {/* Speaker icon button */}
+                          <button
+                            onClick={() => speakText(msg.content, i)}
+                            title={currentSpeakingIndex === i ? "Stop" : "Listen"}
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: currentSpeakingIndex === i ? LIGHT_GREEN : "white", border: `1px solid ${currentSpeakingIndex === i ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", flexShrink: 0 }}
+                            onMouseEnter={(e) => { if (currentSpeakingIndex !== i) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}15`; } }}
+                            onMouseLeave={(e) => { if (currentSpeakingIndex !== i) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}
+                          >
+                            {currentSpeakingIndex === i
+                              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                              : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            }
+                          </button>
+
+                          {/* Like button */}
+                          <button
+                            onClick={() => setReactions(prev => ({ ...prev, [i]: { ...prev[i], like: !prev[i]?.like, dislike: false } }))}
+                            title="Like"
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.like ? "#E8F5E9" : "white", border: `1px solid ${reactions[i]?.like ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = "#E8F5E9"; }}
+                            onMouseLeave={(e) => { if (!reactions[i]?.like) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.like ? LIGHT_GREEN : "none"} stroke={reactions[i]?.like ? LIGHT_GREEN : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                            </svg>
+                          </button>
+
+                          {/* Dislike button */}
+                          <button
+                            onClick={() => setReactions(prev => ({ ...prev, [i]: { ...prev[i], dislike: !prev[i]?.dislike, like: false } }))}
+                            title="Dislike"
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.dislike ? "#FEE2E2" : "white", border: `1px solid ${reactions[i]?.dislike ? "#EF4444" : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#EF4444"; e.currentTarget.style.background = "#FEE2E2"; }}
+                            onMouseLeave={(e) => { if (!reactions[i]?.dislike) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.dislike ? "#EF4444" : "none"} stroke={reactions[i]?.dislike ? "#EF4444" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                            </svg>
+                          </button>
+
+                          {/* Emoji reaction button */}
+                          <button
+                            onClick={() => setShowEmojiPicker(showEmojiPicker === i ? null : i)}
+                            title="React with emoji"
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.emoji ? "#FFFBEB" : "white", border: `1px solid ${reactions[i]?.emoji ? GOLD : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: reactions[i]?.emoji ? 14 : 12 }}
+                            onMouseEnter={(e) => { if (!reactions[i]?.emoji) { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "#FFFBEB"; } }}
+                            onMouseLeave={(e) => { if (!reactions[i]?.emoji) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}
+                          >
+                            {reactions[i]?.emoji || "😊"}
+                          </button>
+
+                          {/* Emoji picker popover */}
+                          {showEmojiPicker === i && (
+                            <div style={{ position: "absolute", bottom: "34px", left: 0, background: "white", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", flexWrap: "wrap", gap: "4px", width: "196px", zIndex: 100 }}>
+                              {["👍","👏","🙏","⚖️","✅","💯","🔥","💪","🤔","😮","😊","🎯","📚","💡","🏛️","✍️","📜","🇵🇰","🌟","❤️"].map(emoji => (
+                                <button key={emoji} onClick={() => { setReactions(prev => ({ ...prev, [i]: { ...prev[i], emoji } })); setShowEmojiPicker(null); }} style={{ width: "32px", height: "32px", border: "1px solid transparent", borderRadius: "6px", background: "transparent", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.background = "#F5F1E8"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                                  {emoji}
+                                </button>
+                              ))}
+                              {reactions[i]?.emoji && (
+                                <button onClick={() => { setReactions(prev => ({ ...prev, [i]: { ...prev[i], emoji: null } })); setShowEmojiPicker(null); }} style={{ width: "100%", padding: "4px", border: "1px solid #eee", borderRadius: "6px", background: "#f9f9f9", cursor: "pointer", fontSize: 10, color: "#888" }}>Clear reaction</button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
