@@ -1,15 +1,71 @@
 // pages/api/auth/signup.js
-// Zero dependencies. Works on Vercel + local.
-// Uses global in-memory store (survives requests) + optional file backup.
+// ─────────────────────────────────────────────────────────────────────────────
+// Persistent auth using a SECRET GitHub Gist as storage.
+// Works on Vercel serverless — no database, no npm packages needed.
+// Each function call reads/writes the same Gist → data is always shared.
+//
+// ONE-TIME SETUP (5 minutes):
+//   1. Go to github.com → Settings → Developer settings → Personal access tokens
+//      → Tokens (classic) → Generate new token (classic)
+//      Tick only: gist
+//      Expiration: No expiration
+//      Copy the token.
+//
+//   2. Create a secret Gist:
+//      Go to gist.github.com
+//      Filename: users.json
+//      Content: []
+//      Click "Create secret gist"
+//      Copy the Gist ID from the URL:
+//      https://gist.github.com/YOUR_USERNAME/GIST_ID  ← copy GIST_ID
+//
+//   3. Add to Vercel Environment Variables:
+//      GIST_TOKEN = your personal access token
+//      GIST_ID    = your gist ID
+//
+//   4. No npm install needed — uses built-in crypto + fetch (Node 18+)
+// ─────────────────────────────────────────────────────────────────────────────
 
-import fs   from "fs";
-import path from "path";
 import crypto from "crypto";
 
-// In-memory store — persists across requests in the same Vercel instance
-if (!global.arkUsers) global.arkUsers = [];
+const GIST_TOKEN = process.env.GIST_TOKEN;
+const GIST_ID    = process.env.GIST_ID;
 
-const USERS_FILE = path.join(process.cwd(), "data", "users.json");
+// ── GitHub Gist helpers ───────────────────────────────────────────────────────
+
+async function readUsers() {
+  const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+    headers: {
+      Authorization: `Bearer ${GIST_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+  if (!res.ok) throw new Error(`Gist read failed: ${res.status}`);
+  const data = await res.json();
+  const content = data.files["users.json"]?.content || "[]";
+  return JSON.parse(content);
+}
+
+async function writeUsers(users) {
+  const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${GIST_TOKEN}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      files: {
+        "users.json": {
+          content: JSON.stringify(users, null, 2),
+        },
+      },
+    }),
+  });
+  if (!res.ok) throw new Error(`Gist write failed: ${res.status}`);
+}
+
+// ── Password hashing (built-in crypto — no bcrypt needed) ────────────────────
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -17,42 +73,18 @@ function hashPassword(password) {
   return `${salt}:${hash}`;
 }
 
-function loadFromFile() {
-  try {
-    if (fs.existsSync(USERS_FILE)) {
-      const raw = fs.readFileSync(USERS_FILE, "utf8").trim();
-      if (raw) return JSON.parse(raw);
-    }
-  } catch {}
-  return [];
-}
+// ── Handler ───────────────────────────────────────────────────────────────────
 
-function saveToFile(users) {
-  try {
-    fs.mkdirSync(path.dirname(USERS_FILE), { recursive: true });
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), "utf8");
-  } catch {} // silently skip if filesystem is read-only (Vercel)
-}
-
-function getUsers() {
-  // Merge file users into memory store on first load
-  if (global.arkUsers.length === 0) {
-    const fileUsers = loadFromFile();
-    if (fileUsers.length > 0) global.arkUsers = fileUsers;
-  }
-  return global.arkUsers;
-}
-
-function saveUsers(users) {
-  global.arkUsers = users;
-  saveToFile(users); // best-effort file backup
-}
-
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  if (!GIST_TOKEN || !GIST_ID) {
+    return res.status(500).json({ error: "Server not configured. Please contact the administrator." });
+  }
 
   const { email, password, name, age, profession, barOfPractice, city, province, country } = req.body;
 
+  // Validation
   if (!email || !password || !name || !age || !profession || !city || !province || !country)
     return res.status(400).json({ error: "All required fields must be filled." });
   if (password.length < 6)
@@ -63,7 +95,7 @@ export default function handler(req, res) {
   const normalizedEmail = email.toLowerCase().trim();
 
   try {
-    const users = getUsers();
+    const users = await readUsers();
 
     if (users.find(u => u.email === normalizedEmail))
       return res.status(409).json({ error: "An account with this email already exists. Please login." });
@@ -84,7 +116,7 @@ export default function handler(req, res) {
       lastLogin:     null,
     };
 
-    saveUsers([...users, newUser]);
+    await writeUsers([...users, newUser]);
 
     const { passwordHash: _, ...safeUser } = newUser;
     return res.status(201).json({ message: "Account created!", user: safeUser });
