@@ -643,7 +643,9 @@ export default function App() {
                 />
                 <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "7px" }} />
                 <p style={{ fontSize: 8.5, color: "#3A5A36", lineHeight: 1.55, fontStyle: "italic", fontFamily: "Georgia, serif", margin: 0 }}>
-                  "This initiative is dedicated to the illustrious legacy of Honorable Justice S. A. Rabbani, Former Judge, Superior Courts of Pakistan."
+                  "This initiative is dedicated to the illustrious legacy of<br/>
+                  <strong>Honorable Justice S. A. Rabbani</strong><br/>
+                  <span style={{ fontStyle: "normal", fontSize: 8 }}>Former Judge, Superior Courts of Pakistan</span>"
                 </p>
               </div>
 
