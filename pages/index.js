@@ -366,13 +366,27 @@ export default function App() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      // Inject date + instructions into the LAST user message (avoids consecutive user roles)
-      const systemNote = `[Context for ARK Law AI only — do not mention this to the user: Today's date is ${currentDate.current}. You are ARK Law AI, an expert Pakistani law assistant. Always use the correct current date when answering date-related questions. Whenever you include a disclaimer section, title it exactly "Professional Disclaimer by ARK LAW AI".]\n\n`;
-      const messagesWithContext = updatedMessages.map((m, idx) =>
-        idx === updatedMessages.length - 1 && m.role === "user"
+      // Build clean message array for API:
+      // - Remove any messages with empty content (streaming placeholders)
+      // - The API requires strictly alternating user/assistant, starting with user
+      // - Strip the initial greeting (assistant) if it's the first message
+      const systemNote = `[Context for ARK Law AI — do not repeat this to user: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Title any disclaimer section exactly "Professional Disclaimer by ARK LAW AI".\n\n`;
+
+      const cleanMessages = updatedMessages
+        .filter(m => m.content && (typeof m.content === "string" ? m.content.trim() : true))
+        .filter((m, idx, arr) => {
+          // Drop leading assistant messages — API must start with user
+          if (idx === 0 && m.role === "assistant") return false;
+          return true;
+        });
+
+      // Inject system note into first user message
+      const messagesWithContext = cleanMessages.map((m, idx) =>
+        idx === 0 && m.role === "user"
           ? { ...m, content: systemNote + (typeof m.content === "string" ? m.content : JSON.stringify(m.content)) }
           : m
       );
+
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) throw new Error("Failed to get response");
       const reader = res.body.getReader();
@@ -849,7 +863,7 @@ export default function App() {
 
                           {/* Like button */}
                           <button
-                            onClick={() => setReactions(prev => ({ ...prev, [i]: { ...prev[i], like: !prev[i]?.like, dislike: false } }))}
+                            onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], like: !prev[i]?.like, dislike: false } })); }}
                             title="Like"
                             style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.like ? "#E8F5E9" : "white", border: `1px solid ${reactions[i]?.like ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
                             onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = "#E8F5E9"; }}
@@ -862,7 +876,7 @@ export default function App() {
 
                           {/* Dislike button */}
                           <button
-                            onClick={() => setReactions(prev => ({ ...prev, [i]: { ...prev[i], dislike: !prev[i]?.dislike, like: false } }))}
+                            onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], dislike: !prev[i]?.dislike, like: false } })); }}
                             title="Dislike"
                             style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.dislike ? "#FEE2E2" : "white", border: `1px solid ${reactions[i]?.dislike ? "#EF4444" : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
                             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#EF4444"; e.currentTarget.style.background = "#FEE2E2"; }}
@@ -875,7 +889,7 @@ export default function App() {
 
                           {/* Emoji reaction button */}
                           <button
-                            onClick={() => setShowEmojiPicker(showEmojiPicker === i ? null : i)}
+                            onClick={(e) => { e.stopPropagation(); setShowEmojiPicker(showEmojiPicker === i ? null : i); }}
                             title="React with emoji"
                             style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.emoji ? "#FFFBEB" : "white", border: `1px solid ${reactions[i]?.emoji ? GOLD : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: reactions[i]?.emoji ? 14 : 12 }}
                             onMouseEnter={(e) => { if (!reactions[i]?.emoji) { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "#FFFBEB"; } }}
@@ -886,7 +900,7 @@ export default function App() {
 
                           {/* Emoji picker popover */}
                           {showEmojiPicker === i && (
-                            <div style={{ position: "absolute", bottom: "34px", left: 0, background: "white", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", flexWrap: "wrap", gap: "4px", width: "196px", zIndex: 100 }}>
+                            <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", bottom: "34px", left: 0, background: "white", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", flexWrap: "wrap", gap: "4px", width: "196px", zIndex: 100 }}>
                               {["👍","👏","🙏","⚖️","✅","💯","🔥","💪","🤔","😮","😊","🎯","📚","💡","🏛️","✍️","📜","🇵🇰","🌟","❤️"].map(emoji => (
                                 <button key={emoji} onClick={() => { setReactions(prev => ({ ...prev, [i]: { ...prev[i], emoji } })); setShowEmojiPicker(null); }} style={{ width: "32px", height: "32px", border: "1px solid transparent", borderRadius: "6px", background: "transparent", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.background = "#F5F1E8"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
                                   {emoji}
