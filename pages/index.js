@@ -831,7 +831,6 @@ export default function App() {
                         {renderMessageContent(msg.content)}
                       </div>
                       {msg.role === "assistant" && (
-                        {/* Action bar: speaker icon + like + dislike + emoji */}
                         <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", position: "relative" }}>
 
                           {/* Speaker icon button */}
