@@ -366,29 +366,36 @@ export default function App() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      // Build clean message array for API:
-      // - Remove any messages with empty content (streaming placeholders)
-      // - The API requires strictly alternating user/assistant, starting with user
-      // - Strip the initial greeting (assistant) if it's the first message
-      const systemNote = `[Context for ARK Law AI — do not repeat this to user: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Title any disclaimer section exactly "Professional Disclaimer by ARK LAW AI".\n\n`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
 
-      const cleanMessages = updatedMessages
-        .filter(m => m.content && (typeof m.content === "string" ? m.content.trim() : true))
-        .filter((m, idx, arr) => {
-          // Drop leading assistant messages — API must start with user
-          if (idx === 0 && m.role === "assistant") return false;
-          return true;
-        });
+      // Build strictly alternating user/assistant array starting with user
+      // 1. Take only user messages from conversation history (not the greeting)
+      // 2. Pair each user message with its following assistant response
+      // 3. End with the new user message
+      const conversationPairs = [];
+      for (let i = 0; i < messages.length; i++) {
+        const m = messages[i];
+        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
+        if (m.role === "user") conversationPairs.push(m);
+        if (m.role === "assistant" && conversationPairs.length > 0 &&
+            conversationPairs[conversationPairs.length - 1].role === "user") {
+          conversationPairs.push(m);
+        }
+      }
+      // Add the new user message
+      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
+      const messagesWithContext = [...conversationPairs, newUserMsg];
 
-      // Inject system note into first user message
-      const messagesWithContext = cleanMessages.map((m, idx) =>
-        idx === 0 && m.role === "user"
-          ? { ...m, content: systemNote + (typeof m.content === "string" ? m.content : JSON.stringify(m.content)) }
-          : m
-      );
-
-      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
-      if (!res.ok) throw new Error("Failed to get response");
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: messagesWithContext }),
+      });
+      if (!res.ok) {
+        let errText = `HTTP ${res.status}`;
+        try { const j = await res.json(); errText = j.error || j.message || errText; } catch {}
+        throw new Error(errText);
+      }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
@@ -841,8 +848,14 @@ export default function App() {
                   <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
                     {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />}
                     <div style={{ maxWidth: "70%", position: "relative" }}>
-                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? "#E8E0CC" : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? "#E8E0CC" : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", position: "relative" }}>
                         {renderMessageContent(msg.content)}
+                        {/* Emoji badge bottom-right of bubble */}
+                        {reactions[i]?.emoji && (
+                          <div style={{ position: "absolute", bottom: "-10px", right: "8px", background: "white", border: `1px solid ${GOLD}40`, borderRadius: "12px", padding: "1px 6px", fontSize: 16, boxShadow: "0 1px 4px rgba(0,0,0,0.12)", lineHeight: 1.4, zIndex: 2 }}>
+                            {reactions[i].emoji}
+                          </div>
+                        )}
                       </div>
                       {msg.role === "assistant" && (
                         <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", position: "relative" }}>
