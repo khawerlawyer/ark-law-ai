@@ -25,8 +25,7 @@ export default function App() {
   const [showSignupPopup,    setShowSignupPopup]    = useState(false);
   const [showLoginPopup,     setShowLoginPopup]     = useState(false);
   // ── FORGOT PASSWORD states ──
-  const [showForgotPopup,    setShowForgotPopup]    = useState(false);
-  const [forgotSent,         setForgotSent]         = useState(false);
+
 
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   const [showUpgradePopup,   setShowUpgradePopup]   = useState(false);
@@ -291,14 +290,6 @@ export default function App() {
     const next = parseInt(localStorage.getItem("ark_metric_users") || "0", 10) + 1;
     localStorage.setItem("ark_metric_users", String(next));
     setMetricUsers(next);
-  };
-
-  // ── FORGOT PASSWORD handler ──
-  // Opens Clerk's Account Portal sign-in page in a new tab.
-  // Clerk's built-in "Forgot password?" link on that page handles the reset email.
-  const handleForgotPassword = () => {
-    window.open("https://grand-lab-78.accounts.dev/sign-in#/forgot-password", "_blank", "noopener,noreferrer");
-    setForgotSent(true);
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1276,14 +1267,6 @@ export default function App() {
                 <input name="password" type="password" required className="ark-input" style={popupInp} placeholder="Enter your password" />
               </div>
 
-              {/* Forgot Password link */}
-              <div style={{ textAlign: "right", marginBottom: "18px" }}>
-                <span onClick={() => { setShowLoginPopup(false); setShowForgotPopup(true); setForgotEmail(""); setForgotSent(false); setForgotError(""); }}
-                  style={{ fontSize: 11, color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>
-                  Forgot Password?
-                </span>
-              </div>
-
               <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }}
                 onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
                 onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Login</button>
@@ -1389,60 +1372,6 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════════
           FORGOT PASSWORD POPUP — same cream + watermark scheme
       ═══════════════════════════════════════════════════════════════════ */}
-      {showForgotPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, padding: "32px 28px 24px", borderRadius: "14px", width: "90%", maxWidth: "400px", border: `2px solid ${GOLD}60`, boxShadow: "0 8px 40px rgba(0,0,0,0.35)", position: "relative", overflow: "hidden" }}>
-
-            {/* Watermark */}
-            <img src="/ark-logo.png" alt="" style={popupWatermark} />
-
-            {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px", position: "relative", zIndex: 1 }}>
-              <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-              <div>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
-                <div style={{ fontSize: 11, color: "#5A7A56" }}>Reset your password</div>
-              </div>
-            </div>
-
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "20px" }} />
-
-            <div style={{ position: "relative", zIndex: 1 }}>
-              {!forgotSent ? (
-                <>
-                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "24px" }}>
-                    Click the button below to open the secure password reset page in a new tab. Enter your registered email there and Clerk will send you a reset link instantly.
-                  </p>
-                  <button onClick={handleForgotPassword}
-                    style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                    onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
-                    🔐 Open Password Reset Page
-                  </button>
-                </>
-              ) : (
-                <div style={{ textAlign: "center", padding: "10px 0 20px" }}>
-                  <div style={{ fontSize: 44, marginBottom: "14px" }}>✅</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: "10px" }}>Reset Page Opened</div>
-                  <p style={{ fontSize: 13, color: "#3A5A36", lineHeight: 1.6, marginBottom: "8px" }}>
-                    A new tab has opened with the password reset page.
-                  </p>
-                  <p style={{ fontSize: 12, color: "#6A8A66", lineHeight: 1.5, marginBottom: "20px" }}>
-                    Enter your email there — Clerk will send a reset link to your inbox immediately.
-                  </p>
-                </div>
-              )}
-
-              {/* Cancel / Back button */}
-              <button onClick={() => { setShowForgotPopup(false); setShowLoginPopup(true); setForgotSent(false); }} className="cancel-btn"
-                style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                {forgotSent ? "← Back to Login" : "Cancel"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {showMyAccountPopup && user && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000 }}>
           <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "1000px", border: `3px solid ${GOLD}`, maxHeight: "90vh", display: "flex", flexDirection: "column", boxShadow: `0 0 40px ${GOLD}50` }}>
