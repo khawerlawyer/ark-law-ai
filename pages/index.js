@@ -68,9 +68,6 @@ export default function App() {
   const [allSessions,        setAllSessions]        = useState([]);
   const [activeChatId,       setActiveChatId]       = useState(null);
 
-  const [metricUsers,        setMetricUsers]        = useState(0);
-  const [metricSessions,     setMetricSessions]     = useState(0);
-  const [metricAnswers,      setMetricAnswers]       = useState(0);
 
   const [isMobile,           setIsMobile]           = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
@@ -216,39 +213,11 @@ export default function App() {
     );
   }, [messages, activeChatId]);
 
-  useEffect(() => {
-    const loadMetrics = () => {
-      setMetricUsers(   parseInt(localStorage.getItem("ark_metric_users")    || "0", 10));
-      setMetricSessions(parseInt(localStorage.getItem("ark_metric_sessions") || "0", 10));
-      setMetricAnswers( parseInt(localStorage.getItem("ark_metric_answers")  || "0", 10));
-    };
-    loadMetrics();
-  }, []);
 
-  useEffect(() => {
-    const userMsgs = messages.filter(m => m.role === "user");
-    if (userMsgs.length === 1 && lastSavedCountRef.current === 0) {
-      const next = parseInt(localStorage.getItem("ark_metric_sessions") || "0", 10) + 1;
-      localStorage.setItem("ark_metric_sessions", String(next));
-      setMetricSessions(next);
-    }
-    if (userMsgs.length > lastSavedCountRef.current) {
-      lastSavedCountRef.current = userMsgs.length;
-    }
-  }, [messages]);
 
-  useEffect(() => {
-    const assistantMsgs = messages.filter(m => m.role === "assistant" && m.content && m.content.length > 50);
-    const stored = parseInt(localStorage.getItem("ark_metric_answers_session") || "0", 10);
-    if (assistantMsgs.length > stored) {
-      const diff = assistantMsgs.length - stored;
-      localStorage.setItem("ark_metric_answers_session", String(assistantMsgs.length));
-      const prev = parseInt(localStorage.getItem("ark_metric_answers") || "0", 10);
-      const next = prev + diff;
-      localStorage.setItem("ark_metric_answers", String(next));
-      setMetricAnswers(next);
-    }
-  }, [messages]);
+
+
+
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
 
@@ -272,7 +241,6 @@ export default function App() {
     setInput("");
     setUploadedFiles([]);
     lastSavedCountRef.current = 0;
-    localStorage.removeItem("ark_metric_answers_session");
   };
 
   const loadSession = (sessionId) => {
@@ -283,14 +251,9 @@ export default function App() {
     setInput("");
     setUploadedFiles([]);
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
-    localStorage.removeItem("ark_metric_answers_session");
   };
 
-  const bumpUserCount = () => {
-    const next = parseInt(localStorage.getItem("ark_metric_users") || "0", 10) + 1;
-    localStorage.setItem("ark_metric_users", String(next));
-    setMetricUsers(next);
-  };
+
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CORE FUNCTIONS
@@ -606,8 +569,6 @@ export default function App() {
         @keyframes pulse     { 0%,100%{ transform:scale(1);   opacity:1;   } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
         @media (max-width:768px){ .desktop-only{ display:none; } }
-        @keyframes counterPop { 0%{ transform:scale(1); } 50%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
-        .metric-number { animation: counterPop 2.4s ease-in-out infinite; display:inline-block; }
 
         /* Popup field focus glow */
         .ark-input:focus { border-color: ${LIGHT_GREEN} !important; box-shadow: 0 0 0 3px ${LIGHT_GREEN}22; }
@@ -673,18 +634,17 @@ export default function App() {
           {/* LEFT SIDEBAR */}
           {!isMobile && (
             <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-              <div style={{ display: "flex", gap: "4px", marginBottom: "8px", flexShrink: 0 }}>
-                {[
-                  { label: "Users",    value: metricUsers,    icon: "👤" },
-                  { label: "Sessions", value: metricSessions, icon: "💬" },
-                  { label: "Answers",  value: metricAnswers,  icon: "⚖️" },
-                ].map(({ label, value, icon }) => (
-                  <div key={label} style={{ flex: 1, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "6px", padding: "5px 3px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-                    <div style={{ fontSize: 11 }}>{icon}</div>
-                    <div className="metric-number" style={{ fontSize: 13, fontWeight: 800, color: NAVY, lineHeight: 1.2 }}>{value.toLocaleString()}</div>
-                    <div style={{ fontSize: 7, color: TEXT_MUTED, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>{label}</div>
-                  </div>
-                ))}
+              {/* Justice Rabbani dedication box */}
+              <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
+                <img
+                  src="/rabbani.jpeg"
+                  alt="Justice S. A. Rabbani"
+                  style={{ width: "62px", height: "62px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${GOLD}`, boxShadow: `0 0 8px ${GOLD}50`, marginBottom: "8px", display: "block", margin: "0 auto 8px" }}
+                />
+                <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "7px" }} />
+                <p style={{ fontSize: 8.5, color: "#3A5A36", lineHeight: 1.55, fontStyle: "italic", fontFamily: "Georgia, serif", margin: 0 }}>
+                  "This initiative is dedicated to the illustrious legacy of Honorable Justice S. A. Rabbani, Former Judge, Superior Courts of Pakistan."
+                </p>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
@@ -1334,7 +1294,6 @@ export default function App() {
                 const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), profession: formData.get("profession"), barOfPractice: formData.get("barOfPractice"), city: formData.get("city"), province: formData.get("province"), country: formData.get("country") }) });
                 const data = await res.json();
                 if (res.ok) {
-                  bumpUserCount();
                   setShowSignupPopup(false);
                   alert("Account created! You have been awarded 500,000 FREE credits! Please login.");
                   setShowLoginPopup(true);
