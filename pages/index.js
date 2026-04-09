@@ -34,6 +34,7 @@ export default function App() {
   const [showComparePopup,   setShowComparePopup]   = useState(false);
   const [showLinkedInPopup,  setShowLinkedInPopup]  = useState(false);
   const [showComingSoon,     setShowComingSoon]     = useState(false);
+  const [showFeaturesPopup,  setShowFeaturesPopup]  = useState(false);
   const [isUrdu,             setIsUrdu]             = useState(false);
 
   const [newsItems,          setNewsItems]          = useState([]);
@@ -69,6 +70,7 @@ export default function App() {
 
 
   const [isMobile,           setIsMobile]           = useState(false);
+  const [mobileTab,          setMobileTab]          = useState("chat"); // "chat" | "left" | "right"
   const [nameAsked,          setNameAsked]          = useState(false);
 
   const currentDate = useRef(
@@ -553,6 +555,7 @@ export default function App() {
       <Head>
         <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
@@ -564,61 +567,93 @@ export default function App() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1);    } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1);   opacity:1;   } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
-        @media (max-width:768px){ .desktop-only{ display:none; } }
 
         /* Popup field focus glow */
         .ark-input:focus { border-color: ${LIGHT_GREEN} !important; box-shadow: 0 0 0 3px ${LIGHT_GREEN}22; }
-
         /* Cancel button hover */
         .cancel-btn:hover { background: #e8e0d4 !important; }
+
+        /* ── Mobile styles ── */
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+
+          /* Header compact on mobile */
+          .ark-header { padding: 6px 10px !important; gap: 8px !important; }
+          .ark-logo-img { width: 34px !important; height: 34px !important; }
+          .ark-logo-name { font-size: 14px !important; }
+          .ark-logo-tag  { display: none !important; }
+          .ark-logo-sub  { display: none !important; }
+          .ark-verse-strip { display: none !important; }
+
+          /* Auth buttons smaller */
+          .ark-auth-btn { padding: 5px 10px !important; font-size: 10px !important; }
+          .ark-lang-btn { padding: 4px 7px !important; font-size: 9px !important; }
+
+          /* Tab bar */
+          .ark-tab-bar { display: flex !important; }
+
+          /* Panels */
+          .ark-panel { display: none; flex: 1; overflow: hidden; }
+          .ark-panel.active { display: flex !important; flex-direction: column; }
+
+          /* Input area bigger touch targets */
+          .ark-input-row button { min-height: 40px !important; min-width: 40px !important; }
+          .ark-send-btn { padding: 10px 14px !important; font-size: 13px !important; }
+          .ark-text-input { font-size: 14px !important; padding: 10px 12px !important; }
+        }
+
+        /* Tab bar hidden on desktop */
+        .ark-tab-bar { display: none; }
       `}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER ══ */}
-        <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
+        <header className="ark-header" style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
+
+          {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <img className="ark-logo-img" src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div className="ark-logo-name" style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              <div className="ark-logo-tag" style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
+              <div className="ark-logo-sub" style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
 
-          <div style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+          {/* Quranic verse — hidden on mobile via CSS class */}
+          <div className="ark-verse-strip" style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2, flexShrink: 0 }}>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 10, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.45, letterSpacing: "0.03em", fontWeight: 600, textAlign: "center", display: "block" }}>
-                {QURAN_VERSE}
-              </span>
+              <span style={{ fontSize: 10, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.45, letterSpacing: "0.03em", fontWeight: 600, textAlign: "center", display: "block" }}>{QURAN_VERSE}</span>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
-            <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
+          {/* Lang + Auth */}
+          <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
+            <button className="ark-lang-btn" onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
+            <button className="ark-lang-btn" onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
+            <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 1px" }} />
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
+                <button className="ark-auth-btn" onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
+                <button className="ark-auth-btn" onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>✨ Sign Up</button>
               </>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "6px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
                   </div>
-                  <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                  <div style={{ fontSize: "9px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                 </div>
-                <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
+                <div style={{ padding: "4px 8px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", borderRadius: "4px", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name.split(" ")[0]}</div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "4px 8px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 9, fontWeight: 600, whiteSpace: "nowrap" }}>Account</button>
               </>
             )}
           </div>
@@ -627,9 +662,9 @@ export default function App() {
         {/* ══ BODY ══ */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* LEFT SIDEBAR */}
-          {!isMobile && (
-            <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
+          {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
+          <div className={isMobile ? `ark-panel${mobileTab === "left" ? " active" : ""}` : ""} style={{ width: isMobile ? "100%" : "200px", background: CREAM, borderRight: isMobile ? "none" : `1px solid ${GOLD}40`, padding: "8px", display: isMobile ? (mobileTab === "left" ? "flex" : "none") : "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
+          <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
               {/* Justice Rabbani dedication box */}
               <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
                 <img
@@ -720,10 +755,10 @@ export default function App() {
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* CHAT AREA */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+          <div className={isMobile ? `ark-panel${mobileTab === "chat" ? " active" : ""}` : ""} style={{ flex: isMobile ? undefined : 1, width: isMobile ? "100%" : undefined, display: isMobile ? (mobileTab === "chat" ? "flex" : "none") : "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
@@ -788,7 +823,7 @@ export default function App() {
               </div>
             )}
 
-            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
+            <div className="ark-input-row" style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
               <button onClick={startVoiceInput} disabled={loading || isListening} title={isListening ? "Listening..." : "Click to speak"}
                 style={{ width: "38px", height: "38px", background: isListening ? LIGHT_GREEN : "white", border: `1px solid ${isListening ? LIGHT_GREEN : GOLD}60`, borderRadius: "6px", cursor: loading || isListening ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", animation: isListening ? "pulse 1.5s infinite" : "none", boxShadow: isListening ? `0 0 0 3px ${LIGHT_GREEN}30` : "none" }}
                 onMouseEnter={(e) => { if (!isListening && !loading) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; } }}
@@ -808,17 +843,18 @@ export default function App() {
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                 placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
+                className="ark-text-input"
                 style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening}
+                className="ark-send-btn"
                 style={{ padding: "9px 18px", background: loading || isListening ? "#9DB89A" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
                 onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
                 onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.send : "SEND"}</button>
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
-          {!isMobile && (
-            <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          {/* RIGHT SIDEBAR — always rendered, hidden on mobile unless tab=right */}
+          <div className={isMobile ? `ark-panel${mobileTab === "right" ? " active" : ""}` : ""} style={{ width: isMobile ? "100%" : "220px", background: CREAM, borderLeft: isMobile ? "none" : `1px solid ${GOLD}40`, display: isMobile ? (mobileTab === "right" ? "flex" : "none") : "flex", flexDirection: "column", overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
                 <span style={{ fontSize: 11 }}>🚀</span>
                 <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
@@ -866,11 +902,26 @@ export default function App() {
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* FOOTER */}
-        <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
+        {/* ── MOBILE TAB BAR — only visible on mobile via CSS ── */}
+        <div className="ark-tab-bar" style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0, justifyContent: "stretch", zIndex: 50 }}>
+          {[
+            { id: "left",  icon: "⚖️", label: "Tools"   },
+            { id: "chat",  icon: "💬", label: "Chat"    },
+            { id: "right", icon: "📋", label: "Queries" },
+          ].map(({ id, icon, label }) => (
+            <button key={id} onClick={() => setMobileTab(id)}
+              style={{ flex: 1, padding: "10px 4px", background: mobileTab === id ? "#2A432A" : "transparent", border: "none", borderTop: mobileTab === id ? `2px solid ${LIGHT_GREEN}` : "2px solid transparent", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", transition: "all 0.18s" }}>
+              <span style={{ fontSize: 18 }}>{icon}</span>
+              <span style={{ fontSize: 10, color: mobileTab === id ? "#E8D97A" : "#9DB89A", fontWeight: mobileTab === id ? 700 : 400 }}>{label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* FOOTER — hidden on mobile */}
+        <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }} className="desktop-only">
           <div style={{ padding: "3px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", minHeight: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, flexWrap: "wrap", rowGap: "0" }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "14px", height: "14px", opacity: 0.85, flexShrink: 0 }} />
@@ -887,7 +938,7 @@ export default function App() {
                   {links.map((link, li) => (
                     <span key={link} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
                       {li > 0 && <span style={{ color: "#3A5A38", fontSize: 7 }}>·</span>}
-                      <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 7, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                      <span onClick={() => link === "Features" ? setShowFeaturesPopup(true) : setShowComingSoon(true)} style={{ fontSize: 7, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
                     </span>
                   ))}
                 </div>
@@ -1571,6 +1622,132 @@ export default function App() {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════
+          FEATURES POPUP
+      ═══════════════════════════════════════════════════════════════════ */}
+      {showFeaturesPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
+          <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
+
+            {/* Watermark */}
+            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
+
+            {/* ── Header ── */}
+            <div style={{ padding: "22px 28px 16px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, background: CREAM, zIndex: 2, borderRadius: "16px 16px 0 0" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY, letterSpacing: "0.5px" }}>FEATURES</div>
+                  <div style={{ fontSize: 10, color: "#5A7A56" }}>ARK Law AI Platform</div>
+                </div>
+              </div>
+              <button onClick={() => setShowFeaturesPopup(false)}
+                style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.color = NAVY}
+                onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+            </div>
+
+            {/* Gold divider */}
+            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
+
+            {/* ── Body ── */}
+            <div style={{ padding: "22px 28px", position: "relative", zIndex: 1, flex: 1 }}>
+
+              {/* Headline & subtext */}
+              <div style={{ marginBottom: "24px", textAlign: "center" }}>
+                <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>
+                  Powerful AI Tools for Legal Professionals
+                </h2>
+                <p style={{ fontSize: 13, color: "#5A7A56", lineHeight: 1.6, margin: 0 }}>
+                  Streamline research, drafting, and case strategy<br />with one intelligent platform.
+                </p>
+              </div>
+
+              {/* Gold divider */}
+              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "22px" }} />
+
+              {/* Feature cards */}
+              {[
+                {
+                  icon: "🔍", title: "Legal Research Assistant",
+                  points: ["Case law summaries", "Statute lookup", "Precedent identification"],
+                },
+                {
+                  icon: "📝", title: "Smart Drafting Engine",
+                  points: ["Contracts, petitions, notices", "Clause suggestions", "Format consistency"],
+                },
+                {
+                  icon: "⚖️", title: "Case Analysis Tool",
+                  points: ["Argument structuring", "Risk insights", "Strategy suggestions"],
+                },
+                {
+                  icon: "🤖", title: "AI Legal Chat",
+                  points: ["Ask legal questions", "Context-aware responses"],
+                },
+                {
+                  icon: "📊", title: "Productivity Dashboard",
+                  points: ["Usage insights", "Saved drafts"],
+                },
+              ].map(({ icon, title, points }, idx) => (
+                <div key={title} style={{ display: "flex", gap: "14px", marginBottom: idx < 4 ? "18px" : "0", padding: "14px 16px", background: "white", borderRadius: "10px", border: `1px solid ${GOLD}25`, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+                  {/* Icon circle */}
+                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}30, ${GOLD}10)`, border: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0, marginTop: "2px" }}>
+                    {icon}
+                  </div>
+                  {/* Content */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: "Georgia,serif", fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: "6px" }}>{title}</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                      {points.map(pt => (
+                        <div key={pt} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: LIGHT_GREEN, flexShrink: 0 }} />
+                          <span style={{ fontSize: 12, color: "#4A6A56", lineHeight: 1.4 }}>{pt}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Gold divider */}
+              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "22px 0" }} />
+
+              {/* CTA buttons */}
+              <div style={{ display: "flex", gap: "12px", marginBottom: "18px" }}>
+                <button onClick={() => setShowComingSoon(true)}
+                  style={{ flex: 1, padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "background 0.2s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
+                  onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
+                  Explore Platform
+                </button>
+                <button onClick={() => setShowComingSoon(true)}
+                  style={{ flex: 1, padding: "12px", background: "white", color: NAVY, border: `2px solid ${GOLD}60`, borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}60`; }}>
+                  Request Demo
+                </button>
+              </div>
+
+              {/* Footer note */}
+              <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
+                <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>
+                  "Built for Pakistan's Legal Ecosystem"
+                </span>
+              </div>
+
+              {/* Gold divider */}
+              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "14px 0 16px" }} />
+
+              {/* Close button */}
+              <button onClick={() => setShowFeaturesPopup(false)} className="cancel-btn"
+                style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
+                Close
+              </button>
             </div>
           </div>
         </div>
