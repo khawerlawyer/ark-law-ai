@@ -67,7 +67,6 @@ export default function App() {
   const [input,              setInput]              = useState("");
   const [loading,            setLoading]            = useState(false);
   const [reactions,          setReactions]          = useState({});
-  const [showEmojiPicker,    setShowEmojiPicker]    = useState(null);
   const [uploadedFiles,      setUploadedFiles]      = useState([]);
 
   const [allSessions,        setAllSessions]        = useState([]);
@@ -177,9 +176,7 @@ export default function App() {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
-    const handleClickOutside = () => setShowEmojiPicker(null);
-    document.addEventListener("click", handleClickOutside);
-    return () => { window.removeEventListener("resize", handleResize); document.removeEventListener("click", handleClickOutside); };
+    return () => { window.removeEventListener("resize", handleResize); };
   }, []);
 
   useEffect(() => {
@@ -794,11 +791,7 @@ export default function App() {
                     <div style={{ maxWidth: "70%", position: "relative" }}>
                       <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? "#E8E0CC" : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", position: "relative" }}>
                         {renderMessageContent(msg.content)}
-                        {reactions[i]?.emoji && (
-                          <div style={{ position: "absolute", bottom: "-10px", right: "8px", background: "white", border: `1px solid ${GOLD}40`, borderRadius: "12px", padding: "1px 6px", fontSize: 16, boxShadow: "0 1px 4px rgba(0,0,0,0.12)", lineHeight: 1.4, zIndex: 2 }}>
-                            {reactions[i].emoji}
-                          </div>
-                        )}
+
                       </div>
                       {msg.role === "assistant" && (
                         <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", position: "relative" }}>
@@ -823,27 +816,6 @@ export default function App() {
                             onMouseLeave={(e) => { if (!reactions[i]?.dislike) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
                             <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.dislike ? "#EF4444" : "none"} stroke={reactions[i]?.dislike ? "#EF4444" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); setShowEmojiPicker(showEmojiPicker === i ? null : i); }} title="React with emoji"
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.emoji ? "#FFFBEB" : "white", border: `1px solid ${reactions[i]?.emoji ? GOLD : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: reactions[i]?.emoji ? 14 : 12 }}
-                            onMouseEnter={(e) => { if (!reactions[i]?.emoji) { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.background = "#FFFBEB"; } }}
-                            onMouseLeave={(e) => { if (!reactions[i]?.emoji) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
-                            {reactions[i]?.emoji || "😊"}
-                          </button>
-                          {showEmojiPicker === i && (
-                            <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", bottom: "34px", left: 0, background: "white", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", display: "flex", flexWrap: "wrap", gap: "4px", width: "196px", zIndex: 100 }}>
-                              {["👍","👏","🙏","⚖️","✅","💯","🔥","💪","🤔","😮","😊","🎯","📚","💡","🏛️","✍️","📜","🇵🇰","🌟","❤️"].map(emoji => (
-                                <button key={emoji} onClick={() => { setReactions(prev => ({ ...prev, [i]: { ...prev[i], emoji } })); setShowEmojiPicker(null); }}
-                                  style={{ width: "32px", height: "32px", border: "1px solid transparent", borderRadius: "6px", background: "transparent", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.15s" }}
-                                  onMouseEnter={(e) => e.currentTarget.style.background = "#F5F1E8"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
-                                  {emoji}
-                                </button>
-                              ))}
-                              {reactions[i]?.emoji && (
-                                <button onClick={() => { setReactions(prev => ({ ...prev, [i]: { ...prev[i], emoji: null } })); setShowEmojiPicker(null); }}
-                                  style={{ width: "100%", padding: "4px", border: "1px solid #eee", borderRadius: "6px", background: "#f9f9f9", cursor: "pointer", fontSize: 10, color: "#888" }}>Clear reaction</button>
-                              )}
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
