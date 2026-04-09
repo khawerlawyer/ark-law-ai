@@ -28,7 +28,6 @@ export default function App() {
 
 
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
-  const [showUpgradePopup,   setShowUpgradePopup]   = useState(false);
   const [showSuccessPopup,   setShowSuccessPopup]   = useState(false);
   const [showNewsPopup,      setShowNewsPopup]      = useState(false);
   const [showDraftPopup,     setShowDraftPopup]     = useState(false);
@@ -116,9 +115,6 @@ export default function App() {
     quickLabel:      "فوری سوالات",
     quickSub:        "کوئی بھی سوال کلک کریں",
     areasLabel:      "قانونی شعبہ جات",
-    upgradeTitle:    "پرو میں اپ گریڈ کریں",
-    upgradeSub:      "تیز AI اور خصوصی ٹولز",
-    goPro:           "پرو لیں",
     placeholder:     "ARK Law AI سے پوچھیں یا مائیک کلک کریں...",
     send:            "بھیجیں",
     login:           "لاگ ان",
@@ -823,13 +819,10 @@ export default function App() {
           {/* RIGHT SIDEBAR */}
           {!isMobile && (
             <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              <div onClick={() => setShowUpgradePopup(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: `linear-gradient(135deg, ${NAVY}, #1A3050)`, cursor: "pointer", flexShrink: 0, transition: "opacity 0.2s", direction: isUrdu ? "rtl" : "ltr" }} onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"} onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}>
-                <span style={{ fontSize: 13 }}>✨</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, color: GOLD, fontWeight: 700, lineHeight: 1.2 }}>{isUrdu ? UR.upgradeTitle : "Upgrade to Pro"}</div>
-                  <div style={{ fontSize: 8, color: "#8AABB8" }}>{isUrdu ? UR.upgradeSub : "Faster AI & exclusive tools"}</div>
-                </div>
-                <div style={{ fontSize: 8, padding: "2px 7px", background: LIGHT_GREEN, borderRadius: "10px", color: "white", fontWeight: 700, whiteSpace: "nowrap", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.goPro : "GO PRO"}</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
+                <span style={{ fontSize: 11 }}>🚀</span>
+                <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
+                <span style={{ fontSize: 9, color: "#9DB89A", fontStyle: "italic" }}>— ARK Law AI</span>
               </div>
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 10px" }}>
                 <div style={{ marginBottom: "20px", direction: isUrdu ? "rtl" : "ltr" }}>
@@ -1579,32 +1572,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {showUpgradePopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowUpgradePopup(false)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0D1B2A", borderRadius: "16px", padding: "48px 40px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #C9A84C", boxShadow: "0 0 60px rgba(201,168,76,0.35), 0 0 120px rgba(201,168,76,0.12)", position: "relative" }}>
-            <button onClick={() => setShowUpgradePopup(false)} style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: "#C9A84C", fontSize: 26, cursor: "pointer", lineHeight: 1, transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "rotate(90deg)"} onMouseLeave={(e) => e.currentTarget.style.transform = "rotate(0deg)"}>✕</button>
-            <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "72px", height: "72px", marginBottom: "18px", filter: "drop-shadow(0 0 16px rgba(201,168,76,0.6))" }} />
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#C9A84C", marginBottom: "6px", letterSpacing: "1px", textShadow: "0 0 20px rgba(201,168,76,0.5)" }}>ARK LAW AI</div>
-            <div style={{ fontSize: 11, color: "#3EB489", marginBottom: "28px", fontStyle: "italic" }}>Pakistan's Legal Intelligence Engine</div>
-            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "28px" }} />
-            <div style={{ fontSize: 28, marginBottom: "12px" }}>✨</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#FAF6EE", marginBottom: "10px" }}>Upgrade to Pro</div>
-            <div style={{ fontSize: 13, color: "#B8C4D0", lineHeight: 1.7, marginBottom: "20px" }}>More tools, faster AI, and exclusive features.<br/><span style={{ color: "#C9A84C", fontWeight: 600 }}>Coming Very Soon — Please stay tuned.</span></div>
-            <div style={{ textAlign: "left", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: "10px", padding: "16px 20px", marginBottom: "24px" }}>
-              {["Priority AI Response Time", "Advanced Document Analysis", "Unlimited Chat History", "Export Chat as PDF", "Premium Legal Templates", "24/7 Priority Support"].map((f, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: i < 5 ? "10px" : 0, color: "#B8C4D0", fontSize: "12px" }}>
-                  <span style={{ color: "#3EB489", fontSize: "14px", flexShrink: 0 }}>✓</span>{f}
-                </div>
-              ))}
-            </div>
-            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "24px" }} />
-            <button onClick={() => setShowUpgradePopup(false)} style={{ padding: "11px 40px", background: "linear-gradient(135deg, #C9A84C, #FFD700)", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", letterSpacing: "0.5px", boxShadow: "0 4px 16px rgba(201,168,76,0.4)", transition: "transform 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-              ⚖️ Got it!
-            </button>
           </div>
         </div>
       )}
