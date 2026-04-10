@@ -554,7 +554,26 @@ export default function App() {
       <Head>
         <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
+
+        {/* PWA */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1B2E1A" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="ARK Law AI" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js')
+                .then(function(reg) { console.log('SW registered:', reg.scope); })
+                .catch(function(err) { console.log('SW failed:', err); });
+            });
+          }
+        `}} />
       </Head>
 
       <style>{`
