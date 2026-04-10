@@ -279,16 +279,35 @@ export default function App() {
   // ── PWA Install handler ──
   const handleInstallApp = async () => {
     if (installPrompt) {
-      // Android Chrome — trigger native prompt
+      // Android Chrome / Edge — native prompt, installs automatically
       installPrompt.prompt();
       const { outcome } = await installPrompt.userChoice;
       if (outcome === "accepted") {
         setShowInstallBtn(false);
         setInstallPrompt(null);
       }
+      return;
+    }
+
+    // Detect browser / OS for tailored instructions
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
+    const isFirefox = /firefox/.test(ua);
+    const isSamsungBrowser = /samsungbrowser/.test(ua);
+    const isOpera = /opr|opera/.test(ua);
+
+    if (isIOS || isSafari) {
+      alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅\n\nThe ARK LAW AI icon will appear on your home screen.");
+    } else if (isFirefox) {
+      alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
+    } else if (isSamsungBrowser) {
+      alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅");
+    } else if (isOpera) {
+      alert("📲 Install ARK LAW AI on Opera:\n\n1. Tap the Opera menu button\n2. Tap \"Home screen\"\n3. Tap \"Add\" — done! ✅");
     } else {
-      // iOS Safari or already installed — show manual instructions
-      alert("To install ARK Law AI:\n\n📱 Android: Tap the ⋮ menu in Chrome → 'Add to Home screen'\n\n🍎 iPhone: Tap the Share button in Safari → 'Add to Home Screen'");
+      // Generic Chrome / other — prompt may not have fired yet
+      alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\" — done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
     }
   };
 
