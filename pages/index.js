@@ -17,7 +17,7 @@ const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
 const QURAN_VERSE =
-  `إِنِ الْحُكْمُ إِلَّا لِلَّهِ  —  "The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone"  —  Surah Yusuf (12:40 & 12:67)  |  Surah Al-An'am (6:57)`;
+  `إِنِ الْحُكْمُ إِلَّا لِلَّهِ  —  "The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone"  —  Al-Qur'an (12:40, 12:67, 6:57)`;
 
 export default function App() {
   const [user,               setUser]               = useState(null);
@@ -648,7 +648,8 @@ export default function App() {
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 11, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.02em", fontWeight: 600, textAlign: "center", display: "block" }}>{QURAN_VERSE}</span>
+              <span style={{ fontSize: 11, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
+              <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr" }}>"The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone" — Al-Qur'an (12:40, 12:67, 6:57)</span>
             </div>
           </div>
           )}
