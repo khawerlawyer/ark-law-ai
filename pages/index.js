@@ -17,7 +17,7 @@ const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
 const QURAN_VERSE =
-  `"O believers! Stand firm for justice as witnesses for Allah even if it is against yourselves, your parents, or close relatives. Be they rich or poor, Allah is best to ensure their interests. So do not let your desires cause you to deviate ˹from justice˺. If you distort the testimony or refuse to give it, then ˹know that˺ Allah is certainly All-Aware of what you do."  — Al-Nisa : 135 (Al-Quran)`;
+  `إِنِ الْحُكْمُ إِلَّا لِلَّهِ  —  "The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone"  —  Surah Yusuf (12:40 & 12:67)  |  Surah Al-An'am (6:57)`;
 
 export default function App() {
   const [user,               setUser]               = useState(null);
@@ -592,7 +592,7 @@ export default function App() {
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 10, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.45, letterSpacing: "0.03em", fontWeight: 600, textAlign: "center", display: "block" }}>{QURAN_VERSE}</span>
+              <span style={{ fontSize: 11, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.02em", fontWeight: 600, textAlign: "center", display: "block" }}>{QURAN_VERSE}</span>
             </div>
           </div>
 
