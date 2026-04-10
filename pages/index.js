@@ -588,7 +588,7 @@ export default function App() {
   return (
     <>
       <Head>
-        <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
+        <title>ARK LAW AI - میرا فاضل دوست</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
@@ -632,7 +632,7 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: isMobile ? "32px" : "48px", height: isMobile ? "32px" : "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: isMobile ? 14 : 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: isMobile ? 14 : 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
               {!isMobile && <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>}
               {!isMobile && <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>}
             </div>
@@ -648,8 +648,8 @@ export default function App() {
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 11, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
-              <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr" }}>"The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone" — Al-Qur'an (12:40, 12:67, 6:57)</span>
+              <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
+              <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"The Order / Decision / Judgment rests with ALLAH ALMIGHTY alone" — Al-Qur'an (12:40, 12:67, 6:57)</span>
             </div>
           </div>
           )}
@@ -998,7 +998,7 @@ export default function App() {
             <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
-                <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK Law AI</div><div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div></div>
+                <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK LAW AI</div><div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div></div>
               </div>
               <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
             </div>
@@ -1039,7 +1039,7 @@ export default function App() {
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
                 <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
                   <div style={{ fontSize: 11, color: "#5A7A56" }}>✍️ AI Legal Document Drafting</div>
                 </div>
               </div>
@@ -1247,7 +1247,7 @@ export default function App() {
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
                 <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
                   <div style={{ fontSize: 11, color: "#5A7A56" }}>⚖️ Compare Legal Documents</div>
                 </div>
               </div>
@@ -1376,7 +1376,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px", position: "relative", zIndex: 1 }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
                 <div style={{ fontSize: 11, color: "#5A7A56" }}>Login to your account</div>
               </div>
             </div>
@@ -1447,7 +1447,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px", position: "relative", zIndex: 1 }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 16, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 16, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
                 <div style={{ fontSize: 10, color: "#5A7A56" }}>Create your free account — 500,000 credits</div>
               </div>
             </div>
@@ -1529,7 +1529,7 @@ export default function App() {
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "42px", height: "42px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
                 <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY }}>ARK Law AI</div>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
                   <div style={{ fontSize: 11, color: "#5A7A56" }}>My Account</div>
                 </div>
               </div>
