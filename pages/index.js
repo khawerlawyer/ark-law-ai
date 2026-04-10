@@ -70,6 +70,8 @@ export default function App() {
 
 
   const [isMobile,           setIsMobile]           = useState(false);
+  const [installPrompt,      setInstallPrompt]      = useState(null);
+  const [showInstallBtn,     setShowInstallBtn]     = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
 
   const currentDate = useRef(
@@ -166,7 +168,25 @@ export default function App() {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
-    return () => { window.removeEventListener("resize", handleResize); };
+
+    // PWA install prompt — fires when browser decides the site is installable
+    const handleInstallPrompt = (e) => {
+      e.preventDefault(); // stop browser showing its own mini bar
+      setInstallPrompt(e);
+      setShowInstallBtn(true);
+    };
+    window.addEventListener("beforeinstallprompt", handleInstallPrompt);
+
+    // Hide button once app is installed
+    window.addEventListener("appinstalled", () => {
+      setShowInstallBtn(false);
+      setInstallPrompt(null);
+    });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
+    };
   }, []);
 
   useEffect(() => {
@@ -255,6 +275,17 @@ export default function App() {
   // ═══════════════════════════════════════════════════════════════════════════
   // CORE FUNCTIONS
   // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── PWA Install handler ──
+  const handleInstallApp = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") {
+      setShowInstallBtn(false);
+      setInstallPrompt(null);
+    }
+  };
 
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
@@ -622,6 +653,15 @@ export default function App() {
             <button onClick={() => setIsUrdu(false)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
             <button onClick={() => setIsUrdu(true)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
+
+            {/* PWA Install button — only shown when browser supports it */}
+            {showInstallBtn && (
+              <button onClick={handleInstallApp}
+                title="Install ARK Law AI as an app on your device"
+                style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
+                📲 {isMobile ? "Install" : "Install App"}
+              </button>
+            )}
             {!user ? (
               <>
                 <button onClick={() => setShowLoginPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
