@@ -278,12 +278,17 @@ export default function App() {
 
   // ── PWA Install handler ──
   const handleInstallApp = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === "accepted") {
-      setShowInstallBtn(false);
-      setInstallPrompt(null);
+    if (installPrompt) {
+      // Android Chrome — trigger native prompt
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === "accepted") {
+        setShowInstallBtn(false);
+        setInstallPrompt(null);
+      }
+    } else {
+      // iOS Safari or already installed — show manual instructions
+      alert("To install ARK Law AI:\n\n📱 Android: Tap the ⋮ menu in Chrome → 'Add to Home screen'\n\n🍎 iPhone: Tap the Share button in Safari → 'Add to Home Screen'");
     }
   };
 
@@ -654,8 +659,8 @@ export default function App() {
             <button onClick={() => setIsUrdu(true)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
 
-            {/* PWA Install button — only shown when browser supports it */}
-            {showInstallBtn && (
+            {/* PWA Install button — always shown for logged-in users, shown for guests only when browser supports it */}
+            {(showInstallBtn || user) && (
               <button onClick={handleInstallApp}
                 title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
