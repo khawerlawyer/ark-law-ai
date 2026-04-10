@@ -70,7 +70,6 @@ export default function App() {
 
 
   const [isMobile,           setIsMobile]           = useState(false);
-  const [mobileTab,          setMobileTab]          = useState("chat"); // "chat" | "left" | "right"
   const [nameAsked,          setNameAsked]          = useState(false);
 
   const currentDate = useRef(
@@ -555,7 +554,6 @@ export default function App() {
       <Head>
         <title>ARK Law AI — Pakistan Legal Intelligence Engine by Khawer Rabbani</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
@@ -567,62 +565,26 @@ export default function App() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1);    } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1);   opacity:1;   } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
-
-        /* Popup field focus glow */
-        .ark-input:focus { border-color: ${LIGHT_GREEN} !important; box-shadow: 0 0 0 3px ${LIGHT_GREEN}22; }
-        /* Cancel button hover */
-        .cancel-btn:hover { background: #e8e0d4 !important; }
-
-        /* ── Mobile styles ── */
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-
-          /* Header compact on mobile */
-          .ark-header { padding: 6px 10px !important; gap: 8px !important; }
-          .ark-logo-img { width: 34px !important; height: 34px !important; }
-          .ark-logo-name { font-size: 14px !important; }
-          .ark-logo-tag  { display: none !important; }
-          .ark-logo-sub  { display: none !important; }
-          .ark-verse-strip { display: none !important; }
-
-          /* Auth buttons smaller */
-          .ark-auth-btn { padding: 5px 10px !important; font-size: 10px !important; }
-          .ark-lang-btn { padding: 4px 7px !important; font-size: 9px !important; }
-
-          /* Tab bar */
-          .ark-tab-bar { display: flex !important; }
-
-          /* Panels */
-          .ark-panel { display: none; flex: 1; overflow: hidden; }
-          .ark-panel.active { display: flex !important; flex-direction: column; }
-
-          /* Input area bigger touch targets */
-          .ark-input-row button { min-height: 40px !important; min-width: 40px !important; }
-          .ark-send-btn { padding: 10px 14px !important; font-size: 13px !important; }
-          .ark-text-input { font-size: 14px !important; padding: 10px 12px !important; }
-        }
-
-        /* Tab bar hidden on desktop */
-        .ark-tab-bar { display: none; }
+        @media (max-width:768px){ .desktop-only{ display:none; } }
       `}</style>
 
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER ══ */}
-        <header className="ark-header" style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
+        <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
 
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img className="ark-logo-img" src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div className="ark-logo-name" style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
-              <div className="ark-logo-tag" style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
-              <div className="ark-logo-sub" style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
 
           {/* Quranic verse — hidden on mobile via CSS class */}
-          <div className="ark-verse-strip" style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
@@ -636,13 +598,13 @@ export default function App() {
 
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
-            <button className="ark-lang-btn" onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
-            <button className="ark-lang-btn" onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
+            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 1px" }} />
             {!user ? (
               <>
-                <button className="ark-auth-btn" onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-                <button className="ark-auth-btn" onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>✨ Sign Up</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>✨ Sign Up</button>
               </>
             ) : (
               <>
@@ -663,7 +625,7 @@ export default function App() {
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
           {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
-          <div className={isMobile ? `ark-panel${mobileTab === "left" ? " active" : ""}` : ""} style={{ width: isMobile ? "100%" : "200px", background: CREAM, borderRight: isMobile ? "none" : `1px solid ${GOLD}40`, padding: "8px", display: isMobile ? (mobileTab === "left" ? "flex" : "none") : "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
+          <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
               {/* Justice Rabbani dedication box */}
               <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
                 <img
@@ -754,11 +716,9 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
-          </div>{/* end left sidebar panel */}
 
           {/* CHAT AREA */}
-          <div className={isMobile ? `ark-panel${mobileTab === "chat" ? " active" : ""}` : ""} style={{ flex: isMobile ? undefined : 1, width: isMobile ? "100%" : undefined, display: isMobile ? (mobileTab === "chat" ? "flex" : "none") : "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
@@ -823,7 +783,7 @@ export default function App() {
               </div>
             )}
 
-            <div className="ark-input-row" style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
+            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
               <button onClick={startVoiceInput} disabled={loading || isListening} title={isListening ? "Listening..." : "Click to speak"}
                 style={{ width: "38px", height: "38px", background: isListening ? LIGHT_GREEN : "white", border: `1px solid ${isListening ? LIGHT_GREEN : GOLD}60`, borderRadius: "6px", cursor: loading || isListening ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", animation: isListening ? "pulse 1.5s infinite" : "none", boxShadow: isListening ? `0 0 0 3px ${LIGHT_GREEN}30` : "none" }}
                 onMouseEnter={(e) => { if (!isListening && !loading) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; } }}
@@ -843,10 +803,8 @@ export default function App() {
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                 placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
-                className="ark-text-input"
                 style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening}
-                className="ark-send-btn"
                 style={{ padding: "9px 18px", background: loading || isListening ? "#9DB89A" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
                 onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
                 onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.send : "SEND"}</button>
@@ -854,7 +812,7 @@ export default function App() {
           </div>
 
           {/* RIGHT SIDEBAR — always rendered, hidden on mobile unless tab=right */}
-          <div className={isMobile ? `ark-panel${mobileTab === "right" ? " active" : ""}` : ""} style={{ width: isMobile ? "100%" : "220px", background: CREAM, borderLeft: isMobile ? "none" : `1px solid ${GOLD}40`, display: isMobile ? (mobileTab === "right" ? "flex" : "none") : "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
                 <span style={{ fontSize: 11 }}>🚀</span>
                 <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
@@ -903,25 +861,10 @@ export default function App() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── MOBILE TAB BAR — only visible on mobile via CSS ── */}
-        <div className="ark-tab-bar" style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0, justifyContent: "stretch", zIndex: 50 }}>
-          {[
-            { id: "left",  icon: "⚖️", label: "Tools"   },
-            { id: "chat",  icon: "💬", label: "Chat"    },
-            { id: "right", icon: "📋", label: "Queries" },
-          ].map(({ id, icon, label }) => (
-            <button key={id} onClick={() => setMobileTab(id)}
-              style={{ flex: 1, padding: "10px 4px", background: mobileTab === id ? "#2A432A" : "transparent", border: "none", borderTop: mobileTab === id ? `2px solid ${LIGHT_GREEN}` : "2px solid transparent", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", transition: "all 0.18s" }}>
-              <span style={{ fontSize: 18 }}>{icon}</span>
-              <span style={{ fontSize: 10, color: mobileTab === id ? "#E8D97A" : "#9DB89A", fontWeight: mobileTab === id ? 700 : 400 }}>{label}</span>
-            </button>
-          ))}
-        </div>
 
-        {/* FOOTER — hidden on mobile */}
-        <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }} className="desktop-only">
+        {/* FOOTER */}
+        <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
           <div style={{ padding: "3px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", minHeight: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, flexWrap: "wrap", rowGap: "0" }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "14px", height: "14px", opacity: 0.85, flexShrink: 0 }} />
@@ -960,8 +903,7 @@ export default function App() {
             </div>
           </div>
         </footer>
-      </div>{/* end body */}
-      </div>{/* end root */}
+      </div>
 
       {/* ════════════════════════════════════════════════════════════════════
           POPUPS
