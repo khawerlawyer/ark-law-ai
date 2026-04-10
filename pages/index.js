@@ -583,7 +583,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quranic verse — hidden on mobile via CSS class */}
+          {/* Quranic verse — hidden on mobile */}
+          {!isMobile && (
           <div style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
@@ -595,6 +596,7 @@ export default function App() {
               <span style={{ fontSize: 11, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.5, letterSpacing: "0.02em", fontWeight: 600, textAlign: "center", display: "block" }}>{QURAN_VERSE}</span>
             </div>
           </div>
+          )}
 
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
