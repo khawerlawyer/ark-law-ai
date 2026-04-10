@@ -571,15 +571,15 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER ══ */}
-        <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
+        <header style={{ background: "#1B2E1A", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
 
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: isMobile ? "32px" : "48px", height: isMobile ? "32px" : "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
-              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: isMobile ? 14 : 18, fontWeight: 700, color: "#E8D97A" }}>ARK Law AI</div>
+              {!isMobile && <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>}
+              {!isMobile && <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>}
             </div>
           </div>
 
@@ -599,25 +599,27 @@ export default function App() {
           )}
 
           {/* Lang + Auth */}
-          <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
-            <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 1px" }} />
+          <div style={{ display: "flex", gap: isMobile ? "4px" : "6px", alignItems: "center", flexShrink: 0 }}>
+            <button onClick={() => setIsUrdu(false)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
+            <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>✨ Sign Up</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isMobile ? "Sign Up" : "✨ Sign Up"}</button>
               </>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "6px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                {!isMobile && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "6px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                    </div>
+                    <div style={{ fontSize: "9px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                   </div>
-                  <div style={{ fontSize: "9px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
-                </div>
-                <div style={{ padding: "4px 8px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", borderRadius: "4px", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name.split(" ")[0]}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "4px 8px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 9, fontWeight: 600, whiteSpace: "nowrap" }}>Account</button>
+                )}
+                <div style={{ padding: isMobile ? "3px 7px" : "4px 8px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", borderRadius: "4px", fontSize: isMobile ? 10 : 9, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name.split(" ")[0]}</div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: isMobile ? "4px 9px" : "4px 8px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 9, fontWeight: 600, whiteSpace: "nowrap" }}>{isMobile ? "Account" : "Account"}</button>
               </>
             )}
           </div>
