@@ -1571,13 +1571,10 @@ export default function App() {
             </div>
           </div>
         </div>
-        </div>
+      </div>
       )}
 
 
-      {/* ══════════════════════════════════════════════════════════════════
-          FEATURES POPUP
-      ═══════════════════════════════════════════════════════════════════ */}
 
       {showComingSoon && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowComingSoon(false)}>
