@@ -35,6 +35,8 @@ export default function App() {
   const [showLinkedInPopup,  setShowLinkedInPopup]  = useState(false);
   const [showComingSoon,     setShowComingSoon]     = useState(false);
   const [showFeaturesPopup,  setShowFeaturesPopup]  = useState(false);
+  const [showPracticeAreas,  setShowPracticeAreas]  = useState(false);
+  const [rightPanelDoc,      setRightPanelDoc]      = useState(null); // { title, content }
   const [isUrdu,             setIsUrdu]             = useState(false);
 
   const [newsItems,          setNewsItems]          = useState([]);
@@ -612,10 +614,13 @@ export default function App() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1);    } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1);   opacity:1;   } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
-        @media (max-width:768px){ .desktop-only{ display:none; } }
+        @media (max-width:768px){
+          .desktop-only{ display:none; }
+          header { position: sticky !important; top: 0 !important; z-index: 100 !important; flex-shrink: 0 !important; }
+        }
       `}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER ══ */}
         <header style={{ background: "#1B2E1A", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
@@ -680,7 +685,8 @@ export default function App() {
         {/* ══ BODY ══ */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
+          {/* LEFT SIDEBAR — hidden on mobile */}
+          {!isMobile && (
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
@@ -717,6 +723,33 @@ export default function App() {
                     <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
                   </div>
                   <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
+                </div>
+
+                {/* Practice Areas dropdown */}
+                <div style={{ borderRadius: "8px", border: "1px solid #E8E8E4", background: "white", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+                  <div onClick={() => setShowPracticeAreas(p => !p)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", cursor: "pointer", transition: "all 0.18s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "white"; }}>
+                    <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</div>
+                      <div style={{ fontSize: 9, color: "#888" }}>{isUrdu ? "قانونی شعبہ منتخب کریں" : "Select a legal area"}</div>
+                    </div>
+                    <span style={{ color: "#BBBBBB", fontSize: 11, transition: "transform 0.2s", transform: showPracticeAreas ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
+                  </div>
+                  {showPracticeAreas && (
+                    <div style={{ borderTop: "1px solid #F0EDE6", maxHeight: "180px", overflowY: "auto" }}>
+                      {PRACTICE_AREAS_PK.map((area, i) => (
+                        <button key={area.id} onClick={() => { sendMessage(`Tell me about ${area.label} in Pakistan`, true); setShowPracticeAreas(false); }}
+                          style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "7px 10px", background: "transparent", border: "none", borderBottom: "1px solid #F5F2EC", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#1A1A1A", transition: "background 0.15s" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                          <span style={{ fontSize: 12 }}>{area.icon}</span>
+                          <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -757,6 +790,7 @@ export default function App() {
                 </div>
               </div>
             </div>
+          )}
 
           {/* CHAT AREA */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
@@ -852,54 +886,53 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
-          <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
-                <span style={{ fontSize: 11 }}>🚀</span>
-                <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
-                <span style={{ fontSize: 9, color: "#9DB89A", fontStyle: "italic" }}>— ARK Law AI</span>
+          {/* RIGHT SIDEBAR — Document Viewer */}
+          <div style={{ width: "280px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+              {/* Header strip */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ fontSize: 11 }}>📄</span>
+                  <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Document Viewer</span>
+                </div>
+                {rightPanelDoc && (
+                  <button onClick={() => setRightPanelDoc(null)} style={{ background: "none", border: "none", color: "#9DB89A", cursor: "pointer", fontSize: 14, lineHeight: 1, padding: 0 }} title="Close document">✕</button>
+                )}
               </div>
-              <div style={{ flex: 1, overflowY: "auto", padding: "14px 10px" }}>
-                <div style={{ marginBottom: "20px", direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", flexDirection: isUrdu ? "row-reverse" : "row" }}>
-                    <span style={{ fontSize: 14 }}>💡</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.quickLabel : "Quick Queries"}</span>
+
+              {/* Content */}
+              {rightPanelDoc ? (
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                  {/* Document title bar */}
+                  <div style={{ padding: "10px 12px", borderBottom: `1px solid ${GOLD}30`, background: "white", flexShrink: 0 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: NAVY, fontFamily: "Georgia,serif", marginBottom: "2px" }}>{rightPanelDoc.title}</div>
+                    <div style={{ fontSize: 9, color: "#7A9A76" }}>AI Generated Document</div>
                   </div>
-                  <p style={{ fontSize: 9, color: "#888", margin: "0 0 10px 0", lineHeight: 1.4, fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? "شروع کرنے کے لیے کوئی سوال کلک کریں" : "Click any question to get started"}</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).map((query, i) => (
-                      <button key={i} onClick={() => sendMessage(isUrdu ? QUICK_QUERIES_PK[i] : query, true)}
-                        style={{ display: "flex", alignItems: "flex-start", gap: "8px", width: "100%", padding: "8px 10px", background: "white", border: `1px solid ${GOLD}25`, borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 10, color: "#2D2D2D", lineHeight: 1.4, fontWeight: 400, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; e.currentTarget.style.color = "#1A5C36"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}25`; e.currentTarget.style.color = "#2D2D2D"; }}>
-                        <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#E8F5EE", border: "1px solid #C2E0CE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>
-                          <span style={{ fontSize: 9, color: ACCENT_PK, fontWeight: 700 }}>?</span>
-                        </div>
-                        <span style={{ flex: 1 }}>{query}</span>
-                      </button>
-                    ))}
+                  {/* Document body */}
+                  <div style={{ flex: 1, overflowY: "auto", padding: "14px 12px" }}>
+                    <pre style={{ fontSize: 11, color: "#2A2A2A", lineHeight: 1.7, fontFamily: "'Times New Roman', serif", whiteSpace: "pre-wrap", wordBreak: "break-word", margin: 0 }}>{rightPanelDoc.content}</pre>
+                  </div>
+                  {/* Actions */}
+                  <div style={{ padding: "8px 12px", borderTop: `1px solid ${GOLD}30`, background: "white", display: "flex", gap: "6px", flexShrink: 0 }}>
+                    <button onClick={() => { const blob = new Blob([rightPanelDoc.content], { type: "text/plain" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `${rightPanelDoc.title}.txt`; a.click(); URL.revokeObjectURL(url); }}
+                      style={{ flex: 1, padding: "7px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: 10, fontWeight: 700 }}>
+                      📥 Download
+                    </button>
+                    <button onClick={() => { navigator.clipboard?.writeText(rightPanelDoc.content); }}
+                      style={{ flex: 1, padding: "7px", background: "#EDE8DF", color: NAVY, border: `1px solid ${GOLD}40`, borderRadius: "6px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>
+                      📋 Copy
+                    </button>
                   </div>
                 </div>
-                <div style={{ height: "1px", background: "#EBEBEB", margin: "0 0 16px 0" }} />
-                <div style={{ direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px", flexDirection: isUrdu ? "row-reverse" : "row" }}>
-                    <span style={{ fontSize: 14 }}>⚖️</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A", textTransform: "uppercase", letterSpacing: "0.4px", fontFamily: isUrdu ? "serif" : "inherit" }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</span>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    {PRACTICE_AREAS_PK.map((area, i) => (
-                      <button key={area.id} onClick={() => sendMessage(`Tell me about ${area.label} in Pakistan`, true)}
-                        style={{ display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "9px 10px", background: "white", border: `1px solid ${GOLD}25`, borderRadius: "8px", cursor: "pointer", textAlign: isUrdu ? "right" : "left", fontSize: 11, color: "#1A1A1A", fontWeight: 500, transition: "all 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.04)", flexDirection: isUrdu ? "row-reverse" : "row", fontFamily: isUrdu ? "serif" : "inherit" }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}25`; }}>
-                        <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "#EEF7F2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", flexShrink: 0 }}>{area.icon}</div>
-                        <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
-                        <span style={{ color: "#BBBBBB", fontSize: 13, fontWeight: 300 }}>{isUrdu ? "‹" : "›"}</span>
-                      </button>
-                    ))}
+              ) : (
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "30px 20px", textAlign: "center" }}>
+                  <div style={{ fontSize: 40, marginBottom: "14px", opacity: 0.3 }}>📄</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: NAVY, marginBottom: "8px", fontFamily: "Georgia,serif" }}>Document Viewer</div>
+                  <div style={{ fontSize: 10, color: "#8A9A86", lineHeight: 1.6 }}>Documents generated or shared in chat will appear here for easy reading and download.</div>
+                  <div style={{ marginTop: "16px", padding: "10px 12px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30`, width: "100%" }}>
+                    <div style={{ fontSize: 9, color: "#6A8A66", lineHeight: 1.5 }}>💡 <strong>Tip:</strong> When ARK generates a document, click <em>"View in Panel"</em> to open it here.</div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -1193,6 +1226,7 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                     <button onClick={() => { setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ flex: 1, padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>🔄 New Document</button>
+                    <button onClick={() => { setRightPanelDoc({ title: draftTitle || draftType, content: draftContent }); setShowDraftPopup(false); }} style={{ flex: 1, padding: "11px", background: NAVY, color: CREAM, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>👁 View in Panel</button>
                     <button onClick={() => downloadDraft("docx")} style={{ flex: 1, padding: "11px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12, transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>📥 Download DOCX</button>
                     <button onClick={() => downloadDraft("pdf")} style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>📄 Download PDF</button>
                   </div>
