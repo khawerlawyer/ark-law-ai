@@ -70,6 +70,7 @@ export default function App() {
 
 
   const [isMobile,           setIsMobile]           = useState(false);
+  const [showRightPanel,     setShowRightPanel]     = useState(false); // hidden by default, toggle-able
   const [installPrompt,      setInstallPrompt]      = useState(null);
   const [showInstallBtn,     setShowInstallBtn]     = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
@@ -657,18 +658,17 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quranic verse — hidden on mobile */}
+          {/* Pakistani flag gradient — center strip, desktop only */}
           {!isMobile && (
-          <div style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
-            </div>
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
-            </div>
-            <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
-              <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"IT IS ONLY ALLAH WHO DECIDES" — Al-Qur'an (12:40, 12:67, 6:57)</span>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", overflow: "hidden", minHeight: "44px", position: "relative", boxShadow: "0 1px 6px rgba(0,0,0,0.2)" }}>
+            {/* White stripe left */}
+            <div style={{ width: "18%", height: "100%", background: "#FFFFFF", position: "absolute", left: 0, top: 0 }} />
+            {/* Green main body */}
+            <div style={{ position: "absolute", left: "18%", right: 0, top: 0, bottom: 0, background: "linear-gradient(135deg, #01411C 0%, #026a2e 50%, #01411C 100%)" }} />
+            {/* Crescent and star overlay */}
+            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1px" }}>
+              <span style={{ fontSize: 22, lineHeight: 1, filter: "drop-shadow(0 0 4px rgba(255,255,255,0.4))" }}>☪</span>
+              <span style={{ fontSize: 9, color: "rgba(255,255,255,0.85)", fontFamily: "Georgia,serif", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Pakistan</span>
             </div>
           </div>
           )}
@@ -685,6 +685,14 @@ export default function App() {
                 title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
                 📲 {isMobile ? "Install" : "Install App"}
+              </button>
+            )}
+            {/* Right panel toggle — for admin/dev use */}
+            {user && !isMobile && (
+              <button onClick={() => setShowRightPanel(p => !p)}
+                title={showRightPanel ? "Hide side panel" : "Show side panel"}
+                style={{ padding: "5px 8px", background: showRightPanel ? ACCENT_PK : "transparent", color: showRightPanel ? "white" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
+                {showRightPanel ? "◧ Hide Panel" : "◧ Panel"}
               </button>
             )}
             {!user ? (
@@ -714,7 +722,8 @@ export default function App() {
 
           {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-              {/* Justice Rabbani dedication box */}
+              {/* Justice Rabbani dedication box — hidden for now, restore by changing false to true */}
+              {false && (
               <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
                 <img
                   src="/rabbani.jpeg"
@@ -728,6 +737,7 @@ export default function App() {
                   <span style={{ fontStyle: "normal", fontSize: 8 }}>Former Judge, Superior Courts of Pakistan</span>"
                 </p>
               </div>
+              )}
 
               <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
@@ -899,8 +909,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR — always rendered, hidden on mobile unless tab=right */}
-          <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          {/* RIGHT PANEL — toggle with showRightPanel; wider for document/info display */}
+          {showRightPanel && (
+          <div style={{ width: "320px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
                 <span style={{ fontSize: 11 }}>🚀</span>
                 <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
@@ -949,6 +960,7 @@ export default function App() {
               </div>
             </div>
           </div>
+          )}
 
 
         {/* FOOTER */}
