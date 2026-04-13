@@ -682,21 +682,6 @@ export default function App() {
 
           {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-              {/* Justice Rabbani dedication box */}
-              <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
-                <img
-                  src="/rabbani.jpeg"
-                  alt="Justice S. A. Rabbani"
-                  style={{ width: "62px", height: "62px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${GOLD}`, boxShadow: `0 0 8px ${GOLD}50`, marginBottom: "8px", display: "block", margin: "0 auto 8px" }}
-                />
-                <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "7px" }} />
-                <p style={{ fontSize: 8.5, color: "#3A5A36", lineHeight: 1.55, fontStyle: "italic", fontFamily: "Georgia, serif", margin: 0 }}>
-                  "This initiative is dedicated to the illustrious legacy of<br/>
-                  <strong>Honorable Justice S. A. Rabbani</strong><br/>
-                  <span style={{ fontStyle: "normal", fontSize: 8 }}>Former Judge, Superior Courts of Pakistan</span>"
-                </p>
-              </div>
-
               <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
