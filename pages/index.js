@@ -34,7 +34,6 @@ export default function App() {
   const [showComparePopup,   setShowComparePopup]   = useState(false);
   const [showLinkedInPopup,  setShowLinkedInPopup]  = useState(false);
   const [showComingSoon,     setShowComingSoon]     = useState(false);
-  const [showFeaturesPopup,  setShowFeaturesPopup]  = useState(false);
   const [isUrdu,             setIsUrdu]             = useState(false);
 
   const [newsItems,          setNewsItems]          = useState([]);
@@ -70,9 +69,6 @@ export default function App() {
 
 
   const [isMobile,           setIsMobile]           = useState(false);
-  const [showRightPanel,     setShowRightPanel]     = useState(false); // hidden by default, toggle-able
-  const [installPrompt,      setInstallPrompt]      = useState(null);
-  const [showInstallBtn,     setShowInstallBtn]     = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
 
   const currentDate = useRef(
@@ -170,24 +166,7 @@ export default function App() {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
 
-    // PWA install prompt — fires when browser decides the site is installable
-    const handleInstallPrompt = (e) => {
-      e.preventDefault(); // stop browser showing its own mini bar
-      setInstallPrompt(e);
-      setShowInstallBtn(true);
-    };
-    window.addEventListener("beforeinstallprompt", handleInstallPrompt);
-
-    // Hide button once app is installed
-    window.addEventListener("appinstalled", () => {
-      setShowInstallBtn(false);
-      setInstallPrompt(null);
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
-    };
+    return () => { window.removeEventListener("resize", handleResize); };
   }, []);
 
   useEffect(() => {
@@ -277,40 +256,6 @@ export default function App() {
   // CORE FUNCTIONS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  // ── PWA Install handler ──
-  const handleInstallApp = async () => {
-    if (installPrompt) {
-      // Android Chrome / Edge — native prompt, installs automatically
-      installPrompt.prompt();
-      const { outcome } = await installPrompt.userChoice;
-      if (outcome === "accepted") {
-        setShowInstallBtn(false);
-        setInstallPrompt(null);
-      }
-      return;
-    }
-
-    // Detect browser / OS for tailored instructions
-    const ua = navigator.userAgent.toLowerCase();
-    const isIOS = /iphone|ipad|ipod/.test(ua);
-    const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
-    const isFirefox = /firefox/.test(ua);
-    const isSamsungBrowser = /samsungbrowser/.test(ua);
-    const isOpera = /opr|opera/.test(ua);
-
-    if (isIOS || isSafari) {
-      alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅\n\nThe ARK LAW AI icon will appear on your home screen.");
-    } else if (isFirefox) {
-      alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
-    } else if (isSamsungBrowser) {
-      alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅");
-    } else if (isOpera) {
-      alert("📲 Install ARK LAW AI on Opera:\n\n1. Tap the Opera menu button\n2. Tap \"Home screen\"\n3. Tap \"Add\" — done! ✅");
-    } else {
-      // Generic Chrome / other — prompt may not have fired yet
-      alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\" — done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
-    }
-  };
 
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
@@ -610,26 +555,8 @@ export default function App() {
       <Head>
         <title>ARK LAW AI - میرا فاضل دوست</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
 
-        {/* PWA */}
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#1B2E1A" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="ARK Law AI" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <script dangerouslySetInnerHTML={{ __html: `
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js')
-                .then(function(reg) { console.log('SW registered:', reg.scope); })
-                .catch(function(err) { console.log('SW failed:', err); });
-            });
-          }
-        `}} />
       </Head>
 
       <style>{`
@@ -646,72 +573,52 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER ══ */}
-        <header style={{ background: "#1B2E1A", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
+        <header style={{ background: "#1B2E1A", padding: "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: "12px" }}>
 
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: isMobile ? "32px" : "48px", height: isMobile ? "32px" : "48px" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: isMobile ? 14 : 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
-              {!isMobile && <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>}
-              {!isMobile && <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>}
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
+              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
 
-          {/* Pakistani flag gradient — center strip, desktop only */}
+          {/* Quranic verse — hidden on mobile */}
           {!isMobile && (
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", overflow: "hidden", minHeight: "44px", position: "relative", boxShadow: "0 1px 6px rgba(0,0,0,0.2)" }}>
-            {/* White stripe left */}
-            <div style={{ width: "18%", height: "100%", background: "#FFFFFF", position: "absolute", left: 0, top: 0 }} />
-            {/* Green main body */}
-            <div style={{ position: "absolute", left: "18%", right: 0, top: 0, bottom: 0, background: "linear-gradient(135deg, #01411C 0%, #026a2e 50%, #01411C 100%)" }} />
-            {/* Crescent and star overlay */}
-            <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1px" }}>
-              <span style={{ fontSize: 22, lineHeight: 1, filter: "drop-shadow(0 0 4px rgba(255,255,255,0.4))" }}>☪</span>
-              <span style={{ fontSize: 9, color: "rgba(255,255,255,0.85)", fontFamily: "Georgia,serif", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Pakistan</span>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px", padding: "4px 40px" }}>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
+              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
+              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
+            </div>
+            <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
+            <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"IT IS ONLY ALLAH WHO DECIDES" — Al-Qur'an (12:40, 12:67, 6:57)</span>
           </div>
           )}
 
           {/* Lang + Auth */}
-          <div style={{ display: "flex", gap: isMobile ? "4px" : "6px", alignItems: "center", flexShrink: 0 }}>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
-            <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
-
-            {/* PWA Install button — always shown for logged-in users, shown for guests only when browser supports it */}
-            {(showInstallBtn || user) && (
-              <button onClick={handleInstallApp}
-                title="Install ARK Law AI as an app on your device"
-                style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
-                📲 {isMobile ? "Install" : "Install App"}
-              </button>
-            )}
-            {/* Right panel toggle — for admin/dev use */}
-            {user && !isMobile && (
-              <button onClick={() => setShowRightPanel(p => !p)}
-                title={showRightPanel ? "Hide side panel" : "Show side panel"}
-                style={{ padding: "5px 8px", background: showRightPanel ? ACCENT_PK : "transparent", color: showRightPanel ? "white" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
-                {showRightPanel ? "◧ Hide Panel" : "◧ Panel"}
-              </button>
-            )}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
+            <div style={{ width: "1px", height: "24px", background: "#3A5A38", margin: "0 2px" }} />
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isMobile ? "Sign Up" : "✨ Sign Up"}</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
               </>
             ) : (
               <>
-                {!isMobile && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "6px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
-                    </div>
-                    <div style={{ fontSize: "9px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
                   </div>
-                )}
-                <div style={{ padding: isMobile ? "3px 7px" : "4px 8px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", borderRadius: "4px", fontSize: isMobile ? 10 : 9, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name.split(" ")[0]}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: isMobile ? "4px 9px" : "4px 8px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 9, fontWeight: 600, whiteSpace: "nowrap" }}>{isMobile ? "Account" : "Account"}</button>
+                  <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                </div>
+                <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
               </>
             )}
           </div>
@@ -722,8 +629,7 @@ export default function App() {
 
           {/* LEFT SIDEBAR — always rendered, hidden on mobile unless tab=left */}
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-              {/* Justice Rabbani dedication box — hidden for now, restore by changing false to true */}
-              {false && (
+              {/* Justice Rabbani dedication box */}
               <div style={{ marginBottom: "8px", flexShrink: 0, background: "white", border: `1px solid ${GOLD}40`, borderRadius: "8px", padding: "10px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", textAlign: "center" }}>
                 <img
                   src="/rabbani.jpeg"
@@ -737,7 +643,6 @@ export default function App() {
                   <span style={{ fontStyle: "normal", fontSize: 8 }}>Former Judge, Superior Courts of Pakistan</span>"
                 </p>
               </div>
-              )}
 
               <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
@@ -909,9 +814,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT PANEL — toggle with showRightPanel; wider for document/info display */}
-          {showRightPanel && (
-          <div style={{ width: "320px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0 }}>
+          {/* RIGHT SIDEBAR */}
+          <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
                 <span style={{ fontSize: 11 }}>🚀</span>
                 <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Test Launch</span>
@@ -959,7 +863,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
 
         {/* FOOTER */}
@@ -980,7 +884,7 @@ export default function App() {
                   {links.map((link, li) => (
                     <span key={link} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
                       {li > 0 && <span style={{ color: "#3A5A38", fontSize: 7 }}>·</span>}
-                      <span onClick={() => link === "Features" ? setShowFeaturesPopup(true) : setShowComingSoon(true)} style={{ fontSize: 7, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
+                      <span onClick={() => setShowComingSoon(true)} style={{ fontSize: 7, color: "#9DB89A", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9DB89A"}>{link}</span>
                     </span>
                   ))}
                 </div>
@@ -1674,128 +1578,6 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════════
           FEATURES POPUP
       ═══════════════════════════════════════════════════════════════════ */}
-      {showFeaturesPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
-
-            {/* Watermark */}
-            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-
-            {/* ── Header ── */}
-            <div style={{ padding: "22px 28px 16px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, background: CREAM, zIndex: 2, borderRadius: "16px 16px 0 0" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY, letterSpacing: "0.5px" }}>FEATURES</div>
-                  <div style={{ fontSize: 10, color: "#5A7A56" }}>ARK Law AI Platform</div>
-                </div>
-              </div>
-              <button onClick={() => setShowFeaturesPopup(false)}
-                style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = NAVY}
-                onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
-            </div>
-
-            {/* Gold divider */}
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
-
-            {/* ── Body ── */}
-            <div style={{ padding: "22px 28px", position: "relative", zIndex: 1, flex: 1 }}>
-
-              {/* Headline & subtext */}
-              <div style={{ marginBottom: "24px", textAlign: "center" }}>
-                <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>
-                  Powerful AI Tools for Legal Professionals
-                </h2>
-                <p style={{ fontSize: 13, color: "#5A7A56", lineHeight: 1.6, margin: 0 }}>
-                  Streamline research, drafting, and case strategy<br />with one intelligent platform.
-                </p>
-              </div>
-
-              {/* Gold divider */}
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "22px" }} />
-
-              {/* Feature cards */}
-              {[
-                {
-                  icon: "🔍", title: "Legal Research Assistant",
-                  points: ["Case law summaries", "Statute lookup", "Precedent identification"],
-                },
-                {
-                  icon: "📝", title: "Smart Drafting Engine",
-                  points: ["Contracts, petitions, notices", "Clause suggestions", "Format consistency"],
-                },
-                {
-                  icon: "⚖️", title: "Case Analysis Tool",
-                  points: ["Argument structuring", "Risk insights", "Strategy suggestions"],
-                },
-                {
-                  icon: "🤖", title: "AI Legal Chat",
-                  points: ["Ask legal questions", "Context-aware responses"],
-                },
-                {
-                  icon: "📊", title: "Productivity Dashboard",
-                  points: ["Usage insights", "Saved drafts"],
-                },
-              ].map(({ icon, title, points }, idx) => (
-                <div key={title} style={{ display: "flex", gap: "14px", marginBottom: idx < 4 ? "18px" : "0", padding: "14px 16px", background: "white", borderRadius: "10px", border: `1px solid ${GOLD}25`, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-                  {/* Icon circle */}
-                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}30, ${GOLD}10)`, border: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0, marginTop: "2px" }}>
-                    {icon}
-                  </div>
-                  {/* Content */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "Georgia,serif", fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: "6px" }}>{title}</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                      {points.map(pt => (
-                        <div key={pt} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: LIGHT_GREEN, flexShrink: 0 }} />
-                          <span style={{ fontSize: 12, color: "#4A6A56", lineHeight: 1.4 }}>{pt}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* Gold divider */}
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "22px 0" }} />
-
-              {/* CTA buttons */}
-              <div style={{ display: "flex", gap: "12px", marginBottom: "18px" }}>
-                <button onClick={() => setShowComingSoon(true)}
-                  style={{ flex: 1, padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "background 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                  onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
-                  Explore Platform
-                </button>
-                <button onClick={() => setShowComingSoon(true)}
-                  style={{ flex: 1, padding: "12px", background: "white", color: NAVY, border: `2px solid ${GOLD}60`, borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}60`; }}>
-                  Request Demo
-                </button>
-              </div>
-
-              {/* Footer note */}
-              <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
-                <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>
-                  "Built for Pakistan's Legal Ecosystem"
-                </span>
-              </div>
-
-              {/* Gold divider */}
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "14px 0 16px" }} />
-
-              {/* Close button */}
-              <button onClick={() => setShowFeaturesPopup(false)} className="cancel-btn"
-                style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showComingSoon && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowComingSoon(false)}>
