@@ -168,25 +168,10 @@ export default function App() {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
-
-    // PWA install prompt — fires when browser decides the site is installable
-    const handleInstallPrompt = (e) => {
-      e.preventDefault(); // stop browser showing its own mini bar
-      setInstallPrompt(e);
-      setShowInstallBtn(true);
-    };
+    const handleInstallPrompt = (e) => { e.preventDefault(); setInstallPrompt(e); setShowInstallBtn(true); };
     window.addEventListener("beforeinstallprompt", handleInstallPrompt);
-
-    // Hide button once app is installed
-    window.addEventListener("appinstalled", () => {
-      setShowInstallBtn(false);
-      setInstallPrompt(null);
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
-    };
+    window.addEventListener("appinstalled", () => { setShowInstallBtn(false); setInstallPrompt(null); });
+    return () => { window.removeEventListener("resize", handleResize); window.removeEventListener("beforeinstallprompt", handleInstallPrompt); };
   }, []);
 
   useEffect(() => {
@@ -276,37 +261,27 @@ export default function App() {
   // CORE FUNCTIONS
   // ═══════════════════════════════════════════════════════════════════════════
 
+
   // ── PWA Install handler ──
   const handleInstallApp = async () => {
     if (installPrompt) {
-      // Android Chrome / Edge — native prompt, installs automatically
       installPrompt.prompt();
       const { outcome } = await installPrompt.userChoice;
-      if (outcome === "accepted") {
-        setShowInstallBtn(false);
-        setInstallPrompt(null);
-      }
+      if (outcome === "accepted") { setShowInstallBtn(false); setInstallPrompt(null); }
       return;
     }
-
-    // Detect browser / OS for tailored instructions
     const ua = navigator.userAgent.toLowerCase();
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    const isOpera = /opr|opera/.test(ua);
-
     if (isIOS || isSafari) {
-      alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅\n\nThe ARK LAW AI icon will appear on your home screen.");
+      alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
     } else if (isFirefox) {
       alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
     } else if (isSamsungBrowser) {
       alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅");
-    } else if (isOpera) {
-      alert("📲 Install ARK LAW AI on Opera:\n\n1. Tap the Opera menu button\n2. Tap \"Home screen\"\n3. Tap \"Add\" — done! ✅");
     } else {
-      // Generic Chrome / other — prompt may not have fired yet
       alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\" — done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
     }
   };
@@ -611,8 +586,6 @@ export default function App() {
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
-
-        {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1B2E1A" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -648,62 +621,57 @@ export default function App() {
         <header style={{ background: "#1B2E1A", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
 
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: isMobile ? "32px" : "48px", height: isMobile ? "32px" : "48px" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: isMobile ? 14 : 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
-              {!isMobile && <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>}
-              {!isMobile && <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>}
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
+              <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
 
           {/* Quranic verse — hidden on mobile */}
           {!isMobile && (
-          <div style={{ flex: 1, display: "flex", alignItems: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px", padding: "4px 40px" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
             <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
               <span style={{ fontSize: 14, color: GOLD }}>☪</span>
             </div>
-            <div style={{ width: "100%", padding: "4px 40px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
-              <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"IT IS ONLY ALLAH WHO DECIDES" — Al-Qur'an (12:40, 12:67, 6:57)</span>
-            </div>
+            <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
+            <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"IT IS ONLY ALLAH WHO DECIDES" — Al-Qur'an (12:40, 12:67, 6:57)</span>
           </div>
           )}
 
           {/* Lang + Auth */}
-          <div style={{ display: "flex", gap: isMobile ? "4px" : "6px", alignItems: "center", flexShrink: 0 }}>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: !isUrdu ? 700 : 400 }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: isMobile ? "4px 7px" : "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: isUrdu ? 700 : 400, fontFamily: "serif" }}>اردو</button>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
 
-            {/* PWA Install button — always shown for logged-in users, shown for guests only when browser supports it */}
+            {/* PWA Install button */}
             {(showInstallBtn || user) && (
-              <button onClick={handleInstallApp}
-                title="Install ARK Law AI as an app on your device"
+              <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
                 📲 {isMobile ? "Install" : "Install App"}
               </button>
             )}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 600, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: isMobile ? "5px 10px" : "6px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 11, fontWeight: 700, whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isMobile ? "Sign Up" : "✨ Sign Up"}</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
               </>
             ) : (
               <>
-                {!isMobile && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 6px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "6px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
-                    </div>
-                    <div style={{ fontSize: "9px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
+                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
                   </div>
-                )}
-                <div style={{ padding: isMobile ? "3px 7px" : "4px 8px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", borderRadius: "4px", fontSize: isMobile ? 10 : 9, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name.split(" ")[0]}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: isMobile ? "4px 9px" : "4px 8px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 10 : 9, fontWeight: 600, whiteSpace: "nowrap" }}>{isMobile ? "Account" : "Account"}</button>
+                  <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
+                </div>
+                <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
               </>
             )}
           </div>
@@ -899,7 +867,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR — always rendered, hidden on mobile unless tab=right */}
+          {/* RIGHT SIDEBAR */}
           <div style={{ width: "220px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
                 <span style={{ fontSize: 11 }}>🚀</span>
@@ -1158,7 +1126,7 @@ export default function App() {
                         <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
                           <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>📋 Affidavit Details</h5>
                           <input placeholder="Purpose of Affidavit *" onChange={(e) => setDraftRequirements({...draftRequirements, purpose: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
-                          <textarea placeholder="Facts to be stated under oath *" onChange={(e) => setDraftRequirements({...draftRequirements, facts: e.target.value})} style={{ width: "100%", height: "100px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }} />
+                          <textarea placeholder="Facts to be stated under oath *" onChange={(e) => setDraftRequirements({...draftRequirements, facts: e.target.value})} style={{ width: "100%", height: "100px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }}></textarea>
                           <input placeholder="Authority/Court where to be filed *" onChange={(e) => setDraftRequirements({...draftRequirements, authority: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12 }} />
                         </div>
                       </div>
@@ -1178,7 +1146,7 @@ export default function App() {
                         ))}
                         <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
                           <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>🔒 Confidentiality Terms</h5>
-                          <textarea placeholder="Nature of Confidential Information *" onChange={(e) => setDraftRequirements({...draftRequirements, confidentialInfo: e.target.value})} style={{ width: "100%", height: "80px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }} />
+                          <textarea placeholder="Nature of Confidential Information *" onChange={(e) => setDraftRequirements({...draftRequirements, confidentialInfo: e.target.value})} style={{ width: "100%", height: "80px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }}></textarea>
                           <input placeholder="Duration of Confidentiality (e.g., 3 years) *" onChange={(e) => setDraftRequirements({...draftRequirements, duration: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12 }} />
                         </div>
                       </div>
@@ -1192,7 +1160,7 @@ export default function App() {
 • Terms and conditions
 • Duration/timeline
 • Special clauses
-• Any other relevant information`} onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} style={{ width: "100%", height: "220px", padding: "12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12, fontFamily: "inherit", lineHeight: "1.6" }} />
+• Any other relevant information`} onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} style={{ width: "100%", height: "220px", padding: "12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12, fontFamily: "inherit", lineHeight: "1.6" }}></textarea>
                       </div>
                     )}
                   </div>
@@ -1228,7 +1196,7 @@ export default function App() {
                 <div>
                   <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "8px", fontWeight: 700, fontFamily: "Georgia,serif" }}>✅ Document Generated Successfully!</h4>
                   <p style={{ color: "#5A7A56", fontSize: 11, marginBottom: "14px" }}>Your {draftType} has been generated. Edit and download below.</p>
-                  <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} style={{ width: "100%", height: "360px", padding: "14px", background: "white", border: `1px solid ${GOLD}50`, color: "#000", borderRadius: "8px", marginBottom: "12px", fontSize: 13, fontFamily: "'Times New Roman', serif", lineHeight: "1.8", whiteSpace: "pre-wrap" }} />
+                  <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} style={{ width: "100%", height: "360px", padding: "14px", background: "white", border: `1px solid ${GOLD}50`, color: "#000", borderRadius: "8px", marginBottom: "12px", fontSize: 13, fontFamily: "'Times New Roman', serif", lineHeight: "1.8", whiteSpace: "pre-wrap" }}></textarea>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", padding: "10px 14px", background: "#EDE8DF", borderRadius: "8px" }}>
                     <span style={{ color: "#5A7A56", fontSize: 11 }}>📝 Words: <strong>{draftContent.split(/\s+/).filter(Boolean).length}</strong></span>
                     <span style={{ color: "#5A7A56", fontSize: 11 }}>📊 Chars: <strong>{draftContent.length}</strong></span>
@@ -1656,7 +1624,10 @@ export default function App() {
             </div>
           </div>
         </div>
+      </div>
       )}
+
+
 
       {/* ══════════════════════════════════════════════════════════════════
           FEATURES POPUP
@@ -1664,11 +1635,7 @@ export default function App() {
       {showFeaturesPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
-
-            {/* Watermark */}
             <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-
-            {/* ── Header ── */}
             <div style={{ padding: "22px 28px 16px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, background: CREAM, zIndex: 2, borderRadius: "16px 16px 0 0" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
@@ -1677,60 +1644,24 @@ export default function App() {
                   <div style={{ fontSize: 10, color: "#5A7A56" }}>ARK Law AI Platform</div>
                 </div>
               </div>
-              <button onClick={() => setShowFeaturesPopup(false)}
-                style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = NAVY}
-                onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+              <button onClick={() => setShowFeaturesPopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
             </div>
-
-            {/* Gold divider */}
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
-
-            {/* ── Body ── */}
             <div style={{ padding: "22px 28px", position: "relative", zIndex: 1, flex: 1 }}>
-
-              {/* Headline & subtext */}
               <div style={{ marginBottom: "24px", textAlign: "center" }}>
-                <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>
-                  Powerful AI Tools for Legal Professionals
-                </h2>
-                <p style={{ fontSize: 13, color: "#5A7A56", lineHeight: 1.6, margin: 0 }}>
-                  Streamline research, drafting, and case strategy<br />with one intelligent platform.
-                </p>
+                <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>Powerful AI Tools for Legal Professionals</h2>
+                <p style={{ fontSize: 13, color: "#5A7A56", lineHeight: 1.6, margin: 0 }}>Streamline research, drafting, and case strategy<br />with one intelligent platform.</p>
               </div>
-
-              {/* Gold divider */}
               <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "22px" }} />
-
-              {/* Feature cards */}
               {[
-                {
-                  icon: "🔍", title: "Legal Research Assistant",
-                  points: ["Case law summaries", "Statute lookup", "Precedent identification"],
-                },
-                {
-                  icon: "📝", title: "Smart Drafting Engine",
-                  points: ["Contracts, petitions, notices", "Clause suggestions", "Format consistency"],
-                },
-                {
-                  icon: "⚖️", title: "Case Analysis Tool",
-                  points: ["Argument structuring", "Risk insights", "Strategy suggestions"],
-                },
-                {
-                  icon: "🤖", title: "AI Legal Chat",
-                  points: ["Ask legal questions", "Context-aware responses"],
-                },
-                {
-                  icon: "📊", title: "Productivity Dashboard",
-                  points: ["Usage insights", "Saved drafts"],
-                },
+                { icon: "🔍", title: "Legal Research Assistant", points: ["Case law summaries", "Statute lookup", "Precedent identification"] },
+                { icon: "📝", title: "Smart Drafting Engine", points: ["Contracts, petitions, notices", "Clause suggestions", "Format consistency"] },
+                { icon: "⚖️", title: "Case Analysis Tool", points: ["Argument structuring", "Risk insights", "Strategy suggestions"] },
+                { icon: "🤖", title: "AI Legal Chat", points: ["Ask legal questions", "Context-aware responses"] },
+                { icon: "📊", title: "Productivity Dashboard", points: ["Usage insights", "Saved drafts"] },
               ].map(({ icon, title, points }, idx) => (
                 <div key={title} style={{ display: "flex", gap: "14px", marginBottom: idx < 4 ? "18px" : "0", padding: "14px 16px", background: "white", borderRadius: "10px", border: `1px solid ${GOLD}25`, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-                  {/* Icon circle */}
-                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}30, ${GOLD}10)`, border: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0, marginTop: "2px" }}>
-                    {icon}
-                  </div>
-                  {/* Content */}
+                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}30, ${GOLD}10)`, border: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: "Georgia,serif", fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: "6px" }}>{title}</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
@@ -1744,41 +1675,16 @@ export default function App() {
                   </div>
                 </div>
               ))}
-
-              {/* Gold divider */}
               <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "22px 0" }} />
-
-              {/* CTA buttons */}
               <div style={{ display: "flex", gap: "12px", marginBottom: "18px" }}>
-                <button onClick={() => setShowComingSoon(true)}
-                  style={{ flex: 1, padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "background 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                  onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
-                  Explore Platform
-                </button>
-                <button onClick={() => setShowComingSoon(true)}
-                  style={{ flex: 1, padding: "12px", background: "white", color: NAVY, border: `2px solid ${GOLD}60`, borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif", transition: "all 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}60`; }}>
-                  Request Demo
-                </button>
+                <button onClick={() => setShowComingSoon(true)} style={{ flex: 1, padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Explore Platform</button>
+                <button onClick={() => setShowComingSoon(true)} style={{ flex: 1, padding: "12px", background: "white", color: NAVY, border: `2px solid ${GOLD}60`, borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}60`; }}>Request Demo</button>
               </div>
-
-              {/* Footer note */}
               <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
-                <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>
-                  "Built for Pakistan's Legal Ecosystem"
-                </span>
+                <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>"Built for Pakistan's Legal Ecosystem"</span>
               </div>
-
-              {/* Gold divider */}
               <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "14px 0 16px" }} />
-
-              {/* Close button */}
-              <button onClick={() => setShowFeaturesPopup(false)} className="cancel-btn"
-                style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                Close
-              </button>
+              <button onClick={() => setShowFeaturesPopup(false)} className="cancel-btn" style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
             </div>
           </div>
         </div>
