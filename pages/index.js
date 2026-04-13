@@ -1667,8 +1667,8 @@ export default function App() {
             </div>
           </div>
         </div>
-      </div>
       )}
+
 
       {/* ══════════════════════════════════════════════════════════════════
           FEATURES POPUP
