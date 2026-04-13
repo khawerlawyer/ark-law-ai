@@ -671,7 +671,7 @@ export default function App() {
                   <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                 </div>
                 <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
+                <button onClick={() => { localStorage.removeItem("arklaw_user"); setUser(null); setUserTokens(500000); }} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>Logout</button>
               </>
             )}
           </div>
@@ -1489,128 +1489,6 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════════
           FORGOT PASSWORD POPUP — same cream + watermark scheme
       ═══════════════════════════════════════════════════════════════════ */}
-      {showMyAccountPopup && user && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, borderRadius: "16px", width: "90%", maxWidth: "680px", border: `2px solid ${GOLD}60`, maxHeight: "92vh", display: "flex", flexDirection: "column", boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", overflow: "hidden" }}>
-
-            {/* Watermark */}
-            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-
-            {/* Header */}
-            <div style={{ padding: "22px 28px 18px", borderBottom: `1px solid ${GOLD}40`, display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1, flexShrink: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "42px", height: "42px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                  <div style={{ fontSize: 11, color: "#5A7A56" }}>My Account</div>
-                </div>
-              </div>
-              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
-            </div>
-
-            {/* Divider */}
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
-
-            {/* Body */}
-            <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative", zIndex: 1 }}>
-
-              {/* LEFT — user info */}
-              <div style={{ flex: "0 0 55%", padding: "24px 28px", overflowY: "auto", borderRight: `1px solid ${GOLD}30` }}>
-
-                {/* Avatar + name */}
-                <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
-                  <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: 700, color: NAVY, flexShrink: 0 }}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div style={{ color: NAVY, fontSize: 17, fontWeight: 700, fontFamily: "Georgia,serif" }}>{user.name}</div>
-                    <div style={{ color: "#6A8A66", fontSize: 11, marginTop: "2px" }}>{user.email}</div>
-                  </div>
-                </div>
-
-                {/* Token balance card */}
-                <div style={{ background: "#EDE8DF", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "14px 16px", marginBottom: "18px" }}>
-                  <div style={{ fontSize: 10, color: "#5A7A56", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>⚡ Credit Balance</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    {/* Progress bar */}
-                    <div style={{ flex: 1, height: "8px", background: "#D8D0C0", borderRadius: "4px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${Math.max(2, (userTokens / 500000) * 100)}%`, background: userTokens > 100000 ? LIGHT_GREEN : userTokens > 20000 ? GOLD : "#E74C3C", borderRadius: "4px", transition: "width 0.4s ease" }} />
-                    </div>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: NAVY, whiteSpace: "nowrap", fontFamily: "Georgia,serif" }}>
-                      {userTokens.toLocaleString()}
-                    </div>
-                  </div>
-                  <div style={{ fontSize: 10, color: "#7A9A76", marginTop: "5px" }}>
-                    {Math.round((userTokens / 500000) * 100)}% remaining of 500,000 credits
-                  </div>
-                </div>
-
-                {/* Account details */}
-                <div style={{ background: "#EDE8DF", border: `1px solid ${GOLD}30`, borderRadius: "10px", padding: "14px 16px", marginBottom: "20px" }}>
-                  <div style={{ fontSize: 10, color: "#5A7A56", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Account Details</div>
-                  <div style={{ display: "grid", gap: "10px" }}>
-                    {[
-                      { label: "Profession",     value: user.profession },
-                      user.barOfPractice && { label: "Bar of Practice", value: user.barOfPractice },
-                      { label: "City",           value: user.city },
-                      { label: "Province",       value: user.province },
-                      { label: "Country",        value: user.country },
-                    ].filter(Boolean).map(({ label, value }) => (
-                      <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}20`, paddingBottom: "6px" }}>
-                        <span style={{ fontSize: 10, color: "#7A9A76", textTransform: "uppercase", letterSpacing: "0.4px" }}>{label}</span>
-                        <span style={{ fontSize: 13, color: NAVY, fontWeight: 600 }}>{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Logout */}
-                <button onClick={() => {
-                  localStorage.removeItem("arklaw_user");
-                  setUser(null);
-                  setUserTokens(500000);
-                  setShowMyAccountPopup(false);
-                }} style={{ width: "100%", padding: "12px", background: "#C0392B", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "background 0.2s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "#A93226"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "#C0392B"}>
-                  🚪 Logout
-                </button>
-              </div>
-
-              {/* RIGHT — chat sessions */}
-              <div style={{ flex: "0 0 45%", display: "flex", flexDirection: "column" }}>
-                <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GOLD}30`, flexShrink: 0 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 You & ARK LAW Sessions</div>
-                  <div style={{ fontSize: 10, color: "#7A9A76", marginTop: "3px" }}>This session's conversations</div>
-                </div>
-                <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
-                  {allSessions.filter(s => s.messages.filter(m => m.role === "user").length > 0).length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "40px 20px", color: "#8A9A86" }}>
-                      <div style={{ fontSize: 36, marginBottom: "10px", opacity: 0.5 }}>💬</div>
-                      <div style={{ fontSize: 12 }}>No conversations yet</div>
-                      <div style={{ fontSize: 10, marginTop: "4px" }}>Start asking questions!</div>
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      {allSessions.filter(s => s.messages.filter(m => m.role === "user").length > 0).map((session) => (
-                        <div key={session.id} onClick={() => { loadSession(session.id); setShowMyAccountPopup(false); }}
-                          style={{ background: "#EDE8DF", padding: "10px 12px", borderRadius: "8px", border: `1px solid ${GOLD}25`, cursor: "pointer", transition: "all 0.18s" }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "#E4DDD0"; e.currentTarget.style.borderColor = GOLD; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "#EDE8DF"; e.currentTarget.style.borderColor = `${GOLD}25`; }}>
-                          <div style={{ color: NAVY, fontSize: 12, lineHeight: 1.4, marginBottom: "4px", fontWeight: 600 }}>{session.title}</div>
-                          <div style={{ color: "#7A9A76", fontSize: 10 }}>{session.messages.filter(m => m.role === "user").length} message(s)</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      )}
 
 
 
