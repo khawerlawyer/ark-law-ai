@@ -1,80 +1,74 @@
-// ARK Law AI — Login handler using Clerk Backend API
-// Verifies credentials against Clerk's permanent cloud user store
+// pages/api/auth/login.js
+// Authenticates user via Supabase, returns profile + chat sessions
+
+import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   const { email, password } = req.body;
-
-  if (!email || !password) {
+  if (!email || !password)
     return res.status(400).json({ error: "Email and password are required" });
-  }
 
   try {
-    // Step 1 — Find user by email using Clerk Backend API
-    const searchRes = await fetch(
-      `https://api.clerk.com/v1/users?email_address=${encodeURIComponent(email)}`,
-      {
-        headers: {
-          "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        },
-      }
-    );
+    // Find user
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email.toLowerCase().trim())
+      .single();
 
-    const users = await searchRes.json();
-
-    if (!searchRes.ok || !Array.isArray(users) || users.length === 0) {
+    if (error || !user)
       return res.status(401).json({ error: "Invalid email or password" });
-    }
 
-    const clerkUser = users[0];
-
-    // Step 2 — Verify password using Clerk's verify_password endpoint
-    const verifyRes = await fetch(
-      `https://api.clerk.com/v1/users/${clerkUser.id}/verify_password`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      }
-    );
-
-    const verifyData = await verifyRes.json();
-
-    if (!verifyRes.ok || !verifyData.verified) {
+    // Verify password
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid)
       return res.status(401).json({ error: "Invalid email or password" });
-    }
 
-    // Step 3 — Update lastLogin in metadata
-    await fetch(`https://api.clerk.com/v1/users/${clerkUser.id}/metadata`, {
-      method: "PATCH",
-      headers: {
-        "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        public_metadata: {
-          ...clerkUser.public_metadata,
-          lastLogin: new Date().toISOString(),
-        },
-      }),
-    });
+    // Update last login
+    await supabase
+      .from("users")
+      .update({ last_login: new Date().toISOString() })
+      .eq("id", user.id);
 
-    // Step 4 — Return safe user object
-    const meta = clerkUser.public_metadata || {};
+    // Load chat sessions
+    const { data: sessions } = await supabase
+      .from("chat_sessions")
+      .select("session_key, title, messages, updated_at")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(50);
+
+    const chatHistory = (sessions || []).map(s => ({
+      id:       s.session_key,
+      title:    s.title,
+      messages: s.messages || [],
+      savedAt:  s.updated_at,
+    }));
+
     return res.status(200).json({
       success: true,
       user: {
-        id: clerkUser.id,
-        name: `${clerkUser.first_name || ""} ${clerkUser.last_name || ""}`.trim(),
-        email: clerkUser.email_addresses?.[0]?.email_address || email,
-        profession: meta.profession || "",
-        city: meta.city || "",
-        tokens: meta.tokens ?? 500000,
-        signupDate: meta.signupDate || "",
+        id:            user.id,
+        name:          user.name,
+        email:         user.email,
+        profession:    user.profession      || "",
+        barOfPractice: user.bar_of_practice || "",
+        city:          user.city            || "",
+        province:      user.province        || "",
+        country:       user.country         || "Pakistan",
+        tokens:        user.tokens          ?? 500000,
+        signupDate:    user.signup_date      || "",
+        lastLogin:     user.last_login       || "",
+        chatHistory,
       },
     });
   } catch (err) {
