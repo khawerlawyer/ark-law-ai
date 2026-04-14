@@ -1,56 +1,77 @@
-// ARK Law AI — Signup handler using Clerk backend API
-// Clerk stores users permanently in the cloud — works across all Vercel instances
+// pages/api/auth/signup.js
+// Creates user in Supabase with bcrypt-hashed password
+
+import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
-  const { name, email, password, profession, city } = req.body;
+  const { name, email, password, profession, barOfPractice, city, province, country } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password)
     return res.status(400).json({ error: "Name, email and password are required" });
-  }
+
+  if (password.length < 6)
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
 
   try {
-    // Create user via Clerk Backend API
-    const response = await fetch("https://api.clerk.com/v1/users", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        first_name: name.split(" ")[0],
-        last_name: name.split(" ").slice(1).join(" ") || "",
-        email_address: [email],
-        password: password,
-        // Store extra fields in public metadata
-        public_metadata: {
-          profession: profession || "",
-          city: city || "",
-          signupDate: new Date().toISOString(),
-          tokens: 500000,
-        },
-      }),
-    });
+    // Check if email already exists
+    const { data: existing } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email.toLowerCase())
+      .single();
 
-    const data = await response.json();
+    if (existing)
+      return res.status(400).json({ error: "An account with this email already exists" });
 
-    if (!response.ok) {
-      // Clerk returns errors array
-      const msg = data.errors?.[0]?.long_message || data.errors?.[0]?.message || "Signup failed";
-      return res.status(400).json({ error: msg });
+    // Hash password
+    const password_hash = await bcrypt.hash(password, 12);
+
+    // Insert user
+    const { data: user, error } = await supabase
+      .from("users")
+      .insert({
+        email:           email.toLowerCase().trim(),
+        password_hash,
+        name:            name.trim(),
+        profession:      profession      || "",
+        bar_of_practice: barOfPractice   || "",
+        city:            city            || "",
+        province:        province        || "",
+        country:         country         || "Pakistan",
+        tokens:          500000,
+        signup_date:     new Date().toISOString(),
+      })
+      .select("id, email, name, profession, bar_of_practice, city, province, country, tokens, signup_date")
+      .single();
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return res.status(500).json({ error: "Failed to create account. Please try again." });
     }
 
-    // Return safe user object (no password)
     return res.status(200).json({
       success: true,
+      message: "Account created! Please log in.",
       user: {
-        id: data.id,
-        name: `${data.first_name} ${data.last_name}`.trim(),
-        email: data.email_addresses?.[0]?.email_address || email,
-        profession: profession || "",
-        city: city || "",
-        tokens: 500000,
+        id:            user.id,
+        name:          user.name,
+        email:         user.email,
+        profession:    user.profession,
+        barOfPractice: user.bar_of_practice,
+        city:          user.city,
+        province:      user.province,
+        country:       user.country,
+        tokens:        user.tokens,
+        signupDate:    user.signup_date,
       },
     });
   } catch (err) {
