@@ -288,21 +288,53 @@ export default function App() {
     }
   };
 
+  // ── Save chat history to Clerk ──
+  const saveHistory = async (sessionsToSave, tokensToSave) => {
+    if (!user?.id) return;
+    try {
+      const sessions = sessionsToSave.filter(s => s.messages.some(m => m.role === "user")).slice(0, 50).map(s => ({
+        id: s.id, title: s.title,
+        messages: s.messages.slice(-20), // keep last 20 msgs per session
+        savedAt: new Date().toISOString(),
+      }));
+      await fetch("/api/auth/save-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, chatHistory: sessions, tokens: tokensToSave }),
+      });
+    } catch (err) { console.error("History save failed:", err); }
+  };
+
+  // ── Logout ──
+  const handleLogout = async () => {
+    await saveHistory(allSessions, userTokens);
+    localStorage.removeItem("arklaw_user");
+    setUser(null);
+    setUserTokens(500000);
+    setShowMyAccountPopup(false);
+  };
+
   const sendMessage = async (msg = null, skipNameCheck = false) => {
     const userMessage = msg || input;
     if (!userMessage.trim() && uploadedFiles.length === 0) return;
     const tokensToDeduct = 100 + (uploadedFiles.length * 500);
     if (userTokens > 0) setUserTokens(prev => {
       const next = Math.max(0, prev - tokensToDeduct);
-      // Persist updated token balance — saved against user ID so it survives logout/login
+      // Persist token balance to localStorage
       const saved = localStorage.getItem("arklaw_user");
       if (saved) {
         try {
           const u = JSON.parse(saved);
           u.tokens = next;
           localStorage.setItem("arklaw_user", JSON.stringify(u));
-          // Also save under user-specific key so balance is restored on next login
-          if (u.id) localStorage.setItem("arklaw_user_tokens_" + u.id, String(next));
+          // Persist to Supabase (fire and forget)
+          if (u.id) {
+            fetch("/api/auth/save-history", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId: u.id, tokens: next }),
+            }).catch(() => {});
+          }
         } catch {}
       }
       return next;
@@ -676,7 +708,7 @@ export default function App() {
                   <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                 </div>
                 <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                <button onClick={() => { localStorage.removeItem("arklaw_user"); setUser(null); setUserTokens(500000); }} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>Logout</button>
+                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
               </>
             )}
           </div>
@@ -1398,14 +1430,22 @@ export default function App() {
                 const res  = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
                 const data = await res.json();
                 if (!res.ok) { alert(data.error || "Invalid email or password"); return; }
-                // Restore saved token balance from previous session if it exists
-                const existingKey = "arklaw_user_tokens_" + data.user.id;
-                const savedTokens = localStorage.getItem(existingKey);
-                const restoredTokens = savedTokens !== null ? parseInt(savedTokens, 10) : (data.user.tokens || 500000);
+                // Use token balance from Supabase (authoritative source)
+                const restoredTokens = data.user.tokens || 500000;
                 const userWithTokens = { ...data.user, tokens: restoredTokens };
                 localStorage.setItem("arklaw_user", JSON.stringify(userWithTokens));
                 setUser(userWithTokens);
                 setUserTokens(restoredTokens);
+                // Restore chat history from Clerk if available
+                if (data.user.chatHistory && data.user.chatHistory.length > 0) {
+                  const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
+                  const restoredSessions = data.user.chatHistory.map(s => ({ ...s, messages: s.messages || [greeting] }));
+                  setAllSessions(prev => {
+                    const newIds = new Set(restoredSessions.map(s => s.id));
+                    const current = prev.filter(s => !newIds.has(s.id));
+                    return [...restoredSessions, ...current].slice(0, 50);
+                  });
+                }
                 setShowLoginPopup(false);
                 alert("Welcome back, " + data.user.name + "! You have " + restoredTokens.toLocaleString() + " credits remaining.");
               } catch (error) { alert("Login failed. Please try again."); }
@@ -1529,6 +1569,97 @@ export default function App() {
       {/* ══════════════════════════════════════════════════════════════════
           FEATURES POPUP
       ═══════════════════════════════════════════════════════════════════ */}
+      {/* MY ACCOUNT POPUP */}
+      {showMyAccountPopup && user && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
+          <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "680px", maxHeight: "88vh", display: "flex", flexDirection: "column", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", overflow: "hidden" }}>
+            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
+            <div style={{ padding: "20px 24px 16px", borderBottom: `1px solid ${GOLD}40`, display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0, position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
+                <div>
+                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
+                  <div style={{ fontSize: 11, color: "#5A7A56" }}>My Account</div>
+                </div>
+              </div>
+              <button onClick={() => setShowMyAccountPopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+            </div>
+            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
+            <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative", zIndex: 1 }}>
+              <div style={{ flex: "0 0 52%", padding: "20px 22px", overflowY: "auto", borderRight: `1px solid ${GOLD}25` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px" }}>
+                  <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, ${ACCENT_PK})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", fontWeight: 700, color: NAVY, flexShrink: 0 }}>{user.name.charAt(0).toUpperCase()}</div>
+                  <div>
+                    <div style={{ color: NAVY, fontSize: 16, fontWeight: 700, fontFamily: "Georgia,serif" }}>{user.name}</div>
+                    <div style={{ color: "#6A8A66", fontSize: 11, marginTop: "2px" }}>{user.email}</div>
+                    {user.signupDate && <div style={{ color: "#9AB89A", fontSize: 9, marginTop: "2px" }}>Member since {new Date(user.signupDate).toLocaleDateString("en-PK", { year: "numeric", month: "long" })}</div>}
+                  </div>
+                </div>
+                <div style={{ background: "#EDE8DF", border: `1px solid ${GOLD}50`, borderRadius: "10px", padding: "12px 14px", marginBottom: "14px" }}>
+                  <div style={{ fontSize: 10, color: "#5A7A56", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>⚡ Credit Balance</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ flex: 1, height: "8px", background: "#D8D0C0", borderRadius: "4px", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${Math.max(2, (userTokens/500000)*100)}%`, background: userTokens > 100000 ? LIGHT_GREEN : userTokens > 20000 ? GOLD : "#E74C3C", borderRadius: "4px", transition: "width 0.4s" }} />
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: NAVY, whiteSpace: "nowrap", fontFamily: "Georgia,serif" }}>{userTokens.toLocaleString()}</div>
+                  </div>
+                  <div style={{ fontSize: 9, color: "#7A9A76", marginTop: "5px" }}>{Math.round((userTokens/500000)*100)}% remaining of 500,000 credits</div>
+                </div>
+                <div style={{ background: "#EDE8DF", border: `1px solid ${GOLD}30`, borderRadius: "10px", padding: "12px 14px", marginBottom: "16px" }}>
+                  <div style={{ fontSize: 10, color: "#5A7A56", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px" }}>Profile Details</div>
+                  <div style={{ display: "grid", gap: "8px" }}>
+                    {[
+                      { label: "Profession",     value: user.profession },
+                      user.barOfPractice && { label: "Bar of Practice", value: user.barOfPractice },
+                      { label: "City",           value: user.city },
+                      { label: "Province",       value: user.province },
+                      { label: "Country",        value: user.country },
+                    ].filter(Boolean).map(({ label, value }) => value ? (
+                      <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}15`, paddingBottom: "5px" }}>
+                        <span style={{ fontSize: 10, color: "#7A9A76", textTransform: "uppercase", letterSpacing: "0.3px" }}>{label}</span>
+                        <span style={{ fontSize: 12, color: NAVY, fontWeight: 600 }}>{value}</span>
+                      </div>
+                    ) : null)}
+                  </div>
+                </div>
+                <button onClick={handleLogout} style={{ width: "100%", padding: "11px", background: "#C0392B", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = "#A93226"} onMouseLeave={(e) => e.currentTarget.style.background = "#C0392B"}>🚪 Logout &amp; Save History</button>
+              </div>
+              <div style={{ flex: "0 0 48%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                <div style={{ padding: "14px 16px", borderBottom: `1px solid ${GOLD}25`, flexShrink: 0 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px" }}>💬 Chat History</div>
+                  <div style={{ fontSize: 9, color: "#7A9A76", marginTop: "2px" }}>Your saved conversations</div>
+                </div>
+                <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px" }}>
+                  {allSessions.filter(s => s.messages.some(m => m.role === "user")).length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "30px 16px", color: "#8A9A86" }}>
+                      <div style={{ fontSize: 32, marginBottom: "8px", opacity: 0.4 }}>💬</div>
+                      <div style={{ fontSize: 11 }}>No conversations yet</div>
+                      <div style={{ fontSize: 9, marginTop: "4px" }}>Start chatting to build your history</div>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {allSessions.filter(s => s.messages.some(m => m.role === "user")).map((session) => (
+                        <div key={session.id} onClick={() => { loadSession(session.id); setShowMyAccountPopup(false); }}
+                          style={{ background: "#EDE8DF", padding: "9px 11px", borderRadius: "8px", border: `1px solid ${GOLD}25`, cursor: "pointer", transition: "all 0.18s" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "#E4DDD0"; e.currentTarget.style.borderColor = GOLD; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "#EDE8DF"; e.currentTarget.style.borderColor = `${GOLD}25`; }}>
+                          <div style={{ color: NAVY, fontSize: 11, lineHeight: 1.4, fontWeight: 600, marginBottom: "3px" }}>{session.title}</div>
+                          <div style={{ color: "#7A9A76", fontSize: 9 }}>{session.messages.filter(m => m.role === "user").length} message(s){session.savedAt ? ` · ${new Date(session.savedAt).toLocaleDateString("en-PK")}` : ""}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div style={{ padding: "10px 12px", borderTop: `1px solid ${GOLD}25`, background: "white", flexShrink: 0 }}>
+                  <button onClick={() => saveHistory(allSessions, userTokens)} style={{ width: "100%", padding: "8px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "6px", fontWeight: 600, fontSize: 11, cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#E4DDD0"} onMouseLeave={(e) => e.currentTarget.style.background = "#EDE8DF"}>💾 Save History Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      )}
+
       {showFeaturesPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
