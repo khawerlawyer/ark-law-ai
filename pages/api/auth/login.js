@@ -1,8 +1,6 @@
 // pages/api/auth/login.js
-// Authenticates user via Supabase, returns profile + chat sessions
-
-import { createClient } from "@supabase/supabase-js";
-import bcrypt from "bcryptjs";
+const { createClient } = require("@supabase/supabase-js");
+const bcrypt = require("bcryptjs");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -73,6 +71,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).json({ error: "Server error. Please try again." });
+    return res.status(500).json({ error: "Server error: " + err.message });
   }
 }
