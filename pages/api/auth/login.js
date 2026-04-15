@@ -1,15 +1,13 @@
 // pages/api/auth/login.js
 import { createClient } from "@supabase/supabase-js";
-import bcrypt from "bcryptjs";
+import { compare } from "bcrypt-ts";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  // ── PASTE YOUR SUPABASE VALUES HERE ──────────────────────────────────
   const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
   const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
-  // ─────────────────────────────────────────────────────────────────────
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -27,7 +25,7 @@ export default async function handler(req, res) {
     if (error || !user)
       return res.status(401).json({ error: "Invalid email or password" });
 
-    const valid = await bcrypt.compare(password, user.password_hash);
+    const valid = await compare(password, user.password_hash);
     if (!valid)
       return res.status(401).json({ error: "Invalid email or password" });
 
