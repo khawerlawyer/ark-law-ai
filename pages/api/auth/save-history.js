@@ -1,7 +1,5 @@
 // pages/api/auth/save-history.js
-// Saves/updates chat sessions + token balance to Supabase
-
-import { createClient } from "@supabase/supabase-js";
+const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -25,7 +23,7 @@ export default async function handler(req, res) {
         .eq("id", userId);
     }
 
-    // Upsert each session
+    // Upsert each chat session
     if (Array.isArray(chatHistory) && chatHistory.length > 0) {
       const upserts = chatHistory
         .filter(s => s.messages && s.messages.some(m => m.role === "user"))
@@ -34,7 +32,7 @@ export default async function handler(req, res) {
           user_id:     userId,
           session_key: String(s.id),
           title:       s.title || "Chat Session",
-          messages:    s.messages.slice(-30),  // keep last 30 messages
+          messages:    s.messages.slice(-30),
           updated_at:  new Date().toISOString(),
         }));
 
@@ -44,8 +42,8 @@ export default async function handler(req, res) {
           .upsert(upserts, { onConflict: "user_id,session_key" });
 
         if (error) {
-          console.error("Session upsert error:", error);
-          return res.status(500).json({ error: "Failed to save sessions" });
+          console.error("Upsert error:", error);
+          return res.status(500).json({ error: "Failed to save: " + error.message });
         }
       }
     }
@@ -53,6 +51,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error("save-history error:", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error: " + err.message });
   }
 }
