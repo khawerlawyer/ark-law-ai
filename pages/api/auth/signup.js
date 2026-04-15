@@ -1,8 +1,6 @@
 // pages/api/auth/signup.js
-// Creates user in Supabase with bcrypt-hashed password
-
-import { createClient } from "@supabase/supabase-js";
-import bcrypt from "bcryptjs";
+const { createClient } = require("@supabase/supabase-js");
+const bcrypt = require("bcryptjs");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -26,14 +24,14 @@ export default async function handler(req, res) {
     const { data: existing } = await supabase
       .from("users")
       .select("id")
-      .eq("email", email.toLowerCase())
-      .single();
+      .eq("email", email.toLowerCase().trim())
+      .maybeSingle();
 
     if (existing)
       return res.status(400).json({ error: "An account with this email already exists" });
 
     // Hash password
-    const password_hash = await bcrypt.hash(password, 12);
+    const password_hash = await bcrypt.hash(password, 10);
 
     // Insert user
     const { data: user, error } = await supabase
@@ -55,7 +53,7 @@ export default async function handler(req, res) {
 
     if (error) {
       console.error("Supabase insert error:", error);
-      return res.status(500).json({ error: "Failed to create account. Please try again." });
+      return res.status(500).json({ error: "Failed to create account: " + error.message });
     }
 
     return res.status(200).json({
@@ -76,6 +74,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("Signup error:", err);
-    return res.status(500).json({ error: "Server error. Please try again." });
+    return res.status(500).json({ error: "Server error: " + err.message });
   }
 }
