@@ -1,17 +1,21 @@
 // pages/api/auth/signup.js
-const { createClient } = require("@supabase/supabase-js");
-const bcrypt = require("bcryptjs");
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  const { name, email, password, profession, barOfPractice, city, province, country } = req.body;
+  // ── Env var check ──
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY)
+    return res.status(500).json({ error: "Server misconfigured: Supabase env vars missing" });
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY
+  );
+
+  const { name, email, password, profession, barOfPractice, city, province, country } = req.body || {};
 
   if (!name || !email || !password)
     return res.status(400).json({ error: "Name, email and password are required" });
@@ -20,21 +24,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Password must be at least 6 characters" });
 
   try {
-    // Check if email already exists
-    const { data: existing } = await supabase
+    // ── Check duplicate email ──
+    const { data: existing, error: checkError } = await supabase
       .from("users")
       .select("id")
       .eq("email", email.toLowerCase().trim())
       .maybeSingle();
 
+    if (checkError)
+      return res.status(500).json({ error: "DB check failed: " + checkError.message + " | code: " + checkError.code });
+
     if (existing)
       return res.status(400).json({ error: "An account with this email already exists" });
 
-    // Hash password
+    // ── Hash password ──
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Insert user
-    const { data: user, error } = await supabase
+    // ── Insert ──
+    const { data: user, error: insertError } = await supabase
       .from("users")
       .insert({
         email:           email.toLowerCase().trim(),
@@ -51,10 +58,8 @@ export default async function handler(req, res) {
       .select("id, email, name, profession, bar_of_practice, city, province, country, tokens, signup_date")
       .single();
 
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return res.status(500).json({ error: "Failed to create account: " + error.message });
-    }
+    if (insertError)
+      return res.status(500).json({ error: "Insert failed: " + insertError.message + " | code: " + insertError.code + " | hint: " + insertError.hint });
 
     return res.status(200).json({
       success: true,
@@ -72,8 +77,8 @@ export default async function handler(req, res) {
         signupDate:    user.signup_date,
       },
     });
+
   } catch (err) {
-    console.error("Signup error:", err);
-    return res.status(500).json({ error: "Server error: " + err.message });
+    return res.status(500).json({ error: "Unexpected error: " + err.message });
   }
 }
