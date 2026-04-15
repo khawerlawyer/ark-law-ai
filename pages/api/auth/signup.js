@@ -22,8 +22,8 @@ export default async function handler(req, res) {
     // return res.status(200).json({ ok: true, step: "hash done" });
 
     // Step 5 — test supabase connection
-    const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
-    const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    const SUPABASE_URL = "https://xxxxxxxxxxxx.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const { data, error } = await supabase
