@@ -6,14 +6,12 @@ export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  // ── Env var check ──
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY)
-    return res.status(500).json({ error: "Server misconfigured: Supabase env vars missing" });
+  // ── PASTE YOUR SUPABASE VALUES HERE ──────────────────────────────────
+  const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+  const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+  // ─────────────────────────────────────────────────────────────────────
 
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
-  );
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const { name, email, password, profession, barOfPractice, city, province, country } = req.body || {};
 
@@ -24,23 +22,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Password must be at least 6 characters" });
 
   try {
-    // ── Check duplicate email ──
-    const { data: existing, error: checkError } = await supabase
+    const { data: existing } = await supabase
       .from("users")
       .select("id")
       .eq("email", email.toLowerCase().trim())
       .maybeSingle();
 
-    if (checkError)
-      return res.status(500).json({ error: "DB check failed: " + checkError.message + " | code: " + checkError.code });
-
     if (existing)
       return res.status(400).json({ error: "An account with this email already exists" });
 
-    // ── Hash password ──
     const password_hash = await bcrypt.hash(password, 10);
 
-    // ── Insert ──
     const { data: user, error: insertError } = await supabase
       .from("users")
       .insert({
@@ -59,7 +51,7 @@ export default async function handler(req, res) {
       .single();
 
     if (insertError)
-      return res.status(500).json({ error: "Insert failed: " + insertError.message + " | code: " + insertError.code + " | hint: " + insertError.hint });
+      return res.status(500).json({ error: "Insert failed: " + insertError.message });
 
     return res.status(200).json({
       success: true,
@@ -77,8 +69,7 @@ export default async function handler(req, res) {
         signupDate:    user.signup_date,
       },
     });
-
   } catch (err) {
-    return res.status(500).json({ error: "Unexpected error: " + err.message });
+    return res.status(500).json({ error: "Error: " + err.message });
   }
 }
