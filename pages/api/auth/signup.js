@@ -1,15 +1,13 @@
 // pages/api/auth/signup.js
 import { createClient } from "@supabase/supabase-js";
-import bcrypt from "bcryptjs";
+import { hash } from "bcrypt-ts";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  // ── PASTE YOUR SUPABASE VALUES HERE ──────────────────────────────────
   const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
   const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
-  // ─────────────────────────────────────────────────────────────────────
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -31,7 +29,7 @@ export default async function handler(req, res) {
     if (existing)
       return res.status(400).json({ error: "An account with this email already exists" });
 
-    const password_hash = await bcrypt.hash(password, 10);
+    const password_hash = await hash(password, 10);
 
     const { data: user, error: insertError } = await supabase
       .from("users")
