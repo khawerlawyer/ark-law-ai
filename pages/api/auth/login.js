@@ -1,22 +1,23 @@
 // pages/api/auth/login.js
-const { createClient } = require("@supabase/supabase-js");
-const bcrypt = require("bcryptjs");
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  const { email, password } = req.body;
+  // ── PASTE YOUR SUPABASE VALUES HERE ──────────────────────────────────
+  const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+  const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+  // ─────────────────────────────────────────────────────────────────────
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const { email, password } = req.body || {};
   if (!email || !password)
     return res.status(400).json({ error: "Email and password are required" });
 
   try {
-    // Find user
     const { data: user, error } = await supabase
       .from("users")
       .select("*")
@@ -26,18 +27,15 @@ export default async function handler(req, res) {
     if (error || !user)
       return res.status(401).json({ error: "Invalid email or password" });
 
-    // Verify password
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid)
       return res.status(401).json({ error: "Invalid email or password" });
 
-    // Update last login
     await supabase
       .from("users")
       .update({ last_login: new Date().toISOString() })
       .eq("id", user.id);
 
-    // Load chat sessions
     const { data: sessions } = await supabase
       .from("chat_sessions")
       .select("session_key, title, messages, updated_at")
@@ -70,7 +68,6 @@ export default async function handler(req, res) {
       },
     });
   } catch (err) {
-    console.error("Login error:", err);
-    return res.status(500).json({ error: "Server error: " + err.message });
+    return res.status(500).json({ error: "Error: " + err.message });
   }
 }
