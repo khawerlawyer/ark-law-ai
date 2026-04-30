@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-// ─── Design Tokens ────────────────────────────────────────────────────────────
 const GOLD         = "#C9A84C";
 const NAVY         = "#0D1B2A";
 const NAVY_MID     = "#162032";
@@ -16,17 +15,11 @@ const POPUP_DARK   = "#0A1118";
 const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
-const QURAN_VERSE =
-  `إِنِ الْحُكْمُ إِلَّا لِلَّهِ  —  "IT IS ONLY ALLAH WHO DECIDES"  —  Al-Qur'an (12:40, 12:67, 6:57)`;
-
 export default function App() {
   const [user,               setUser]               = useState(null);
   const [userTokens,         setUserTokens]         = useState(500000);
   const [showSignupPopup,    setShowSignupPopup]    = useState(false);
   const [showLoginPopup,     setShowLoginPopup]     = useState(false);
-  // ── FORGOT PASSWORD states ──
-
-
   const [showMyAccountPopup, setShowMyAccountPopup] = useState(false);
   const [showSuccessPopup,   setShowSuccessPopup]   = useState(false);
   const [showNewsPopup,      setShowNewsPopup]      = useState(false);
@@ -36,7 +29,6 @@ export default function App() {
   const [showComingSoon,     setShowComingSoon]     = useState(false);
   const [showFeaturesPopup,  setShowFeaturesPopup]  = useState(false);
   const [showPracticeAreas,  setShowPracticeAreas]  = useState(false);
-  const [rightPanelDoc,      setRightPanelDoc]      = useState(null); // { title, content }
   const [isUrdu,             setIsUrdu]             = useState(false);
 
   const [newsItems,          setNewsItems]          = useState([]);
@@ -70,7 +62,6 @@ export default function App() {
   const [allSessions,        setAllSessions]        = useState([]);
   const [activeChatId,       setActiveChatId]       = useState(null);
 
-
   const [isMobile,           setIsMobile]           = useState(false);
   const [installPrompt,      setInstallPrompt]      = useState(null);
   const [showInstallBtn,     setShowInstallBtn]     = useState(false);
@@ -79,7 +70,6 @@ export default function App() {
   const currentDate = useRef(
     new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
   );
-
   const messagesEndRef    = useRef(null);
   const lastSavedCountRef = useRef(0);
 
@@ -107,8 +97,6 @@ export default function App() {
 
   const UR = {
     appTagline:      "پاکستان کا قانونی ذہانت انجن",
-    appSubtitle:     "قانونی پیشہ ور افراد کے لیے · پاکستان کے لیے",
-    byLine:          "از وکیل و اے آئی انوویٹر خاور ربانی",
     sessions:        "آپ اور ARK LAW سیشنز",
     newBtn:          "+ نیا",
     analyzeTitle:    "دستاویز تجزیہ",
@@ -117,19 +105,12 @@ export default function App() {
     compareSubtitle: "2 دستاویزیں موازنہ کے لیے",
     draftTitle:      "دستاویز ڈرافٹ",
     draftSubtitle:   "معاہدے، حلف نامے وغیرہ",
-    quickLabel:      "فوری سوالات",
-    quickSub:        "کوئی بھی سوال کلک کریں",
     areasLabel:      "قانونی شعبہ جات",
     placeholder:     "ARK Law AI سے پوچھیں یا مائیک کلک کریں...",
     send:            "بھیجیں",
     login:           "لاگ ان",
-    signup:          "✨ مفت سائن اپ",
-    greeting:        "ARK Law AI میں خوش آمدید — پاکستانی قانون کا آپ کا قابل اعتماد ساتھی۔\n\nآج میں آپ کی کیسے مدد کر سکتا ہوں؟",
-    newChat:         "نیا سیشن",
     listening:       "سن رہا ہوں...",
     thinking:        "ARK سوچ رہا ہے...",
-    listen:          "🔊 سنیں",
-    stop:            "⏸️ رکیں",
     myAccount:       "میرا اکاؤنٹ",
     quickQueries: [
       "پاکستان میں کرایہ دار کے طور پر میرے کیا حقوق ہیں؟",
@@ -142,14 +123,8 @@ export default function App() {
       "پاکستان میں معاہدے کا قانون بیان کریں",
     ],
     practiceAreas: [
-      "عمومی قانون",
-      "فوجداری قانون",
-      "کارپوریٹ و تجارتی",
-      "خاندانی قانون",
-      "جائیداد و زمین",
-      "محنت کے قوانین",
-      "ٹیکس",
-      "آئینی قانون",
+      "عمومی قانون", "فوجداری قانون", "کارپوریٹ و تجارتی",
+      "خاندانی قانون", "جائیداد و زمین", "محنت کے قوانین", "ٹیکس", "آئینی قانون",
     ],
   };
 
@@ -177,10 +152,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const greeting = {
-      role: "assistant",
-      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?",
-    };
+    const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
     const firstSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions([firstSession]);
     setActiveChatId(firstSession.id);
@@ -199,29 +171,17 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
-    setAllSessions(prev =>
-      prev.map(s => {
-        if (s.id !== activeChatId) return s;
-        const firstUser = messages.find(m => m.role === "user");
-        const title = firstUser
-          ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "")
-          : "New Chat";
-        return { ...s, messages, title };
-      })
-    );
+    setAllSessions(prev => prev.map(s => {
+      if (s.id !== activeChatId) return s;
+      const firstUser = messages.find(m => m.role === "user");
+      const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
+      return { ...s, messages, title };
+    }));
   }, [messages, activeChatId]);
-
-
-
-
-
-
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
 
@@ -229,15 +189,10 @@ export default function App() {
   // HELPERS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const fetchNewsHeadlines = async () => {
-    setNewsItems(newsDatabase.map(item => item.headline));
-  };
+  const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = {
-      role: "assistant",
-      content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?",
-    };
+    const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -257,14 +212,10 @@ export default function App() {
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
   };
 
-
-
   // ═══════════════════════════════════════════════════════════════════════════
   // CORE FUNCTIONS
   // ═══════════════════════════════════════════════════════════════════════════
 
-
-  // ── PWA Install handler ──
   const handleInstallApp = async () => {
     if (installPrompt) {
       installPrompt.prompt();
@@ -277,35 +228,43 @@ export default function App() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) {
-      alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
-    } else if (isFirefox) {
-      alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
-    } else if (isSamsungBrowser) {
-      alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅");
-    } else {
-      alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\" — done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
-    }
+    if (isIOS || isSafari) alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
+    else if (isFirefox) alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅");
+    else if (isSamsungBrowser) alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅");
+    else alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\" — done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
   };
 
-  // ── Save chat history to Clerk ──
+  // ── Save chat history to server ──
   const saveHistory = async (sessionsToSave, tokensToSave) => {
     if (!user?.id) return;
     try {
       const sessions = sessionsToSave.filter(s => s.messages.some(m => m.role === "user")).slice(0, 50).map(s => ({
-        id: s.id, title: s.title,
-        messages: s.messages.slice(-20), // keep last 20 msgs per session
-        savedAt: new Date().toISOString(),
+        id: s.id, title: s.title, messages: s.messages.slice(-20), savedAt: new Date().toISOString(),
       }));
       await fetch("/api/auth/save-history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.id, chatHistory: sessions, tokens: tokensToSave }),
       });
     } catch (err) { console.error("History save failed:", err); }
   };
 
-  // ── Logout ──
+  // ── Persist tokens to Supabase immediately (fire-and-forget) ──
+  const saveTokensToServer = (newTokens) => {
+    const saved = localStorage.getItem("arklaw_user");
+    if (!saved) return;
+    try {
+      const u = JSON.parse(saved);
+      if (!u?.id) return;
+      u.tokens = newTokens;
+      localStorage.setItem("arklaw_user", JSON.stringify(u));
+      fetch("/api/auth/save-history", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: u.id, tokens: newTokens }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  // ── Logout — saves tokens first ──
   const handleLogout = async () => {
     await saveHistory(allSessions, userTokens);
     localStorage.removeItem("arklaw_user");
@@ -318,27 +277,11 @@ export default function App() {
     const userMessage = msg || input;
     if (!userMessage.trim() && uploadedFiles.length === 0) return;
     const tokensToDeduct = 100 + (uploadedFiles.length * 500);
-    if (userTokens > 0) setUserTokens(prev => {
-      const next = Math.max(0, prev - tokensToDeduct);
-      // Persist token balance to localStorage
-      const saved = localStorage.getItem("arklaw_user");
-      if (saved) {
-        try {
-          const u = JSON.parse(saved);
-          u.tokens = next;
-          localStorage.setItem("arklaw_user", JSON.stringify(u));
-          // Persist to Supabase (fire and forget)
-          if (u.id) {
-            fetch("/api/auth/save-history", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId: u.id, tokens: next }),
-            }).catch(() => {});
-          }
-        } catch {}
-      }
-      return next;
-    });
+    if (userTokens > 0) {
+      const newTokens = Math.max(0, userTokens - tokensToDeduct);
+      setUserTokens(newTokens);
+      saveTokensToServer(newTokens);
+    }
     let fileContents = [];
     if (uploadedFiles.length > 0) {
       for (const file of uploadedFiles) {
@@ -359,7 +302,7 @@ export default function App() {
     if (fileContents.length > 0) {
       messageContent += "\n\n📎 Attached Files:\n";
       fileContents.forEach(file => {
-        if (file.type === "text")     messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
+        if (file.type === "text")          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
         else if (file.type === "document") messageContent += `\n${file.message}\n`;
         else if (file.type === "image")    messageContent += `\n[Image: ${file.name}]\n`;
       });
@@ -378,23 +321,12 @@ export default function App() {
         const m = messages[i];
         if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
         if (m.role === "user") conversationPairs.push(m);
-        if (m.role === "assistant" && conversationPairs.length > 0 &&
-            conversationPairs[conversationPairs.length - 1].role === "user") {
-          conversationPairs.push(m);
-        }
+        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
       }
       const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
       const messagesWithContext = [...conversationPairs, newUserMsg];
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: messagesWithContext }),
-      });
-      if (!res.ok) {
-        let errText = `HTTP ${res.status}`;
-        try { const j = await res.json(); errText = j.error || j.message || errText; } catch {}
-        throw new Error(errText);
-      }
+      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
+      if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
@@ -433,48 +365,17 @@ export default function App() {
   const speakText = (text, messageIndex) => {
     if (isSpeaking && currentSpeakingIndex === messageIndex) { window.speechSynthesis.cancel(); setIsSpeaking(false); setCurrentSpeakingIndex(null); return; }
     window.speechSynthesis.cancel();
-    const cleanText = text
-      .replace(/#{1,6}\s*/g, "")
-      .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")
-      .replace(/\*+/g, "")
-      .replace(/_([^_]+)_/g, "$1")
-      .replace(/`{1,3}[^`]*`{1,3}/g, "")
-      .replace(/~~([^~]+)~~/g, "$1")
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
-      .replace(/^[-*+]\s+/gm, "")
-      .replace(/^\d+\.\s+/gm, "")
-      .replace(/^>\s+/gm, "")
-      .replace(/[-]{3,}/g, ". ")
-      .replace(/[•·]/g, " ")
-      .replace(/\n+/g, " ")
-      .replace(/\s{2,}/g, " ")
-      .trim();
+    const cleanText = text.replace(/#{1,6}\s*/g,"").replace(/\*{1,3}([^*]+)\*{1,3}/g,"$1").replace(/\*+/g,"").replace(/_([^_]+)_/g,"$1").replace(/`{1,3}[^`]*`{1,3}/g,"").replace(/~~([^~]+)~~/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/!\[[^\]]*\]\([^)]+\)/g,"").replace(/^[-*+]\s+/gm,"").replace(/^\d+\.\s+/gm,"").replace(/^>\s+/gm,"").replace(/[-]{3,}/g,". ").replace(/[•·]/g," ").replace(/\n+/g," ").replace(/\s{2,}/g," ").trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 0.88; utterance.pitch = 0.92; utterance.volume = 1.0; utterance.lang = "en-US";
     const selectVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      const maleVoice =
-        voices.find(v => v.name === "Microsoft Guy Online (Natural) - en-US") ||
-        voices.find(v => v.name === "Microsoft Davis Online (Natural) - en-US") ||
-        voices.find(v => v.name === "Microsoft Ryan Online (Natural) - en-US") ||
-        voices.find(v => v.name === "Microsoft Eric - en-US") ||
-        voices.find(v => v.name === "Microsoft Mark - en-US") ||
-        voices.find(v => v.name.includes("Guy") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("Davis") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("Reed") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("Eric") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("David") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("Mark") && v.lang === "en-US") ||
-        voices.find(v => v.name.includes("Alex") && v.lang === "en-US") ||
-        voices.find(v => v.lang === "en-US" && !["Samantha","Zira","Susan","Linda","Jenny","Aria","Ana","Emma","Isabella","Ava","Michelle","Monica","Siri"].some(n => v.name.includes(n))) ||
-        voices.find(v => v.lang === "en-US") ||
-        voices.find(v => v.lang.startsWith("en"));
+      const maleVoice = voices.find(v => v.name === "Microsoft Guy Online (Natural) - en-US") || voices.find(v => v.name === "Microsoft Davis Online (Natural) - en-US") || voices.find(v => v.name === "Microsoft Ryan Online (Natural) - en-US") || voices.find(v => v.name === "Microsoft Eric - en-US") || voices.find(v => v.name === "Microsoft Mark - en-US") || voices.find(v => v.name.includes("Guy") && v.lang === "en-US") || voices.find(v => v.name.includes("Davis") && v.lang === "en-US") || voices.find(v => v.name.includes("Eric") && v.lang === "en-US") || voices.find(v => v.name.includes("David") && v.lang === "en-US") || voices.find(v => v.name.includes("Mark") && v.lang === "en-US") || voices.find(v => v.lang === "en-US" && !["Samantha","Zira","Susan","Linda","Jenny","Aria","Ana","Emma","Isabella","Ava","Michelle","Monica","Siri"].some(n => v.name.includes(n))) || voices.find(v => v.lang === "en-US") || voices.find(v => v.lang.startsWith("en"));
       if (maleVoice) utterance.voice = maleVoice;
     };
     selectVoice();
     if (window.speechSynthesis.getVoices().length === 0) window.speechSynthesis.onvoiceschanged = selectVoice;
-    utterance.onstart = () => { setIsSpeaking(true);  setCurrentSpeakingIndex(messageIndex); };
+    utterance.onstart = () => { setIsSpeaking(true); setCurrentSpeakingIndex(messageIndex); };
     utterance.onend   = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
     utterance.onerror = () => { setIsSpeaking(false); setCurrentSpeakingIndex(null); };
     window.speechSynthesis.speak(utterance);
@@ -596,18 +497,10 @@ export default function App() {
     return <div style={{ whiteSpace: "normal" }}>{elements}</div>;
   };
 
-  // ── Shared popup input/label styles ──
   const popupInp = { width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 13, boxSizing: "border-box", outline: "none" };
   const popupLbl = { color: "#5A7A56", fontSize: 11, display: "block", marginBottom: "5px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" };
   const popupRow = { marginBottom: "11px" };
-
-  // ── Watermark style reused in popups ──
-  const popupWatermark = {
-    position: "absolute", top: "50%", left: "50%",
-    transform: "translate(-50%,-50%)",
-    opacity: 0.04, pointerEvents: "none", zIndex: 0,
-    width: "220px", height: "220px",
-  };
+  const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
   // ═══════════════════════════════════════════════════════════════════════════
   // RENDER
@@ -627,15 +520,7 @@ export default function App() {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="ARK Law AI" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <script dangerouslySetInnerHTML={{ __html: `
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js')
-                .then(function(reg) { console.log('SW registered:', reg.scope); })
-                .catch(function(err) { console.log('SW failed:', err); });
-            });
-          }
-        `}} />
+        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){console.log('SW registered:',reg.scope);}).catch(function(err){console.log('SW failed:',err);});});}` }} />
       </Head>
 
       <style>{`
@@ -643,8 +528,8 @@ export default function App() {
         html, body { height: 100%; overflow: hidden; }
         #__next { height: 100%; overflow: hidden; }
         @keyframes glow      { 0%,100%{ box-shadow:0 0 15px rgba(201,168,76,.5); } 50%{ box-shadow:0 0 25px rgba(201,168,76,.8); } }
-        @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1);    } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
-        @keyframes pulse     { 0%,100%{ transform:scale(1);   opacity:1;   } 50%{ transform:scale(1.1); opacity:.8; } }
+        @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1); } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
+        @keyframes pulse     { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
         @media (max-width:768px){
           .desktop-only{ display:none; }
@@ -654,7 +539,7 @@ export default function App() {
 
       <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
-        {/* ══ HEADER ══ */}
+        {/* ══ HEADER — no Quranic verse ══ */}
         <header style={{ background: "#1B2E1A", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
 
           {/* Logo */}
@@ -667,27 +552,11 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quranic verse — hidden on mobile */}
-          {!isMobile && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: `1px solid ${GOLD}50`, background: CREAM, boxShadow: `0 1px 6px ${GOLD}20`, position: "relative", minHeight: "44px", padding: "4px 40px" }}>
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to right, ${CREAM}, transparent)`, borderRadius: "10px 0 0 10px", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
-            </div>
-            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "32px", background: `linear-gradient(to left, ${CREAM}, transparent)`, borderRadius: "0 10px 10px 0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
-              <span style={{ fontSize: 14, color: GOLD }}>☪</span>
-            </div>
-            <span style={{ fontSize: 12, color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.6, fontWeight: 700, textAlign: "center", display: "block", direction: "rtl", width: "100%" }}>إِنِ الْحُكْمُ إِلَّا لِلَّهِ</span>
-            <span style={{ fontSize: 9.5, fontStyle: "italic", color: LIGHT_GREEN, fontFamily: "Georgia, serif", lineHeight: 1.4, fontWeight: 500, textAlign: "center", display: "block", direction: "ltr", width: "100%" }}>"IT IS ONLY ALLAH WHO DECIDES" — Al-Qur'an (12:40, 12:67, 6:57)</span>
-          </div>
-          )}
-
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
             <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
             <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
-
-            {/* PWA Install button */}
             {(showInstallBtn || user) && (
               <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
@@ -696,7 +565,7 @@ export default function App() {
             )}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
                 <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
               </>
             ) : (
@@ -714,133 +583,132 @@ export default function App() {
           </div>
         </header>
 
-        {/* ══ BODY ══ */}
+        {/* ══ BODY — two panels only (left sidebar + chat) ══ */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* LEFT SIDEBAR — hidden on mobile */}
+          {/* LEFT SIDEBAR */}
           {!isMobile && (
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
-                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.analyzeTitle : "Analyze Documents"}</div>
-                    <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
-                      {isUrdu ? UR.analyzeSubtitle : "Upload to analyze ↑"}
-                      <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert(isUrdu ? "یہ فیچر جلد آ رہا ہے" : "Feature coming soon: Document analysis"); }} />
-                    </label>
-                  </div>
-                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
+                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
+                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.analyzeTitle : "Analyze Documents"}</div>
+                  <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
+                    {isUrdu ? UR.analyzeSubtitle : "Upload to analyze ↑"}
+                    <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert(isUrdu ? "یہ فیچر جلد آ رہا ہے" : "Feature coming soon: Document analysis"); }} />
+                  </label>
                 </div>
-
-                <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.compareTitle : "Compare Documents"}</div>
-                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.compareSubtitle : "Upload 2 docs to compare"}</div>
-                  </div>
-                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-                </div>
-
-                <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "white";   e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
-                  <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.draftTitle : "Draft Documents"}</div>
-                    <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
-                  </div>
-                  <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-                </div>
-
-                {/* Practice Areas dropdown */}
-                <div style={{ borderRadius: "8px", border: "1px solid #E8E8E4", background: "white", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-                  <div onClick={() => setShowPracticeAreas(p => !p)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", cursor: "pointer", transition: "all 0.18s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "white"; }}>
-                    <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</div>
-                      <div style={{ fontSize: 9, color: "#888" }}>{isUrdu ? "قانونی شعبہ منتخب کریں" : "Select a legal area"}</div>
-                    </div>
-                    <span style={{ color: "#BBBBBB", fontSize: 11, transition: "transform 0.2s", transform: showPracticeAreas ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
-                  </div>
-                  {showPracticeAreas && (
-                    <div style={{ borderTop: "1px solid #F0EDE6", maxHeight: "180px", overflowY: "auto" }}>
-                      {PRACTICE_AREAS_PK.map((area, i) => (
-                        <button key={area.id} onClick={() => { sendMessage(`Tell me about ${area.label} in Pakistan`, true); setShowPracticeAreas(false); }}
-                          style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "7px 10px", background: "transparent", border: "none", borderBottom: "1px solid #F5F2EC", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#1A1A1A", transition: "background 0.15s" }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "#F0FAF4"; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
-                          <span style={{ fontSize: 12 }}>{area.icon}</span>
-                          <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
               </div>
 
-              <div style={{ height: "1px", background: `${GOLD}40`, margin: "6px 0", flexShrink: 0 }} />
+              <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
+                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
+                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.compareTitle : "Compare Documents"}</div>
+                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.compareSubtitle : "Upload 2 docs to compare"}</div>
+                </div>
+                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
+              </div>
 
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: isUrdu ? "rtl" : "ltr" }}>💬 {isUrdu ? UR.sessions : "You & ARK LAW Sessions"}</span>
-                  <button onClick={startNewChat} style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                    onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}
-                    title={isUrdu ? "نیا سیشن" : "New Chat"}
-                  >{isUrdu ? UR.newBtn : "+ New"}</button>
+              <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
+                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
+                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
+                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.draftTitle : "Draft Documents"}</div>
+                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
                 </div>
-                <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "2px" }}>
-                  {allSessions.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "20px 8px", color: TEXT_MUTED }}>
-                      <div style={{ fontSize: 20, marginBottom: "6px", opacity: 0.4 }}>💬</div>
-                      <div style={{ fontSize: 8, lineHeight: 1.5 }}>Start a conversation!</div>
-                    </div>
-                  ) : (
-                    allSessions.map((session) => {
-                      const isActive = session.id === activeChatId;
-                      return (
-                        <div key={session.id} onClick={() => loadSession(session.id)} title={session.title}
-                          style={{ padding: "6px 8px", borderRadius: "6px", background: isActive ? `${GOLD}22` : "transparent", border: isActive ? `1px solid ${GOLD}60` : "1px solid transparent", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "flex-start", gap: "6px" }}
-                          onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = `${NAVY}08`; e.currentTarget.style.borderColor = NAVY_BORDER; } }}
-                          onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; } }}
-                        >
-                          <span style={{ fontSize: 10, flexShrink: 0, marginTop: "1px" }}>{isActive ? "🟡" : "💬"}</span>
-                          <span style={{ fontSize: 8, color: isActive ? NAVY : "#444", lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", fontWeight: isActive ? 600 : 400 }}>
-                            {session.title}
-                          </span>
-                        </div>
-                      );
-                    })
-                  )}
+                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
+              </div>
+
+              {/* Practice Areas dropdown */}
+              <div style={{ borderRadius: "8px", border: "1px solid #E8E8E4", background: "white", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+                <div onClick={() => setShowPracticeAreas(p => !p)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", cursor: "pointer", transition: "all 0.18s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "#F5F9F5"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "white"}>
+                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</div>
+                    <div style={{ fontSize: 9, color: "#888" }}>{isUrdu ? "قانونی شعبہ منتخب کریں" : "Select a legal area"}</div>
+                  </div>
+                  <span style={{ color: "#BBBBBB", fontSize: 11, transition: "transform 0.2s", transform: showPracticeAreas ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
                 </div>
+                {showPracticeAreas && (
+                  <div style={{ borderTop: "1px solid #F0EDE6", maxHeight: "180px", overflowY: "auto" }}>
+                    {PRACTICE_AREAS_PK.map((area, i) => (
+                      <button key={area.id} onClick={() => { sendMessage(`Tell me about ${area.label} in Pakistan`, true); setShowPracticeAreas(false); }}
+                        style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "7px 10px", background: "transparent", border: "none", borderBottom: "1px solid #F5F2EC", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#1A1A1A", transition: "background 0.15s" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "#F0FAF4"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                        <span style={{ fontSize: 12 }}>{area.icon}</span>
+                        <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
+
+            <div style={{ height: "1px", background: `${GOLD}40`, margin: "6px 0", flexShrink: 0 }} />
+
+            {/* Sessions */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: isUrdu ? "rtl" : "ltr" }}>💬 {isUrdu ? UR.sessions : "You & ARK LAW Sessions"}</span>
+                <button onClick={startNewChat} style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
+                  onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}
+                >{isUrdu ? UR.newBtn : "+ New"}</button>
+              </div>
+              <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "2px" }}>
+                {allSessions.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "20px 8px", color: TEXT_MUTED }}>
+                    <div style={{ fontSize: 20, marginBottom: "6px", opacity: 0.4 }}>💬</div>
+                    <div style={{ fontSize: 8, lineHeight: 1.5 }}>Start a conversation!</div>
+                  </div>
+                ) : (
+                  allSessions.map((session) => {
+                    const isActive = session.id === activeChatId;
+                    return (
+                      <div key={session.id} onClick={() => loadSession(session.id)} title={session.title}
+                        style={{ padding: "6px 8px", borderRadius: "6px", background: isActive ? `${GOLD}22` : "transparent", border: isActive ? `1px solid ${GOLD}60` : "1px solid transparent", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "flex-start", gap: "6px" }}
+                        onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = `${NAVY}08`; e.currentTarget.style.borderColor = NAVY_BORDER; } }}
+                        onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; } }}>
+                        <span style={{ fontSize: 10, flexShrink: 0, marginTop: "1px" }}>{isActive ? "🟡" : "💬"}</span>
+                        <span style={{ fontSize: 8, color: isActive ? NAVY : "#444", lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", fontWeight: isActive ? 600 : 400 }}>{session.title}</span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
           )}
 
-          {/* CHAT AREA */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: CREAM, position: "relative" }}>
+          {/* ══ CHAT AREA (takes full remaining width — no right sidebar) ══ */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "white", position: "relative" }}>
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {messages.map((msg, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "10px" }}>
-                    {msg.role === "assistant" && <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />}
-                    <div style={{ maxWidth: "70%", position: "relative" }}>
-                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: msg.role === "user" ? "#E8E0CC" : "white", color: msg.role === "user" ? NAVY : "#333", fontSize: 13, lineHeight: "1.4", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", position: "relative" }}>
+                  <div key={i} style={{ display: "flex", justifyContent: "flex-start", gap: "10px" }}>
+                    {msg.role === "assistant"
+                      ? <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />
+                      : <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: `linear-gradient(135deg, ${NAVY}, ${NAVY_SURFACE})`, border: `2px solid ${NAVY_BORDER}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: GOLD, fontWeight: 700 }}>{user?.name?.charAt(0)?.toUpperCase() || "U"}</div>
+                    }
+                    <div style={{ maxWidth: "75%", position: "relative" }}>
+                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: "white", color: "#1A1A1A", fontSize: 13, lineHeight: "1.6", position: "relative" }}>
                         {renderMessageContent(msg.content)}
-
                       </div>
                       {msg.role === "assistant" && (
-                        <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px", position: "relative" }}>
+                        <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
                           <button onClick={() => speakText(msg.content, i)} title={currentSpeakingIndex === i ? "Stop" : "Listen"}
                             style={{ width: "28px", height: "28px", borderRadius: "6px", background: currentSpeakingIndex === i ? LIGHT_GREEN : "white", border: `1px solid ${currentSpeakingIndex === i ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", flexShrink: 0 }}
                             onMouseEnter={(e) => { if (currentSpeakingIndex !== i) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}15`; } }}
@@ -851,13 +719,13 @@ export default function App() {
                             }
                           </button>
                           <button onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], like: !prev[i]?.like, dislike: false } })); }} title="Like"
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.like ? "#E8F5E9" : "white", border: `1px solid ${reactions[i]?.like ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.like ? "#E8F5E9" : "white", border: `1px solid ${reactions[i]?.like ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}
                             onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = "#E8F5E9"; }}
                             onMouseLeave={(e) => { if (!reactions[i]?.like) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
                             <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.like ? LIGHT_GREEN : "none"} stroke={reactions[i]?.like ? LIGHT_GREEN : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                           </button>
                           <button onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], dislike: !prev[i]?.dislike, like: false } })); }} title="Dislike"
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.dislike ? "#FEE2E2" : "white", border: `1px solid ${reactions[i]?.dislike ? "#EF4444" : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", fontSize: 13 }}
+                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.dislike ? "#FEE2E2" : "white", border: `1px solid ${reactions[i]?.dislike ? "#EF4444" : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}
                             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#EF4444"; e.currentTarget.style.background = "#FEE2E2"; }}
                             onMouseLeave={(e) => { if (!reactions[i]?.dislike) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
                             <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.dislike ? "#EF4444" : "none"} stroke={reactions[i]?.dislike ? "#EF4444" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
@@ -890,7 +758,8 @@ export default function App() {
               </div>
             )}
 
-            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center" }}>
+            {/* Input row */}
+            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center", background: "white" }}>
               <button onClick={startVoiceInput} disabled={loading || isListening} title={isListening ? "Listening..." : "Click to speak"}
                 style={{ width: "38px", height: "38px", background: isListening ? LIGHT_GREEN : "white", border: `1px solid ${isListening ? LIGHT_GREEN : GOLD}60`, borderRadius: "6px", cursor: loading || isListening ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", animation: isListening ? "pulse 1.5s infinite" : "none", boxShadow: isListening ? `0 0 0 3px ${LIGHT_GREEN}30` : "none" }}
                 onMouseEnter={(e) => { if (!isListening && !loading) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; } }}
@@ -910,7 +779,7 @@ export default function App() {
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                 placeholder={isListening ? (isUrdu ? UR.listening : "Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `اپنی ${uploadedFiles.length} فائل(وں) کے بارے میں پوچھیں...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
-                style={{ flex: 1, padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
+                style={{ flex: 1, padding: "9px 12px", background: "white", border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening}
                 style={{ padding: "9px 18px", background: loading || isListening ? "#9DB89A" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
                 onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
@@ -918,56 +787,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR — Document Viewer */}
-          <div style={{ width: "280px", background: CREAM, borderLeft: `1px solid ${GOLD}40`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              {/* Header strip */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 12px", background: "#1B2E1A", flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ fontSize: 11 }}>📄</span>
-                  <span style={{ fontSize: 11, color: "#E8D97A", fontWeight: 700, fontFamily: "Georgia,serif", letterSpacing: "0.5px" }}>Document Viewer</span>
-                </div>
-                {rightPanelDoc && (
-                  <button onClick={() => setRightPanelDoc(null)} style={{ background: "none", border: "none", color: "#9DB89A", cursor: "pointer", fontSize: 14, lineHeight: 1, padding: 0 }} title="Close document">✕</button>
-                )}
-              </div>
-
-              {/* Content */}
-              {rightPanelDoc ? (
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                  {/* Document title bar */}
-                  <div style={{ padding: "10px 12px", borderBottom: `1px solid ${GOLD}30`, background: "white", flexShrink: 0 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: NAVY, fontFamily: "Georgia,serif", marginBottom: "2px" }}>{rightPanelDoc.title}</div>
-                    <div style={{ fontSize: 9, color: "#7A9A76" }}>AI Generated Document</div>
-                  </div>
-                  {/* Document body */}
-                  <div style={{ flex: 1, overflowY: "auto", padding: "14px 12px" }}>
-                    <pre style={{ fontSize: 11, color: "#2A2A2A", lineHeight: 1.7, fontFamily: "'Times New Roman', serif", whiteSpace: "pre-wrap", wordBreak: "break-word", margin: 0 }}>{rightPanelDoc.content}</pre>
-                  </div>
-                  {/* Actions */}
-                  <div style={{ padding: "8px 12px", borderTop: `1px solid ${GOLD}30`, background: "white", display: "flex", gap: "6px", flexShrink: 0 }}>
-                    <button onClick={() => { const blob = new Blob([rightPanelDoc.content], { type: "text/plain" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `${rightPanelDoc.title}.txt`; a.click(); URL.revokeObjectURL(url); }}
-                      style={{ flex: 1, padding: "7px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: 10, fontWeight: 700 }}>
-                      📥 Download
-                    </button>
-                    <button onClick={() => { navigator.clipboard?.writeText(rightPanelDoc.content); }}
-                      style={{ flex: 1, padding: "7px", background: "#EDE8DF", color: NAVY, border: `1px solid ${GOLD}40`, borderRadius: "6px", cursor: "pointer", fontSize: 10, fontWeight: 600 }}>
-                      📋 Copy
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "30px 20px", textAlign: "center" }}>
-                  <div style={{ fontSize: 40, marginBottom: "14px", opacity: 0.3 }}>📄</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: NAVY, marginBottom: "8px", fontFamily: "Georgia,serif" }}>Document Viewer</div>
-                  <div style={{ fontSize: 10, color: "#8A9A86", lineHeight: 1.6 }}>Documents generated or shared in chat will appear here for easy reading and download.</div>
-                  <div style={{ marginTop: "16px", padding: "10px 12px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30`, width: "100%" }}>
-                    <div style={{ fontSize: 9, color: "#6A8A66", lineHeight: 1.5 }}>💡 <strong>Tip:</strong> When ARK generates a document, click <em>"View in Panel"</em> to open it here.</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
+        </div>{/* end body */}
 
         {/* FOOTER */}
         <footer style={{ background: "#1B2E1A", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
@@ -1011,9 +831,7 @@ export default function App() {
         </footer>
       </div>
 
-      {/* ════════════════════════════════════════════════════════════════════
-          POPUPS
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════ POPUPS ═════════════════════════════════ */}
 
       {showSuccessPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
@@ -1064,15 +882,10 @@ export default function App() {
       )}
 
       {showDraftPopup && (
-        // Backdrop — pointerEvents blocks all clicks outside popup
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, borderRadius: "14px", width: "90%", maxWidth: "800px", maxHeight: "92vh", overflow: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative" }}>
-
-            {/* Watermark */}
             <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-
-            {/* Header */}
-            <div style={{ background: "transparent", padding: "20px 24px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}40`, position: "sticky", top: 0, background: CREAM, zIndex: 2 }}>
+            <div style={{ padding: "20px 24px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}40`, position: "sticky", top: 0, background: CREAM, zIndex: 2 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
                 <div>
@@ -1080,15 +893,9 @@ export default function App() {
                   <div style={{ fontSize: 11, color: "#5A7A56" }}>✍️ AI Legal Document Drafting</div>
                 </div>
               </div>
-              <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }}
-                style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = NAVY}
-                onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+              <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
             </div>
-
-            {/* Divider */}
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)` }} />
-
             <div style={{ padding: "22px 24px", position: "relative", zIndex: 1 }}>
               {draftStep === "type-selection" && (
                 <div>
@@ -1115,13 +922,8 @@ export default function App() {
                   <button onClick={() => { if (!draftType) { alert("Please select a document type"); return; } setDraftStep("gathering-info"); }} disabled={!draftType}
                     style={{ width: "100%", padding: "13px", background: draftType ? LIGHT_GREEN : "#C8C0B0", color: "white", border: "none", borderRadius: "8px", cursor: draftType ? "pointer" : "not-allowed", fontWeight: 700, fontSize: 14, marginBottom: "10px", transition: "background 0.2s" }}
                     onMouseEnter={(e) => { if (draftType) e.currentTarget.style.background = LG_HOVER; }}
-                    onMouseLeave={(e) => { if (draftType) e.currentTarget.style.background = LIGHT_GREEN; }}>
-                    Next: Provide Information →
-                  </button>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} className="cancel-btn"
-                    style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                    Cancel
-                  </button>
+                    onMouseLeave={(e) => { if (draftType) e.currentTarget.style.background = LIGHT_GREEN; }}>Next: Provide Information →</button>
+                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Cancel</button>
                 </div>
               )}
               {draftStep === "gathering-info" && (
@@ -1132,34 +934,15 @@ export default function App() {
                     {draftType === "rental-agreement" && (
                       <div>
                         {[
-                          { heading: "🏠 Landlord Information", fields: [
-                            { ph: "Landlord Full Name *", key: "landlordName" },
-                            { ph: "Landlord CNIC Number *", key: "landlordCNIC" },
-                            { ph: "Landlord Complete Address *", key: "landlordAddress" },
-                          ]},
-                          { heading: "👤 Tenant Information", fields: [
-                            { ph: "Tenant Full Name *", key: "tenantName" },
-                            { ph: "Tenant CNIC Number *", key: "tenantCNIC" },
-                            { ph: "Tenant Complete Address *", key: "tenantAddress" },
-                          ]},
-                          { heading: "🏘️ Property Details", fields: [
-                            { ph: "Property Complete Address *", key: "propertyAddress" },
-                            { ph: "Property Type (House/Flat/Commercial) *", key: "propertyType" },
-                            { ph: "Covered Area (sq ft/marla/kanal) *", key: "propertyArea" },
-                          ]},
-                          { heading: "💰 Rental Terms", fields: [
-                            { ph: "Monthly Rent Amount (PKR) *", key: "monthlyRent" },
-                            { ph: "Security Deposit (PKR) *", key: "securityDeposit" },
-                            { ph: "Lease Duration (e.g., 1 year, 11 months) *", key: "leaseDuration" },
-                            { ph: "Rent Payment Date (e.g., 1st of each month) *", key: "paymentDate" },
-                            { ph: "Notice Period (e.g., 1 month) *", key: "noticePeriod" },
-                          ]},
+                          { heading: "🏠 Landlord Information", fields: [{ ph: "Landlord Full Name *", key: "landlordName" }, { ph: "Landlord CNIC Number *", key: "landlordCNIC" }, { ph: "Landlord Complete Address *", key: "landlordAddress" }]},
+                          { heading: "👤 Tenant Information",   fields: [{ ph: "Tenant Full Name *", key: "tenantName" }, { ph: "Tenant CNIC Number *", key: "tenantCNIC" }, { ph: "Tenant Complete Address *", key: "tenantAddress" }]},
+                          { heading: "🏘️ Property Details",    fields: [{ ph: "Property Complete Address *", key: "propertyAddress" }, { ph: "Property Type (House/Flat/Commercial) *", key: "propertyType" }, { ph: "Covered Area (sq ft/marla/kanal) *", key: "propertyArea" }]},
+                          { heading: "💰 Rental Terms",         fields: [{ ph: "Monthly Rent Amount (PKR) *", key: "monthlyRent" }, { ph: "Security Deposit (PKR) *", key: "securityDeposit" }, { ph: "Lease Duration (e.g., 1 year, 11 months) *", key: "leaseDuration" }, { ph: "Rent Payment Date (e.g., 1st of each month) *", key: "paymentDate" }, { ph: "Notice Period (e.g., 1 month) *", key: "noticePeriod" }]},
                         ].map(({ heading, fields }) => (
                           <div key={heading} style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
                             <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>{heading}</h5>
                             {fields.map(({ ph, key }) => (
-                              <input key={key} placeholder={ph} onChange={(e) => setDraftRequirements({...draftRequirements, [key]: e.target.value})}
-                                style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
+                              <input key={key} placeholder={ph} onChange={(e) => setDraftRequirements({...draftRequirements, [key]: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
                             ))}
                           </div>
                         ))}
@@ -1183,10 +966,7 @@ export default function App() {
                     )}
                     {draftType === "nda" && (
                       <div>
-                        {[
-                          { heading: "📤 Disclosing Party", fields: [["Party Name *","disclosingParty"],["Address *","disclosingAddress"]] },
-                          { heading: "📥 Receiving Party",  fields: [["Party Name *","receivingParty"],["Address *","receivingAddress"]] },
-                        ].map(({ heading, fields }) => (
+                        {[{ heading: "📤 Disclosing Party", fields: [["Party Name *","disclosingParty"],["Address *","disclosingAddress"]] }, { heading: "📥 Receiving Party", fields: [["Party Name *","receivingParty"],["Address *","receivingAddress"]] }].map(({ heading, fields }) => (
                           <div key={heading} style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
                             <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>{heading}</h5>
                             {fields.map(([ph,key]) => (
@@ -1204,29 +984,20 @@ export default function App() {
                     {!["rental-agreement", "affidavit", "nda"].includes(draftType) && (
                       <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
                         <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>📋 Document Information</h5>
-                        <textarea placeholder={`Provide all necessary details for ${draftType}:
-
-• Party names and addresses
-• Terms and conditions
-• Duration/timeline
-• Special clauses
-• Any other relevant information`} onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} style={{ width: "100%", height: "220px", padding: "12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12, fontFamily: "inherit", lineHeight: "1.6" }}></textarea>
+                        <textarea placeholder={`Provide all necessary details for ${draftType}:\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information`} onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} style={{ width: "100%", height: "220px", padding: "12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12, fontFamily: "inherit", lineHeight: "1.6" }}></textarea>
                       </div>
                     )}
                   </div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
                     <button onClick={() => setDraftStep("type-selection")} style={{ flex: 1, padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>← Back</button>
                     <button onClick={() => generateDocument(draftRequirements)} disabled={draftGenerating}
-                      style={{ flex: 2, padding: "11px", background: draftGenerating ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: draftGenerating ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 13, transition: "background 0.2s" }}
+                      style={{ flex: 2, padding: "11px", background: draftGenerating ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: draftGenerating ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 13 }}
                       onMouseEnter={(e) => { if (!draftGenerating) e.currentTarget.style.background = LG_HOVER; }}
                       onMouseLeave={(e) => { if (!draftGenerating) e.currentTarget.style.background = draftGenerating ? "#C8C0B0" : LIGHT_GREEN; }}>
                       {draftGenerating ? "⏳ Generating..." : "🚀 Generate Document with AI"}
                     </button>
                   </div>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} className="cancel-btn"
-                    style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginTop: "10px", transition: "background 0.2s" }}>
-                    Cancel
-                  </button>
+                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginTop: "10px" }}>Cancel</button>
                 </div>
               )}
               {draftStep === "generating" && (
@@ -1258,14 +1029,10 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                     <button onClick={() => { setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ flex: 1, padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>🔄 New Document</button>
-                    <button onClick={() => { setRightPanelDoc({ title: draftTitle || draftType, content: draftContent }); setShowDraftPopup(false); }} style={{ flex: 1, padding: "11px", background: NAVY, color: CREAM, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>👁 View in Panel</button>
-                    <button onClick={() => downloadDraft("docx")} style={{ flex: 1, padding: "11px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12, transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>📥 Download DOCX</button>
+                    <button onClick={() => downloadDraft("docx")} style={{ flex: 1, padding: "11px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>📥 Download DOCX</button>
                     <button onClick={() => downloadDraft("pdf")} style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>📄 Download PDF</button>
                   </div>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} className="cancel-btn"
-                    style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                    Close
-                  </button>
+                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
                 </div>
               )}
             </div>
@@ -1276,11 +1043,7 @@ export default function App() {
       {showComparePopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, borderRadius: "14px", width: "90%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative" }}>
-
-            {/* Watermark */}
             <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" }} />
-
-            {/* Header */}
             <div style={{ padding: "20px 24px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}40`, position: "sticky", top: 0, background: CREAM, zIndex: 2 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
@@ -1289,83 +1052,49 @@ export default function App() {
                   <div style={{ fontSize: 11, color: "#5A7A56" }}>⚖️ Compare Legal Documents</div>
                 </div>
               </div>
-              <button onClick={() => setShowComparePopup(false)}
-                style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1, transition: "color 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.color = NAVY}
-                onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+              <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
             </div>
-
-            {/* Divider */}
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)` }} />
-
             <div style={{ padding: "20px 24px", position: "relative", zIndex: 1 }}>
-
-              {/* Doc 1 */}
               <div style={{ marginBottom: "14px" }}>
                 <label style={{ color: "#5A7A56", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 1</label>
-                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])}
-                  style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
+                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
                 {doc1 && <div style={{ marginTop: "5px", fontSize: 10, color: doc1.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc1.name} — {(doc1.size/1024/1024).toFixed(2)}MB {doc1.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
               </div>
-
-              {/* Doc 2 */}
               <div style={{ marginBottom: "14px" }}>
                 <label style={{ color: "#5A7A56", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 2</label>
-                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])}
-                  style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
+                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
                 {doc2 && <div style={{ marginTop: "5px", fontSize: 10, color: doc2.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc2.name} — {(doc2.size/1024/1024).toFixed(2)}MB {doc2.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
               </div>
-
-              {/* Info note */}
               <div style={{ marginBottom: "14px", padding: "10px 12px", background: "#EDE8DF", borderRadius: "7px", borderLeft: `3px solid ${ACCENT_PK}` }}>
                 <div style={{ fontSize: 10, color: "#4A6A56", lineHeight: "1.6" }}>ℹ️ <strong>Supported:</strong> PDF, DOC, DOCX (max 5MB each) · ✓ Scanned PDFs supported</div>
               </div>
-
-              {/* Focal point */}
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ color: "#5A7A56", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>🎯 Focal Point for Comparison</label>
-                <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)}
-                  placeholder="e.g., payment terms, liability clauses, termination conditions..."
-                  style={{ width: "100%", padding: "9px 12px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 12 }} />
+                <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses, termination conditions..." style={{ width: "100%", padding: "9px 12px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 12 }} />
               </div>
-
-              {/* Loading */}
               {comparingDocs && (
                 <div style={{ marginBottom: "14px", padding: "18px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30`, textAlign: "center" }}>
                   <div style={{ color: NAVY, fontSize: 13, fontWeight: 600, marginBottom: "6px", fontFamily: "Georgia,serif" }}>⏳ Analyzing Documents...</div>
                   <div style={{ color: "#5A7A56", fontSize: 11 }}>AI is comparing the documents</div>
                 </div>
               )}
-
-              {/* Result */}
               {comparisonResult && !comparingDocs && (
                 <div style={{ marginBottom: "14px", padding: "14px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30` }}>
                   <div style={{ color: NAVY, fontSize: 12, fontWeight: 700, marginBottom: "8px", fontFamily: "Georgia,serif" }}>📊 Comparison Report</div>
                   <div style={{ color: "#3A3A2A", fontSize: 11, lineHeight: "1.6", whiteSpace: "pre-wrap", maxHeight: "320px", overflowY: "auto" }}>{comparisonResult}</div>
                 </div>
               )}
-
-              {/* Action buttons */}
               <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                 <button onClick={compareDocuments} disabled={comparingDocs}
-                  style={{ flex: 1, padding: "11px", background: comparingDocs ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 12, transition: "background 0.2s" }}
+                  style={{ flex: 1, padding: "11px", background: comparingDocs ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 12 }}
                   onMouseEnter={(e) => { if (!comparingDocs) e.currentTarget.style.background = LG_HOVER; }}
                   onMouseLeave={(e) => { if (!comparingDocs) e.currentTarget.style.background = comparingDocs ? "#C8C0B0" : LIGHT_GREEN; }}>
                   {comparingDocs ? "⏳ Analyzing..." : "🔍 Compare Documents"}
                 </button>
-                {comparisonResult && (
-                  <button onClick={downloadComparisonPDF}
-                    style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>
-                    📄 Download PDF
-                  </button>
-                )}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>📄 Download PDF</button>}
               </div>
-
-              {/* Cancel */}
-              <button onClick={() => { setShowComparePopup(false); setDoc1(null); setDoc2(null); setCompareFocus(""); setComparisonResult(""); }} className="cancel-btn"
-                style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", transition: "background 0.2s" }}>
-                Cancel
-              </button>
+              <button onClick={() => { setShowComparePopup(false); setDoc1(null); setDoc2(null); setCompareFocus(""); setComparisonResult(""); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -1399,18 +1128,11 @@ export default function App() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          LOGIN POPUP — cream bg, watermark, backdrop locks, Cancel button
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* LOGIN POPUP */}
       {showLoginPopup && (
-        // Backdrop: pointer-events: none so clicking outside does NOTHING
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, padding: "32px 28px 24px", borderRadius: "14px", width: "90%", maxWidth: "400px", border: `2px solid ${GOLD}60`, boxShadow: "0 8px 40px rgba(0,0,0,0.35)", position: "relative", overflow: "hidden" }}>
-
-            {/* Watermark */}
             <img src="/ark-logo.png" alt="" style={popupWatermark} />
-
-            {/* Header */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px", position: "relative", zIndex: 1 }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
@@ -1418,10 +1140,7 @@ export default function App() {
                 <div style={{ fontSize: 11, color: "#5A7A56" }}>Login to your account</div>
               </div>
             </div>
-
-            {/* Divider */}
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "20px" }} />
-
             <form style={{ position: "relative", zIndex: 1 }} onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -1430,66 +1149,35 @@ export default function App() {
                 const res  = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
                 const data = await res.json();
                 if (!res.ok) { alert(data.error || "Invalid email or password"); return; }
-                // Use token balance from Supabase (authoritative source)
                 const restoredTokens = data.user.tokens || 500000;
                 const userWithTokens = { ...data.user, tokens: restoredTokens };
                 localStorage.setItem("arklaw_user", JSON.stringify(userWithTokens));
                 setUser(userWithTokens);
                 setUserTokens(restoredTokens);
-                // Restore chat history from Clerk if available
                 if (data.user.chatHistory && data.user.chatHistory.length > 0) {
                   const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
                   const restoredSessions = data.user.chatHistory.map(s => ({ ...s, messages: s.messages || [greeting] }));
-                  setAllSessions(prev => {
-                    const newIds = new Set(restoredSessions.map(s => s.id));
-                    const current = prev.filter(s => !newIds.has(s.id));
-                    return [...restoredSessions, ...current].slice(0, 50);
-                  });
+                  setAllSessions(prev => { const newIds = new Set(restoredSessions.map(s => s.id)); const current = prev.filter(s => !newIds.has(s.id)); return [...restoredSessions, ...current].slice(0, 50); });
                 }
                 setShowLoginPopup(false);
                 alert("Welcome back, " + data.user.name + "! You have " + restoredTokens.toLocaleString() + " credits remaining.");
               } catch (error) { alert("Login failed. Please try again."); }
             }}>
-              <div style={popupRow}>
-                <label style={popupLbl}>Email Address</label>
-                <input name="email" type="email" required className="ark-input" style={popupInp} placeholder="your.email@example.com" />
-              </div>
-              <div style={{ ...popupRow, marginBottom: "8px" }}>
-                <label style={popupLbl}>Password</label>
-                <input name="password" type="password" required className="ark-input" style={popupInp} placeholder="Enter your password" />
-              </div>
-
-              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Login</button>
-
-              {/* Cancel button */}
-              <button type="button" onClick={() => setShowLoginPopup(false)} className="cancel-btn"
-                style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "12px", transition: "background 0.2s" }}>
-                Cancel
-              </button>
-
-              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 12, margin: 0 }}>
-                Don't have an account?{" "}
-                <span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }}
-                  style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span>
-              </p>
+              <div style={popupRow}><label style={popupLbl}>Email Address</label><input name="email" type="email" required style={popupInp} placeholder="your.email@example.com" /></div>
+              <div style={{ ...popupRow, marginBottom: "8px" }}><label style={popupLbl}>Password</label><input name="password" type="password" required style={popupInp} placeholder="Enter your password" /></div>
+              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Login</button>
+              <button type="button" onClick={() => setShowLoginPopup(false)} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "12px" }}>Cancel</button>
+              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 12, margin: 0 }}>Don't have an account?{" "}<span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
             </form>
           </div>
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          SIGNUP POPUP — cream bg, watermark, no Age field, compact, Cancel
-      ═══════════════════════════════════════════════════════════════════ */}
+      {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, padding: "24px 28px 20px", borderRadius: "14px", width: "90%", maxWidth: "480px", border: `2px solid ${GOLD}60`, boxShadow: "0 8px 40px rgba(0,0,0,0.35)", maxHeight: "92vh", overflowY: "auto", position: "relative", overflow: "hidden" }}>
-
-            {/* Watermark */}
             <img src="/ark-logo.png" alt="" style={popupWatermark} />
-
-            {/* Header */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px", position: "relative", zIndex: 1 }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
@@ -1497,82 +1185,43 @@ export default function App() {
                 <div style={{ fontSize: 10, color: "#5A7A56" }}>Create your free account — 500,000 credits</div>
               </div>
             </div>
-
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "16px" }} />
-
             <form style={{ position: "relative", zIndex: 1 }} onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
               try {
                 const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), profession: formData.get("profession"), barOfPractice: formData.get("barOfPractice"), city: formData.get("city"), province: formData.get("province"), country: formData.get("country") }) });
                 const data = await res.json();
-                if (res.ok) {
-                  setShowSignupPopup(false);
-                  alert("Account created! You have been awarded 500,000 FREE credits! Please login.");
-                  setShowLoginPopup(true);
-                } else { alert(data.error || "Signup failed. Please try again."); }
+                if (res.ok) { setShowSignupPopup(false); alert("Account created! You have been awarded 500,000 FREE credits! Please login."); setShowLoginPopup(true); }
+                else { alert(data.error || "Signup failed. Please try again."); }
               } catch (error) { alert("Signup failed: " + error.message); }
             }}>
-              {/* Row 1: Email */}
-              <div style={popupRow}><label style={popupLbl}>Email *</label><input name="email" type="email" required className="ark-input" style={popupInp} placeholder="your.email@example.com" /></div>
-              {/* Row 2: Password */}
-              <div style={popupRow}><label style={popupLbl}>Password * (min 6 chars)</label><input name="password" type="password" required minLength={6} className="ark-input" style={popupInp} placeholder="Minimum 6 characters" /></div>
-              {/* Row 3: Name */}
-              <div style={popupRow}><label style={popupLbl}>Full Name *</label><input name="name" type="text" required className="ark-input" style={popupInp} placeholder="Your full name" /></div>
-              {/* Row 4: Profession (full width, no age) */}
+              <div style={popupRow}><label style={popupLbl}>Email *</label><input name="email" type="email" required style={popupInp} placeholder="your.email@example.com" /></div>
+              <div style={popupRow}><label style={popupLbl}>Password * (min 6 chars)</label><input name="password" type="password" required minLength={6} style={popupInp} placeholder="Minimum 6 characters" /></div>
+              <div style={popupRow}><label style={popupLbl}>Full Name *</label><input name="name" type="text" required style={popupInp} placeholder="Your full name" /></div>
               <div style={popupRow}><label style={popupLbl}>Profession *</label>
-                <select name="profession" required className="ark-input" style={{ ...popupInp, cursor: "pointer", background: CREAM }}>
+                <select name="profession" required style={{ ...popupInp, cursor: "pointer", background: CREAM }}>
                   <option value="">Select profession...</option>
-                  <option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option>
-                  <option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option>
+                  <option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option>
                 </select>
               </div>
-              {/* Row 5: Bar + City side by side */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "11px" }}>
-                <div><label style={popupLbl}>Bar of Practice</label><input name="barOfPractice" type="text" className="ark-input" style={popupInp} placeholder="e.g., Punjab Bar" /></div>
-                <div><label style={popupLbl}>City *</label><input name="city" type="text" required className="ark-input" style={popupInp} placeholder="e.g., Lahore" /></div>
+                <div><label style={popupLbl}>Bar of Practice</label><input name="barOfPractice" type="text" style={popupInp} placeholder="e.g., Punjab Bar" /></div>
+                <div><label style={popupLbl}>City *</label><input name="city" type="text" required style={popupInp} placeholder="e.g., Lahore" /></div>
               </div>
-              {/* Row 6: Province + Country side by side */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
-                <div><label style={popupLbl}>Province *</label><input name="province" type="text" required className="ark-input" style={popupInp} placeholder="e.g., Punjab" /></div>
-                <div><label style={popupLbl}>Country *</label><input name="country" type="text" required defaultValue="Pakistan" className="ark-input" style={popupInp} /></div>
+                <div><label style={popupLbl}>Province *</label><input name="province" type="text" required style={popupInp} placeholder="e.g., Punjab" /></div>
+                <div><label style={popupLbl}>Country *</label><input name="country" type="text" required defaultValue="Pakistan" style={popupInp} /></div>
               </div>
-
-              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "8px", transition: "background 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>
-                Create Account — 500,000 Free Credits ✨
-              </button>
-
-              {/* Cancel button */}
-              <button type="button" onClick={() => setShowSignupPopup(false)} className="cancel-btn"
-                style={{ width: "100%", padding: "9px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }}>
-                Cancel
-              </button>
-
-              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 11, margin: 0 }}>
-                Already have an account?{" "}
-                <span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }}
-                  style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span>
-              </p>
+              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "8px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Create Account — 500,000 Free Credits ✨</button>
+              <button type="button" onClick={() => setShowSignupPopup(false)} style={{ width: "100%", padding: "9px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "10px" }}>Cancel</button>
+              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 11, margin: 0 }}>Already have an account?{" "}<span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span></p>
             </form>
           </div>
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          FORGOT PASSWORD POPUP — same cream + watermark scheme
-      ═══════════════════════════════════════════════════════════════════ */}
-
-
-
-      {/* ══════════════════════════════════════════════════════════════════
-          FEATURES POPUP
-      ═══════════════════════════════════════════════════════════════════ */}
       {/* MY ACCOUNT POPUP */}
-
-
-
       {showMyAccountPopup && user && (
         <div style={{ position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.75)",pointerEvents:"all" }}>
           <div style={{ background:"#F5F1E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid rgba(201,168,76,0.6)",boxShadow:"0 12px 48px rgba(0,0,0,0.4)",overflow:"hidden",position:"relative" }}>
@@ -1640,6 +1289,7 @@ export default function App() {
         </div>
       )}
 
+      {/* FEATURES POPUP */}
       {showFeaturesPopup && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
           <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
@@ -1692,12 +1342,13 @@ export default function App() {
                 <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>"Built for Pakistan's Legal Ecosystem"</span>
               </div>
               <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "14px 0 16px" }} />
-              <button onClick={() => setShowFeaturesPopup(false)} className="cancel-btn" style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
+              <button onClick={() => setShowFeaturesPopup(false)} style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
             </div>
           </div>
         </div>
       )}
 
+      {/* COMING SOON POPUP */}
       {showComingSoon && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowComingSoon(false)}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: "#0D1B2A", borderRadius: "16px", padding: "48px 40px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #C9A84C", boxShadow: "0 0 60px rgba(201,168,76,0.35), 0 0 120px rgba(201,168,76,0.12)", position: "relative" }}>
