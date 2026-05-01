@@ -500,7 +500,7 @@ export default function AppUSA() {
   };
 
   const popupInp = { width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 13, boxSizing: "border-box", outline: "none" };
-  const popupLbl = { color: "#5A7A9A", fontSize: 11, display: "block", marginBottom: "5px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" };
+  const popupLbl = { color: "#6A90C8", fontSize: 11, display: "block", marginBottom: "5px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px" };
   const popupRow = { marginBottom: "11px" };
   const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
@@ -533,6 +533,12 @@ export default function AppUSA() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1); } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+        @keyframes usFlagFloat {
+          0%, 100% { transform: translateY(0px) perspective(300px) rotateY(0deg); }
+          25%       { transform: translateY(-4px) perspective(300px) rotateY(5deg) scaleX(0.98); }
+          50%       { transform: translateY(-7px) perspective(300px) rotateY(0deg); }
+          75%       { transform: translateY(-4px) perspective(300px) rotateY(-5deg) scaleX(0.98); }
+        }
         @media (max-width:768px){
           .desktop-only{ display:none; }
           header { position: sticky !important; top: 0 !important; z-index: 100 !important; flex-shrink: 0 !important; }
@@ -542,29 +548,50 @@ export default function AppUSA() {
       <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER — no Quranic verse ══ */}
-        <header style={{ background: "#0D1E35", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "1px solid #2E4A2C", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
+        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
 
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
-              <div style={{ fontSize: 10, color: "#9AB4CC", direction: isUrdu ? "rtl" : "ltr" }}>"US Legal Intelligence Engine"</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
+              <div style={{ fontSize: 10, color: "#A8C0E8", direction: isUrdu ? "rtl" : "ltr" }}>US Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>My Learned Assistant</div>
             </div>
           </div>
+
+          {/* ── Animated US Flag — center ── */}
+          {!isMobile && (
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ position: "absolute", width: "100px", height: "100px", borderRadius: "50%", background: "radial-gradient(circle, rgba(191,10,48,0.2) 0%, transparent 70%)", pointerEvents: "none" }} />
+                <img
+                  src="https://flagcdn.com/w640/us.png"
+                  alt="US Flag"
+                  style={{
+                    width: "88px", height: "59px",
+                    objectFit: "cover",
+                    borderRadius: "5px",
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    filter: "drop-shadow(0 4px 12px rgba(191,10,48,0.5)) brightness(1.05) saturate(1.2)",
+                    animation: "usFlagFloat 3.5s ease-in-out infinite",
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             <button onClick={() => router.push("/")} title="Back to Home"
-              style={{ padding: "5px 10px", background: "rgba(255,255,255,0.08)", color: "#9AB4CC", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#1A2A43"; e.currentTarget.style.color = "#E8D97A"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#9AB4CC"; }}>
+              style={{ padding: "5px 10px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
               ← 🌍
             </button>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#1A2A43" : "transparent", color: !isUrdu ? "#E8D97A" : "#9AB4CC", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#1A2A43" : "transparent", color: isUrdu ? "#E8D97A" : "#9AB4CC", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
-            <div style={{ width: "1px", height: "20px", background: "#2A3A5A", margin: "0 1px" }} />
+            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#002868" : "transparent", color: !isUrdu ? "#E8D97A" : "#A8C0E8", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
+            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#002868" : "transparent", color: isUrdu ? "#E8D97A" : "#A8C0E8", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
+            <div style={{ width: "1px", height: "20px", background: "#003399", margin: "0 1px" }} />
             {(showInstallBtn || user) && (
               <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
@@ -789,7 +816,7 @@ export default function AppUSA() {
                 placeholder={isListening ? ("Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `Ask about your ${uploadedFiles.length} attached file(s)...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
                 style={{ flex: 1, padding: "9px 12px", background: "white", border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening}
-                style={{ padding: "9px 18px", background: loading || isListening ? "#9AB4CC" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
+                style={{ padding: "9px 18px", background: loading || isListening ? "#A8C0E8" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
                 onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
                 onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{"SEND"}</button>
             </div>
@@ -798,24 +825,24 @@ export default function AppUSA() {
         </div>{/* end body */}
 
         {/* FOOTER */}
-        <footer style={{ background: "#0D1E35", borderTop: "1px solid #2E4A2C", flexShrink: 0 }}>
+        <footer style={{ background: "#001F5B", borderTop: "2px solid #BF0A30", flexShrink: 0 }}>
           <div style={{ padding: "3px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", minHeight: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, flexWrap: "wrap", rowGap: "0" }}>
               <img src="/ark-logo.png" alt="ARK" style={{ width: "14px", height: "14px", opacity: 0.85, flexShrink: 0 }} />
               <span style={{ fontSize: 8, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia,serif", whiteSpace: "nowrap" }}>ARK LAW AI</span>
-              <span style={{ color: "#2A3A5A", fontSize: 8 }}>|</span>
+              <span style={{ color: "#003399", fontSize: 8 }}>|</span>
               {[
                 { heading: "Product",   links: ["Features", "Document Analysis", "AI Drafting"] },
                 { heading: "Company",   links: ["About Us", "Careers", "Blog"] },
                 { heading: "Resources", links: ["Help Center", "Guides", "Legal Updates"] },
               ].map(({ heading, links }, gi) => (
                 <div key={heading} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  {gi > 0 && <span style={{ color: "#2A3A5A", fontSize: 8 }}>|</span>}
+                  {gi > 0 && <span style={{ color: "#003399", fontSize: 8 }}>|</span>}
                   <span style={{ fontSize: 7, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.4px" }}>{heading}:</span>
                   {links.map((link, li) => (
                     <span key={link} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                      {li > 0 && <span style={{ color: "#2A3A5A", fontSize: 7 }}>·</span>}
-                      <span onClick={() => link === "Features" ? setShowFeaturesPopup(true) : setShowComingSoon(true)} style={{ fontSize: 7, color: "#9AB4CC", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#9AB4CC"}>{link}</span>
+                      {li > 0 && <span style={{ color: "#003399", fontSize: 7 }}>·</span>}
+                      <span onClick={() => link === "Features" ? setShowFeaturesPopup(true) : setShowComingSoon(true)} style={{ fontSize: 7, color: "#A8C0E8", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#A8C0E8"}>{link}</span>
                     </span>
                   ))}
                 </div>
@@ -828,9 +855,9 @@ export default function AppUSA() {
                 { label: "YouTube",  svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
               ].map(({ label, svg }) => (
                 <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
-                  style={{ width: "16px", height: "16px", borderRadius: "3px", background: "#1A2A43", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#9AB4CC", cursor: "pointer", transition: "all 0.18s", padding: 0 }}
+                  style={{ width: "16px", height: "16px", borderRadius: "3px", background: "#002868", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#A8C0E8", cursor: "pointer", transition: "all 0.18s", padding: 0 }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "#1A2A43"; e.currentTarget.style.color = "#9AB4CC"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#A8C0E8"; }}
                 >{svg}</button>
               ))}
               <span style={{ fontSize: 6.5, color: "#6A8A68", whiteSpace: "nowrap" }}>© 2026 ARK Lex AI LLC.</span>
@@ -898,7 +925,7 @@ export default function AppUSA() {
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
                 <div>
                   <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                  <div style={{ fontSize: 11, color: "#5A7A9A" }}>✍️ AI Legal Document Drafting</div>
+                  <div style={{ fontSize: 11, color: "#6A90C8" }}>✍️ AI Legal Document Drafting</div>
                 </div>
               </div>
               <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
@@ -937,7 +964,7 @@ export default function AppUSA() {
               {draftStep === "gathering-info" && (
                 <div>
                   <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "8px", fontWeight: 700, fontFamily: "Georgia,serif" }}>📝 Step 2: Provide Document Information</h4>
-                  <p style={{ color: "#5A7A9A", fontSize: 11, marginBottom: "20px" }}>Fill in the details below. AI will generate a complete US legal document.</p>
+                  <p style={{ color: "#6A90C8", fontSize: 11, marginBottom: "20px" }}>Fill in the details below. AI will generate a complete US legal document.</p>
                   <div style={{ maxHeight: "400px", overflowY: "auto", padding: "5px" }}>
                     {draftType === "rental-agreement" && (
                       <div>
@@ -1012,7 +1039,7 @@ export default function AppUSA() {
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
                   <img src="/ark-logo.png" alt="ARK" style={{ width: "70px", height: "70px", marginBottom: "20px", opacity: 0.7, animation: "pulse 2s infinite" }} />
                   <h4 style={{ color: NAVY, fontSize: 16, marginBottom: "15px", fontWeight: 700, fontFamily: "Georgia,serif" }}>⏳ Generating Your Legal Document...</h4>
-                  <p style={{ color: "#5A7A9A", fontSize: 13, lineHeight: "1.6", marginBottom: "20px" }}>Our AI is drafting a comprehensive, US law-compliant document.</p>
+                  <p style={{ color: "#6A90C8", fontSize: 13, lineHeight: "1.6", marginBottom: "20px" }}>Our AI is drafting a comprehensive, US law-compliant document.</p>
                   <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", border: `1px solid ${GOLD}30` }}>
                     {["Analyzing requirements","Applying US legal format","Including all necessary clauses"].map((t,i) => (
                       <div key={i} style={{ color: LIGHT_GREEN, fontSize: 11, marginBottom: i < 2 ? "6px" : 0 }}>✓ {t}</div>
@@ -1024,12 +1051,12 @@ export default function AppUSA() {
               {draftStep === "completed" && (
                 <div>
                   <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "8px", fontWeight: 700, fontFamily: "Georgia,serif" }}>✅ Document Generated Successfully!</h4>
-                  <p style={{ color: "#5A7A9A", fontSize: 11, marginBottom: "14px" }}>Your {draftType} has been generated. Edit and download below.</p>
+                  <p style={{ color: "#6A90C8", fontSize: 11, marginBottom: "14px" }}>Your {draftType} has been generated. Edit and download below.</p>
                   <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} style={{ width: "100%", height: "360px", padding: "14px", background: "white", border: `1px solid ${GOLD}50`, color: "#000", borderRadius: "8px", marginBottom: "12px", fontSize: 13, fontFamily: "'Times New Roman', serif", lineHeight: "1.8", whiteSpace: "pre-wrap" }}></textarea>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", padding: "10px 14px", background: "#EDE8DF", borderRadius: "8px" }}>
-                    <span style={{ color: "#5A7A9A", fontSize: 11 }}>📝 Words: <strong>{draftContent.split(/\s+/).filter(Boolean).length}</strong></span>
-                    <span style={{ color: "#5A7A9A", fontSize: 11 }}>📊 Chars: <strong>{draftContent.length}</strong></span>
-                    <span style={{ color: "#5A7A9A", fontSize: 11 }}>📄 Pages: <strong>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</strong></span>
+                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📝 Words: <strong>{draftContent.split(/\s+/).filter(Boolean).length}</strong></span>
+                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📊 Chars: <strong>{draftContent.length}</strong></span>
+                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📄 Pages: <strong>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</strong></span>
                   </div>
                   <div style={{ background: `${GOLD}18`, padding: "10px 14px", borderRadius: "8px", borderLeft: `4px solid ${GOLD}`, marginBottom: "16px" }}>
                     <div style={{ color: "#8A6A10", fontSize: 10, fontWeight: 600, marginBottom: "4px" }}>⚠️ IMPORTANT LEGAL DISCLAIMER</div>
@@ -1057,7 +1084,7 @@ export default function AppUSA() {
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
                 <div>
                   <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                  <div style={{ fontSize: 11, color: "#5A7A9A" }}>⚖️ Compare Legal Documents</div>
+                  <div style={{ fontSize: 11, color: "#6A90C8" }}>⚖️ Compare Legal Documents</div>
                 </div>
               </div>
               <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
@@ -1065,12 +1092,12 @@ export default function AppUSA() {
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)` }} />
             <div style={{ padding: "20px 24px", position: "relative", zIndex: 1 }}>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ color: "#5A7A9A", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 1</label>
+                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 1</label>
                 <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
                 {doc1 && <div style={{ marginTop: "5px", fontSize: 10, color: doc1.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc1.name} — {(doc1.size/1024/1024).toFixed(2)}MB {doc1.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
               </div>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ color: "#5A7A9A", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 2</label>
+                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 2</label>
                 <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
                 {doc2 && <div style={{ marginTop: "5px", fontSize: 10, color: doc2.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc2.name} — {(doc2.size/1024/1024).toFixed(2)}MB {doc2.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
               </div>
@@ -1078,13 +1105,13 @@ export default function AppUSA() {
                 <div style={{ fontSize: 10, color: "#4A6A56", lineHeight: "1.6" }}>ℹ️ <strong>Supported:</strong> PDF, DOC, DOCX (max 5MB each) · ✓ Scanned PDFs supported</div>
               </div>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ color: "#5A7A9A", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>🎯 Focal Point for Comparison</label>
+                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>🎯 Focal Point for Comparison</label>
                 <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses, termination conditions..." style={{ width: "100%", padding: "9px 12px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 12 }} />
               </div>
               {comparingDocs && (
                 <div style={{ marginBottom: "14px", padding: "18px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30`, textAlign: "center" }}>
                   <div style={{ color: NAVY, fontSize: 13, fontWeight: 600, marginBottom: "6px", fontFamily: "Georgia,serif" }}>⏳ Analyzing Documents...</div>
-                  <div style={{ color: "#5A7A9A", fontSize: 11 }}>AI is comparing the documents</div>
+                  <div style={{ color: "#6A90C8", fontSize: 11 }}>AI is comparing the documents</div>
                 </div>
               )}
               {comparisonResult && !comparingDocs && (
@@ -1145,7 +1172,7 @@ export default function AppUSA() {
               <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
                 <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                <div style={{ fontSize: 11, color: "#5A7A9A" }}>Login to your account</div>
+                <div style={{ fontSize: 11, color: "#6A90C8" }}>Login to your account</div>
               </div>
             </div>
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "20px" }} />
@@ -1190,7 +1217,7 @@ export default function AppUSA() {
               <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
               <div>
                 <div style={{ fontFamily: "Georgia,serif", fontSize: 16, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                <div style={{ fontSize: 10, color: "#5A7A9A" }}>Create your free account — 500,000 credits</div>
+                <div style={{ fontSize: 10, color: "#6A90C8" }}>Create your free account — 500,000 credits</div>
               </div>
             </div>
             <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "16px" }} />
@@ -1237,7 +1264,7 @@ export default function AppUSA() {
             <div style={{ padding:"18px 22px 14px",borderBottom:"1px solid rgba(201,168,76,0.4)",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#F5F1E8" }}>
               <div style={{ display:"flex",alignItems:"center",gap:"10px" }}>
                 <img src="/ark-logo.png" alt="ARK" style={{ width:"34px",height:"34px" }} />
-                <div style={{ fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#0D1B2A" }}>ARK LAW AI <span style={{ fontSize:11,fontWeight:400,color:"#5A7A9A" }}>/ My Account</span></div>
+                <div style={{ fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#0D1B2A" }}>ARK LAW AI <span style={{ fontSize:11,fontWeight:400,color:"#6A90C8" }}>/ My Account</span></div>
               </div>
               <button onClick={()=>setShowMyAccountPopup(false)} style={{ background:"none",border:"none",color:"#6A8A66",fontSize:22,cursor:"pointer",lineHeight:1 }}>✕</button>
             </div>
@@ -1252,7 +1279,7 @@ export default function AppUSA() {
                   </div>
                 </div>
                 <div style={{ background:"#EDE8DF",border:"1px solid rgba(201,168,76,0.5)",borderRadius:"10px",padding:"11px 13px",marginBottom:"10px" }}>
-                  <div style={{ fontSize:10,color:"#5A7A9A",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px" }}>⚡ Credit Balance</div>
+                  <div style={{ fontSize:10,color:"#6A90C8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px" }}>⚡ Credit Balance</div>
                   <div style={{ display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px" }}>
                     <div style={{ flex:1,height:"7px",background:"#D8D0C0",borderRadius:"4px",overflow:"hidden" }}>
                       <div style={{ height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens > 100000 ? "#4CAF7D" : "#C9A84C",borderRadius:"4px" }}></div>
@@ -1262,7 +1289,7 @@ export default function AppUSA() {
                   <div style={{ fontSize:9,color:"#7A9A76" }}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
                 </div>
                 <div style={{ background:"#EDE8DF",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"10px",padding:"11px 13px",marginBottom:"12px" }}>
-                  <div style={{ fontSize:10,color:"#5A7A9A",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"9px" }}>Profile</div>
+                  <div style={{ fontSize:10,color:"#6A90C8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"9px" }}>Profile</div>
                   {[{k:"Profession",v:user.profession},{k:"Bar",v:user.barOfPractice},{k:"City",v:user.city},{k:"Province",v:user.province},{k:"Country",v:user.country}].filter(x=>x.v).map(({k,v})=>(
                     <div key={k} style={{ display:"flex",justifyContent:"space-between",borderBottom:"1px solid rgba(201,168,76,0.15)",paddingBottom:"5px",marginBottom:"5px" }}>
                       <span style={{ fontSize:9,color:"#7A9A76",textTransform:"uppercase" }}>{k}</span>
@@ -1307,7 +1334,7 @@ export default function AppUSA() {
                 <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
                 <div>
                   <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY, letterSpacing: "0.5px" }}>FEATURES</div>
-                  <div style={{ fontSize: 10, color: "#5A7A9A" }}>ARK Law AI Platform</div>
+                  <div style={{ fontSize: 10, color: "#6A90C8" }}>ARK Law AI Platform</div>
                 </div>
               </div>
               <button onClick={() => setShowFeaturesPopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
@@ -1316,7 +1343,7 @@ export default function AppUSA() {
             <div style={{ padding: "22px 28px", position: "relative", zIndex: 1, flex: 1 }}>
               <div style={{ marginBottom: "24px", textAlign: "center" }}>
                 <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>Powerful AI Tools for Legal Professionals</h2>
-                <p style={{ fontSize: 13, color: "#5A7A9A", lineHeight: 1.6, margin: 0 }}>Streamline research, drafting, and case strategy<br />with one intelligent platform.</p>
+                <p style={{ fontSize: 13, color: "#6A90C8", lineHeight: 1.6, margin: 0 }}>Streamline research, drafting, and case strategy<br />with one intelligent platform.</p>
               </div>
               <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "22px" }} />
               {[
