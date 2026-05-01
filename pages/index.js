@@ -212,29 +212,30 @@ export default function Landing() {
       {/* Main layout */}
       <div style={{
         position: "relative", zIndex: 1,
-        height: "100vh", display: "flex", flexDirection: "column",
+        minHeight: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "60px 20px 20px",
+        padding: "100px 20px 30px",
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.6s ease",
+        overflowY: "auto",
       }}>
 
         {/* Logo + Title */}
         <div style={{
           display: "flex", flexDirection: "column", alignItems: "center",
-          marginBottom: "48px",
+          marginBottom: "32px",
           animation: "fadeUp 0.8s ease both",
           animationDelay: "0.1s",
         }}>
           {/* Logo */}
-          <div style={{ position: "relative", marginBottom: "16px" }}>
+          <div style={{ position: "relative", marginBottom: "16px", padding: "16px" }}>
             <div style={{
-              position: "absolute", inset: "-12px",
+              position: "absolute", inset: "0",
               borderRadius: "50%",
               background: `radial-gradient(circle, ${GOLD}30 0%, transparent 70%)`,
             }} />
             <img src="/ark-logo.png" alt="ARK Law AI"
-              style={{ width: "80px", height: "80px", position: "relative", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
+              style={{ width: "90px", height: "90px", position: "relative", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
           </div>
 
           {/* Brand name */}
