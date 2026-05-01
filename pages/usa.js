@@ -563,7 +563,7 @@ export default function AppUSA() {
           {/* ── Animated US Flag — center ── */}
           {!isMobile && (
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}>
                 <div style={{ position: "absolute", width: "100px", height: "100px", borderRadius: "50%", background: "radial-gradient(circle, rgba(191,10,48,0.2) 0%, transparent 70%)", pointerEvents: "none" }} />
                 <img
                   src="https://flagcdn.com/w640/us.png"
@@ -575,8 +575,13 @@ export default function AppUSA() {
                     border: "2px solid rgba(255,255,255,0.2)",
                     filter: "drop-shadow(0 4px 12px rgba(191,10,48,0.5)) brightness(1.05) saturate(1.2)",
                     animation: "usFlagFloat 3.5s ease-in-out infinite",
+                    position: "relative", zIndex: 1,
                   }}
                 />
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  <div style={{ fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: "#E8D97A", letterSpacing: "2px", fontStyle: "italic", whiteSpace: "nowrap" }}>We the People</div>
+                  <div style={{ width: "100%", height: "1px", background: "linear-gradient(to right, #BF0A30, transparent)", marginTop: "3px" }} />
+                </div>
               </div>
             </div>
           )}
