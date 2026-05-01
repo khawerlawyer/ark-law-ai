@@ -176,10 +176,25 @@ export default function Landing() {
         }
 
         @media (max-width: 700px) {
-          .landing-card { width: 230px; height: 280px; }
-          .landing-card .flag-emoji { width: 90px; height: 60px; }
-          .landing-card .country-name { font-size: 22px; }
-          .cards-row { flex-direction: column !important; gap: 24px !important; }
+          /* Cards side by side on mobile */
+          .cards-row { flex-direction: row !important; gap: 12px !important; align-items: center !important; }
+          .landing-card { width: 148px; height: 240px; border-radius: 16px; }
+          .landing-card .flag-emoji { width: 70px; height: 47px; border-radius: 4px; }
+          .landing-card .country-name { font-size: 16px; margin-bottom: 4px; }
+          .landing-card .country-sub { font-size: 10px; margin-bottom: 10px; line-height: 1.4; }
+          .landing-card .enter-btn { padding: 7px 14px; font-size: 11px; }
+          .landing-card .card-content { margin-top: 10px; padding: 0 10px; }
+          .mobile-or { flex-direction: column !important; }
+          .mobile-or .or-line { height: 30px !important; }
+          /* Compact logo/title on mobile */
+          .logo-section { margin-bottom: 12px !important; }
+          .logo-img { width: 56px !important; height: 56px !important; }
+          .brand-title { font-size: 22px !important; letter-spacing: 2px !important; }
+          .brand-tagline { font-size: 10px !important; margin-top: 3px !important; }
+          .brand-divider { margin-top: 7px !important; }
+          .brand-instruction { font-size: 12px !important; margin-top: 7px !important; }
+          .footer-text { margin-top: 12px !important; font-size: 10px !important; }
+          .footer-verse { margin-top: 4px !important; font-size: 10px !important; }
         }
       `}</style>
 
@@ -214,14 +229,14 @@ export default function Landing() {
         position: "relative", zIndex: 1,
         height: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "20px 20px 10px",
+        padding: "16px 12px 10px",
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.6s ease",
-        overflowY: "hidden",
+        overflowY: "auto",
       }}>
 
         {/* Logo + Title */}
-        <div style={{
+        <div className="logo-section" style={{
           display: "flex", flexDirection: "column", alignItems: "center",
           marginBottom: "18px",
           animation: "fadeUp 0.8s ease both",
@@ -235,7 +250,7 @@ export default function Landing() {
               background: `radial-gradient(circle, ${GOLD}30 0%, transparent 70%)`,
             }} />
             <img src="/ark-logo.png" alt="ARK Law AI"
-              style={{ width: "72px", height: "72px", position: "relative", filter: `drop-shadow(0 0 16px ${GOLD}60)` }} />
+              className="logo-img" style={{ width: "72px", height: "72px", position: "relative", filter: `drop-shadow(0 0 16px ${GOLD}60)` }} />
           </div>
 
           {/* Brand name */}
@@ -250,7 +265,7 @@ export default function Landing() {
             backgroundClip: "text",
             letterSpacing: "3px",
             animation: "shimmer 4s linear infinite",
-          }}>ARK LAW AI</div>
+          }} className="brand-title">ARK LAW AI</div>
 
           {/* Tagline */}
           <div style={{
@@ -260,10 +275,10 @@ export default function Landing() {
             fontStyle: "italic",
             letterSpacing: "1.5px",
             marginTop: "6px",
-          }}>Your Trusted Legal Intelligence Engine</div>
+          }} className="brand-tagline">Your Trusted Legal Intelligence Engine</div>
 
           {/* Gold divider */}
-          <div style={{
+          <div className="brand-divider" style={{
             width: "100px", height: "1px",
             background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
             marginTop: "10px",
@@ -278,7 +293,7 @@ export default function Landing() {
             marginTop: "10px",
             letterSpacing: "0.5px",
             textAlign: "center",
-          }}>Select your jurisdiction to begin</div>
+          }} className="brand-instruction">Select your jurisdiction to begin</div>
         </div>
 
         {/* Cards row */}
@@ -329,8 +344,8 @@ export default function Landing() {
           </div>
 
           {/* ── DIVIDER ── */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "1px", height: "60px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+          <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
             <div style={{
               width: "36px", height: "36px", borderRadius: "50%",
               border: `1px solid ${GOLD}40`,
@@ -340,7 +355,7 @@ export default function Landing() {
               fontSize: "11px", color: GOLD, letterSpacing: "1px",
               fontWeight: 700,
             }}>OR</div>
-            <div style={{ width: "1px", height: "60px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
           </div>
 
           {/* ── USA CARD ── */}
@@ -381,7 +396,7 @@ export default function Landing() {
         </div>
 
         {/* Bottom tagline */}
-        <div style={{
+        <div className="footer-text" style={{
           marginTop: "20px",
           fontFamily: "'Crimson Pro', serif",
           fontSize: "12px",
@@ -396,7 +411,7 @@ export default function Landing() {
         </div>
 
         {/* Quranic verse - subtle */}
-        <div style={{
+        <div className="footer-verse" style={{
           marginTop: "10px",
           fontFamily: "'Crimson Pro', serif",
           fontSize: "11px",
