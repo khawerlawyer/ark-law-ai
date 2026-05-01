@@ -29,12 +29,12 @@ const PK_FALLBACK = [
 ];
 
 function PKNewsWidget() {
-  const [headlines, setHeadlines] = React.useState(PK_FALLBACK);
-  const [tickerPos, setTickerPos] = React.useState(0);
-  const [loading, setLoading] = React.useState(false);
-  const [expanded, setExpanded] = React.useState(false);
+  const [headlines, setHeadlines] = useState(PK_FALLBACK);
+  const [tickerPos, setTickerPos] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchNews = async () => {
       try {
         const rss = "https://www.dawn.com/feeds/home";
@@ -53,7 +53,7 @@ function PKNewsWidget() {
     return function() { clearInterval(interval); };
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!headlines.length || expanded) return;
     const id = setInterval(function() {
       setTickerPos(function(prev) { return (prev + 1) % headlines.length; });
