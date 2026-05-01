@@ -16,6 +16,138 @@ const POPUP_DARK   = "#0A1118";
 const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
+// ─── Live Pakistan News Widget ───────────────────────────────────────────────
+const PK_FALLBACK = [
+  { title: "Supreme Court of Pakistan issues landmark ruling on constitutional rights", source: "Dawn", url: "https://dawn.com" },
+  { title: "Lahore High Court upholds property rights in landmark judgment", source: "The News", url: "https://thenews.com.pk" },
+  { title: "Federal government announces new labour law amendments", source: "Geo News", url: "https://geo.tv" },
+  { title: "FBR introduces reforms to Income Tax Ordinance 2001", source: "Dawn", url: "https://dawn.com" },
+  { title: "Islamabad High Court rules on digital privacy protections", source: "The News", url: "https://thenews.com.pk" },
+  { title: "NAB releases updated accountability court proceedings", source: "Geo News", url: "https://geo.tv" },
+  { title: "CJP announces judicial reforms for faster case resolution", source: "Dawn", url: "https://dawn.com" },
+  { title: "Senate passes amendment to Criminal Procedure Code", source: "ARY News", url: "https://arynews.tv" },
+];
+
+function PKNewsWidget() {
+  const [headlines, setHeadlines] = React.useState(PK_FALLBACK);
+  const [tickerPos, setTickerPos] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const rss = "https://www.dawn.com/feeds/home";
+        const url = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss) + "&count=8";
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.status === "ok" && data.items && data.items.length > 0) {
+          setHeadlines(data.items.map(function(item) {
+            return { title: item.title, source: "Dawn", url: item.link };
+          }));
+        }
+      } catch(e) { /* keep fallback */ }
+    };
+    fetchNews();
+    const interval = setInterval(fetchNews, 5 * 60 * 1000);
+    return function() { clearInterval(interval); };
+  }, []);
+
+  React.useEffect(() => {
+    if (!headlines.length || expanded) return;
+    const id = setInterval(function() {
+      setTickerPos(function(prev) { return (prev + 1) % headlines.length; });
+    }, 4000);
+    return function() { clearInterval(id); };
+  }, [headlines, expanded]);
+
+  return (
+    <div style={{
+      position: "absolute", top: "12px", right: "12px", zIndex: 10,
+      width: "230px",
+      background: "rgba(10,30,15,0.97)",
+      border: "1px solid rgba(76,175,125,0.5)",
+      borderRadius: "10px",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
+      overflow: "hidden",
+      fontFamily: "Segoe UI, sans-serif",
+    }}>
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "6px 10px", background: "#1B5E20", cursor: "pointer",
+      }} onClick={function() { setExpanded(function(e) { return !e; }); }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
+          <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>· Pakistan Legal News</span>
+        </div>
+        <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
+      </div>
+
+      {/* Ticker */}
+      {!expanded && (
+        <div style={{ padding: "8px 10px", minHeight: "60px" }}>
+          {loading ? (
+            <div style={{ color: "#9DB89A", fontSize: 10, fontStyle: "italic" }}>Loading...</div>
+          ) : (
+            <div>
+              <div style={{ fontSize: 11, color: "#E8F5E0", lineHeight: 1.45, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                {headlines[tickerPos] && headlines[tickerPos].title}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "5px" }}>
+                <span style={{ fontSize: 9, color: "#4CAF7D", fontWeight: 700 }}>{headlines[tickerPos] && headlines[tickerPos].source}</span>
+                <a href={headlines[tickerPos] && headlines[tickerPos].url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 9, color: "#9DB89A", textDecoration: "none" }}>Read ↗</a>
+              </div>
+              <div style={{ display: "flex", gap: "3px", marginTop: "5px", justifyContent: "center" }}>
+                {headlines.slice(0, 8).map(function(_, i) {
+                  return (
+                    <div key={i} onClick={function() { setTickerPos(i); }} style={{
+                      width: "5px", height: "5px", borderRadius: "50%", cursor: "pointer",
+                      background: i === tickerPos ? "white" : "rgba(255,255,255,0.3)",
+                      transition: "background 0.3s",
+                    }} />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Expanded list */}
+      {expanded && (
+        <div style={{ maxHeight: "280px", overflowY: "auto" }}>
+          {headlines.map(function(item, i) {
+            return (
+              <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", padding: "8px 10px", textDecoration: "none",
+                  borderBottom: "1px solid rgba(255,255,255,0.06)",
+                  background: i % 2 === 0 ? "rgba(10,40,15,0.5)" : "transparent",
+                }}>
+                <div style={{ fontSize: 11, color: "#E8F5E0", lineHeight: 1.4, marginBottom: "3px" }}>{item.title}</div>
+                <span style={{ fontSize: 9, color: "#4CAF7D", fontWeight: 700 }}>{item.source}</span>
+              </a>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Footer */}
+      <div style={{
+        padding: "4px 10px", background: "rgba(0,10,5,0.9)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <span style={{ fontSize: 8, color: "#5A7A56", fontStyle: "italic" }}>Dawn · Updates every 5 min</span>
+        <a href="https://www.dawn.com" target="_blank" rel="noopener noreferrer"
+          style={{ fontSize: 8, color: "#4CAF7D", textDecoration: "none", fontWeight: 700 }}>dawn.com ↗</a>
+      </div>
+    </div>
+  );
+}
+
+
 export default function App() {
   const router = useRouter();
   const [user,               setUser]               = useState(null);
@@ -735,6 +867,9 @@ export default function App() {
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
             </div>
+
+            {/* ── Live Pakistan News Ticker ── */}
+            {!isMobile && <PKNewsWidget />}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {messages.map((msg, i) => (
