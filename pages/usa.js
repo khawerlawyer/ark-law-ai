@@ -594,8 +594,7 @@ export default function AppUSA() {
               onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
               ← 🌍
             </button>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#002868" : "transparent", color: !isUrdu ? "#E8D97A" : "#A8C0E8", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#002868" : "transparent", color: isUrdu ? "#E8D97A" : "#A8C0E8", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
+            <div style={{ padding: "5px 10px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", fontSize: 10, fontWeight: 700 }}>🇺🇸 EN</div>
             <div style={{ width: "1px", height: "20px", background: "#003399", margin: "0 1px" }} />
             {(showInstallBtn || user) && (
               <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
@@ -735,6 +734,49 @@ export default function AppUSA() {
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
               <img src="/ark-logo-us.png" alt="ARK Watermark" style={{ width: "380px", height: "380px", borderRadius: "50%", objectFit: "cover" }} />
             </div>
+
+            {/* ── Live US News Overlay ── */}
+            {!isMobile && (
+              <div style={{
+                position: "absolute", top: "12px", right: "12px", zIndex: 10,
+                width: "240px",
+                background: "rgba(0,31,91,0.96)",
+                border: "1px solid rgba(191,10,48,0.6)",
+                borderRadius: "10px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+                overflow: "hidden",
+              }}>
+                {/* Header bar */}
+                <div style={{
+                  display: "flex", alignItems: "center", gap: "6px",
+                  padding: "6px 10px",
+                  background: "#BF0A30",
+                }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px", textTransform: "uppercase" }}>LIVE</span>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", marginLeft: "2px" }}>· US Legal News</span>
+                </div>
+                {/* YouTube live embed — CNN */}
+                <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/live_stream?channel=UCupvZG-5ko_eiXAupbDfxWw&autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
+                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    title="US Live News"
+                  />
+                </div>
+                {/* Footer */}
+                <div style={{
+                  padding: "5px 10px", display: "flex", alignItems: "center", justifyContent: "space-between",
+                  background: "rgba(0,20,60,0.9)",
+                }}>
+                  <span style={{ fontSize: 9, color: "#A8C0E8", fontStyle: "italic" }}>CNN Live Stream</span>
+                  <a href="https://www.cnn.com" target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 9, color: "#BF0A30", textDecoration: "none", fontWeight: 700 }}>cnn.com ↗</a>
+                </div>
+              </div>
+            )}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {messages.map((msg, i) => (
