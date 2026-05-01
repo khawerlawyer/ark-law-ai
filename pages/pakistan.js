@@ -533,6 +533,12 @@ export default function App() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1); } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+        @keyframes pkFlagFloat {
+          0%, 100% { transform: translateY(0px) perspective(300px) rotateY(0deg); }
+          25%       { transform: translateY(-4px) perspective(300px) rotateY(6deg) scaleX(0.98); }
+          50%       { transform: translateY(-7px) perspective(300px) rotateY(0deg); }
+          75%       { transform: translateY(-4px) perspective(300px) rotateY(-6deg) scaleX(0.98); }
+        }
         @media (max-width:768px){
           .desktop-only{ display:none; }
           header { position: sticky !important; top: 0 !important; z-index: 100 !important; flex-shrink: 0 !important; }
@@ -553,6 +559,32 @@ export default function App() {
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
+
+          {/* ── Animated PK Flag — center ── */}
+          {!isMobile && (
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}>
+                <div style={{ position: "absolute", width: "100px", height: "100px", borderRadius: "50%", background: "radial-gradient(circle, rgba(76,175,125,0.2) 0%, transparent 70%)", pointerEvents: "none" }} />
+                <img
+                  src="https://flagcdn.com/w640/pk.png"
+                  alt="Pakistan Flag"
+                  style={{
+                    width: "88px", height: "59px",
+                    objectFit: "cover",
+                    borderRadius: "5px",
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    filter: "drop-shadow(0 4px 12px rgba(76,175,125,0.5)) brightness(1.05) saturate(1.2)",
+                    animation: "pkFlagFloat 3.5s ease-in-out infinite",
+                    position: "relative", zIndex: 1,
+                  }}
+                />
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  <div style={{ fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: "#E8D97A", letterSpacing: "2px", fontStyle: "italic", whiteSpace: "nowrap" }}>Faith · Unity · Discipline</div>
+                  <div style={{ width: "100%", height: "1px", background: "linear-gradient(to right, #4CAF7D, transparent)", marginTop: "3px" }} />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
