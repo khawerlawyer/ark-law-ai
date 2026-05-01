@@ -547,6 +547,7 @@ export default function App() {
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <span style={{ fontSize: isMobile ? 28 : 34, lineHeight: 1, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))" }}>🇵🇰</span>
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
               <div style={{ fontSize: 10, color: "#9DB89A", direction: isUrdu ? "rtl" : "ltr" }}>{isUrdu ? UR.appTagline : "The Legal Intelligence Engine"}</div>
