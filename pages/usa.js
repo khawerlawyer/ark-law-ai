@@ -759,11 +759,11 @@ export default function AppUSA() {
                 {/* YouTube live embed — CNN */}
                 <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
                   <iframe
-                    src="https://www.youtube.com/embed/live_stream?channel=UCupvZG-5ko_eiXAupbDfxWw&autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
+                    src="https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
                     style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
                     allow="autoplay; encrypted-media"
                     allowFullScreen
-                    title="US Live News"
+                    title="ABC News Live"
                   />
                 </div>
                 {/* Footer */}
@@ -771,9 +771,9 @@ export default function AppUSA() {
                   padding: "5px 10px", display: "flex", alignItems: "center", justifyContent: "space-between",
                   background: "rgba(0,20,60,0.9)",
                 }}>
-                  <span style={{ fontSize: 9, color: "#A8C0E8", fontStyle: "italic" }}>CNN Live Stream</span>
-                  <a href="https://www.cnn.com" target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: 9, color: "#BF0A30", textDecoration: "none", fontWeight: 700 }}>cnn.com ↗</a>
+                  <span style={{ fontSize: 9, color: "#A8C0E8", fontStyle: "italic" }}>ABC News Live</span>
+                  <a href="https://abcnews.go.com" target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 9, color: "#BF0A30", textDecoration: "none", fontWeight: 700 }}>abcnews.go.com ↗</a>
                 </div>
               </div>
             )}
