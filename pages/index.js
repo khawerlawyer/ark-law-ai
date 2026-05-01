@@ -60,6 +60,19 @@ export default function Landing() {
           0%, 100% { opacity: 0.4; box-shadow: 0 0 8px ${GOLD}40; }
           50%       { opacity: 1;   box-shadow: 0 0 20px ${GOLD}80; }
         }
+        @keyframes wave {
+          0%   { transform: perspective(300px) rotateY(0deg)   scaleX(1);    }
+          25%  { transform: perspective(300px) rotateY(8deg)   scaleX(0.97); }
+          50%  { transform: perspective(300px) rotateY(0deg)   scaleX(1);    }
+          75%  { transform: perspective(300px) rotateY(-8deg)  scaleX(0.97); }
+          100% { transform: perspective(300px) rotateY(0deg)   scaleX(1);    }
+        }
+        @keyframes flagFloat {
+          0%, 100% { transform: translateY(0px) perspective(300px) rotateY(0deg); }
+          25%       { transform: translateY(-6px) perspective(300px) rotateY(6deg) scaleX(0.98); }
+          50%       { transform: translateY(-10px) perspective(300px) rotateY(0deg); }
+          75%       { transform: translateY(-6px) perspective(300px) rotateY(-6deg) scaleX(0.98); }
+        }
 
         .landing-card {
           position: relative;
@@ -83,15 +96,21 @@ export default function Landing() {
           transition: opacity 0.4s ease;
         }
         .landing-card .flag-emoji {
-          font-size: 90px;
-          line-height: 1;
-          filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
-          transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
-          animation: float 4s ease-in-out infinite;
+          width: 130px;
+          height: 87px;
+          object-fit: cover;
+          border-radius: 6px;
+          filter: drop-shadow(0 10px 28px rgba(0,0,0,0.7)) brightness(1.05) saturate(1.2);
+          animation: flagFloat 3.5s ease-in-out infinite;
           position: relative; z-index: 2;
+          border: 2px solid rgba(255,255,255,0.15);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+          transform-origin: left center;
+          transition: filter 0.3s ease;
         }
         .landing-card:hover .flag-emoji {
-          transform: scale(1.15);
+          filter: drop-shadow(0 12px 32px rgba(0,0,0,0.8)) brightness(1.12) saturate(1.3);
+          animation: flagFloat 2s ease-in-out infinite;
         }
         .landing-card .card-content {
           position: relative; z-index: 2;
@@ -158,7 +177,7 @@ export default function Landing() {
 
         @media (max-width: 700px) {
           .landing-card { width: 260px; height: 320px; }
-          .landing-card .flag-emoji { font-size: 70px; }
+          .landing-card .flag-emoji { width: 90px; height: 60px; }
           .landing-card .country-name { font-size: 22px; }
           .cards-row { flex-direction: column !important; gap: 24px !important; }
         }
@@ -287,7 +306,7 @@ export default function Landing() {
               background: `radial-gradient(ellipse at 50% -20%, rgba(76,175,125,0.15) 0%, transparent 60%)`,
             }} />
 
-            <div className="flag-emoji" style={{ animationDelay: "0s" }}>🇵🇰</div>
+            <img className="flag-emoji" src="https://flagcdn.com/w640/pk.png" alt="Pakistan Flag" style={{ animationDelay: "0s" }} />
 
             <div className="card-content">
               <div className="country-name" style={{ color: "#E8F5E0" }}>Pakistan</div>
@@ -339,7 +358,7 @@ export default function Landing() {
               background: `radial-gradient(ellipse at 50% -20%, rgba(178,34,52,0.15) 0%, transparent 60%)`,
             }} />
 
-            <div className="flag-emoji" style={{ animationDelay: "0.5s" }}>🇺🇸</div>
+            <img className="flag-emoji" src="https://flagcdn.com/w640/us.png" alt="USA Flag" style={{ animationDelay: "0.5s" }} />
 
             <div className="card-content">
               <div className="country-name" style={{ color: "#FFF0F0" }}>United States</div>
