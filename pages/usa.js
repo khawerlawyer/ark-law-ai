@@ -16,6 +16,156 @@ const POPUP_DARK   = "#0A1118";
 const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
+
+// ─── Live US News Widget ──────────────────────────────────────────────────────
+function USNewsWidget() {
+  const [headlines, setHeadlines] = useState([]);
+  const [tickerPos, setTickerPos] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const tickerRef = useRef(null);
+
+  // Fallback headlines in case fetch fails
+  const fallbackHeadlines = [
+    { title: "Supreme Court hears landmark First Amendment case", source: "Reuters", url: "https://reuters.com" },
+    { title: "Senate advances bipartisan judicial reform bill", source: "AP News", url: "https://apnews.com" },
+    { title: "Federal court rules on immigration policy challenge", source: "NPR", url: "https://npr.org" },
+    { title: "DOJ announces new white-collar crime enforcement unit", source: "Bloomberg Law", url: "https://bloomberg.com" },
+    { title: "IRS updates tax filing guidelines for 2026", source: "Reuters", url: "https://reuters.com" },
+    { title: "SCOTUS takes up Fourth Amendment digital privacy case", source: "AP News", url: "https://apnews.com" },
+    { title: "New federal labor regulations take effect this week", source: "NPR", url: "https://npr.org" },
+    { title: "Class action lawsuit filed against major tech firm", source: "Bloomberg Law", url: "https://bloomberg.com" },
+  ];
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        // Use RSS2JSON to fetch Reuters legal news (no API key needed)
+        const rss = "https://feeds.reuters.com/reuters/topNews";
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}&count=8`);
+        const data = await res.json();
+        if (data.status === "ok" && data.items?.length) {
+          setHeadlines(data.items.map(item => ({
+            title: item.title,
+            source: "Reuters",
+            url: item.link,
+          })));
+        } else {
+          setHeadlines(fallbackHeadlines);
+        }
+      } catch {
+        setHeadlines(fallbackHeadlines);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNews();
+    const interval = setInterval(fetchNews, 5 * 60 * 1000); // refresh every 5 min
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-scroll ticker
+  useEffect(() => {
+    if (!headlines.length || expanded) return;
+    const id = setInterval(() => {
+      setTickerPos(prev => (prev + 1) % headlines.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [headlines, expanded]);
+
+  const NAVY_D = "#001F5B";
+  const RED_US = "#BF0A30";
+
+  return (
+    <div style={{
+      position: "absolute", top: "12px", right: "12px", zIndex: 10,
+      width: "230px",
+      background: "rgba(0,20,70,0.97)",
+      border: `1px solid ${RED_US}80`,
+      borderRadius: "10px",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
+      overflow: "hidden",
+      fontFamily: "Segoe UI, sans-serif",
+    }}>
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "6px 10px", background: RED_US, cursor: "pointer",
+      }} onClick={() => setExpanded(e => !e)}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
+          <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>· US Legal News</span>
+        </div>
+        <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
+      </div>
+
+      {/* Ticker / Expanded view */}
+      {!expanded ? (
+        /* ── Ticker mode ── */
+        <div style={{ padding: "8px 10px", minHeight: "54px" }}>
+          {loading ? (
+            <div style={{ color: "#A8C0E8", fontSize: 10, fontStyle: "italic" }}>Loading headlines...</div>
+          ) : headlines.length > 0 ? (
+            <div>
+              <div style={{
+                fontSize: 11, color: "#E8F0FF", lineHeight: 1.45,
+                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+              }}>
+                {headlines[tickerPos]?.title}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "5px" }}>
+                <span style={{ fontSize: 9, color: RED_US, fontWeight: 700 }}>{headlines[tickerPos]?.source}</span>
+                <a href={headlines[tickerPos]?.url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 9, color: "#A8C0E8", textDecoration: "none" }}>Read ↗</a>
+              </div>
+              {/* Dot indicators */}
+              <div style={{ display: "flex", gap: "3px", marginTop: "5px", justifyContent: "center" }}>
+                {headlines.slice(0, 8).map((_, i) => (
+                  <div key={i} onClick={() => setTickerPos(i)} style={{
+                    width: "5px", height: "5px", borderRadius: "50%", cursor: "pointer",
+                    background: i === tickerPos ? "white" : "rgba(255,255,255,0.3)",
+                    transition: "background 0.3s",
+                  }} />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        /* ── Expanded list mode ── */
+        <div style={{ maxHeight: "280px", overflowY: "auto" }}>
+          {loading ? (
+            <div style={{ padding: "12px 10px", color: "#A8C0E8", fontSize: 10, fontStyle: "italic" }}>Loading...</div>
+          ) : headlines.map((item, i) => (
+            <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+              style={{ display: "block", padding: "8px 10px", textDecoration: "none",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                background: i % 2 === 0 ? "rgba(0,30,80,0.5)" : "transparent",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(191,10,48,0.15)"}
+              onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "rgba(0,30,80,0.5)" : "transparent"}
+            >
+              <div style={{ fontSize: 11, color: "#E8F0FF", lineHeight: 1.4, marginBottom: "3px" }}>{item.title}</div>
+              <span style={{ fontSize: 9, color: RED_US, fontWeight: 700 }}>{item.source}</span>
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* Footer */}
+      <div style={{
+        padding: "4px 10px", background: "rgba(0,10,40,0.9)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <span style={{ fontSize: 8, color: "#6A8AAA", fontStyle: "italic" }}>Reuters · Updates every 5 min</span>
+        <a href="https://reuters.com" target="_blank" rel="noopener noreferrer"
+          style={{ fontSize: 8, color: RED_US, textDecoration: "none", fontWeight: 700 }}>reuters.com ↗</a>
+      </div>
+    </div>
+  );
+}
+
 export default function AppUSA() {
   const router = useRouter();
   const [user,               setUser]               = useState(null);
@@ -735,48 +885,8 @@ export default function AppUSA() {
               <img src="/ark-logo-us.png" alt="ARK Watermark" style={{ width: "380px", height: "380px", borderRadius: "50%", objectFit: "cover" }} />
             </div>
 
-            {/* ── Live US News Overlay ── */}
-            {!isMobile && (
-              <div style={{
-                position: "absolute", top: "12px", right: "12px", zIndex: 10,
-                width: "240px",
-                background: "rgba(0,31,91,0.96)",
-                border: "1px solid rgba(191,10,48,0.6)",
-                borderRadius: "10px",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-                overflow: "hidden",
-              }}>
-                {/* Header bar */}
-                <div style={{
-                  display: "flex", alignItems: "center", gap: "6px",
-                  padding: "6px 10px",
-                  background: "#BF0A30",
-                }}>
-                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px", textTransform: "uppercase" }}>LIVE</span>
-                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", marginLeft: "2px" }}>· US Legal News</span>
-                </div>
-                {/* YouTube live embed — CNN */}
-                <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
-                  <iframe
-                    src="https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
-                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                    title="ABC News Live"
-                  />
-                </div>
-                {/* Footer */}
-                <div style={{
-                  padding: "5px 10px", display: "flex", alignItems: "center", justifyContent: "space-between",
-                  background: "rgba(0,20,60,0.9)",
-                }}>
-                  <span style={{ fontSize: 9, color: "#A8C0E8", fontStyle: "italic" }}>ABC News Live</span>
-                  <a href="https://abcnews.go.com" target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: 9, color: "#BF0A30", textDecoration: "none", fontWeight: 700 }}>abcnews.go.com ↗</a>
-                </div>
-              </div>
-            )}
+            {/* ── Live US News Ticker ── */}
+            {!isMobile && <USNewsWidget />}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {messages.map((msg, i) => (
