@@ -214,7 +214,7 @@ export default function Landing() {
         position: "relative", zIndex: 1,
         height: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "20px",
+        padding: "60px 20px 20px",
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.6s ease",
       }}>
@@ -312,7 +312,7 @@ export default function Landing() {
               <div className="country-name" style={{ color: "#E8F5E0" }}>Pakistan</div>
               <div className="country-sub" style={{ color: "#9DB89A" }}>
                 Pakistani Law & Statutes<br/>
-                Lahore · Karachi · Islamabad
+                All Provinces & Federal Areas
               </div>
               <button className="enter-btn">
                 Enter <span style={{ fontSize: 16 }}>→</span>
