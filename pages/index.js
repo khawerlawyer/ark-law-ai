@@ -80,8 +80,8 @@ export default function Landing() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          width: 300px;
-          height: 380px;
+          width: 260px;
+          height: 310px;
           border-radius: 24px;
           cursor: pointer;
           transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s ease;
@@ -96,8 +96,8 @@ export default function Landing() {
           transition: opacity 0.4s ease;
         }
         .landing-card .flag-emoji {
-          width: 130px;
-          height: 87px;
+          width: 100px;
+          height: 67px;
           object-fit: cover;
           border-radius: 6px;
           filter: drop-shadow(0 10px 28px rgba(0,0,0,0.7)) brightness(1.05) saturate(1.2);
@@ -176,7 +176,7 @@ export default function Landing() {
         }
 
         @media (max-width: 700px) {
-          .landing-card { width: 260px; height: 320px; }
+          .landing-card { width: 230px; height: 280px; }
           .landing-card .flag-emoji { width: 90px; height: 60px; }
           .landing-card .country-name { font-size: 22px; }
           .cards-row { flex-direction: column !important; gap: 24px !important; }
@@ -212,36 +212,36 @@ export default function Landing() {
       {/* Main layout */}
       <div style={{
         position: "relative", zIndex: 1,
-        minHeight: "100vh", display: "flex", flexDirection: "column",
+        height: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "100px 20px 30px",
+        padding: "20px 20px 10px",
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.6s ease",
-        overflowY: "auto",
+        overflowY: "hidden",
       }}>
 
         {/* Logo + Title */}
         <div style={{
           display: "flex", flexDirection: "column", alignItems: "center",
-          marginBottom: "32px",
+          marginBottom: "18px",
           animation: "fadeUp 0.8s ease both",
           animationDelay: "0.1s",
         }}>
           {/* Logo */}
-          <div style={{ position: "relative", marginBottom: "16px", padding: "16px" }}>
+          <div style={{ position: "relative", marginBottom: "8px", padding: "10px" }}>
             <div style={{
               position: "absolute", inset: "0",
               borderRadius: "50%",
               background: `radial-gradient(circle, ${GOLD}30 0%, transparent 70%)`,
             }} />
             <img src="/ark-logo.png" alt="ARK Law AI"
-              style={{ width: "90px", height: "90px", position: "relative", filter: `drop-shadow(0 0 20px ${GOLD}60)` }} />
+              style={{ width: "72px", height: "72px", position: "relative", filter: `drop-shadow(0 0 16px ${GOLD}60)` }} />
           </div>
 
           {/* Brand name */}
           <div style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(28px, 5vw, 42px)",
+            fontSize: "clamp(24px, 4vw, 36px)",
             fontWeight: 900,
             background: `linear-gradient(135deg, ${GOLD} 0%, #FFE08A 40%, ${GOLD} 60%, #B8860B 100%)`,
             backgroundSize: "200% auto",
@@ -255,7 +255,7 @@ export default function Landing() {
           {/* Tagline */}
           <div style={{
             fontFamily: "'Crimson Pro', serif",
-            fontSize: "clamp(13px, 2vw, 16px)",
+            fontSize: "clamp(11px, 1.5vw, 14px)",
             color: "#9DB89A",
             fontStyle: "italic",
             letterSpacing: "1.5px",
@@ -264,18 +264,18 @@ export default function Landing() {
 
           {/* Gold divider */}
           <div style={{
-            width: "120px", height: "1px",
+            width: "100px", height: "1px",
             background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
-            marginTop: "16px",
+            marginTop: "10px",
             animation: "dividerGlow 3s ease-in-out infinite",
           }} />
 
           {/* Instruction */}
           <div style={{
             fontFamily: "'Crimson Pro', serif",
-            fontSize: "clamp(14px, 2.5vw, 18px)",
+            fontSize: "clamp(13px, 2vw, 16px)",
             color: "#B8C4D0",
-            marginTop: "16px",
+            marginTop: "10px",
             letterSpacing: "0.5px",
             textAlign: "center",
           }}>Select your jurisdiction to begin</div>
@@ -283,7 +283,7 @@ export default function Landing() {
 
         {/* Cards row */}
         <div className="cards-row" style={{
-          display: "flex", gap: "40px", alignItems: "center", justifyContent: "center",
+          display: "flex", gap: "24px", alignItems: "center", justifyContent: "center",
           animation: "scaleIn 0.8s cubic-bezier(.34,1.56,.64,1) both",
           animationDelay: "0.3s",
         }}>
@@ -382,7 +382,7 @@ export default function Landing() {
 
         {/* Bottom tagline */}
         <div style={{
-          marginTop: "48px",
+          marginTop: "20px",
           fontFamily: "'Crimson Pro', serif",
           fontSize: "12px",
           color: "#4A6A56",
