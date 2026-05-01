@@ -552,7 +552,7 @@ export default function AppUSA() {
 
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "48px", height: "48px" }} />
+            <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
               <div style={{ fontSize: 10, color: "#A8C0E8", direction: isUrdu ? "rtl" : "ltr" }}>US Legal Intelligence Engine</div>
@@ -733,14 +733,14 @@ export default function AppUSA() {
           {/* ══ CHAT AREA (takes full remaining width — no right sidebar) ══ */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "white", position: "relative" }}>
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
-              <img src="/ark-logo.png" alt="ARK Watermark" style={{ width: "400px", height: "400px" }} />
+              <img src="/ark-logo-us.png" alt="ARK Watermark" style={{ width: "380px", height: "380px", borderRadius: "50%", objectFit: "cover" }} />
             </div>
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {messages.map((msg, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "flex-start", gap: "10px" }}>
                     {msg.role === "assistant"
-                      ? <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0 }} />
+                      ? <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0, objectFit: "cover" }} />
                       : <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: `linear-gradient(135deg, ${NAVY}, ${NAVY_SURFACE})`, border: `2px solid ${NAVY_BORDER}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: GOLD, fontWeight: 700 }}>{user?.name?.charAt(0)?.toUpperCase() || "U"}</div>
                     }
                     <div style={{ maxWidth: "75%", position: "relative" }}>
@@ -777,7 +777,7 @@ export default function AppUSA() {
                 ))}
                 {loading && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <img src="/ark-logo.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
+                    <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, objectFit: "cover" }} />
                     <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{"ARK is thinking..."}</div>
                   </div>
                 )}
