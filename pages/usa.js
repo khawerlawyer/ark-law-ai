@@ -720,57 +720,57 @@ export default function AppUSA() {
 
       <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
-        {/* ══ HEADER — no Quranic verse ══ */}
-        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
+        {/* ══ HEADER ══ */}
+        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", flexShrink: 0 }}>
 
-          {/* Logo — left column */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, minWidth: isMobile ? "auto" : "220px" }}>
-            <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover" }} />
-            <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
-              <div style={{ fontSize: 10, color: "#A8C0E8", direction: isUrdu ? "rtl" : "ltr" }}>US Legal Intelligence Engine</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>My Learned Assistant</div>
-            </div>
-          </div>
-
-          {/* Lang + Auth — right column */}
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0, minWidth: isMobile ? "auto" : "220px", justifyContent: "flex-end" }}>
+          {/* ── LEFT: Logo + back button ── */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             <button onClick={() => router.push("/")} title="Back to Home"
-              style={{ padding: "5px 10px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }}
+              style={{ padding: "5px 8px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s", flexShrink: 0 }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
               ← 🌍
             </button>
-            {/* ── Center Tagline ── */}
-            {!isMobile && (
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <div style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: "clamp(14px, 1.8vw, 20px)",
-                  fontWeight: 700,
-                  letterSpacing: "3px",
-                  background: "linear-gradient(135deg, #C9A84C 0%, #FFE08A 40%, #C9A84C 60%, #B8860B 100%)",
-                  backgroundSize: "200% auto",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  animation: "taglineShimmer 4s linear infinite, taglineFadeIn 0.8s ease both",
-                  whiteSpace: "nowrap",
-                }}>We the People</div>
-                <div style={{ width: "120px", height: "1px", background: "linear-gradient(to right, transparent, #BF0A30, transparent)", marginTop: "4px" }} />
-                <div style={{
-                  fontFamily: "'Crimson Pro', serif",
-                  fontSize: "clamp(9px, 1vw, 11px)",
-                  fontStyle: "italic",
-                  fontWeight: 300,
-                  color: "#A8C0E8",
-                  letterSpacing: "1.5px",
-                  marginTop: "2px",
-                  animation: "taglineFadeIn 0.8s ease 0.3s both",
-                }}>Constitution of the United States</div>
-              </div>
-            )}
+            <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
+              <div style={{ fontSize: 10, color: "#A8C0E8" }}>US Legal Intelligence Engine</div>
+              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>My Learned Assistant</div>
+            </div>
+          </div>
 
+          {/* ── CENTER: Tagline (truly centered via absolute or flex:1 on both sides equal) ── */}
+          {!isMobile && (
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <div style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(14px, 1.8vw, 20px)",
+                fontWeight: 700,
+                letterSpacing: "3px",
+                background: "linear-gradient(135deg, #C9A84C 0%, #FFE08A 40%, #C9A84C 60%, #B8860B 100%)",
+                backgroundSize: "200% auto",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                animation: "taglineShimmer 4s linear infinite, taglineFadeIn 0.8s ease both",
+                whiteSpace: "nowrap",
+              }}>We the People</div>
+              <div style={{ width: "120px", height: "1px", background: "linear-gradient(to right, transparent, #BF0A30, transparent)", marginTop: "4px" }} />
+              <div style={{
+                fontFamily: "'Crimson Pro', serif",
+                fontSize: "clamp(9px, 1vw, 11px)",
+                fontStyle: "italic",
+                fontWeight: 300,
+                color: "#A8C0E8",
+                letterSpacing: "1.5px",
+                marginTop: "2px",
+                animation: "taglineFadeIn 0.8s ease 0.3s both",
+              }}>Constitution of the United States</div>
+            </div>
+          )}
+
+          {/* ── RIGHT: Auth buttons ── */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             {/* Language dropdown */}
             <select value={isUrdu ? "es" : "en"} onChange={(e) => setIsUrdu(e.target.value === "es")}
               style={{ padding: "4px 6px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, outline: "none" }}>
@@ -816,6 +816,7 @@ export default function AppUSA() {
               </>
             )}
           </div>
+                  </div>
         </header>
 
         {/* ══ BODY — two panels only (left sidebar + chat) ══ */}
