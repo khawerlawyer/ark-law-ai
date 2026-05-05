@@ -816,7 +816,6 @@ export default function AppUSA() {
               </>
             )}
           </div>
-                  </div>
         </header>
 
         {/* ══ BODY — two panels only (left sidebar + chat) ══ */}
