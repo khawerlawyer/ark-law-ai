@@ -721,10 +721,10 @@ export default function AppUSA() {
       <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
 
         {/* ══ HEADER — no Quranic verse ══ */}
-        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
+        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", flexShrink: 0, gap: isMobile ? "8px" : "12px" }}>
 
-          {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+          {/* Logo — left column */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, minWidth: isMobile ? "auto" : "220px" }}>
             <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover" }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
@@ -733,8 +733,8 @@ export default function AppUSA() {
             </div>
           </div>
 
-          {/* Lang + Auth */}
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+          {/* Lang + Auth — right column */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0, minWidth: isMobile ? "auto" : "220px", justifyContent: "flex-end" }}>
             <button onClick={() => router.push("/")} title="Back to Home"
               style={{ padding: "5px 10px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s" }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
