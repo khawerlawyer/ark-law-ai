@@ -305,6 +305,16 @@ export default function AppUSA() {
 
   useEffect(() => {
     const greeting = { role: "assistant", content: "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    try {
+      const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
+      if (saved.length > 0) {
+        setAllSessions(saved);
+        setActiveChatId(saved[0].id);
+        setMessages(saved[0].messages);
+        setNameAsked(true);
+        return;
+      }
+    } catch {}
     const firstSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions([firstSession]);
     setActiveChatId(firstSession.id);
@@ -327,12 +337,16 @@ export default function AppUSA() {
 
   useEffect(() => {
     if (activeChatId === null) return;
-    setAllSessions(prev => prev.map(s => {
-      if (s.id !== activeChatId) return s;
-      const firstUser = messages.find(m => m.role === "user");
-      const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
-      return { ...s, messages, title };
-    }));
+    setAllSessions(prev => {
+      const updated = prev.map(s => {
+        if (s.id !== activeChatId) return s;
+        const firstUser = messages.find(m => m.role === "user");
+        const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
+        return { ...s, messages, title };
+      });
+      try { localStorage.setItem("arklaw_sessions_us", JSON.stringify(updated.slice(0, 50))); } catch {}
+      return updated;
+    });
   }, [messages, activeChatId]);
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
@@ -710,32 +724,6 @@ export default function AppUSA() {
             </div>
           </div>
 
-          {/* ── Animated US Flag — center ── */}
-          {!isMobile && (
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}>
-                <div style={{ position: "absolute", width: "100px", height: "100px", borderRadius: "50%", background: "radial-gradient(circle, rgba(191,10,48,0.2) 0%, transparent 70%)", pointerEvents: "none" }} />
-                <img
-                  src="https://flagcdn.com/w640/us.png"
-                  alt="US Flag"
-                  style={{
-                    width: "88px", height: "59px",
-                    objectFit: "cover",
-                    borderRadius: "5px",
-                    border: "2px solid rgba(255,255,255,0.2)",
-                    filter: "drop-shadow(0 4px 12px rgba(191,10,48,0.5)) brightness(1.05) saturate(1.2)",
-                    animation: "usFlagFloat 3.5s ease-in-out infinite",
-                    position: "relative", zIndex: 1,
-                  }}
-                />
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                  <div style={{ fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: "#E8D97A", letterSpacing: "2px", fontStyle: "italic", whiteSpace: "nowrap" }}>We the People</div>
-                  <div style={{ width: "100%", height: "1px", background: "linear-gradient(to right, #BF0A30, transparent)", marginTop: "3px" }} />
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             <button onClick={() => router.push("/")} title="Back to Home"
@@ -744,29 +732,48 @@ export default function AppUSA() {
               onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
               ← 🌍
             </button>
-            <div style={{ padding: "5px 10px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", fontSize: 10, fontWeight: 700 }}>🇺🇸 EN</div>
+            {/* Language dropdown */}
+            <select value={isUrdu ? "es" : "en"} onChange={(e) => setIsUrdu(e.target.value === "es")}
+              style={{ padding: "4px 6px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, outline: "none" }}>
+              <option value="en">🌐 English</option>
+              <option value="es">🇺🇸 Español</option>
+            </select>
             <div style={{ width: "1px", height: "20px", background: "#003399", margin: "0 1px" }} />
-            {(showInstallBtn || user) && (
-              <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
-                style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
-                📲 {isMobile ? "Install" : "Install App"}
+            {showInstallBtn && !user && (
+              <button onClick={handleInstallApp} title="Install ARK Law AI"
+                style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", animation: "pulse 2s infinite" }}>
+                📲 Install
               </button>
             )}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{"Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "5px 12px", background: "transparent", color: LIGHT_GREEN, border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.color = "white"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = LIGHT_GREEN; }}>Login</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "5px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Signup</button>
               </>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: NAVY, border: `1px solid ${NAVY_BORDER}`, borderRadius: "6px" }}>
-                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, ${NAVY_BORDER} 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: NAVY_SURFACE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: "#001F5B", border: "1px solid #003399", borderRadius: "6px" }}>
+                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, #003399 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#001F5B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
                   </div>
                   <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                 </div>
-                <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
+                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #BF0A30, #8B0000)", color: "white", border: "1px solid #BF0A30", borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
+                {user?.email?.toLowerCase() === "khawer.profession@gmail.com" && (
+                  <button onClick={() => window.open("/admin", "_blank")}
+                    style={{ padding: "5px 10px", background: "#DC2626", color: "white", border: "1px solid #991B1B", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px" }}>
+                    🔑 Admin
+                  </button>
+                )}
+                <button onClick={() => { saveHistory(allSessions, userTokens); setShowMyAccountPopup(true); }} title="My Account"
+                  style={{ width: "34px", height: "34px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, #B8860B)`, border: `2px solid ${GOLD}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", boxShadow: `0 0 8px ${GOLD}50` }}
+                  onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 16px ${GOLD}80`}
+                  onMouseLeave={(e) => e.currentTarget.style.boxShadow = `0 0 8px ${GOLD}50`}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#001F5B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </button>
               </>
             )}
           </div>
@@ -779,20 +786,6 @@ export default function AppUSA() {
           {!isMobile && (
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
-                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{"Analyze Documents"}</div>
-                  <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
-                    {"Upload to analyze ↑"}
-                    <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert(isUrdu ? "یہ فیچر جلد آ رہا ہے" : "Feature coming soon: Document analysis"); }} />
-                  </label>
-                </div>
-                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-              </div>
-
               <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
@@ -1382,7 +1375,7 @@ export default function AppUSA() {
               e.preventDefault();
               const formData = new FormData(e.target);
               try {
-                const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), profession: formData.get("profession"), barOfPractice: formData.get("barOfPractice"), city: formData.get("city"), province: formData.get("province"), country: formData.get("country") }) });
+                const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), profession: formData.get("profession"), barOfPractice: "", city: formData.get("city"), province: formData.get("province"), country: "United States" }) });
                 const data = await res.json();
                 if (res.ok) { setShowSignupPopup(false); alert("Account created! You have been awarded 500,000 FREE credits! Please login."); setShowLoginPopup(true); }
                 else { alert(data.error || "Signup failed. Please try again."); }
@@ -1397,13 +1390,28 @@ export default function AppUSA() {
                   <option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option>
                 </select>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "11px" }}>
-                <div><label style={popupLbl}>Bar of Practice</label><input name="barOfPractice" type="text" style={popupInp} placeholder="e.g., Punjab Bar" /></div>
-                <div><label style={popupLbl}>City *</label><input name="city" type="text" required style={popupInp} placeholder="e.g., Lahore" /></div>
+              <div style={{ marginBottom: "11px" }}>
+                <label style={popupLbl}>City *</label>
+                <input name="city" type="text" required style={popupInp} placeholder="e.g., New York" />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
-                <div><label style={popupLbl}>Province *</label><input name="province" type="text" required style={popupInp} placeholder="e.g., Punjab" /></div>
-                <div><label style={popupLbl}>Country *</label><input name="country" type="text" required defaultValue="United States" style={popupInp} /></div>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={popupLbl}>State *</label>
+                <select name="province" required style={{ ...popupInp, cursor: "pointer", background: CREAM }}>
+                  <option value="">Select state...</option>
+                  <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+                  <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+                  <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+                  <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+                  <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+                  <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+                  <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+                  <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+                  <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+                  <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+                  <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+                  <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
+                  <option>Wisconsin</option><option>Wyoming</option><option>District of Columbia</option>
+                </select>
               </div>
               <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "8px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Create Account — 500,000 Free Credits ✨</button>
               <button type="button" onClick={() => setShowSignupPopup(false)} style={{ width: "100%", padding: "9px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "10px" }}>Cancel</button>
@@ -1447,7 +1455,7 @@ export default function AppUSA() {
                 </div>
                 <div style={{ background:"#EDE8DF",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"10px",padding:"11px 13px",marginBottom:"12px" }}>
                   <div style={{ fontSize:10,color:"#6A90C8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"9px" }}>Profile</div>
-                  {[{k:"Profession",v:user.profession},{k:"Bar",v:user.barOfPractice},{k:"City",v:user.city},{k:"Province",v:user.province},{k:"Country",v:user.country}].filter(x=>x.v).map(({k,v})=>(
+                  {[{k:"Profession",v:user.profession},{k:"City",v:user.city},{k:"State",v:user.province},{k:"Country",v:user.country}].filter(x=>x.v).map(({k,v})=>(
                     <div key={k} style={{ display:"flex",justifyContent:"space-between",borderBottom:"1px solid rgba(201,168,76,0.15)",paddingBottom:"5px",marginBottom:"5px" }}>
                       <span style={{ fontSize:9,color:"#7A9A76",textTransform:"uppercase" }}>{k}</span>
                       <span style={{ fontSize:11,color:"#0D1B2A",fontWeight:600 }}>{v}</span>
@@ -1472,8 +1480,8 @@ export default function AppUSA() {
                       ))
                   }
                 </div>
-                <div style={{ padding:"10px 12px",borderTop:"1px solid rgba(201,168,76,0.25)",background:"white",flexShrink:0 }}>
-                  <button onClick={()=>saveHistory(allSessions,userTokens)} style={{ width:"100%",padding:"8px",background:"#EDE8DF",color:"#5A6A55",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"6px",fontWeight:600,fontSize:11,cursor:"pointer" }} onMouseEnter={(e)=>e.currentTarget.style.background="#E4DDD0"} onMouseLeave={(e)=>e.currentTarget.style.background="#EDE8DF"}>💾 Save History Now</button>
+                <div style={{ padding:"6px 12px",borderTop:"1px solid rgba(201,168,76,0.25)",background:"#001F5B",flexShrink:0,textAlign:"center" }}>
+                  <span style={{ fontSize:9,color:"#A8C0E8",fontStyle:"italic" }}>✓ History auto-saved</span>
                 </div>
               </div>
             </div>
