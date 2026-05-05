@@ -672,6 +672,7 @@ export default function App() {
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1B2E1A" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -690,6 +691,14 @@ export default function App() {
         @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1); } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
         @keyframes pulse     { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.1); opacity:.8; } }
         @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+        @keyframes taglineShimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes taglineFadeIn {
+          from { opacity: 0; transform: translateY(-6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         @keyframes pkFlagFloat {
           0%, 100% { transform: translateY(0px) perspective(300px) rotateY(0deg); }
           25%       { transform: translateY(-4px) perspective(300px) rotateY(6deg) scaleX(0.98); }
@@ -716,6 +725,36 @@ export default function App() {
               <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>میرا فاضل دوست</div>
             </div>
           </div>
+
+          {/* ── Center Tagline ── */}
+          {!isMobile && (
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <div style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(14px, 1.8vw, 20px)",
+                fontWeight: 700,
+                letterSpacing: "3px",
+                background: "linear-gradient(135deg, #C9A84C 0%, #FFE08A 40%, #C9A84C 60%, #B8860B 100%)",
+                backgroundSize: "200% auto",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                animation: "taglineShimmer 4s linear infinite, taglineFadeIn 0.8s ease both",
+                whiteSpace: "nowrap",
+              }}>Faith · Unity · Discipline</div>
+              <div style={{ width: "120px", height: "1px", background: "linear-gradient(to right, transparent, #4CAF7D, transparent)", marginTop: "4px" }} />
+              <div style={{
+                fontFamily: "'Crimson Pro', serif",
+                fontSize: "clamp(9px, 1vw, 11px)",
+                fontStyle: "italic",
+                fontWeight: 300,
+                color: "#9DB89A",
+                letterSpacing: "1.5px",
+                marginTop: "2px",
+                animation: "taglineFadeIn 0.8s ease 0.3s both",
+              }}>قائداعظم محمد علی جناح</div>
+            </div>
+          )}
 
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
