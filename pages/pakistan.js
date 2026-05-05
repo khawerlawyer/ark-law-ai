@@ -287,6 +287,17 @@ export default function App() {
 
   useEffect(() => {
     const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
+    // Try to restore previous sessions from localStorage
+    try {
+      const saved = JSON.parse(localStorage.getItem("arklaw_sessions_pk") || "[]");
+      if (saved.length > 0) {
+        setAllSessions(saved);
+        setActiveChatId(saved[0].id);
+        setMessages(saved[0].messages);
+        setNameAsked(true);
+        return;
+      }
+    } catch {}
     const firstSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions([firstSession]);
     setActiveChatId(firstSession.id);
@@ -309,15 +320,29 @@ export default function App() {
 
   useEffect(() => {
     if (activeChatId === null) return;
-    setAllSessions(prev => prev.map(s => {
-      if (s.id !== activeChatId) return s;
-      const firstUser = messages.find(m => m.role === "user");
-      const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
-      return { ...s, messages, title };
-    }));
+    setAllSessions(prev => {
+      const updated = prev.map(s => {
+        if (s.id !== activeChatId) return s;
+        const firstUser = messages.find(m => m.role === "user");
+        const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
+        return { ...s, messages, title };
+      });
+      // Persist sessions to localStorage so they survive logout/login
+      try { localStorage.setItem("arklaw_sessions_pk", JSON.stringify(updated.slice(0, 50))); } catch {}
+      return updated;
+    });
   }, [messages, activeChatId]);
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
+
+  // Auto-save chat history whenever sessions change (if logged in)
+  useEffect(() => {
+    if (!user?.id || allSessions.length === 0) return;
+    const timer = setTimeout(() => {
+      saveHistory(allSessions, userTokens);
+    }, 2000); // debounce 2s
+    return () => clearTimeout(timer);
+  }, [allSessions]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // HELPERS
@@ -692,32 +717,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* ── Animated PK Flag — center ── */}
-          {!isMobile && (
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}>
-                <div style={{ position: "absolute", width: "100px", height: "100px", borderRadius: "50%", background: "radial-gradient(circle, rgba(76,175,125,0.2) 0%, transparent 70%)", pointerEvents: "none" }} />
-                <img
-                  src="https://flagcdn.com/w640/pk.png"
-                  alt="Pakistan Flag"
-                  style={{
-                    width: "88px", height: "59px",
-                    objectFit: "cover",
-                    borderRadius: "5px",
-                    border: "2px solid rgba(255,255,255,0.2)",
-                    filter: "drop-shadow(0 4px 12px rgba(76,175,125,0.5)) brightness(1.05) saturate(1.2)",
-                    animation: "pkFlagFloat 3.5s ease-in-out infinite",
-                    position: "relative", zIndex: 1,
-                  }}
-                />
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                  <div style={{ fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: "#E8D97A", letterSpacing: "2px", fontStyle: "italic", whiteSpace: "nowrap" }}>Faith · Unity · Discipline</div>
-                  <div style={{ width: "100%", height: "1px", background: "linear-gradient(to right, #4CAF7D, transparent)", marginTop: "3px" }} />
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Lang + Auth */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             <button onClick={() => router.push("/")} title="Back to Home"
@@ -726,10 +725,13 @@ export default function App() {
               onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#9DB89A"; }}>
               ← 🌍
             </button>
-            <button onClick={() => setIsUrdu(false)} style={{ padding: "5px 10px", background: !isUrdu ? "#2A432A" : "transparent", color: !isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: !isUrdu ? 700 : 400, transition: "all 0.2s" }}>EN</button>
-            <button onClick={() => setIsUrdu(true)} style={{ padding: "5px 10px", background: isUrdu ? "#2A432A" : "transparent", color: isUrdu ? "#E8D97A" : "#9DB89A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: isUrdu ? 700 : 400, transition: "all 0.2s", fontFamily: "serif" }}>اردو</button>
+            <select value={isUrdu ? "ur" : "en"} onChange={(e) => setIsUrdu(e.target.value === "ur")}
+              style={{ padding: "4px 6px", background: "#2A432A", color: "#E8D97A", border: "1px solid #3A5A38", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, outline: "none" }}>
+              <option value="en">🌐 English</option>
+              <option value="ur">اردو Urdu</option>
+            </select>
             <div style={{ width: "1px", height: "20px", background: "#3A5A38", margin: "0 1px" }} />
-            {(showInstallBtn || user) && (
+            {showInstallBtn && !user && (
               <button onClick={handleInstallApp} title="Install ARK Law AI as an app on your device"
                 style={{ padding: isMobile ? "5px 8px" : "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: isMobile ? 9 : 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px", animation: "pulse 2s infinite" }}>
                 📲 {isMobile ? "Install" : "Install App"}
@@ -737,8 +739,8 @@ export default function App() {
             )}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "6px 14px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LG_HOVER}`, borderRadius: "4px", cursor: "pointer", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => { e.currentTarget.style.background = LG_HOVER; e.currentTarget.style.transform = "scale(1.04)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.transform = "scale(1)"; }}>✨ Sign Up Free</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "5px 12px", background: "transparent", color: LIGHT_GREEN, border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.color = "white"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = LIGHT_GREEN; }}>Login</button>
+                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "5px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Signup</button>
               </>
             ) : (
               <>
@@ -749,7 +751,21 @@ export default function App() {
                   <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
                 </div>
                 <div style={{ padding: "5px 10px", background: `linear-gradient(135deg, ${ACCENT_PK}, #2D9B6E)`, color: "white", border: `1px solid ${ACCENT_PK}`, borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                <button onClick={() => setShowMyAccountPopup(true)} style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: `1px solid ${GOLD}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>My Account</button>
+                {user?.email?.toLowerCase() === "khawer.profession@gmail.com" && (
+                  <button onClick={() => window.open("/admin", "_blank")}
+                    style={{ padding: "5px 10px", background: "#DC2626", color: "white", border: "1px solid #991B1B", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px" }}>
+                    🔑 Admin
+                  </button>
+                )}
+                <button onClick={() => { saveHistory(allSessions, userTokens); setShowMyAccountPopup(true); }} title="My Account"
+                  style={{ width: "34px", height: "34px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, #B8860B)`, border: `2px solid ${GOLD}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", boxShadow: `0 0 8px ${GOLD}50` }}
+                  onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 16px ${GOLD}80`}
+                  onMouseLeave={(e) => e.currentTarget.style.boxShadow = `0 0 8px ${GOLD}50`}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </button>
               </>
             )}
           </div>
@@ -762,19 +778,6 @@ export default function App() {
           {!isMobile && (
           <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>📂</div>
-                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.analyzeTitle : "Analyze Documents"}</div>
-                  <label style={{ fontSize: 9, color: ACCENT_PK, cursor: "pointer", fontWeight: 500 }}>
-                    {isUrdu ? UR.analyzeSubtitle : "Upload to analyze ↑"}
-                    <input type="file" accept=".pdf,.docx,.doc" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) alert(isUrdu ? "یہ فیچر جلد آ رہا ہے" : "Feature coming soon: Document analysis"); }} />
-                  </label>
-                </div>
-                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-              </div>
 
               <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
@@ -1455,8 +1458,8 @@ export default function App() {
                       ))
                   }
                 </div>
-                <div style={{ padding:"10px 12px",borderTop:"1px solid rgba(201,168,76,0.25)",background:"white",flexShrink:0 }}>
-                  <button onClick={()=>saveHistory(allSessions,userTokens)} style={{ width:"100%",padding:"8px",background:"#EDE8DF",color:"#5A6A55",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"6px",fontWeight:600,fontSize:11,cursor:"pointer" }} onMouseEnter={(e)=>e.currentTarget.style.background="#E4DDD0"} onMouseLeave={(e)=>e.currentTarget.style.background="#EDE8DF"}>💾 Save History Now</button>
+                <div style={{ padding:"6px 12px",borderTop:"1px solid rgba(201,168,76,0.25)",background:"white",flexShrink:0,textAlign:"center" }}>
+                  <span style={{ fontSize:9,color:"#7A9A76",fontStyle:"italic" }}>✓ History auto-saved</span>
                 </div>
               </div>
             </div>
