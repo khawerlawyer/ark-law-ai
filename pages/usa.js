@@ -723,14 +723,8 @@ export default function AppUSA() {
         {/* ══ HEADER ══ */}
         <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", flexShrink: 0 }}>
 
-          {/* ── LEFT: Logo + back button ── */}
+          {/* ── LEFT: Logo ── */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <button onClick={() => router.push("/")} title="Back to Home"
-              style={{ padding: "5px 8px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s", flexShrink: 0 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
-              ← 🌍
-            </button>
             <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <div>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
@@ -772,6 +766,12 @@ export default function AppUSA() {
           {/* ── RIGHT: Auth buttons ── */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
             {/* Language dropdown */}
+            <button onClick={() => router.push("/")} title="Back to Home"
+              style={{ padding: "5px 8px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s", flexShrink: 0 }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
+              ← 🌍
+            </button>
             <select value={isUrdu ? "es" : "en"} onChange={(e) => setIsUrdu(e.target.value === "es")}
               style={{ padding: "4px 6px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, outline: "none" }}>
               <option value="en">🌐 English</option>
