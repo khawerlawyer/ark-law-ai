@@ -957,7 +957,7 @@ export default function AppIN() {
               <select value={isUrdu?"hi":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">🌐 English</option>
-                <option value="hi">हिंदी Hindi</option>
+                <option value="hi">Hindi</option>
               </select>
             </div>
           </div>
@@ -980,7 +980,7 @@ export default function AppIN() {
             {/* Desktop tagline */}
             {!isMobile && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <div style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}>सत्यमेव जयते</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}>Satyameva Jayate</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#FF9933,transparent)",marginTop:"3px"}}/>
                 <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}>Truth Alone Triumphs — Constitution of India</div>
               </div>
@@ -1011,7 +1011,7 @@ export default function AppIN() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"18px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#ececec",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
-                  {isUrdu ? "आज मैं आपकी कैसे सहायता कर सकता हूँ?" : "How can I help you today?"}
+                  {isUrdu ? "How can I help you today?" : "How can I help you today?"}
                 </h2>
                 <p style={{fontSize:14,color:"#666",marginBottom:"28px",textAlign:"center"}}>
                   {isUrdu ? "ARK Law AI India" : "ARK Law AI India — your expert legal assistant"}
@@ -1155,7 +1155,7 @@ export default function AppIN() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
-              {isUrdu ? "ARK Law AI गलतियाँ कर सकता है। महत्वपूर्ण कानूनी जानकारी सत्यापित करें।" : "ARK Law AI India may make mistakes. Verify important legal information."}
+              {isUrdu ? "ARK Law AI गलतियाँ कर सकता है। Verify important legal information." : "ARK Law AI India may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
