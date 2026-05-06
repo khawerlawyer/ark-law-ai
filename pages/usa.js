@@ -247,36 +247,36 @@ export default function AppUSA() {
     "Explain contract law in the US",
   ];
 
+  // Spanish translations (used when isUrdu === true, which means Spanish is active)
   const UR = {
-    appTagline:      "پاکستان کا قانونی ذہانت انجن",
-    sessions:        "آپ اور ARK LAW سیشنز",
-    newBtn:          "+ نیا",
-    analyzeTitle:    "دستاویز تجزیہ",
-    analyzeSubtitle: "تجزیہ کے لیے اپلوڈ کریں ↑",
-    compareTitle:    "دستاویز موازنہ",
-    compareSubtitle: "2 دستاویزیں موازنہ کے لیے",
-    draftTitle:      "دستاویز ڈرافٹ",
-    draftSubtitle:   "معاہدے، حلف نامے وغیرہ",
-    areasLabel:      "قانونی شعبہ جات",
-    placeholder:     "Ask ARK Law AI about US law or click mic to speak...",
-    send:            "بھیجیں",
-    login:           "لاگ ان",
-    listening:       "سن رہا ہوں...",
-    thinking:        "ARK سوچ رہا ہے...",
-    myAccount:       "میرا اکاؤنٹ",
+    appTagline:      "Motor de Inteligencia Legal de EE.UU.",
+    sessions:        "Tus Sesiones con ARK LAW",
+    newBtn:          "+ Nueva",
+    compareTitle:    "Comparar Documentos",
+    compareSubtitle: "Sube 2 docs para comparar",
+    draftTitle:      "Redactar Documentos",
+    draftSubtitle:   "Contratos, declaraciones y más",
+    areasLabel:      "Áreas de Práctica",
+    placeholder:     "Pregúntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el micrófono...",
+    send:            "Enviar",
+    login:           "Iniciar sesión",
+    listening:       "Escuchando...",
+    thinking:        "ARK está pensando...",
+    myAccount:       "Mi Cuenta",
+    newChat:         "Nueva sesión",
     quickQueries: [
-      "پاکستان میں کرایہ دار کے طور پر میرے کیا حقوق ہیں؟",
-      "پاکستان میں FIR کیسے درج کروائیں؟",
-      "پاکستان میں طلاق کا طریقہ کار کیا ہے؟",
-      "پاکستان میں وراثت کے قوانین کی وضاحت کریں",
-      "پاکستان میں ملازمت کے حقوق کیا ہیں؟",
-      "پاکستان میں وصیت کا مسودہ کیسے تیار کریں؟",
-      "توکیل نامہ کیا ہوتا ہے؟",
-      "پاکستان میں معاہدے کا قانون بیان کریں",
+      "¿Cuáles son mis derechos como inquilino en EE.UU.?",
+      "¿Cómo presento una demanda en EE.UU.?",
+      "¿Cuál es el proceso de divorcio en EE.UU.?",
+      "Explica las leyes de herencia en EE.UU.",
+      "¿Cuáles son mis derechos laborales en EE.UU.?",
+      "¿Cómo redacto un testamento en EE.UU.?",
+      "¿Qué es un poder notarial?",
+      "Explica la ley de contratos en EE.UU.",
     ],
     practiceAreas: [
-      "عمومی قانون", "فوجداری قانون", "کارپوریٹ و تجارتی",
-      "خاندانی قانون", "جائیداد و زمین", "محنت کے قوانین", "ٹیکس", "آئینی قانون",
+      "Derecho General", "Derecho Penal", "Corporativo y Negocios",
+      "Derecho de Familia", "Inmigración", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
     ],
   };
 
@@ -304,7 +304,7 @@ export default function AppUSA() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
       if (saved.length > 0) {
@@ -358,7 +358,7 @@ export default function AppUSA() {
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -481,7 +481,10 @@ export default function AppUSA() {
     const streamingMessageIndex = updatedMessages.length;
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country (including Pakistan, UK, India, Canada, or any other jurisdiction), you must politely decline and say something like: "I'm sorry, I specialize exclusively in US law and am not able to assist with [country] legal matters. For Pakistani law, please visit arklaw.ai/pakistan. Is there anything I can help you with under US law?" Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable.]`;
+      const langInstruction = isUrdu
+        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
+        : "Respond in English.";
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -786,7 +789,7 @@ export default function AppUSA() {
             )}
             {!user ? (
               <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "5px 12px", background: "transparent", color: LIGHT_GREEN, border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.color = "white"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = LIGHT_GREEN; }}>Login</button>
+                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "5px 12px", background: "transparent", color: LIGHT_GREEN, border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.color = "white"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
                 <button onClick={() => setShowSignupPopup(true)} style={{ padding: "5px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Signup</button>
               </>
             ) : (
@@ -829,9 +832,9 @@ export default function AppUSA() {
                 onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
                 <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{"Compare Documents"}</div>
-                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{"Upload 2 docs to compare"}</div>
+                <div style={{ flex: 1, minWidth: 0, direction: "ltr" }}>
+                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.compareTitle : "Compare Documents"}</div>
+                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.compareSubtitle : "Upload 2 docs to compare"}</div>
                 </div>
                 <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
               </div>
@@ -840,9 +843,9 @@ export default function AppUSA() {
                 onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
                 <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
-                <div style={{ flex: 1, minWidth: 0, direction: isUrdu ? "rtl" : "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{"Draft Documents"}</div>
-                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{"Contracts, affidavits & more"}</div>
+                <div style={{ flex: 1, minWidth: 0, direction: "ltr" }}>
+                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.draftTitle : "Draft Documents"}</div>
+                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
                 </div>
                 <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
               </div>
@@ -854,15 +857,15 @@ export default function AppUSA() {
                   onMouseLeave={(e) => e.currentTarget.style.background = "white"}>
                   <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{"Practice Areas"}</div>
-                    <div style={{ fontSize: 9, color: "#888" }}>"Select a legal area"</div>
+                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</div>
+                    <div style={{ fontSize: 9, color: "#888" }}>{isUrdu ? "Seleccionar área legal" : "Select a legal area"}</div>
                   </div>
                   <span style={{ color: "#BBBBBB", fontSize: 11, transition: "transform 0.2s", transform: showPracticeAreas ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
                 </div>
                 {showPracticeAreas && (
                   <div style={{ borderTop: "1px solid #F0EDE6", maxHeight: "180px", overflowY: "auto" }}>
                     {PRACTICE_AREAS_PK.map((area, i) => (
-                      <button key={area.id} onClick={() => { sendMessage(`Tell me about ${area.label} in the United States`, true); setShowPracticeAreas(false); }}
+                      <button key={area.id} onClick={() => { sendMessage(isUrdu ? `Cuéntame sobre ${area.label} en los Estados Unidos` : `Tell me about ${area.label} in the United States`, true); setShowPracticeAreas(false); }}
                         style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "7px 10px", background: "transparent", border: "none", borderBottom: "1px solid #F5F2EC", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#1A1A1A", transition: "background 0.15s" }}
                         onMouseEnter={(e) => e.currentTarget.style.background = "#F0FAF4"}
                         onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
@@ -880,8 +883,8 @@ export default function AppUSA() {
             {/* Sessions */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: isUrdu ? "rtl" : "ltr" }}>💬 {"You & ARK LAW Sessions"}</span>
-                <button onClick={startNewChat} style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: isUrdu ? "serif" : "inherit" }}
+                <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: "ltr" }}>💬 {"You & ARK LAW Sessions"}</span>
+                <button onClick={startNewChat} style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: "inherit" }}
                   onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
                   onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}
                 >{"+ New"}</button>
@@ -962,7 +965,7 @@ export default function AppUSA() {
                 {loading && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, objectFit: "cover" }} />
-                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{"ARK is thinking..."}</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{{isUrdu ? UR.thinking : "ARK is thinking..."}}</div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -1003,9 +1006,9 @@ export default function AppUSA() {
               </label>
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                 placeholder={isListening ? ("Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `Ask about your ${uploadedFiles.length} attached file(s)...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
-                style={{ flex: 1, padding: "9px 12px", background: "white", border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: isUrdu ? "rtl" : "ltr", fontFamily: isUrdu ? "serif" : "inherit" }} />
+                style={{ flex: 1, padding: "9px 12px", background: "white", border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: "ltr", fontFamily: "inherit" }} />
               <button onClick={() => sendMessage()} disabled={loading || isListening}
-                style={{ padding: "9px 18px", background: loading || isListening ? "#A8C0E8" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: isUrdu ? "serif" : "inherit", transition: "background 0.2s" }}
+                style={{ padding: "9px 18px", background: loading || isListening ? "#A8C0E8" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: "inherit", transition: "background 0.2s" }}
                 onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
                 onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{"SEND"}</button>
             </div>
@@ -1379,7 +1382,7 @@ export default function AppUSA() {
                 setUser(userWithTokens);
                 setUserTokens(restoredTokens);
                 if (data.user.chatHistory && data.user.chatHistory.length > 0) {
-                  const greeting = { role: "assistant", content: "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+                  const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
                   const restoredSessions = data.user.chatHistory.map(s => ({ ...s, messages: s.messages || [greeting] }));
                   setAllSessions(prev => { const newIds = new Set(restoredSessions.map(s => s.id)); const current = prev.filter(s => !newIds.has(s.id)); return [...restoredSessions, ...current].slice(0, 50); });
                 }
@@ -1389,7 +1392,7 @@ export default function AppUSA() {
             }}>
               <div style={popupRow}><label style={popupLbl}>Email Address</label><input name="email" type="email" required style={popupInp} placeholder="your.email@example.com" /></div>
               <div style={{ ...popupRow, marginBottom: "8px" }}><label style={popupLbl}>Password</label><input name="password" type="password" required style={popupInp} placeholder="Enter your password" /></div>
-              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Login</button>
+              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
               <button type="button" onClick={() => setShowLoginPopup(false)} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "12px" }}>Cancel</button>
               <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 12, margin: 0 }}>Don't have an account?{" "}<span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
             </form>
