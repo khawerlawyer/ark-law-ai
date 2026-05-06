@@ -380,7 +380,11 @@ export default function AdminPanel() {
                 </div>
 
                 <div style={{ marginTop: 20, padding: "12px 16px", background: NAVY_MID, borderRadius: 8, border: `1px solid ${NAVY_BORDER}`, fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6 }}>
-                  ℹ️ <strong style={{ color: GOLD }}>How it works:</strong> The theme preference is stored in <code style={{ color: GOLD }}>localStorage</code> under the key <code style={{ color: GOLD }}>arklaw_us_theme</code>. The US version reads this on load and switches between the ChatGPT-style layout and the classic ARK layout. Since it's browser-based, the change applies on the device where you make this selection.
+                  ℹ️ <strong style={{ color: GOLD }}>How it works:</strong> The theme preference is stored in <code style={{ color: GOLD }}>localStorage</code> under the key <code style={{ color: GOLD }}>arklaw_us_theme</code>. When set to <strong>"chatgpt"</strong>, visiting <code style={{ color: GOLD }}>/usa</code> shows the ChatGPT-style layout. When set to <strong>"classic"</strong>, clicking the US version will redirect to <code style={{ color: GOLD }}>/usa-classic</code> — the original ARK navy/red design. You can also visit both directly.
+                  <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                    <a href="/usa" target="_blank" style={{ padding: "6px 12px", background: "#212121", color: "#ececec", border: "1px solid #333", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open ChatGPT UI ↗</a>
+                    <a href="/usa-classic" target="_blank" style={{ padding: "6px 12px", background: "#001F5B", color: "#E8D97A", border: "1px solid #BF0A30", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open Classic UI ↗</a>
+                  </div>
                 </div>
               </div>
             </div>
