@@ -681,7 +681,7 @@ export default function App() {
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&family=DM+Sans:wght@700;800&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1B2E1A" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -731,7 +731,7 @@ export default function App() {
           <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
             <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
-              <span style={{fontSize:14,fontWeight:700,color:"#ececec",fontFamily:"Georgia,serif",letterSpacing:"0.5px"}}><img src="https://flagcdn.com/w40/pk.png" alt="PK" style={{width:"20px",height:"14px",borderRadius:"2px",marginRight:"5px",verticalAlign:"middle"}}/>ARK LAW AI</span>
+              <span style={{fontSize:14,fontWeight:700,color:"#ececec",fontFamily:"'DM Sans',sans-serif",letterSpacing:"1px",fontWeight:800}}}>ARK LAW AI <img src="https://flagcdn.com/w40/pk.png" alt="PK" style={{width:"18px",height:"12px",borderRadius:"2px",marginLeft:"5px",verticalAlign:"middle"}}/></span>
             </div>
             <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#b4b4b4",transition:"all 0.15s"}}
