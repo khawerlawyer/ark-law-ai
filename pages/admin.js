@@ -21,8 +21,11 @@ export default function AdminPanel() {
   const [loading,   setLoading]   = useState(false);
   const [search,    setSearch]    = useState("");
   const [selected,  setSelected]  = useState(null);
-  const [tab,       setTab]       = useState("users"); // users | stats | tokens
+  const [tab,       setTab]       = useState("users");
   const [msg,       setMsg]       = useState("");
+  const [usTheme,   setUsTheme]   = useState(() => {
+    try { return localStorage.getItem("arklaw_us_theme") || "chatgpt"; } catch { return "chatgpt"; }
+  });
 
   // ── Auth check ──
   useEffect(() => {
@@ -141,7 +144,7 @@ export default function AdminPanel() {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 2, marginBottom: 0 }}>
-          {[["users","👥 Users"], ["stats","📊 Stats"], ["tokens","⚡ Tokens"]].map(([t, label]) => (
+          {[["users","👥 Users"], ["stats","📊 Stats"], ["tokens","⚡ Tokens"], ["theme","🎨 Theme"]].map(([t, label]) => (
             <button key={t} className="tab-btn"
               style={{ background: tab === t ? NAVY_SURFACE : NAVY_MID, color: tab === t ? GOLD : TEXT_MUTED, borderBottom: tab === t ? `2px solid ${GOLD}` : "2px solid transparent" }}
               onClick={() => setTab(t)}>{label}</button>
@@ -320,6 +323,66 @@ export default function AdminPanel() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* ── THEME TAB ── */}
+          {tab === "theme" && (
+            <div>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 15, color: GOLD, marginBottom: 10 }}>🎨 US Version Theme</div>
+                <p style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20, lineHeight: 1.6 }}>
+                  Choose which UI theme the US version of ARK Law AI displays. The setting is saved in your browser and applied immediately when you visit the US version.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  {/* ChatGPT Theme */}
+                  <div onClick={() => { setUsTheme("chatgpt"); localStorage.setItem("arklaw_us_theme","chatgpt"); setMsg("✅ ChatGPT theme applied — refresh the US version to see it."); }}
+                    style={{ background: usTheme === "chatgpt" ? "#212121" : NAVY_MID, border: `2px solid ${usTheme === "chatgpt" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
+                    <div style={{ background: "#212121", borderRadius: 8, padding: "12px 14px", marginBottom: 12, border: "1px solid #333" }}>
+                      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                        <div style={{ width: 60, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
+                        <div style={{ width: 40, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
+                      </div>
+                      <div style={{ width: "100%", height: 6, background: "#2f2f2f", borderRadius: 3, marginBottom: 4 }} />
+                      <div style={{ width: "80%", height: 6, background: "#2f2f2f", borderRadius: 3 }} />
+                      <div style={{ marginTop: 10, padding: "6px 10px", background: "#2f2f2f", borderRadius: 8, border: "1px solid #3a3a3a", display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ flex: 1, height: 5, background: "#3a3a3a", borderRadius: 3 }} />
+                        <div style={{ width: 20, height: 20, background: "white", borderRadius: 6 }} />
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: usTheme === "chatgpt" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>ChatGPT Style {usTheme === "chatgpt" && "✓"}</div>
+                    <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Dark #212121 background, minimal sidebar, centered chat — matches ChatGPT's exact layout.</div>
+                  </div>
+
+                  {/* Classic Theme */}
+                  <div onClick={() => { setUsTheme("classic"); localStorage.setItem("arklaw_us_theme","classic"); setMsg("✅ Classic theme applied — refresh the US version to see it."); }}
+                    style={{ background: usTheme === "classic" ? "#001F5B" : NAVY_MID, border: `2px solid ${usTheme === "classic" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
+                    <div style={{ background: "#001F5B", borderRadius: 8, padding: "10px 12px", marginBottom: 12, border: "2px solid #BF0A30" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, borderBottom: "1px solid #003399", paddingBottom: 6 }}>
+                        <div style={{ width: 20, height: 20, borderRadius: "50%", background: GOLD }} />
+                        <div style={{ flex: 1, height: 6, background: GOLD, borderRadius: 3, opacity: 0.6 }} />
+                        <div style={{ width: 30, height: 6, background: "#BF0A30", borderRadius: 3 }} />
+                      </div>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <div style={{ width: 50, background: "#F5F1E8", borderRadius: 4, padding: 4 }}>
+                          <div style={{ height: 4, background: "#ccc", borderRadius: 2, marginBottom: 3 }} />
+                          <div style={{ height: 4, background: "#ccc", borderRadius: 2 }} />
+                        </div>
+                        <div style={{ flex: 1, background: "white", borderRadius: 4, padding: 4 }}>
+                          <div style={{ height: 4, background: "#eee", borderRadius: 2, marginBottom: 3 }} />
+                          <div style={{ height: 4, background: "#eee", borderRadius: 2, width: "70%" }} />
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: usTheme === "classic" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>Classic ARK Style {usTheme === "classic" && "✓"}</div>
+                    <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>US Navy/Red theme with cream sidebar, ARK branding header — original ARK Law AI design.</div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 20, padding: "12px 16px", background: NAVY_MID, borderRadius: 8, border: `1px solid ${NAVY_BORDER}`, fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6 }}>
+                  ℹ️ <strong style={{ color: GOLD }}>How it works:</strong> The theme preference is stored in <code style={{ color: GOLD }}>localStorage</code> under the key <code style={{ color: GOLD }}>arklaw_us_theme</code>. The US version reads this on load and switches between the ChatGPT-style layout and the classic ARK layout. Since it's browser-based, the change applies on the device where you make this selection.
+                </div>
+              </div>
             </div>
           )}
         </div>
