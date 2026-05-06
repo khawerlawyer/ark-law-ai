@@ -415,7 +415,7 @@ export default function AppBD() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: isUrdu ? "ARK Law AI Bangladesh-এ আপনাকে স্বাগতম।\n\nআজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?" : "Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Welcome to ARK Law AI Bangladesh — How can I help you today?" : "Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_bd") || "[]");
       if (saved.length > 0) {
@@ -469,7 +469,7 @@ export default function AppBD() {
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: isUrdu ? "ARK Law AI Bangladesh-এ আপনাকে স্বাগতম।\n\nআজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?" : "Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Welcome to ARK Law AI Bangladesh — How can I help you today?" : "Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -957,7 +957,7 @@ export default function AppBD() {
               <select value={isUrdu?"bn":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">🌐 English</option>
-                <option value="bn">বাংলা Bangla</option>
+                <option value="bn">Bangla</option>
               </select>
             </div>
           </div>
@@ -982,7 +982,7 @@ export default function AppBD() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}>Joy Bangla</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",marginTop:"3px"}}/>
-                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}>Constitution of the People's Republic of Bangladesh</div>
+                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}>Constitution of Bangladesh</div>
               </div>
             )}
             {/* Right: news + mobile auth */}
@@ -1011,7 +1011,7 @@ export default function AppBD() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"18px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#ececec",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
-                  {isUrdu ? "আজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?" : "How can I help you today?"}
+                  {isUrdu ? "How can I help you today?" : "How can I help you today?"}
                 </h2>
                 <p style={{fontSize:14,color:"#666",marginBottom:"28px",textAlign:"center"}}>
                   {isUrdu ? "ARK Law AI Bangladesh" : "ARK Law AI Bangladesh — your expert legal assistant"}
@@ -1155,7 +1155,7 @@ export default function AppBD() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
-              {isUrdu ? "ARK Law AI ভুল করতে পারে। গুরুত্বপূর্ণ আইনি তথ্য যাচাই করুন।" : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
+              {isUrdu ? "ARK Law AI ভুল করতে পারে। Verify important legal information." : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
@@ -1360,7 +1360,7 @@ export default function AppBD() {
                 const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_bd")||"[]");}catch{return [];}})();
                 const serverHistoryUs=(data.user.chatHistory&&data.user.chatHistory.length>0)?data.user.chatHistory:localBackupUs;
                 if(serverHistoryUs.length>0){
-                  const greeting={role:"assistant",content:isUrdu?"ARK Law AI Bangladesh-এ আপনাকে স্বাগতম।\n\nআজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?":"Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?"};
+                  const greeting={role:"assistant",content:isUrdu?"Welcome to ARK Law AI Bangladesh — How can I help you today?":"Welcome to ARK Law AI Bangladesh — Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?"};
                   const restoredSessions=serverHistoryUs.map(s=>({...s,messages:s.messages||[greeting]}));
                   setAllSessions(restoredSessions.slice(0,50));
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
