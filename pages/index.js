@@ -255,7 +255,7 @@ export default function Landing() {
 
           {/* Brand name */}
           <div style={{
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "DM Sans, sans-serif",
             fontSize: "clamp(24px, 4vw, 36px)",
             fontWeight: 900,
             background: `linear-gradient(135deg, ${GOLD} 0%, #FFE08A 40%, ${GOLD} 60%, #B8860B 100%)`,
@@ -351,7 +351,7 @@ export default function Landing() {
               border: `1px solid ${GOLD}40`,
               background: `radial-gradient(circle, ${GOLD}15, transparent)`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "DM Sans, sans-serif",
               fontSize: "11px", color: GOLD, letterSpacing: "1px",
               fontWeight: 700,
             }}>OR</div>
