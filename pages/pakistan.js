@@ -677,7 +677,7 @@ export default function App() {
   return (
     <>
       <Head>
-        <title>ARK LAW AI Pakistan - میرا فاضل دوست</title>
+        <title>ARK LAW AI Pakistan - My Learned Friend</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/favicon.svg" />
@@ -845,7 +845,7 @@ export default function App() {
               <select value={isUrdu?"ur":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">🌐 English</option>
-                <option value="ur">اردو Urdu</option>
+                <option value="ur">Urdu</option>
               </select>
             </div>
           </div>
@@ -870,7 +870,7 @@ export default function App() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}}>Faith · Unity · Discipline</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#4CAF7D,transparent)",marginTop:"3px"}}/>
-                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}}>قائداعظم محمد علی جناح</div>
+                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}}>Pakistan — My Learned Friend</div>
               </div>
             )}
             {/* Right: news + mobile auth */}
