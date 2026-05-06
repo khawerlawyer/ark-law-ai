@@ -25,7 +25,7 @@ export default function Landing() {
         <meta name="description" content="ARK Law AI: AI-powered legal assistant for Pakistan and USA law." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.svg" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@700;800&display=swap" rel="stylesheet" />
       </Head>
 
       <style>{`
@@ -255,7 +255,7 @@ export default function Landing() {
 
           {/* Brand name */}
           <div style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontSize: "clamp(24px, 4vw, 36px)",
             fontWeight: 900,
             background: `linear-gradient(135deg, ${GOLD} 0%, #FFE08A 40%, ${GOLD} 60%, #B8860B 100%)`,
@@ -351,7 +351,7 @@ export default function Landing() {
               border: `1px solid ${GOLD}40`,
               background: `radial-gradient(circle, ${GOLD}15, transparent)`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "11px", color: GOLD, letterSpacing: "1px",
               fontWeight: 700,
             }}>OR</div>
