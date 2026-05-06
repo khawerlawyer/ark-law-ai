@@ -965,7 +965,7 @@ export default function AppUSA() {
                 {loading && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, objectFit: "cover" }} />
-                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{{isUrdu ? UR.thinking : "ARK is thinking..."}}</div>
+                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{isUrdu ? UR.thinking : "ARK is thinking..."}</div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
