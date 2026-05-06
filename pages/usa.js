@@ -1256,11 +1256,7 @@ export default function AppUSA() {
                 const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_us")||"[]");}catch{return [];}})();
                 const serverHistoryUs=(data.user.chatHistory&&data.user.chatHistory.length>0)?data.user.chatHistory:localBackupUs;
                 if(serverHistoryUs.length>0){
-                  const greeting={role:"assistant",content:isUrdu?"Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.
-
-¿En qué puedo ayudarle hoy?":"Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.
-
-How may I assist you today?"};
+                  const greeting={role:"assistant",content:isUrdu?"Bienvenido a ARK Law AI USA \u2014 Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n\u00bfen qu\u00e9 puedo ayudarle hoy?":"Welcome to ARK Law AI USA \u2014 Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?"};
                   const restoredSessions=serverHistoryUs.map(s=>({...s,messages:s.messages||[greeting]}));
                   setAllSessions(restoredSessions.slice(0,50));
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
