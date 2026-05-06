@@ -218,6 +218,7 @@ export default function AppUSA() {
   const [installPrompt,      setInstallPrompt]      = useState(null);
   const [showInstallBtn,     setShowInstallBtn]     = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
+  const [usTheme,            setUsTheme]            = useState("chatgpt"); // "chatgpt" | "classic"
 
   const currentDate = useRef(
     new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
@@ -300,6 +301,11 @@ export default function AppUSA() {
     const handleInstallPrompt = (e) => { e.preventDefault(); setInstallPrompt(e); setShowInstallBtn(true); };
     window.addEventListener("beforeinstallprompt", handleInstallPrompt);
     window.addEventListener("appinstalled", () => { setShowInstallBtn(false); setInstallPrompt(null); });
+    // Read theme preference set by admin panel
+    try {
+      const savedTheme = localStorage.getItem("arklaw_us_theme");
+      if (savedTheme === "classic" || savedTheme === "chatgpt") setUsTheme(savedTheme);
+    } catch {}
     return () => { window.removeEventListener("resize", handleResize); window.removeEventListener("beforeinstallprompt", handleInstallPrompt); };
   }, []);
 
@@ -684,450 +690,585 @@ export default function AppUSA() {
         <link rel="icon" href="/favicon.svg" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0A1628" />
+        <meta name="theme-color" content="#212121" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="ARK Law AI" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){console.log('SW registered:',reg.scope);}).catch(function(err){console.log('SW failed:',err);});});}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js');});}` }} />
       </Head>
 
       <style>{`
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; }
-        #__next { height: 100%; overflow: hidden; }
-        @keyframes glow      { 0%,100%{ box-shadow:0 0 15px rgba(201,168,76,.5); } 50%{ box-shadow:0 0 25px rgba(201,168,76,.8); } }
-        @keyframes glowPulse { 0%,100%{ box-shadow:0 0 12px rgba(201,168,76,.7); transform:scale(1); } 50%{ box-shadow:0 0 20px rgba(255,215,0,.9); transform:scale(1.02); } }
-        @keyframes pulse     { 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.1); opacity:.8; } }
-        @keyframes typeCursor{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
-        @keyframes taglineShimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        @keyframes taglineFadeIn {
-          from { opacity: 0; transform: translateY(-6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes usFlagFloat {
-          0%, 100% { transform: translateY(0px) perspective(300px) rotateY(0deg); }
-          25%       { transform: translateY(-4px) perspective(300px) rotateY(5deg) scaleX(0.98); }
-          50%       { transform: translateY(-7px) perspective(300px) rotateY(0deg); }
-          75%       { transform: translateY(-4px) perspective(300px) rotateY(-5deg) scaleX(0.98); }
-        }
-        @media (max-width:768px){
-          .desktop-only{ display:none; }
-          header { position: sticky !important; top: 0 !important; z-index: 100 !important; flex-shrink: 0 !important; }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html,body{height:100%;overflow:hidden;background:#212121;color:#ececec;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
+        #__next{height:100%;overflow:hidden;}
+        ::-webkit-scrollbar{width:5px;}
+        ::-webkit-scrollbar-track{background:transparent;}
+        ::-webkit-scrollbar-thumb{background:#444;border-radius:3px;}
+        ::-webkit-scrollbar-thumb:hover{background:#555;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+        @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes dotBounce{0%,80%,100%{transform:scale(0.6);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
+        .sb-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:#ececec;transition:background 0.15s;text-decoration:none;width:100%;border:none;background:transparent;text-align:left;}
+        .sb-item:hover{background:#2f2f2f;}
+        .sb-item.active{background:#2f2f2f;}
+        .msg-wrap{max-width:720px;margin:0 auto;padding:0 16px;}
+        .msg-actions{opacity:0;transition:opacity 0.15s;}
+        .msg-row:hover .msg-actions{opacity:1;}
+        .qcard{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:12px;padding:14px 16px;cursor:pointer;transition:background 0.15s;text-align:left;}
+        .qcard:hover{background:#333;}
+        .input-wrap{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:16px;transition:border-color 0.2s;}
+        .input-wrap:focus-within{border-color:#555;}
+        @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "100dvh" : "100vh", minHeight: "100dvh", background: NAVY, color: TEXT_PRIMARY, fontFamily: "Segoe UI, Tahoma, sans-serif", overflow: "hidden" }}>
+      {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
+      {usTheme === "chatgpt" && (
+      <div style={{display:"flex",height:"100vh",background:"#212121",color:"#ececec",overflow:"hidden"}}>
 
-        {/* ══ HEADER ══ */}
-        <header style={{ background: "#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom: "2px solid #BF0A30", display: "flex", alignItems: "center", flexShrink: 0 }}>
+        {/* ═══════════════════════════════════════════
+            SIDEBAR
+        ═══════════════════════════════════════════ */}
+        <div className="sidebar-desktop" style={{width:"260px",background:"#171717",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:"1px solid #2a2a2a",overflowY:"auto"}}>
 
-          {/* ── LEFT: Logo ── */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <img src="/ark-logo-us.png" alt="ARK USA" style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: "#E8D97A" }}>ARK LAW AI</div>
-              <div style={{ fontSize: 10, color: "#A8C0E8" }}>US Legal Intelligence Engine</div>
-              <div style={{ fontSize: 9, color: GOLD, fontStyle: "italic", marginTop: "2px" }}>My Learned Assistant</div>
+          {/* Logo + New Chat */}
+          <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
+              <span style={{fontSize:14,fontWeight:700,color:"#ececec",fontFamily:"Georgia,serif",letterSpacing:"0.5px"}}>ARK LAW AI</span>
             </div>
-          </div>
-
-          {/* ── CENTER: Tagline (truly centered via absolute or flex:1 on both sides equal) ── */}
-          {!isMobile && (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <div style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(14px, 1.8vw, 20px)",
-                fontWeight: 700,
-                letterSpacing: "3px",
-                background: "linear-gradient(135deg, #C9A84C 0%, #FFE08A 40%, #C9A84C 60%, #B8860B 100%)",
-                backgroundSize: "200% auto",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                animation: "taglineShimmer 4s linear infinite, taglineFadeIn 0.8s ease both",
-                whiteSpace: "nowrap",
-              }}>We the People</div>
-              <div style={{ width: "120px", height: "1px", background: "linear-gradient(to right, transparent, #BF0A30, transparent)", marginTop: "4px" }} />
-              <div style={{
-                fontFamily: "'Crimson Pro', serif",
-                fontSize: "clamp(9px, 1vw, 11px)",
-                fontStyle: "italic",
-                fontWeight: 300,
-                color: "#A8C0E8",
-                letterSpacing: "1.5px",
-                marginTop: "2px",
-                animation: "taglineFadeIn 0.8s ease 0.3s both",
-              }}>Constitution of the United States</div>
-            </div>
-          )}
-
-          {/* ── RIGHT: Auth buttons ── */}
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
-            {/* Language dropdown */}
-            <button onClick={() => router.push("/")} title="Back to Home"
-              style={{ padding: "5px 8px", background: "rgba(255,255,255,0.08)", color: "#A8C0E8", border: "1px solid #2A3A5A", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", transition: "all 0.2s", flexShrink: 0 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#E8D97A"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#A8C0E8"; }}>
-              ← 🌍
+            <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
+              style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#b4b4b4",transition:"all 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#b4b4b4";}}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
-            <select value={isUrdu ? "es" : "en"} onChange={(e) => setIsUrdu(e.target.value === "es")}
-              style={{ padding: "4px 6px", background: "#002868", color: "#E8D97A", border: "1px solid #003399", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, outline: "none" }}>
-              <option value="en">🌐 English</option>
-              <option value="es">🇺🇸 Español</option>
-            </select>
-            <div style={{ width: "1px", height: "20px", background: "#003399", margin: "0 1px" }} />
-            {showInstallBtn && !user && (
-              <button onClick={handleInstallApp} title="Install ARK Law AI"
-                style={{ padding: "5px 10px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", animation: "pulse 2s infinite" }}>
-                📲 Install
-              </button>
-            )}
-            {!user ? (
-              <>
-                <button onClick={() => setShowLoginPopup(true)} style={{ padding: "5px 12px", background: "transparent", color: LIGHT_GREEN, border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, transition: "all 0.2s", whiteSpace: "nowrap" }} onMouseEnter={(e) => { e.currentTarget.style.background = LIGHT_GREEN; e.currentTarget.style.color = "white"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = LIGHT_GREEN; }}>{isUrdu ? UR.login : "Login"}</button>
-                <button onClick={() => setShowSignupPopup(true)} style={{ padding: "5px 12px", background: LIGHT_GREEN, color: "white", border: `1px solid ${LIGHT_GREEN}`, borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 600, whiteSpace: "nowrap", transition: "all 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Signup</button>
-              </>
-            ) : (
-              <>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "4px 8px", background: "#001F5B", border: "1px solid #003399", borderRadius: "6px" }}>
-                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `conic-gradient(${GOLD} ${(userTokens/500000)*100}%, #003399 0%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "#001F5B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "7px", fontWeight: 700, color: GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
-                  </div>
-                  <div style={{ fontSize: "10px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{userTokens.toLocaleString()}</div>
-                </div>
-                <div style={{ padding: "5px 10px", background: "linear-gradient(135deg, #BF0A30, #8B0000)", color: "white", border: "1px solid #BF0A30", borderRadius: "4px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>👤 {user.name}</div>
-                {user?.email?.toLowerCase() === "khawer.profession@gmail.com" && (
-                  <button onClick={() => window.open("/admin", "_blank")}
-                    style={{ padding: "5px 10px", background: "#DC2626", color: "white", border: "1px solid #991B1B", borderRadius: "4px", cursor: "pointer", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: "4px" }}>
-                    🔑 Admin
+          </div>
+
+          {/* Tools */}
+          <div style={{padding:"4px 6px",flexShrink:0}}>
+            <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
+              <span>{isUrdu ? UR.compareTitle : "Compare Documents"}</span>
+            </button>
+            <button className="sb-item" onClick={()=>setShowDraftPopup(true)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <span>{isUrdu ? UR.draftTitle : "Draft Documents"}</span>
+            </button>
+            <button className="sb-item" onClick={()=>setShowPracticeAreas(p=>!p)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>{isUrdu ? UR.areasLabel : "Practice Areas"}</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{marginLeft:"auto",transform:showPracticeAreas?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            {showPracticeAreas && (
+              <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
+                {PRACTICE_AREAS_PK.map((area,i)=>(
+                  <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#b4b4b4"}}
+                    onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
+                    <span style={{fontSize:13}}>{area.icon}</span>
+                    <span>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                   </button>
-                )}
-                <button onClick={() => { saveHistory(allSessions, userTokens); setShowMyAccountPopup(true); }} title="My Account"
-                  style={{ width: "34px", height: "34px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, #B8860B)`, border: `2px solid ${GOLD}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", boxShadow: `0 0 8px ${GOLD}50` }}
-                  onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 16px ${GOLD}80`}
-                  onMouseLeave={(e) => e.currentTarget.style.boxShadow = `0 0 8px ${GOLD}50`}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#001F5B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{height:"1px",background:"#2a2a2a",margin:"6px 12px",flexShrink:0}}/>
+
+          {/* Recents label */}
+          <div style={{padding:"2px 16px 4px",flexShrink:0}}>
+            <span style={{fontSize:11,fontWeight:600,color:"#8e8ea0",textTransform:"uppercase",letterSpacing:"0.6px"}}>Recents</span>
+          </div>
+
+          {/* Sessions list */}
+          <div style={{flex:1,overflowY:"auto",padding:"0 6px"}}>
+            {allSessions.length===0 ? (
+              <div style={{padding:"16px 12px",color:"#555",fontSize:13,textAlign:"center"}}>No conversations yet</div>
+            ) : allSessions.map(s=>{
+              const active=s.id===activeChatId;
+              return(
+                <button key={s.id} className={"sb-item"+(active?" active":"")} onClick={()=>loadSession(s.id)}
+                  style={{fontSize:13,color:active?"#ececec":"#b4b4b4",width:"100%"}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{s.title}</span>
                 </button>
-              </>
-            )}
+              );
+            })}
           </div>
-        </header>
 
-        {/* ══ BODY — two panels only (left sidebar + chat) ══ */}
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-
-          {/* LEFT SIDEBAR */}
-          {!isMobile && (
-          <div style={{ width: "200px", background: CREAM, borderRight: `1px solid ${GOLD}40`, padding: "8px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "3px", flexShrink: 0 }}>
-              <div onClick={() => setShowComparePopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                <div style={{ flex: 1, minWidth: 0, direction: "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.compareTitle : "Compare Documents"}</div>
-                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.compareSubtitle : "Upload 2 docs to compare"}</div>
+          {/* Bottom user section */}
+          <div style={{padding:"8px",borderTop:"1px solid #2a2a2a",flexShrink:0}}>
+            {!user ? (
+              <div style={{display:"flex",gap:"6px",padding:"2px 4px"}}>
+                <button onClick={()=>setShowLoginPopup(true)}
+                  style={{flex:1,padding:"9px 0",background:"transparent",color:"#ececec",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#2f2f2f"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  {isUrdu ? UR.login : "Log in"}
+                </button>
+                <button onClick={()=>setShowSignupPopup(true)}
+                  style={{flex:1,padding:"9px 0",background:"white",color:"#212121",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#e8e8e8"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
+                  Sign up
+                </button>
+              </div>
+            ) : (
+              <div>
+                {/* Token bar */}
+                <div style={{padding:"5px 10px",marginBottom:"4px",background:"#2a2a2a",borderRadius:"8px",display:"flex",alignItems:"center",gap:"8px"}}>
+                  <div style={{flex:1,height:"3px",background:"#3a3a3a",borderRadius:"2px",overflow:"hidden"}}>
+                    <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"2px"}}/>
+                  </div>
+                  <span style={{fontSize:10,color:"#666",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()}</span>
                 </div>
-                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-              </div>
-
-              <div onClick={() => setShowDraftPopup(true)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", background: "white", borderRadius: "8px", border: "1px solid #E8E8E4", cursor: "pointer", transition: "all 0.18s", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#F5F9F5"; e.currentTarget.style.borderColor = ACCENT_PK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#E8E8E4"; }}>
-                <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>✍️</div>
-                <div style={{ flex: 1, minWidth: 0, direction: "ltr" }}>
-                  <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.draftTitle : "Draft Documents"}</div>
-                  <div style={{ fontSize: 9, color: "#888", fontWeight: 400 }}>{isUrdu ? UR.draftSubtitle : "Contracts, affidavits & more"}</div>
-                </div>
-                <span style={{ color: "#BBBBBB", fontSize: 12 }}>›</span>
-              </div>
-
-              {/* Practice Areas dropdown */}
-              <div style={{ borderRadius: "8px", border: "1px solid #E8E8E4", background: "white", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-                <div onClick={() => setShowPracticeAreas(p => !p)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", cursor: "pointer", transition: "all 0.18s" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "#F5F9F5"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "white"}>
-                  <div style={{ width: "28px", height: "28px", flexShrink: 0, background: "#EDF7F0", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>⚖️</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 600, lineHeight: 1.3 }}>{isUrdu ? UR.areasLabel : "Practice Areas"}</div>
-                    <div style={{ fontSize: 9, color: "#888" }}>{isUrdu ? "Seleccionar área legal" : "Select a legal area"}</div>
+                {/* User row */}
+                <button className="sb-item" onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}} style={{width:"100%"}}>
+                  <div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#C9A84C,#B8860B)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#111",flexShrink:0}}>
+                    {user.name?.charAt(0)?.toUpperCase()}
                   </div>
-                  <span style={{ color: "#BBBBBB", fontSize: 11, transition: "transform 0.2s", transform: showPracticeAreas ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
-                </div>
-                {showPracticeAreas && (
-                  <div style={{ borderTop: "1px solid #F0EDE6", maxHeight: "180px", overflowY: "auto" }}>
-                    {PRACTICE_AREAS_PK.map((area, i) => (
-                      <button key={area.id} onClick={() => { sendMessage(isUrdu ? `Cuéntame sobre ${area.label} en los Estados Unidos` : `Tell me about ${area.label} in the United States`, true); setShowPracticeAreas(false); }}
-                        style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "7px 10px", background: "transparent", border: "none", borderBottom: "1px solid #F5F2EC", cursor: "pointer", textAlign: "left", fontSize: 10, color: "#1A1A1A", transition: "background 0.15s" }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#F0FAF4"}
-                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
-                        <span style={{ fontSize: 12 }}>{area.icon}</span>
-                        <span style={{ flex: 1 }}>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
-                      </button>
-                    ))}
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:13,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
+                    <div style={{fontSize:11,color:"#666",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.email}</div>
                   </div>
-                )}
-              </div>
-            </div>
-
-            <div style={{ height: "1px", background: `${GOLD}40`, margin: "6px 0", flexShrink: 0 }} />
-
-            {/* Sessions */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px", flexShrink: 0 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: NAVY, textTransform: "uppercase", letterSpacing: "0.5px", direction: "ltr" }}>💬 {"You & ARK LAW Sessions"}</span>
-                <button onClick={startNewChat} style={{ fontSize: 8, padding: "2px 8px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 700, transition: "background 0.15s", fontFamily: "inherit" }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER}
-                  onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}
-                >{"+ New"}</button>
-              </div>
-              <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "2px" }}>
-                {allSessions.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "20px 8px", color: TEXT_MUTED }}>
-                    <div style={{ fontSize: 20, marginBottom: "6px", opacity: 0.4 }}>💬</div>
-                    <div style={{ fontSize: 8, lineHeight: 1.5 }}>Start a conversation!</div>
-                  </div>
-                ) : (
-                  allSessions.map((session) => {
-                    const isActive = session.id === activeChatId;
-                    return (
-                      <div key={session.id} onClick={() => loadSession(session.id)} title={session.title}
-                        style={{ padding: "6px 8px", borderRadius: "6px", background: isActive ? `${GOLD}22` : "transparent", border: isActive ? `1px solid ${GOLD}60` : "1px solid transparent", cursor: "pointer", transition: "all 0.15s", display: "flex", alignItems: "flex-start", gap: "6px" }}
-                        onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = `${NAVY}08`; e.currentTarget.style.borderColor = NAVY_BORDER; } }}
-                        onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; } }}>
-                        <span style={{ fontSize: 10, flexShrink: 0, marginTop: "1px" }}>{isActive ? "🟡" : "💬"}</span>
-                        <span style={{ fontSize: 8, color: isActive ? NAVY : "#444", lineHeight: 1.4, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", fontWeight: isActive ? 600 : 400 }}>{session.title}</span>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          </div>
-          )}
-
-          {/* ══ CHAT AREA (takes full remaining width — no right sidebar) ══ */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "white", position: "relative" }}>
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.08, pointerEvents: "none", zIndex: 0 }}>
-              <img src="/ark-logo-us.png" alt="ARK Watermark" style={{ width: "380px", height: "380px", borderRadius: "50%", objectFit: "cover" }} />
-            </div>
-
-            {/* ── Live US News Ticker ── */}
-            {!isMobile && <USNewsWidget />}
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column-reverse", position: "relative", zIndex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {messages.map((msg, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "flex-start", gap: "10px" }}>
-                    {msg.role === "assistant"
-                      ? <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, flexShrink: 0, objectFit: "cover" }} />
-                      : <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: `linear-gradient(135deg, ${NAVY}, ${NAVY_SURFACE})`, border: `2px solid ${NAVY_BORDER}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: GOLD, fontWeight: 700 }}>{user?.name?.charAt(0)?.toUpperCase() || "U"}</div>
-                    }
-                    <div style={{ maxWidth: "75%", position: "relative" }}>
-                      <div style={{ padding: "10px 14px", borderRadius: "8px", background: "white", color: "#1A1A1A", fontSize: 13, lineHeight: "1.6", position: "relative" }}>
-                        {renderMessageContent(msg.content)}
-                      </div>
-                      {msg.role === "assistant" && (
-                        <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
-                          <button onClick={() => speakText(msg.content, i)} title={currentSpeakingIndex === i ? "Stop" : "Listen"}
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: currentSpeakingIndex === i ? LIGHT_GREEN : "white", border: `1px solid ${currentSpeakingIndex === i ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s", flexShrink: 0 }}
-                            onMouseEnter={(e) => { if (currentSpeakingIndex !== i) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}15`; } }}
-                            onMouseLeave={(e) => { if (currentSpeakingIndex !== i) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
-                            {currentSpeakingIndex === i
-                              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                              : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                            }
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], like: !prev[i]?.like, dislike: false } })); }} title="Like"
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.like ? "#E8F5E9" : "white", border: `1px solid ${reactions[i]?.like ? LIGHT_GREEN : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = "#E8F5E9"; }}
-                            onMouseLeave={(e) => { if (!reactions[i]?.like) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.like ? LIGHT_GREEN : "none"} stroke={reactions[i]?.like ? LIGHT_GREEN : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); setReactions(prev => ({ ...prev, [i]: { ...prev[i], dislike: !prev[i]?.dislike, like: false } })); }} title="Dislike"
-                            style={{ width: "28px", height: "28px", borderRadius: "6px", background: reactions[i]?.dislike ? "#FEE2E2" : "white", border: `1px solid ${reactions[i]?.dislike ? "#EF4444" : "#D0D0C8"}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#EF4444"; e.currentTarget.style.background = "#FEE2E2"; }}
-                            onMouseLeave={(e) => { if (!reactions[i]?.dislike) { e.currentTarget.style.borderColor = "#D0D0C8"; e.currentTarget.style.background = "white"; } }}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.dislike ? "#EF4444" : "none"} stroke={reactions[i]?.dislike ? "#EF4444" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                {loading && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <img src="/ark-logo-us.png" alt="ARK" style={{ width: "32px", height: "32px", borderRadius: "50%", border: `2px solid ${GOLD}`, objectFit: "cover" }} />
-                    <div style={{ color: TEXT_MUTED, fontSize: 12 }}>{isUrdu ? UR.thinking : "ARK is thinking..."}</div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-
-            {uploadedFiles.length > 0 && (
-              <div style={{ padding: "8px 12px", borderTop: `1px solid ${NAVY_BORDER}`, background: `${NAVY_SURFACE}aa`, display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
-                <span style={{ fontSize: 10, color: TEXT_MUTED, fontWeight: 600 }}>📎 Attached ({uploadedFiles.length}):</span>
-                {uploadedFiles.map((file, index) => (
-                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px", padding: "3px 8px", background: NAVY_SURFACE, border: `1px solid ${GOLD}`, borderRadius: "4px", fontSize: 10, color: CREAM }}>
-                    <span>{file.name}</span><span style={{ color: TEXT_MUTED }}>({(file.size / 1024).toFixed(1)} KB)</span>
-                    <button onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== index))} style={{ background: "none", border: "none", color: GOLD, cursor: "pointer", fontSize: 12, padding: "0 2px", lineHeight: 1 }}>✕</button>
-                  </div>
-                ))}
-                <button onClick={() => setUploadedFiles([])} style={{ padding: "3px 8px", background: `${GOLD}20`, border: `1px solid ${GOLD}`, borderRadius: "4px", color: GOLD, fontSize: 9, fontWeight: 600, cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = NAVY; }} onMouseLeave={(e) => { e.currentTarget.style.background = `${GOLD}20`; e.currentTarget.style.color = GOLD; }}>Clear All</button>
+                  {user?.email?.toLowerCase()==="khawer.profession@gmail.com" && (
+                    <button onClick={e=>{e.stopPropagation();window.open("/admin","_blank");}}
+                      style={{padding:"2px 6px",background:"#DC2626",color:"white",border:"none",borderRadius:"4px",cursor:"pointer",fontSize:9,fontWeight:700,flexShrink:0}}>
+                      Admin
+                    </button>
+                  )}
+                </button>
               </div>
             )}
-
-            {/* Input row */}
-            <div style={{ padding: "12px 15px", borderTop: `1px solid ${NAVY_BORDER}`, display: "flex", gap: "8px", alignItems: "center", background: "white" }}>
-              <button onClick={startVoiceInput} disabled={loading || isListening} title={isListening ? "Listening..." : "Click to speak"}
-                style={{ width: "38px", height: "38px", background: isListening ? LIGHT_GREEN : "white", border: `1px solid ${isListening ? LIGHT_GREEN : GOLD}60`, borderRadius: "6px", cursor: loading || isListening ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s", animation: isListening ? "pulse 1.5s infinite" : "none", boxShadow: isListening ? `0 0 0 3px ${LIGHT_GREEN}30` : "none" }}
-                onMouseEnter={(e) => { if (!isListening && !loading) { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; } }}
-                onMouseLeave={(e) => { if (!isListening) { e.currentTarget.style.borderColor = `${GOLD}60`; e.currentTarget.style.background = "white"; } }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isListening ? "white" : NAVY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/>
-                </svg>
+            {/* Back + Language */}
+            <div style={{display:"flex",gap:"4px",marginTop:"4px",padding:"0 2px"}}>
+              <button onClick={()=>router.push("/")}
+                style={{padding:"6px 8px",background:"transparent",color:"#666",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
+                ← 🌍
               </button>
-              <label htmlFor="file-upload" title="Attach files"
-                style={{ width: "38px", height: "38px", background: "white", border: `1px solid ${GOLD}60`, borderRadius: "6px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = LIGHT_GREEN; e.currentTarget.style.background = `${LIGHT_GREEN}12`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${GOLD}60`; e.currentTarget.style.background = "white"; }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                </svg>
-                <input id="file-upload" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={(e) => { const files = Array.from(e.target.files); if (files.length > 0) { setUploadedFiles(prev => [...prev, ...files]); alert(files.length + " file(s) uploaded: " + files.map(f => f.name).join(", ")); } }} style={{ display: "none" }} />
-              </label>
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                placeholder={isListening ? ("Listening...") : uploadedFiles.length > 0 ? (isUrdu ? `Ask about your ${uploadedFiles.length} attached file(s)...` : `Ask about your ${uploadedFiles.length} attached file(s)...`) : (isUrdu ? UR.placeholder : "Ask ARK Law AI or click mic to speak...")}
-                style={{ flex: 1, padding: "9px 12px", background: "white", border: `1px solid ${GOLD}60`, color: NAVY, borderRadius: "4px", fontSize: 13, direction: "ltr", fontFamily: "inherit" }} />
-              <button onClick={() => sendMessage()} disabled={loading || isListening}
-                style={{ padding: "9px 18px", background: loading || isListening ? "#A8C0E8" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "4px", cursor: loading || isListening ? "not-allowed" : "pointer", fontWeight: 600, fontSize: 13, opacity: loading || isListening ? 0.6 : 1, fontFamily: "inherit", transition: "background 0.2s" }}
-                onMouseEnter={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LG_HOVER; }}
-                onMouseLeave={(e) => { if (!loading && !isListening) e.currentTarget.style.background = LIGHT_GREEN; }}>{"SEND"}</button>
+              <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
+                style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
+                <option value="en">🌐 English</option>
+                <option value="es">Español</option>
+              </select>
             </div>
-          </div>
-
-        </div>{/* end body */}
-
-        {/* FOOTER */}
-        <footer style={{ background: "#001F5B", borderTop: "2px solid #BF0A30", flexShrink: 0 }}>
-          <div style={{ padding: "3px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", minHeight: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, flexWrap: "wrap", rowGap: "0" }}>
-              <img src="/ark-logo.png" alt="ARK" style={{ width: "14px", height: "14px", opacity: 0.85, flexShrink: 0 }} />
-              <span style={{ fontSize: 8, fontWeight: 700, color: "#E8D97A", fontFamily: "Georgia,serif", whiteSpace: "nowrap" }}>ARK LAW AI</span>
-              <span style={{ color: "#003399", fontSize: 8 }}>|</span>
-              {[
-                { heading: "Product",   links: ["Features", "Document Analysis", "AI Drafting"] },
-                { heading: "Company",   links: ["About Us", "Careers", "Blog"] },
-                { heading: "Resources", links: ["Help Center", "Guides", "Legal Updates"] },
-              ].map(({ heading, links }, gi) => (
-                <div key={heading} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  {gi > 0 && <span style={{ color: "#003399", fontSize: 8 }}>|</span>}
-                  <span style={{ fontSize: 7, fontWeight: 700, color: "#D4C97A", textTransform: "uppercase", letterSpacing: "0.4px" }}>{heading}:</span>
-                  {links.map((link, li) => (
-                    <span key={link} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                      {li > 0 && <span style={{ color: "#003399", fontSize: 7 }}>·</span>}
-                      <span onClick={() => link === "Features" ? setShowFeaturesPopup(true) : setShowComingSoon(true)} style={{ fontSize: 7, color: "#A8C0E8", cursor: "pointer", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#E8D97A"} onMouseLeave={(e) => e.currentTarget.style.color = "#A8C0E8"}>{link}</span>
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", flexShrink: 0 }}>
-              {[
-                { label: "Twitter",  svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-                { label: "LinkedIn", svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-                { label: "YouTube",  svg: <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> },
-              ].map(({ label, svg }) => (
-                <button key={label} onClick={() => setShowComingSoon(true)} aria-label={label}
-                  style={{ width: "16px", height: "16px", borderRadius: "3px", background: "#002868", border: "1px solid #3A5A38", display: "flex", alignItems: "center", justifyContent: "center", color: "#A8C0E8", cursor: "pointer", transition: "all 0.18s", padding: 0 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#3A5C38"; e.currentTarget.style.color = "#E8D97A"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "#002868"; e.currentTarget.style.color = "#A8C0E8"; }}
-                >{svg}</button>
-              ))}
-              <span style={{ fontSize: 6.5, color: "#6A8A68", whiteSpace: "nowrap" }}>© 2026 ARK Lex AI LLC.</span>
-            </div>
-          </div>
-        </footer>
-      </div>
-
-      {/* ════════════════════════ POPUPS ═════════════════════════════════ */}
-
-      {showSuccessPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: NAVY_SURFACE, padding: "40px", borderRadius: "12px", border: `2px solid ${ACCENT_PK}`, maxWidth: "450px", textAlign: "center" }}>
-            <img src="/ark-logo.png" alt="ARK" style={{ width: "60px", height: "60px", margin: "0 auto 15px" }} />
-            <div style={{ fontSize: 48, marginBottom: "15px" }}>✅</div>
-            <h2 style={{ color: ACCENT_PK, fontSize: 18, marginBottom: "15px" }}>Correct Code!</h2>
-            <div style={{ borderTop: `2px solid ${GOLD}`, borderBottom: `2px solid ${GOLD}`, padding: "20px", margin: "20px 0" }}>
-              <p style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.6" }}>You have entered the correct access code for ARK Law AI USA.</p>
-            </div>
-            <button onClick={() => setShowSuccessPopup(false)} style={{ padding: "12px 30px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600 }}>OK — Let's Go! ⚖️</button>
           </div>
         </div>
-      )}
+
+        {/* ═══════════════════════════════════════════
+            MAIN CONTENT
+        ═══════════════════════════════════════════ */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#212121"}}>
+
+          {/* Top bar — tagline + news widget */}
+          <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #2a2a2a",flexShrink:0,minHeight:"52px"}}>
+            {/* Mobile logo */}
+            {isMobile && (
+              <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",borderRadius:"50%",objectFit:"cover"}}/>
+                <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
+              </div>
+            )}
+            {/* Desktop tagline */}
+            {!isMobile && (
+              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}}>We the People</div>
+                <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginTop:"3px"}}/>
+                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}}>Constitution of the United States</div>
+              </div>
+            )}
+            {/* Right: news + mobile auth */}
+            <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0}}>
+              {!isMobile && <USNewsWidget />}
+              {isMobile && !user && (
+                <div style={{display:"flex",gap:"6px"}}>
+                  <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#ececec",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
+                  <button onClick={()=>setShowSignupPopup(true)} style={{padding:"6px 12px",background:"white",color:"#212121",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:600}}>Sign up</button>
+                </div>
+              )}
+              {isMobile && user && (
+                <button onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}}
+                  style={{width:"32px",height:"32px",borderRadius:"50%",background:"linear-gradient(135deg,#C9A84C,#B8860B)",border:"none",cursor:"pointer",fontSize:14,fontWeight:700,color:"#111"}}>
+                  {user.name?.charAt(0)?.toUpperCase()}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Chat scroll area */}
+          <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column"}}>
+
+            {/* Empty state */}
+            {messages.filter(m=>m.role==="user").length===0 && !loading && (
+              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px",animation:"fadeSlideUp 0.4s ease"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"18px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#ececec",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
+                  {isUrdu ? "¿En qué puedo ayudarle hoy?" : "How can I help you today?"}
+                </h2>
+                <p style={{fontSize:14,color:"#666",marginBottom:"28px",textAlign:"center"}}>
+                  {isUrdu ? "ARK Law AI USA — su asistente legal experto" : "ARK Law AI USA — your expert US legal assistant"}
+                </p>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:"10px",width:"100%",maxWidth:"660px"}}>
+                  {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
+                    <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
+                      <div style={{fontSize:13.5,color:"#d1d1d1",lineHeight:1.45,marginBottom:"8px"}}>{q}</div>
+                      <div style={{fontSize:11,color:"#555",display:"flex",alignItems:"center",gap:"4px"}}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Ask ARK
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Messages */}
+            <div style={{padding:"8px 0 0"}}>
+              {messages.map((msg,i)=>(
+                <div key={i} className="msg-row" style={{padding:"14px 0",animation:"fadeSlideUp 0.25s ease"}}>
+                  <div className="msg-wrap">
+                    <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+                      {/* Avatar */}
+                      <div style={{flexShrink:0,marginTop:"2px"}}>
+                        {msg.role==="assistant" ? (
+                          <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",border:"1px solid #333"}}/>
+                        ) : (
+                          <div style={{width:"30px",height:"30px",borderRadius:"50%",background:"linear-gradient(135deg,#667eea,#764ba2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white"}}>
+                            {user?.name?.charAt(0)?.toUpperCase()||"U"}
+                          </div>
+                        )}
+                      </div>
+                      {/* Text */}
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:13,fontWeight:600,color:"#ececec",marginBottom:"5px"}}>
+                          {msg.role==="assistant" ? "ARK Law AI" : (user?.name||"You")}
+                        </div>
+                        <div style={{fontSize:14.5,color:"#d1d1d1",lineHeight:1.7}}>
+                          {renderMessageContent(msg.content)}
+                        </div>
+                        {/* Actions */}
+                        {msg.role==="assistant" && msg.content && (
+                          <div className="msg-actions" style={{display:"flex",gap:"4px",marginTop:"10px",flexWrap:"wrap"}}>
+                            <button onClick={()=>speakText(msg.content,i)}
+                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:currentSpeakingIndex===i?"#4CAF7D":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
+                              onMouseLeave={e=>{e.currentTarget.style.borderColor="#333";e.currentTarget.style.color=currentSpeakingIndex===i?"#4CAF7D":"#666";}}>
+                              {currentSpeakingIndex===i
+                                ?<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
+                              <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
+                            </button>
+                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
+                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                            </button>
+                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
+                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* Loading dots */}
+              {loading && (
+                <div style={{padding:"14px 0"}}>
+                  <div className="msg-wrap">
+                    <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+                      <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
+                      <div style={{paddingTop:"6px",display:"flex",gap:"5px",alignItems:"center"}}>
+                        {[0,1,2].map(i=>(
+                          <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#666",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} style={{height:"16px"}}/>
+            </div>
+          </div>
+
+          {/* ═══════════════════ INPUT AREA ═══════════════════ */}
+          <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#212121",flexShrink:0}}>
+
+            {/* Attached files */}
+            {uploadedFiles.length>0 && (
+              <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
+                {uploadedFiles.map((file,idx)=>(
+                  <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#2f2f2f",border:"1px solid #3a3a3a",borderRadius:"8px",fontSize:12,color:"#d1d1d1"}}>
+                    <span>📎 {file.name}</span>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#666",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Input box */}
+            <div className="input-wrap" style={{maxWidth:"720px",margin:"0 auto",padding:"10px 12px",display:"flex",alignItems:"flex-end",gap:"8px"}}>
+              {/* Attach */}
+              <label htmlFor="file-us" style={{cursor:"pointer",color:"#666",display:"flex",alignItems:"center",padding:"4px",borderRadius:"6px",flexShrink:0,transition:"color 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.color="#ececec"} onMouseLeave={e=>e.currentTarget.style.color="#666"}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <input id="file-us" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" style={{display:"none"}} onChange={e=>{const files=Array.from(e.target.files);if(files.length)setUploadedFiles(prev=>[...prev,...files]);}}/>
+              </label>
+
+              {/* Textarea */}
+              <textarea
+                value={input}
+                onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(180,e.target.scrollHeight)+"px";}}
+                onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
+                placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about US law...")}
+                rows={1}
+                style={{flex:1,background:"transparent",border:"none",color:"#ececec",fontSize:15,lineHeight:1.6,resize:"none",outline:"none",fontFamily:"inherit",maxHeight:"180px",overflowY:"auto"}}
+              />
+
+              {/* Mic */}
+              <button onClick={startVoiceInput} disabled={loading||isListening}
+                style={{color:isListening?"#4CAF7D":"#666",background:"transparent",border:"none",cursor:"pointer",display:"flex",alignItems:"center",flexShrink:0,padding:"4px",borderRadius:"6px",transition:"color 0.15s",animation:isListening?"pulse 1.5s infinite":"none"}}
+                onMouseEnter={e=>{if(!isListening)e.currentTarget.style.color="#ececec";}}
+                onMouseLeave={e=>{if(!isListening)e.currentTarget.style.color="#666";}}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+              </button>
+
+              {/* Send */}
+              <button onClick={()=>sendMessage()} disabled={loading||(!input.trim()&&!uploadedFiles.length)}
+                style={{width:"32px",height:"32px",borderRadius:"8px",background:(loading||(!input.trim()&&!uploadedFiles.length))?"#333":"white",border:"none",cursor:(loading||(!input.trim()&&!uploadedFiles.length))?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.2s"}}>
+                {loading
+                  ?<div style={{width:"13px",height:"13px",border:"2px solid #666",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
+                  :<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={(!input.trim()&&!uploadedFiles.length)?"#555":"#212121"} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                }
+              </button>
+            </div>
+
+            <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
+              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la información legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+      )} {/* end chatgpt theme */}
+
+      {/* ═══════════════════ CLASSIC ARK THEME ═══════════════════ */}
+      {usTheme === "classic" && (
+        <div style={{ display:"flex", flexDirection:"column", height: isMobile ? "100dvh" : "100vh", background:"#001F5B", color:"#FAF6EE", fontFamily:"Segoe UI, Tahoma, sans-serif", overflow:"hidden" }}>
+          {/* Header */}
+          <header style={{ background:"#001F5B", padding: isMobile ? "6px 10px" : "8px 20px", borderBottom:"2px solid #BF0A30", display:"flex", alignItems:"center", flexShrink:0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"8px", flexShrink:0 }}>
+              <img src="/ark-logo-us.png" alt="ARK USA" style={{ width:"52px", height:"52px", borderRadius:"50%", objectFit:"cover", flexShrink:0 }} />
+              <div>
+                <div style={{ fontFamily:"Georgia,serif", fontSize:18, fontWeight:700, color:"#E8D97A" }}>ARK LAW AI</div>
+                <div style={{ fontSize:10, color:"#A8C0E8" }}>US Legal Intelligence Engine</div>
+                <div style={{ fontSize:9, color:GOLD, fontStyle:"italic", marginTop:"2px" }}>My Learned Assistant</div>
+              </div>
+            </div>
+            {!isMobile && (
+              <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+                <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(14px,1.8vw,20px)", fontWeight:700, letterSpacing:"3px", background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)", backgroundSize:"200% auto", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", animation:"taglineShimmer 4s linear infinite", whiteSpace:"nowrap" }}>We the People</div>
+                <div style={{ width:"120px", height:"1px", background:"linear-gradient(to right,transparent,#BF0A30,transparent)", marginTop:"4px" }} />
+                <div style={{ fontFamily:"'Crimson Pro',serif", fontSize:"10px", fontStyle:"italic", color:"#A8C0E8", letterSpacing:"1.5px", marginTop:"2px" }}>Constitution of the United States</div>
+              </div>
+            )}
+            <div style={{ display:"flex", gap:"8px", alignItems:"center", flexShrink:0 }}>
+              <button onClick={()=>router.push("/")} style={{ padding:"5px 8px", background:"rgba(255,255,255,0.08)", color:"#A8C0E8", border:"1px solid #2A3A5A", borderRadius:"4px", cursor:"pointer", fontSize:10, fontWeight:600, display:"flex", alignItems:"center", gap:"4px" }}>← 🌍</button>
+              <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")} style={{ padding:"4px 6px", background:"#002868", color:"#E8D97A", border:"1px solid #003399", borderRadius:"4px", cursor:"pointer", fontSize:10, fontWeight:600, outline:"none" }}>
+                <option value="en">🌐 English</option>
+                <option value="es">Español</option>
+              </select>
+              {!user ? (
+                <>
+                  <button onClick={()=>setShowLoginPopup(true)} style={{ padding:"5px 12px", background:"transparent", color:LIGHT_GREEN, border:`1px solid ${LIGHT_GREEN}`, borderRadius:"4px", cursor:"pointer", fontSize:10, fontWeight:600 }} onMouseEnter={e=>{e.currentTarget.style.background=LIGHT_GREEN;e.currentTarget.style.color="white";}} onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=LIGHT_GREEN;}}>{isUrdu?UR.login:"Login"}</button>
+                  <button onClick={()=>setShowSignupPopup(true)} style={{ padding:"5px 12px", background:LIGHT_GREEN, color:"white", border:`1px solid ${LIGHT_GREEN}`, borderRadius:"4px", cursor:"pointer", fontSize:10, fontWeight:600 }} onMouseEnter={e=>e.currentTarget.style.background=LG_HOVER} onMouseLeave={e=>e.currentTarget.style.background=LIGHT_GREEN}>Signup</button>
+                </>
+              ) : (
+                <>
+                  <div style={{ display:"flex", alignItems:"center", gap:"6px", padding:"4px 8px", background:"#001F5B", border:"1px solid #003399", borderRadius:"6px" }}>
+                    <div style={{ width:"24px", height:"24px", borderRadius:"50%", background:`conic-gradient(${GOLD} ${(userTokens/500000)*100}%, #003399 0%)`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <div style={{ width:"18px", height:"18px", borderRadius:"50%", background:"#001F5B", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"7px", fontWeight:700, color:GOLD }}>{Math.round((userTokens/500000)*100)}%</div>
+                    </div>
+                    <div style={{ fontSize:"10px", fontWeight:700, color:GOLD }}>{userTokens.toLocaleString()}</div>
+                  </div>
+                  <div style={{ padding:"5px 10px", background:"linear-gradient(135deg,#BF0A30,#8B0000)", color:"white", border:"1px solid #BF0A30", borderRadius:"4px", fontSize:10, fontWeight:700 }}>👤 {user.name}</div>
+                  {user?.email?.toLowerCase()==="khawer.profession@gmail.com" && (
+                    <button onClick={()=>window.open("/admin","_blank")} style={{ padding:"5px 10px", background:"#DC2626", color:"white", border:"1px solid #991B1B", borderRadius:"4px", cursor:"pointer", fontSize:10, fontWeight:700 }}>🔑 Admin</button>
+                  )}
+                  <button onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}} title="My Account"
+                    style={{ width:"34px", height:"34px", borderRadius:"50%", background:`linear-gradient(135deg,${GOLD},#B8860B)`, border:`2px solid ${GOLD}`, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#001F5B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </button>
+                </>
+              )}
+            </div>
+          </header>
+
+          {/* Body */}
+          <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
+            {/* Left Sidebar */}
+            {!isMobile && (
+            <div style={{ width:"200px", background:"#F5F1E8", borderRight:`1px solid ${GOLD}40`, padding:"8px", display:"flex", flexDirection:"column", overflow:"hidden" }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:"3px", flexShrink:0 }}>
+                <div onClick={()=>setShowComparePopup(true)} style={{ display:"flex", alignItems:"center", gap:"10px", padding:"8px 10px", background:"white", borderRadius:"8px", border:"1px solid #E8E8E4", cursor:"pointer", transition:"all 0.18s" }} onMouseEnter={e=>{e.currentTarget.style.background="#F5F9F5";e.currentTarget.style.borderColor="#3EB489";}} onMouseLeave={e=>{e.currentTarget.style.background="white";e.currentTarget.style.borderColor="#E8E8E4";}}>
+                  <div style={{ width:"28px", height:"28px", background:"#EDF7F0", borderRadius:"8px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"14px" }}>⚖️</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:11, color:"#1A1A1A", fontWeight:600, lineHeight:1.3 }}>{isUrdu?UR.compareTitle:"Compare Documents"}</div>
+                    <div style={{ fontSize:9, color:"#888" }}>{isUrdu?UR.compareSubtitle:"Upload 2 docs to compare"}</div>
+                  </div>
+                  <span style={{ color:"#BBBBBB", fontSize:12 }}>›</span>
+                </div>
+                <div onClick={()=>setShowDraftPopup(true)} style={{ display:"flex", alignItems:"center", gap:"10px", padding:"8px 10px", background:"white", borderRadius:"8px", border:"1px solid #E8E8E4", cursor:"pointer", transition:"all 0.18s" }} onMouseEnter={e=>{e.currentTarget.style.background="#F5F9F5";e.currentTarget.style.borderColor="#3EB489";}} onMouseLeave={e=>{e.currentTarget.style.background="white";e.currentTarget.style.borderColor="#E8E8E4";}}>
+                  <div style={{ width:"28px", height:"28px", background:"#EDF7F0", borderRadius:"8px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"14px" }}>✍️</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:11, color:"#1A1A1A", fontWeight:600, lineHeight:1.3 }}>{isUrdu?UR.draftTitle:"Draft Documents"}</div>
+                    <div style={{ fontSize:9, color:"#888" }}>{isUrdu?UR.draftSubtitle:"Contracts, affidavits & more"}</div>
+                  </div>
+                  <span style={{ color:"#BBBBBB", fontSize:12 }}>›</span>
+                </div>
+                <div style={{ borderRadius:"8px", border:"1px solid #E8E8E4", background:"white", overflow:"hidden" }}>
+                  <div onClick={()=>setShowPracticeAreas(p=>!p)} style={{ display:"flex", alignItems:"center", gap:"10px", padding:"8px 10px", cursor:"pointer" }} onMouseEnter={e=>e.currentTarget.style.background="#F5F9F5"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
+                    <div style={{ width:"28px", height:"28px", background:"#EDF7F0", borderRadius:"8px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"14px" }}>⚖️</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:11, color:"#1A1A1A", fontWeight:600 }}>{isUrdu?UR.areasLabel:"Practice Areas"}</div>
+                    </div>
+                    <span style={{ color:"#BBBBBB", fontSize:11, transition:"transform 0.2s", transform:showPracticeAreas?"rotate(90deg)":"rotate(0deg)" }}>›</span>
+                  </div>
+                  {showPracticeAreas && (
+                    <div style={{ borderTop:"1px solid #F0EDE6", maxHeight:"180px", overflowY:"auto" }}>
+                      {PRACTICE_AREAS_PK.map((area,i)=>(
+                        <button key={area.id} onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}} style={{ display:"flex", alignItems:"center", gap:"8px", width:"100%", padding:"7px 10px", background:"transparent", border:"none", borderBottom:"1px solid #F5F2EC", cursor:"pointer", textAlign:"left", fontSize:10, color:"#1A1A1A" }} onMouseEnter={e=>e.currentTarget.style.background="#F0FAF4"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                          <span style={{ fontSize:12 }}>{area.icon}</span><span style={{ flex:1 }}>{isUrdu?UR.practiceAreas[i]:area.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{ height:"1px", background:`${GOLD}40`, margin:"6px 0", flexShrink:0 }}/>
+              <div style={{ flex:1, display:"flex", flexDirection:"column", minHeight:0 }}>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"6px", flexShrink:0 }}>
+                  <span style={{ fontSize:9, fontWeight:700, color:NAVY, textTransform:"uppercase", letterSpacing:"0.5px" }}>💬 {isUrdu?UR.sessions:"You & ARK LAW Sessions"}</span>
+                  <button onClick={startNewChat} style={{ fontSize:8, padding:"2px 8px", background:LIGHT_GREEN, color:"white", border:"none", borderRadius:"4px", cursor:"pointer", fontWeight:700 }} onMouseEnter={e=>e.currentTarget.style.background=LG_HOVER} onMouseLeave={e=>e.currentTarget.style.background=LIGHT_GREEN}>{isUrdu?UR.newBtn:"+ New"}</button>
+                </div>
+                <div style={{ flex:1, overflowY:"auto", display:"flex", flexDirection:"column", gap:"2px" }}>
+                  {allSessions.map(session=>{
+                    const isActive=session.id===activeChatId;
+                    return(
+                      <div key={session.id} onClick={()=>loadSession(session.id)} style={{ padding:"6px 8px", borderRadius:"6px", background:isActive?`${GOLD}22`:"transparent", border:isActive?`1px solid ${GOLD}60`:"1px solid transparent", cursor:"pointer", display:"flex", alignItems:"flex-start", gap:"6px" }} onMouseEnter={e=>{if(!isActive){e.currentTarget.style.background=`${NAVY}08`;}}} onMouseLeave={e=>{if(!isActive){e.currentTarget.style.background="transparent";}}}>
+                        <span style={{ fontSize:10, flexShrink:0 }}>{isActive?"🟡":"💬"}</span>
+                        <span style={{ fontSize:8, color:isActive?NAVY:"#444", lineHeight:1.4, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", fontWeight:isActive?600:400 }}>{session.title}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{ marginTop:"8px" }}>
+                  <USNewsWidget />
+                </div>
+              </div>
+            </div>
+            )}
+            {/* Chat area */}
+            <div style={{ flex:1, display:"flex", flexDirection:"column", background:"white", position:"relative" }}>
+              <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", opacity:0.08, pointerEvents:"none", zIndex:0 }}>
+                <img src="/ark-logo-us.png" alt="" style={{ width:"380px", height:"380px", borderRadius:"50%", objectFit:"cover" }}/>
+              </div>
+              <div style={{ flex:1, overflowY:"auto", padding:"20px", display:"flex", flexDirection:"column-reverse", position:"relative", zIndex:1 }}>
+                <div style={{ display:"flex", flexDirection:"column", gap:"12px" }}>
+                  {messages.map((msg,i)=>(
+                    <div key={i} style={{ display:"flex", justifyContent:"flex-start", gap:"10px" }}>
+                      {msg.role==="assistant"?<img src="/ark-logo-us.png" alt="ARK" style={{ width:"32px", height:"32px", borderRadius:"50%", objectFit:"cover", border:`2px solid ${GOLD}`, flexShrink:0 }}/>:<div style={{ width:"32px", height:"32px", borderRadius:"50%", background:"linear-gradient(135deg,#667eea,#764ba2)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"white" }}>{user?.name?.charAt(0)?.toUpperCase()||"U"}</div>}
+                      <div style={{ maxWidth:"75%", position:"relative" }}>
+                        <div style={{ padding:"10px 14px", borderRadius:"8px", background:"white", color:"#1A1A1A", fontSize:13, lineHeight:"1.6" }}>{renderMessageContent(msg.content)}</div>
+                        {msg.role==="assistant" && (
+                          <div style={{ marginTop:"6px", display:"flex", gap:"4px" }}>
+                            <button onClick={()=>speakText(msg.content,i)} style={{ width:"28px", height:"28px", borderRadius:"6px", background:currentSpeakingIndex===i?LIGHT_GREEN:"white", border:`1px solid ${currentSpeakingIndex===i?LIGHT_GREEN:"#D0D0C8"}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
+                              {currentSpeakingIndex===i?<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
+                            </button>
+                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}} style={{ width:"28px", height:"28px", borderRadius:"6px", background:reactions[i]?.like?"#E8F5E9":"white", border:`1px solid ${reactions[i]?.like?LIGHT_GREEN:"#D0D0C8"}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill={reactions[i]?.like?LIGHT_GREEN:"none"} stroke={reactions[i]?.like?LIGHT_GREEN:"#666"} strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {loading && <div style={{ display:"flex", alignItems:"center", gap:"8px" }}><img src="/ark-logo-us.png" alt="ARK" style={{ width:"32px", height:"32px", borderRadius:"50%", objectFit:"cover", border:`2px solid ${GOLD}` }}/><div style={{ color:"#6E8099", fontSize:12 }}>{isUrdu?UR.thinking:"ARK is thinking..."}</div></div>}
+                  <div ref={messagesEndRef}/>
+                </div>
+              </div>
+              <div style={{ padding:"12px 15px", borderTop:`1px solid #2B3F57`, display:"flex", gap:"8px", alignItems:"center", background:"white" }}>
+                <button onClick={startVoiceInput} disabled={loading||isListening} style={{ width:"38px", height:"38px", background:isListening?LIGHT_GREEN:"white", border:`1px solid ${isListening?LIGHT_GREEN:GOLD}60`, borderRadius:"6px", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, animation:isListening?"pulse 1.5s infinite":"none" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isListening?"white":NAVY} strokeWidth="2" strokeLinecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></svg>
+                </button>
+                <label htmlFor="file-classic" style={{ width:"38px", height:"38px", background:"white", border:`1px solid ${GOLD}60`, borderRadius:"6px", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                  <input id="file-classic" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" style={{ display:"none" }} onChange={e=>{const files=Array.from(e.target.files);if(files.length)setUploadedFiles(prev=>[...prev,...files]);}}/>
+                </label>
+                <input type="text" value={input} onChange={e=>setInput(e.target.value)} onKeyPress={e=>e.key==="Enter"&&sendMessage()} placeholder={isListening?(isUrdu?UR.listening:"Listening..."):(isUrdu?UR.placeholder:"Ask ARK Law AI about US law...")} style={{ flex:1, padding:"9px 12px", background:"white", border:`1px solid ${GOLD}60`, color:NAVY, borderRadius:"4px", fontSize:13 }}/>
+                <button onClick={()=>sendMessage()} disabled={loading||isListening} style={{ padding:"9px 18px", background:loading||isListening?"#9DB89A":LIGHT_GREEN, color:"white", border:"none", borderRadius:"4px", cursor:loading||isListening?"not-allowed":"pointer", fontWeight:600, fontSize:13, transition:"background 0.2s" }} onMouseEnter={e=>{if(!loading&&!isListening)e.currentTarget.style.background=LG_HOVER;}} onMouseLeave={e=>{if(!loading&&!isListening)e.currentTarget.style.background=LIGHT_GREEN;}}>{isUrdu?UR.send:"SEND"}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} {/* end classic theme */}
+
+      {/* ═══════════════════════════════════════════
+          POPUPS (US theme — navy/red)
+      ═══════════════════════════════════════════ */}
 
       {showNewsPopup && selectedNews && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: NAVY, borderRadius: "12px", width: "90%", maxWidth: "700px", maxHeight: "85vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: "0 0 30px rgba(201,168,76,0.2)" }}>
-            <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "40px", height: "40px" }} />
-                <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 14 }}>ARK LAW AI</div><div style={{ color: TEXT_MUTED, fontSize: 9 }}>Legal News Analysis</div></div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
+          <div style={{background:"#1a1a2e",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
+            <div style={{background:"linear-gradient(135deg,#001F5B,#0d0d2b)",padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #BF0A30"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",borderRadius:"50%",objectFit:"cover"}}/>
+                <div><div style={{color:GOLD,fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#A8C0E8",fontSize:9}}>Legal News Analysis</div></div>
               </div>
-              <button onClick={() => setShowNewsPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
+              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{ padding: "25px" }}>
-              <p style={{ color: GOLD, fontSize: 15, fontWeight: 700, marginBottom: "10px", lineHeight: "1.6" }}>{selectedNews.headline}</p>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "15px", padding: "10px", background: NAVY_SURFACE, borderRadius: "4px", borderLeft: `3px solid ${ACCENT_PK}` }}>
-                <span style={{ fontSize: 10, color: TEXT_MUTED }}>📰 Source:</span>
-                <span style={{ fontSize: 11, color: ACCENT_PK, fontWeight: 600 }}>{selectedNews.source}</span>
+            <div style={{padding:"25px"}}>
+              <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
+              <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #BF0A30"}}>
+                <span style={{fontSize:10,color:"#A8C0E8"}}>📰 Source:</span>
+                <span style={{fontSize:11,color:"#BF0A30",fontWeight:600}}>{selectedNews.source}</span>
               </div>
-              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }} />
-              <div style={{ marginBottom: "15px" }}>
-                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>Full News Details:</h4>
-                <p style={{ color: TEXT_PRIMARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>{selectedNews.fullText}</p>
-              </div>
-              <div style={{ height: "1px", background: NAVY_BORDER, margin: "15px 0" }} />
-              <div>
-                <h4 style={{ color: GOLD, fontSize: 12, fontWeight: 600, marginBottom: "8px" }}>⚖️ Legal Analysis & Impact:</h4>
-                {newsLoading ? <div style={{ color: TEXT_MUTED, fontSize: 13, textAlign: "center", padding: "20px" }}>⏳ Analyzing legal significance...</div> : <div style={{ color: TEXT_SECONDARY, fontSize: 13, lineHeight: "1.8", whiteSpace: "pre-wrap" }}>{newsAnalysis}</div>}
+              <p style={{color:"#d1d1d1",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
+              <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
+                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}>⚖️ Legal Analysis:</h4>
+                {newsLoading?<div style={{color:"#666",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#b4b4b4",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
-            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-              <button onClick={() => setShowNewsPopup(false)} style={{ padding: "10px 24px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>CLOSE</button>
+            <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
+              <button onClick={()=>setShowNewsPopup(false)} style={{padding:"10px 24px",background:GOLD,color:NAVY,border:"none",borderRadius:"4px",cursor:"pointer",fontWeight:600,fontSize:12}}>CLOSE</button>
             </div>
           </div>
         </div>
       )}
 
       {showDraftPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, borderRadius: "14px", width: "90%", maxWidth: "800px", maxHeight: "92vh", overflow: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative" }}>
-            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-            <div style={{ padding: "20px 24px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}40`, position: "sticky", top: 0, background: CREAM, zIndex: 2 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
-                <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                  <div style={{ fontSize: 11, color: "#6A90C8" }}>✍️ AI Legal Document Drafting</div>
-                </div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
+          <div style={{background:"#1a1a1a",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
+            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #333",position:"sticky",top:0,background:"#1a1a1a",zIndex:2}}>
+              <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover"}}/>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>✍️ AI Legal Document Drafting</div></div>
               </div>
-              <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)` }} />
-            <div style={{ padding: "22px 24px", position: "relative", zIndex: 1 }}>
-              {draftStep === "type-selection" && (
+            <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
+              {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "15px", fontWeight: 700, fontFamily: "Georgia,serif" }}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={(e) => setDraftType(e.target.value)} style={{ width: "100%", padding: "12px", background: CREAM, border: `1px solid ${GOLD}50`, color: NAVY, borderRadius: "8px", marginBottom: "20px", fontSize: 13, cursor: "pointer" }}>
+                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
+                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"18px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">-- Select Document Type --</option>
                     <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
                     <option value="contract">📄 General Contract</option>
@@ -1136,130 +1277,66 @@ export default function AppUSA() {
                     <option value="will">📜 Will / Testament</option>
                     <option value="power-of-attorney">🔑 Power of Attorney</option>
                     <option value="employment-agreement">💼 Employment Agreement</option>
-                    <option value="partnership-deed">🤝 Partnership Deed</option>
-                    <option value="sale-deed">🏘️ Sale Deed</option>
-                    <option value="divorce-agreement">💔 Divorce Agreement</option>
+                    <option value="partnership-deed">🤝 Partnership Agreement</option>
+                    <option value="sale-deed">🏘️ Real Estate Purchase Agreement</option>
+                    <option value="divorce-agreement">💔 Divorce Settlement Agreement</option>
                     <option value="loan-agreement">💰 Loan Agreement</option>
-                    <option value="trust-deed">🏛️ Trust Deed</option>
+                    <option value="trust-deed">🏛️ Trust Agreement</option>
                   </select>
-                  <div style={{ background: "#EDE8DF", padding: "15px", borderRadius: "8px", borderLeft: `4px solid ${ACCENT_PK}`, marginBottom: "20px" }}>
-                    <div style={{ color: "#3A6A55", fontSize: 11, fontWeight: 600, marginBottom: "8px" }}>ℹ️ How It Works:</div>
-                    <div style={{ color: "#4A6A56", fontSize: 11, lineHeight: "1.6" }}>1. Select the document type<br/>2. Provide required information<br/>3. AI generates a complete, court-ready document<br/>4. Edit and download in Word or PDF format</div>
-                  </div>
-                  <button onClick={() => { if (!draftType) { alert("Please select a document type"); return; } setDraftStep("gathering-info"); }} disabled={!draftType}
-                    style={{ width: "100%", padding: "13px", background: draftType ? LIGHT_GREEN : "#C8C0B0", color: "white", border: "none", borderRadius: "8px", cursor: draftType ? "pointer" : "not-allowed", fontWeight: 700, fontSize: 14, marginBottom: "10px", transition: "background 0.2s" }}
-                    onMouseEnter={(e) => { if (draftType) e.currentTarget.style.background = LG_HOVER; }}
-                    onMouseLeave={(e) => { if (draftType) e.currentTarget.style.background = LIGHT_GREEN; }}>Next: Provide Information →</button>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                  <button onClick={()=>{if(!draftType){alert("Please select a document type");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                    style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
+                    onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
+                    Next: Provide Information →
+                  </button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
               )}
-              {draftStep === "gathering-info" && (
+              {draftStep==="gathering-info" && (
                 <div>
-                  <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "8px", fontWeight: 700, fontFamily: "Georgia,serif" }}>📝 Step 2: Provide Document Information</h4>
-                  <p style={{ color: "#6A90C8", fontSize: 11, marginBottom: "20px" }}>Fill in the details below. AI will generate a complete US legal document.</p>
-                  <div style={{ maxHeight: "400px", overflowY: "auto", padding: "5px" }}>
-                    {draftType === "rental-agreement" && (
-                      <div>
-                        {[
-                          { heading: "🏠 Landlord Information", fields: [{ ph: "Landlord Full Name *", key: "landlordName" }, { ph: "Landlord CNIC Number *", key: "landlordCNIC" }, { ph: "Landlord Complete Address *", key: "landlordAddress" }]},
-                          { heading: "👤 Tenant Information",   fields: [{ ph: "Tenant Full Name *", key: "tenantName" }, { ph: "Tenant CNIC Number *", key: "tenantCNIC" }, { ph: "Tenant Complete Address *", key: "tenantAddress" }]},
-                          { heading: "🏘️ Property Details",    fields: [{ ph: "Property Complete Address *", key: "propertyAddress" }, { ph: "Property Type (House/Flat/Commercial) *", key: "propertyType" }, { ph: "Covered Area (sq ft/marla/kanal) *", key: "propertyArea" }]},
-                          { heading: "💰 Rental Terms",         fields: [{ ph: "Monthly Rent Amount (PKR) *", key: "monthlyRent" }, { ph: "Security Deposit (PKR) *", key: "securityDeposit" }, { ph: "Lease Duration (e.g., 1 year, 11 months) *", key: "leaseDuration" }, { ph: "Rent Payment Date (e.g., 1st of each month) *", key: "paymentDate" }, { ph: "Notice Period (e.g., 1 month) *", key: "noticePeriod" }]},
-                        ].map(({ heading, fields }) => (
-                          <div key={heading} style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                            <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>{heading}</h5>
-                            {fields.map(({ ph, key }) => (
-                              <input key={key} placeholder={ph} onChange={(e) => setDraftRequirements({...draftRequirements, [key]: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {draftType === "affidavit" && (
-                      <div>
-                        <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                          <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>⚖️ Deponent Information</h5>
-                          {[["Deponent Full Name *","deponentName"],["CNIC Number *","deponentCNIC"],["Father's/Husband's Name *","deponentFatherName"],["Complete Address *","deponentAddress"]].map(([ph,key]) => (
-                            <input key={key} placeholder={ph} onChange={(e) => setDraftRequirements({...draftRequirements, [key]: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
-                          ))}
-                        </div>
-                        <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                          <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>📋 Affidavit Details</h5>
-                          <input placeholder="Purpose of Affidavit *" onChange={(e) => setDraftRequirements({...draftRequirements, purpose: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
-                          <textarea placeholder="Facts to be stated under oath *" onChange={(e) => setDraftRequirements({...draftRequirements, facts: e.target.value})} style={{ width: "100%", height: "100px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }}></textarea>
-                          <input placeholder="Authority/Court where to be filed *" onChange={(e) => setDraftRequirements({...draftRequirements, authority: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12 }} />
-                        </div>
-                      </div>
-                    )}
-                    {draftType === "nda" && (
-                      <div>
-                        {[{ heading: "📤 Disclosing Party", fields: [["Party Name *","disclosingParty"],["Address *","disclosingAddress"]] }, { heading: "📥 Receiving Party", fields: [["Party Name *","receivingParty"],["Address *","receivingAddress"]] }].map(({ heading, fields }) => (
-                          <div key={heading} style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                            <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>{heading}</h5>
-                            {fields.map(([ph,key]) => (
-                              <input key={key} placeholder={ph} onChange={(e) => setDraftRequirements({...draftRequirements, [key]: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12 }} />
-                            ))}
-                          </div>
-                        ))}
-                        <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                          <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>🔒 Confidentiality Terms</h5>
-                          <textarea placeholder="Nature of Confidential Information *" onChange={(e) => setDraftRequirements({...draftRequirements, confidentialInfo: e.target.value})} style={{ width: "100%", height: "80px", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", marginBottom: "8px", fontSize: 12, fontFamily: "inherit" }}></textarea>
-                          <input placeholder="Duration of Confidentiality (e.g., 3 years) *" onChange={(e) => setDraftRequirements({...draftRequirements, duration: e.target.value})} style={{ width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12 }} />
-                        </div>
-                      </div>
-                    )}
-                    {!["rental-agreement", "affidavit", "nda"].includes(draftType) && (
-                      <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", marginBottom: "14px", border: `1px solid ${GOLD}30` }}>
-                        <h5 style={{ color: "#3A6A55", fontSize: 12, marginBottom: "10px", fontWeight: 600 }}>📋 Document Information</h5>
-                        <textarea placeholder={`Provide all necessary details for ${draftType}:\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information`} onChange={(e) => setDraftRequirements({...draftRequirements, generalInfo: e.target.value})} style={{ width: "100%", height: "220px", padding: "12px", background: CREAM, border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "6px", fontSize: 12, fontFamily: "inherit", lineHeight: "1.6" }}></textarea>
-                      </div>
-                    )}
+                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
+                  <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
+                    <div style={{background:"#2a2a2a",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #3a3a3a"}}>
+                      <textarea placeholder={`Provide all necessary details for ${draftType}:
+
+• Party names and addresses
+• Terms and conditions
+• Duration/timeline
+• Special clauses
+• Any other relevant information`} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#1a1a1a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-                    <button onClick={() => setDraftStep("type-selection")} style={{ flex: 1, padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>← Back</button>
-                    <button onClick={() => generateDocument(draftRequirements)} disabled={draftGenerating}
-                      style={{ flex: 2, padding: "11px", background: draftGenerating ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: draftGenerating ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 13 }}
-                      onMouseEnter={(e) => { if (!draftGenerating) e.currentTarget.style.background = LG_HOVER; }}
-                      onMouseLeave={(e) => { if (!draftGenerating) e.currentTarget.style.background = draftGenerating ? "#C8C0B0" : LIGHT_GREEN; }}>
-                      {draftGenerating ? "⏳ Generating..." : "🚀 Generate Document with AI"}
+                  <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
+                    <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
+                      style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
+                      onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#BF0A30";}}>
+                      {draftGenerating?"⏳ Generating...":"🚀 Generate with AI"}
                     </button>
                   </div>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginTop: "10px" }}>Cancel</button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
                 </div>
               )}
-              {draftStep === "generating" && (
-                <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <img src="/ark-logo.png" alt="ARK" style={{ width: "70px", height: "70px", marginBottom: "20px", opacity: 0.7, animation: "pulse 2s infinite" }} />
-                  <h4 style={{ color: NAVY, fontSize: 16, marginBottom: "15px", fontWeight: 700, fontFamily: "Georgia,serif" }}>⏳ Generating Your Legal Document...</h4>
-                  <p style={{ color: "#6A90C8", fontSize: 13, lineHeight: "1.6", marginBottom: "20px" }}>Our AI is drafting a comprehensive, US law-compliant document.</p>
-                  <div style={{ background: "#EDE8DF", padding: "14px", borderRadius: "8px", border: `1px solid ${GOLD}30` }}>
-                    {["Analyzing requirements","Applying US legal format","Including all necessary clauses"].map((t,i) => (
-                      <div key={i} style={{ color: LIGHT_GREEN, fontSize: 11, marginBottom: i < 2 ? "6px" : 0 }}>✓ {t}</div>
-                    ))}
-                    <div style={{ color: "#8A9A86", fontSize: 11, marginTop: "6px" }}>⏳ Finalizing document...</div>
-                  </div>
+              {draftStep==="generating" && (
+                <div style={{textAlign:"center",padding:"40px 20px"}}>
+                  <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
+                  <h4 style={{color:"#ececec",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
+                  <p style={{color:"#666",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
-              {draftStep === "completed" && (
+              {draftStep==="completed" && (
                 <div>
-                  <h4 style={{ color: NAVY, fontSize: 15, marginBottom: "8px", fontWeight: 700, fontFamily: "Georgia,serif" }}>✅ Document Generated Successfully!</h4>
-                  <p style={{ color: "#6A90C8", fontSize: 11, marginBottom: "14px" }}>Your {draftType} has been generated. Edit and download below.</p>
-                  <textarea value={draftContent} onChange={(e) => setDraftContent(e.target.value)} style={{ width: "100%", height: "360px", padding: "14px", background: "white", border: `1px solid ${GOLD}50`, color: "#000", borderRadius: "8px", marginBottom: "12px", fontSize: 13, fontFamily: "'Times New Roman', serif", lineHeight: "1.8", whiteSpace: "pre-wrap" }}></textarea>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", padding: "10px 14px", background: "#EDE8DF", borderRadius: "8px" }}>
-                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📝 Words: <strong>{draftContent.split(/\s+/).filter(Boolean).length}</strong></span>
-                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📊 Chars: <strong>{draftContent.length}</strong></span>
-                    <span style={{ color: "#6A90C8", fontSize: 11 }}>📄 Pages: <strong>{Math.ceil(draftContent.split(/\s+/).filter(Boolean).length / 500)}</strong></span>
+                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
+                  <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
+                  <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #BF0A30",marginBottom:"14px"}}>
+                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
+                    <div style={{color:"#b4b4b4",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
-                  <div style={{ background: `${GOLD}18`, padding: "10px 14px", borderRadius: "8px", borderLeft: `4px solid ${GOLD}`, marginBottom: "16px" }}>
-                    <div style={{ color: "#8A6A10", fontSize: 10, fontWeight: 600, marginBottom: "4px" }}>⚠️ IMPORTANT LEGAL DISCLAIMER</div>
-                    <div style={{ color: "#6A5A30", fontSize: 10, lineHeight: "1.5" }}>This document is AI-generated for reference only. Please have it reviewed by a licensed US attorney before execution.</div>
+                  <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
+                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
+                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>📥 DOCX</button>
+                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
                   </div>
-                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                    <button onClick={() => { setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ flex: 1, padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>🔄 New Document</button>
-                    <button onClick={() => downloadDraft("docx")} style={{ flex: 1, padding: "11px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>📥 Download DOCX</button>
-                    <button onClick={() => downloadDraft("pdf")} style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>📄 Download PDF</button>
-                  </div>
-                  <button onClick={() => { setShowDraftPopup(false); setDraftStep("type-selection"); setDraftContent(""); setDraftRequirements({}); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
               )}
             </div>
@@ -1268,88 +1345,44 @@ export default function AppUSA() {
       )}
 
       {showComparePopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, borderRadius: "14px", width: "90%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative" }}>
-            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" }} />
-            <div style={{ padding: "20px 24px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${GOLD}40`, position: "sticky", top: 0, background: CREAM, zIndex: 2 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))" }} />
-                <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                  <div style={{ fontSize: 11, color: "#6A90C8" }}>⚖️ Compare Legal Documents</div>
-                </div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
+          <div style={{background:"#1a1a1a",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #333",position:"sticky",top:0,background:"#1a1a1a",zIndex:2}}>
+              <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover"}}/>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>⚖️ Compare Legal Documents</div></div>
               </div>
-              <button onClick={() => setShowComparePopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
+              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)` }} />
-            <div style={{ padding: "20px 24px", position: "relative", zIndex: 1 }}>
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 1</label>
-                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc1(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
-                {doc1 && <div style={{ marginTop: "5px", fontSize: 10, color: doc1.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc1.name} — {(doc1.size/1024/1024).toFixed(2)}MB {doc1.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
-              </div>
-              <div style={{ marginBottom: "14px" }}>
-                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>📄 Document 2</label>
-                <input type="file" accept=".pdf,.docx,.doc" onChange={(e) => setDoc2(e.target.files?.[0])} style={{ width: "100%", padding: "8px 10px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 11 }} />
-                {doc2 && <div style={{ marginTop: "5px", fontSize: 10, color: doc2.size > 5*1024*1024 ? "#C0392B" : LIGHT_GREEN }}>{doc2.name} — {(doc2.size/1024/1024).toFixed(2)}MB {doc2.size > 5*1024*1024 && "⚠️ TOO LARGE (Max 5MB)"}</div>}
-              </div>
-              <div style={{ marginBottom: "14px", padding: "10px 12px", background: "#EDE8DF", borderRadius: "7px", borderLeft: `3px solid ${ACCENT_PK}` }}>
-                <div style={{ fontSize: 10, color: "#4A6A56", lineHeight: "1.6" }}>ℹ️ <strong>Supported:</strong> PDF, DOC, DOCX (max 5MB each) · ✓ Scanned PDFs supported</div>
-              </div>
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ color: "#6A90C8", fontSize: 11, fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>🎯 Focal Point for Comparison</label>
-                <input type="text" value={compareFocus} onChange={(e) => setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses, termination conditions..." style={{ width: "100%", padding: "9px 12px", background: "#EDE8DF", border: `1px solid ${GOLD}40`, color: NAVY, borderRadius: "7px", fontSize: 12 }} />
-              </div>
-              {comparingDocs && (
-                <div style={{ marginBottom: "14px", padding: "18px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30`, textAlign: "center" }}>
-                  <div style={{ color: NAVY, fontSize: 13, fontWeight: 600, marginBottom: "6px", fontFamily: "Georgia,serif" }}>⏳ Analyzing Documents...</div>
-                  <div style={{ color: "#6A90C8", fontSize: 11 }}>AI is comparing the documents</div>
+            <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
+              {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
+                <div key={label} style={{marginBottom:"14px"}}>
+                  <label style={{color:"#A8C0E8",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
+                  <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"7px",fontSize:11,outline:"none"}}/>
+                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name} — {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
-              )}
+              ))}
+              <div style={{marginBottom:"14px"}}>
+                <label style={{color:"#A8C0E8",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
+                <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"7px",fontSize:12,outline:"none"}}/>
+              </div>
+              {comparingDocs && <div style={{padding:"16px",background:"#2a2a2a",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#b4b4b4",fontSize:13}}>⏳ Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
-                <div style={{ marginBottom: "14px", padding: "14px", background: "#EDE8DF", borderRadius: "8px", border: `1px solid ${GOLD}30` }}>
-                  <div style={{ color: NAVY, fontSize: 12, fontWeight: 700, marginBottom: "8px", fontFamily: "Georgia,serif" }}>📊 Comparison Report</div>
-                  <div style={{ color: "#3A3A2A", fontSize: 11, lineHeight: "1.6", whiteSpace: "pre-wrap", maxHeight: "320px", overflowY: "auto" }}>{comparisonResult}</div>
+                <div style={{marginBottom:"14px",padding:"14px",background:"#2a2a2a",borderRadius:"8px",border:"1px solid #3a3a3a"}}>
+                  <div style={{color:"#ececec",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
+                  <div style={{color:"#b4b4b4",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
                 </div>
               )}
-              <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+              <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
                 <button onClick={compareDocuments} disabled={comparingDocs}
-                  style={{ flex: 1, padding: "11px", background: comparingDocs ? "#C8C0B0" : LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", cursor: comparingDocs ? "not-allowed" : "pointer", fontWeight: 700, fontSize: 12 }}
-                  onMouseEnter={(e) => { if (!comparingDocs) e.currentTarget.style.background = LG_HOVER; }}
-                  onMouseLeave={(e) => { if (!comparingDocs) e.currentTarget.style.background = comparingDocs ? "#C8C0B0" : LIGHT_GREEN; }}>
-                  {comparingDocs ? "⏳ Analyzing..." : "🔍 Compare Documents"}
+                  style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
+                  onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#BF0A30";}}>
+                  {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
                 </button>
-                {comparisonResult && <button onClick={downloadComparisonPDF} style={{ flex: 1, padding: "11px", background: GOLD, color: NAVY, border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>📄 Download PDF</button>}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
               </div>
-              <button onClick={() => { setShowComparePopup(false); setDoc1(null); setDoc2(null); setCompareFocus(""); setComparisonResult(""); }} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showLinkedInPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: POPUP_DARK, borderRadius: "12px", width: "90%", maxWidth: "1000px", maxHeight: "90vh", overflow: "auto", border: `2px solid ${GOLD}`, boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}>
-            <div style={{ background: `linear-gradient(135deg, ${NAVY_SURFACE}, ${NAVY_MID})`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `2px solid ${GOLD}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "50px", height: "50px" }} />
-                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                  <img src="/khawer-profile.jpeg" alt="Khawer Rabbani" style={{ width: "60px", height: "60px", borderRadius: "50%", border: `2px solid ${GOLD}` }} />
-                  <div><div style={{ color: GOLD, fontWeight: 700, fontSize: 18 }}>Khawer Rabbani</div><div style={{ color: ACCENT_PK, fontSize: 12, marginTop: "3px" }}>Attorney & AI Innovator</div><div style={{ color: TEXT_MUTED, fontSize: 10, marginTop: "2px" }}>Founder & CEO, ARK LAW AI</div></div>
-                </div>
-              </div>
-              <button onClick={() => setShowLinkedInPopup(false)} style={{ background: "none", border: "none", color: GOLD, fontSize: 28, cursor: "pointer" }}>✕</button>
-            </div>
-            <div style={{ padding: "0", background: CREAM }}>
-              <iframe src="/KRprofile.pdf#toolbar=0" style={{ width: "100%", height: "75vh", border: "none", background: "white" }} title="Khawer Rabbani Professional Profile" />
-            </div>
-            <div style={{ padding: "15px 25px", borderTop: `2px solid ${GOLD}`, background: NAVY_SURFACE, display: "flex", gap: "10px", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ fontSize: 10, color: TEXT_MUTED }}>📧 khawer.rabbani@gmail.com</div>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <a href="https://www.linkedin.com/in/khawerrabbani/" target="_blank" rel="noopener noreferrer" style={{ padding: "10px 20px", background: "#0077B5", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12, textDecoration: "none", display: "inline-block" }}>🔗 LinkedIn Profile</a>
-                <button onClick={() => window.open("/KRprofile.pdf", "_blank")} style={{ padding: "10px 20px", background: ACCENT_PK, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>📄 Download Profile</button>
-                <button onClick={() => setShowLinkedInPopup(false)} style={{ padding: "10px 20px", background: GOLD, color: NAVY, border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>Close</button>
-              </div>
+              <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
           </div>
         </div>
@@ -1357,44 +1390,53 @@ export default function AppUSA() {
 
       {/* LOGIN POPUP */}
       {showLoginPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, padding: "32px 28px 24px", borderRadius: "14px", width: "90%", maxWidth: "400px", border: `2px solid ${GOLD}60`, boxShadow: "0 8px 40px rgba(0,0,0,0.35)", position: "relative", overflow: "hidden" }}>
-            <img src="/ark-logo.png" alt="" style={popupWatermark} />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "18px", position: "relative", zIndex: 1 }}>
-              <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-              <div>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                <div style={{ fontSize: 11, color: "#6A90C8" }}>Login to your account</div>
-              </div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
+          <div style={{background:"#1a1a1a",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"16px",position:"relative",zIndex:1}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>Log in to your account</div></div>
             </div>
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "20px" }} />
-            <form style={{ position: "relative", zIndex: 1 }} onSubmit={async (e) => {
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"18px"}}/>
+            <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
               e.preventDefault();
-              const formData = new FormData(e.target);
-              const email = formData.get("email"); const password = formData.get("password");
-              try {
-                const res  = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
-                const data = await res.json();
-                if (!res.ok) { alert(data.error || "Invalid email or password"); return; }
-                const restoredTokens = data.user.tokens || 500000;
-                const userWithTokens = { ...data.user, tokens: restoredTokens };
-                localStorage.setItem("arklaw_user", JSON.stringify(userWithTokens));
-                setUser(userWithTokens);
-                setUserTokens(restoredTokens);
-                if (data.user.chatHistory && data.user.chatHistory.length > 0) {
-                  const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
-                  const restoredSessions = data.user.chatHistory.map(s => ({ ...s, messages: s.messages || [greeting] }));
-                  setAllSessions(prev => { const newIds = new Set(restoredSessions.map(s => s.id)); const current = prev.filter(s => !newIds.has(s.id)); return [...restoredSessions, ...current].slice(0, 50); });
+              const fd=new FormData(e.target);
+              const email=fd.get("email");const password=fd.get("password");
+              try{
+                const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+                const data=await res.json();
+                if(!res.ok){alert(data.error||"Invalid email or password");return;}
+                const restoredTokens=data.user.tokens||500000;
+                const userWithTokens={...data.user,tokens:restoredTokens};
+                localStorage.setItem("arklaw_user",JSON.stringify(userWithTokens));
+                setUser(userWithTokens);setUserTokens(restoredTokens);
+                const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_us")||"[]");}catch{return [];}})();
+                const serverHistoryUs=(data.user.chatHistory&&data.user.chatHistory.length>0)?data.user.chatHistory:localBackupUs;
+                if(serverHistoryUs.length>0){
+                  const greeting={role:"assistant",content:isUrdu?"Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.
+
+¿En qué puedo ayudarle hoy?":"Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.
+
+How may I assist you today?"};
+                  const restoredSessions=serverHistoryUs.map(s=>({...s,messages:s.messages||[greeting]}));
+                  setAllSessions(restoredSessions.slice(0,50));
+                  if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
                 }
                 setShowLoginPopup(false);
-                alert("Welcome back, " + data.user.name + "! You have " + restoredTokens.toLocaleString() + " credits remaining.");
-              } catch (error) { alert("Login failed. Please try again."); }
+                alert("Welcome back, "+data.user.name+"! You have "+restoredTokens.toLocaleString()+" credits remaining.");
+              }catch(error){alert("Login failed. Please try again.");}
             }}>
-              <div style={popupRow}><label style={popupLbl}>Email Address</label><input name="email" type="email" required style={popupInp} placeholder="your.email@example.com" /></div>
-              <div style={{ ...popupRow, marginBottom: "8px" }}><label style={popupLbl}>Password</label><input name="password" type="password" required style={popupInp} placeholder="Enter your password" /></div>
-              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "10px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>{isUrdu ? UR.login : "Login"}</button>
-              <button type="button" onClick={() => setShowLoginPopup(false)} style={{ width: "100%", padding: "10px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "12px" }}>Cancel</button>
-              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 12, margin: 0 }}>Don't have an account?{" "}<span onClick={() => { setShowLoginPopup(false); setShowSignupPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Sign up here</span></p>
+              <div style={{marginBottom:"11px"}}>
+                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
+                <input name="email" type="email" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="your@email.com"/>
+              </div>
+              <div style={{marginBottom:"16px"}}>
+                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
+                <input name="password" type="password" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="Enter your password"/>
+              </div>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"10px"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Log in</button>
+              <button type="button" onClick={()=>setShowLoginPopup(false)} style={{width:"100%",padding:"9px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"12px"}}>Cancel</button>
+              <p style={{textAlign:"center",color:"#666",fontSize:12,margin:0}}>Don't have an account?{" "}<span onClick={()=>{setShowLoginPopup(false);setShowSignupPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Sign up</span></p>
             </form>
           </div>
         </div>
@@ -1402,62 +1444,53 @@ export default function AppUSA() {
 
       {/* SIGNUP POPUP */}
       {showSignupPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 3000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, padding: "24px 28px 20px", borderRadius: "14px", width: "90%", maxWidth: "480px", border: `2px solid ${GOLD}60`, boxShadow: "0 8px 40px rgba(0,0,0,0.35)", maxHeight: "92vh", overflowY: "auto", position: "relative", overflow: "hidden" }}>
-            <img src="/ark-logo.png" alt="" style={popupWatermark} />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px", position: "relative", zIndex: 1 }}>
-              <img src="/ark-logo.png" alt="ARK" style={{ width: "36px", height: "36px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-              <div>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 16, fontWeight: 700, color: NAVY }}>ARK LAW AI</div>
-                <div style={{ fontSize: 10, color: "#6A90C8" }}>Create your free account — 500,000 credits</div>
-              </div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
+          <div style={{background:"#1a1a1a",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#A8C0E8"}}>Create your free account — 500,000 credits</div></div>
             </div>
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, marginBottom: "16px" }} />
-            <form style={{ position: "relative", zIndex: 1 }} onSubmit={async (e) => {
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"14px"}}/>
+            <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
               e.preventDefault();
-              const formData = new FormData(e.target);
-              try {
-                const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: formData.get("email"), password: formData.get("password"), name: formData.get("name"), profession: formData.get("profession"), barOfPractice: "", city: formData.get("city"), province: formData.get("province"), country: "United States" }) });
-                const data = await res.json();
-                if (res.ok) { setShowSignupPopup(false); alert("Account created! You have been awarded 500,000 FREE credits! Please login."); setShowLoginPopup(true); }
-                else { alert(data.error || "Signup failed. Please try again."); }
-              } catch (error) { alert("Signup failed: " + error.message); }
+              const fd=new FormData(e.target);
+              try{
+                const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"United States"})});
+                const data=await res.json();
+                if(res.ok){setShowSignupPopup(false);alert("Account created! 500,000 FREE credits awarded! Please log in.");setShowLoginPopup(true);}
+                else{alert(data.error||"Signup failed.");}
+              }catch(error){alert("Signup failed: "+error.message);}
             }}>
-              <div style={popupRow}><label style={popupLbl}>Email *</label><input name="email" type="email" required style={popupInp} placeholder="your.email@example.com" /></div>
-              <div style={popupRow}><label style={popupLbl}>Password * (min 6 chars)</label><input name="password" type="password" required minLength={6} style={popupInp} placeholder="Minimum 6 characters" /></div>
-              <div style={popupRow}><label style={popupLbl}>Full Name *</label><input name="name" type="text" required style={popupInp} placeholder="Your full name" /></div>
-              <div style={popupRow}><label style={popupLbl}>Profession *</label>
-                <select name="profession" required style={{ ...popupInp, cursor: "pointer", background: CREAM }}>
+              {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
+                <div key={n} style={{marginBottom:"10px"}}>
+                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>{l}</label>
+                  <input name={n} type={t} required={true} minLength={n==="password"?6:undefined} style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder={ph}/>
+                </div>
+              ))}
+              <div style={{marginBottom:"10px"}}>
+                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Profession *</label>
+                <select name="profession" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none",cursor:"pointer"}}>
                   <option value="">Select profession...</option>
-                  <option>Lawyer</option><option>Legal Assistant</option><option>Paralegal</option><option>Law Clerk</option><option>Court Researcher</option><option>Law Student</option><option>Judge</option>
+                  <option>Attorney</option><option>Paralegal</option><option>Legal Assistant</option><option>Law Clerk</option><option>Law Student</option><option>Judge</option><option>Other</option>
                 </select>
               </div>
-              <div style={{ marginBottom: "11px" }}>
-                <label style={popupLbl}>City *</label>
-                <input name="city" type="text" required style={popupInp} placeholder="e.g., New York" />
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"10px"}}>
+                <div>
+                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
+                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
+                </div>
+                <div>
+                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
+                  <select name="province" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none",cursor:"pointer"}}>
+                    <option value="">Select state...</option>
+                    {["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia"].map(s=><option key={s}>{s}</option>)}
+                  </select>
+                </div>
               </div>
-              <div style={{ marginBottom: "16px" }}>
-                <label style={popupLbl}>State *</label>
-                <select name="province" required style={{ ...popupInp, cursor: "pointer", background: CREAM }}>
-                  <option value="">Select state...</option>
-                  <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
-                  <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
-                  <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
-                  <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
-                  <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
-                  <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
-                  <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
-                  <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
-                  <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
-                  <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
-                  <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
-                  <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
-                  <option>Wisconsin</option><option>Wyoming</option><option>District of Columbia</option>
-                </select>
-              </div>
-              <button type="submit" style={{ width: "100%", padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "7px", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: "8px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Create Account — 500,000 Free Credits ✨</button>
-              <button type="button" onClick={() => setShowSignupPopup(false)} style={{ width: "100%", padding: "9px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "7px", fontWeight: 600, fontSize: 13, cursor: "pointer", marginBottom: "10px" }}>Cancel</button>
-              <p style={{ textAlign: "center", color: "#6A8A66", fontSize: 11, margin: 0 }}>Already have an account?{" "}<span onClick={() => { setShowSignupPopup(false); setShowLoginPopup(true); }} style={{ color: LIGHT_GREEN, cursor: "pointer", textDecoration: "underline", fontWeight: 600 }}>Login here</span></p>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Create Account — 500,000 Free Credits ✨</button>
+              <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
+              <p style={{textAlign:"center",color:"#666",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
           </div>
         </div>
@@ -1465,65 +1498,62 @@ export default function AppUSA() {
 
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
-        <div style={{ position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.75)",pointerEvents:"all" }}>
-          <div style={{ background:"#F5F1E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid rgba(201,168,76,0.6)",boxShadow:"0 12px 48px rgba(0,0,0,0.4)",overflow:"hidden",position:"relative" }}>
-            <img src="/ark-logo.png" alt="" style={{ position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px" }} />
-            <div style={{ padding:"18px 22px 14px",borderBottom:"1px solid rgba(201,168,76,0.4)",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#F5F1E8" }}>
-              <div style={{ display:"flex",alignItems:"center",gap:"10px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width:"34px",height:"34px" }} />
-                <div style={{ fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#0D1B2A" }}>ARK LAW AI <span style={{ fontSize:11,fontWeight:400,color:"#6A90C8" }}>/ My Account</span></div>
+        <div style={{position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.8)",pointerEvents:"all"}}>
+          <div style={{background:"#1a1a1a",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
+            <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #333",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#1a1a1a"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
+                <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:GOLD}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#A8C0E8"}}>/ My Account</span></div>
               </div>
-              <button onClick={()=>setShowMyAccountPopup(false)} style={{ background:"none",border:"none",color:"#6A8A66",fontSize:22,cursor:"pointer",lineHeight:1 }}>✕</button>
+              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{ height:"1px",background:"linear-gradient(to right,transparent,rgba(201,168,76,0.8),transparent)",flexShrink:0 }} />
-            <div style={{ display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1 }}>
-              <div style={{ flex:"0 0 52%",padding:"16px 18px",overflowY:"auto",borderRight:"1px solid rgba(201,168,76,0.2)" }}>
-                <div style={{ display:"flex",alignItems:"center",gap:"12px",marginBottom:"14px" }}>
-                  <div style={{ width:"46px",height:"46px",borderRadius:"50%",background:"linear-gradient(135deg,#C9A84C,#3EB489)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px",fontWeight:700,color:"#0D1B2A",flexShrink:0 }}>{user.name.charAt(0).toUpperCase()}</div>
-                  <div>
-                    <div style={{ color:"#0D1B2A",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif" }}>{user.name}</div>
-                    <div style={{ color:"#6A8A66",fontSize:10,marginTop:"2px" }}>{user.email}</div>
-                  </div>
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",flexShrink:0}}/>
+            <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
+              <div style={{flex:"0 0 52%",padding:"14px 16px",overflowY:"auto",borderRight:"1px solid #2a2a2a"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px"}}>
+                  <div style={{width:"44px",height:"44px",borderRadius:"50%",background:"linear-gradient(135deg,#BF0A30,#8B0000)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",fontWeight:700,color:"white",flexShrink:0}}>{user.name.charAt(0).toUpperCase()}</div>
+                  <div><div style={{color:"#ececec",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#666",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
-                <div style={{ background:"#EDE8DF",border:"1px solid rgba(201,168,76,0.5)",borderRadius:"10px",padding:"11px 13px",marginBottom:"10px" }}>
-                  <div style={{ fontSize:10,color:"#6A90C8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px" }}>⚡ Credit Balance</div>
-                  <div style={{ display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px" }}>
-                    <div style={{ flex:1,height:"7px",background:"#D8D0C0",borderRadius:"4px",overflow:"hidden" }}>
-                      <div style={{ height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens > 100000 ? "#4CAF7D" : "#C9A84C",borderRadius:"4px" }}></div>
+                <div style={{background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
+                  <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
+                    <div style={{flex:1,height:"6px",background:"#333",borderRadius:"3px",overflow:"hidden"}}>
+                      <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
                     </div>
-                    <span style={{ fontSize:13,fontWeight:800,color:"#0D1B2A",fontFamily:"Georgia,serif" }}>{userTokens.toLocaleString()}</span>
+                    <span style={{fontSize:13,fontWeight:800,color:"#ececec",fontFamily:"Georgia,serif"}}>{userTokens.toLocaleString()}</span>
                   </div>
-                  <div style={{ fontSize:9,color:"#7A9A76" }}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
+                  <div style={{fontSize:9,color:"#666"}}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
                 </div>
-                <div style={{ background:"#EDE8DF",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"10px",padding:"11px 13px",marginBottom:"12px" }}>
-                  <div style={{ fontSize:10,color:"#6A90C8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"9px" }}>Profile</div>
-                  {[{k:"Profession",v:user.profession},{k:"City",v:user.city},{k:"State",v:user.province},{k:"Country",v:user.country}].filter(x=>x.v).map(({k,v})=>(
-                    <div key={k} style={{ display:"flex",justifyContent:"space-between",borderBottom:"1px solid rgba(201,168,76,0.15)",paddingBottom:"5px",marginBottom:"5px" }}>
-                      <span style={{ fontSize:9,color:"#7A9A76",textTransform:"uppercase" }}>{k}</span>
-                      <span style={{ fontSize:11,color:"#0D1B2A",fontWeight:600 }}>{v}</span>
+                <div style={{background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"10px",padding:"10px 12px",marginBottom:"12px"}}>
+                  <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"8px"}}>Profile</div>
+                  {[{k:"Profession",v:user.profession},{k:"City",v:user.city},{k:"State",v:user.province},{k:"Country",v:user.country||"United States"}].filter(x=>x.v).map(({k,v})=>(
+                    <div key={k} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #333",paddingBottom:"5px",marginBottom:"5px"}}>
+                      <span style={{fontSize:9,color:"#666",textTransform:"uppercase"}}>{k}</span>
+                      <span style={{fontSize:11,color:"#ececec",fontWeight:600}}>{v}</span>
                     </div>
                   ))}
                 </div>
-                <button onClick={handleLogout} style={{ width:"100%",padding:"10px",background:"#C0392B",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer" }} onMouseEnter={(e)=>e.currentTarget.style.background="#A93226"} onMouseLeave={(e)=>e.currentTarget.style.background="#C0392B"}>🚪 Logout &amp; Save History</button>
+                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}>🚪 Logout &amp; Save History</button>
               </div>
-              <div style={{ flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden" }}>
-                <div style={{ padding:"13px 15px",borderBottom:"1px solid rgba(201,168,76,0.25)",flexShrink:0 }}>
-                  <div style={{ fontSize:11,fontWeight:700,color:"#0D1B2A",textTransform:"uppercase",letterSpacing:"0.5px" }}>💬 Chat History</div>
-                  <div style={{ fontSize:9,color:"#7A9A76",marginTop:"2px" }}>Your saved conversations</div>
+              <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{padding:"12px 14px",borderBottom:"1px solid #2a2a2a",flexShrink:0}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#ececec",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
+                  <div style={{fontSize:9,color:"#666",marginTop:"2px"}}>Your saved conversations</div>
                 </div>
-                <div style={{ flex:1,overflowY:"auto",padding:"10px 12px" }}>
+                <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
-                    ? <div style={{ textAlign:"center",padding:"28px 14px",color:"#8A9A86" }}><div style={{ fontSize:30,marginBottom:"8px",opacity:0.4 }}>💬</div><div style={{ fontSize:11 }}>No conversations yet</div></div>
-                    : allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
-                        <div key={session.id} onClick={()=>{ loadSession(session.id); setShowMyAccountPopup(false); }} style={{ background:"#EDE8DF",padding:"9px 11px",borderRadius:"8px",border:"1px solid rgba(201,168,76,0.25)",cursor:"pointer",marginBottom:"6px" }} onMouseEnter={(e)=>{ e.currentTarget.style.background="#E4DDD0"; }} onMouseLeave={(e)=>{ e.currentTarget.style.background="#EDE8DF"; }}>
-                          <div style={{ color:"#0D1B2A",fontSize:11,fontWeight:600,marginBottom:"3px" }}>{session.title}</div>
-                          <div style={{ color:"#7A9A76",fontSize:9 }}>{session.messages.filter(m=>m.role==="user").length} message(s)</div>
-                        </div>
-                      ))
+                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
+                    :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
+                      <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#2a2a2a",padding:"8px 10px",borderRadius:"8px",border:"1px solid #333",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
+                        <div style={{color:"#ececec",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
+                        <div style={{color:"#666",fontSize:9}}>{session.messages.filter(m=>m.role==="user").length} message(s)</div>
+                      </div>
+                    ))
                   }
                 </div>
-                <div style={{ padding:"6px 12px",borderTop:"1px solid rgba(201,168,76,0.25)",background:"#001F5B",flexShrink:0,textAlign:"center" }}>
-                  <span style={{ fontSize:9,color:"#A8C0E8",fontStyle:"italic" }}>✓ History auto-saved</span>
+                <div style={{padding:"8px 10px",borderTop:"1px solid #2a2a2a",background:"#1a1a1a",flexShrink:0,textAlign:"center"}}>
+                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}>✓ History auto-saved</span>
                 </div>
               </div>
             </div>
@@ -1531,81 +1561,14 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* FEATURES POPUP */}
-      {showFeaturesPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000, pointerEvents: "all" }}>
-          <div style={{ background: CREAM, borderRadius: "16px", width: "92%", maxWidth: "560px", maxHeight: "92vh", overflowY: "auto", border: `2px solid ${GOLD}60`, boxShadow: "0 12px 48px rgba(0,0,0,0.4)", position: "relative", display: "flex", flexDirection: "column" }}>
-            <img src="/ark-logo.png" alt="" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "260px", height: "260px" }} />
-            <div style={{ padding: "22px 28px 16px", borderBottom: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, background: CREAM, zIndex: 2, borderRadius: "16px 16px 0 0" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/ark-logo.png" alt="ARK" style={{ width: "38px", height: "38px", filter: "drop-shadow(0 0 6px rgba(201,168,76,0.4))", flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: NAVY, letterSpacing: "0.5px" }}>FEATURES</div>
-                  <div style={{ fontSize: 10, color: "#6A90C8" }}>ARK Law AI Platform</div>
-                </div>
-              </div>
-              <button onClick={() => setShowFeaturesPopup(false)} style={{ background: "none", border: "none", color: "#6A8A66", fontSize: 22, cursor: "pointer", lineHeight: 1 }} onMouseEnter={(e) => e.currentTarget.style.color = NAVY} onMouseLeave={(e) => e.currentTarget.style.color = "#6A8A66"}>✕</button>
-            </div>
-            <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}80, transparent)`, flexShrink: 0 }} />
-            <div style={{ padding: "22px 28px", position: "relative", zIndex: 1, flex: 1 }}>
-              <div style={{ marginBottom: "24px", textAlign: "center" }}>
-                <h2 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: NAVY, marginBottom: "8px", lineHeight: 1.3 }}>Powerful AI Tools for Legal Professionals</h2>
-                <p style={{ fontSize: 13, color: "#6A90C8", lineHeight: 1.6, margin: 0 }}>Streamline research, drafting, and case strategy<br />with one intelligent platform.</p>
-              </div>
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, marginBottom: "22px" }} />
-              {[
-                { icon: "🔍", title: "Legal Research Assistant", points: ["Case law summaries", "Statute lookup", "Precedent identification"] },
-                { icon: "📝", title: "Smart Drafting Engine", points: ["Contracts, petitions, notices", "Clause suggestions", "Format consistency"] },
-                { icon: "⚖️", title: "Case Analysis Tool", points: ["Argument structuring", "Risk insights", "Strategy suggestions"] },
-                { icon: "🤖", title: "AI Legal Chat", points: ["Ask legal questions", "Context-aware responses"] },
-                { icon: "📊", title: "Productivity Dashboard", points: ["Usage insights", "Saved drafts"] },
-              ].map(({ icon, title, points }, idx) => (
-                <div key={title} style={{ display: "flex", gap: "14px", marginBottom: idx < 4 ? "18px" : "0", padding: "14px 16px", background: "white", borderRadius: "10px", border: `1px solid ${GOLD}25`, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}30, ${GOLD}10)`, border: `1px solid ${GOLD}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "Georgia,serif", fontSize: 14, fontWeight: 700, color: NAVY, marginBottom: "6px" }}>{title}</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                      {points.map(pt => (
-                        <div key={pt} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: LIGHT_GREEN, flexShrink: 0 }} />
-                          <span style={{ fontSize: 12, color: "#4A6A56", lineHeight: 1.4 }}>{pt}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "22px 0" }} />
-              <div style={{ display: "flex", gap: "12px", marginBottom: "18px" }}>
-                <button onClick={() => setShowComingSoon(true)} style={{ flex: 1, padding: "12px", background: LIGHT_GREEN, color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif" }} onMouseEnter={(e) => e.currentTarget.style.background = LG_HOVER} onMouseLeave={(e) => e.currentTarget.style.background = LIGHT_GREEN}>Explore Platform</button>
-                <button onClick={() => setShowComingSoon(true)} style={{ flex: 1, padding: "12px", background: "white", color: NAVY, border: `2px solid ${GOLD}60`, borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "Georgia,serif" }} onMouseEnter={(e) => { e.currentTarget.style.background = `${GOLD}15`; e.currentTarget.style.borderColor = GOLD; }} onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = `${GOLD}60`; }}>Request Demo</button>
-              </div>
-              <div style={{ textAlign: "center", padding: "10px 0 4px" }}>
-                <span style={{ fontSize: 11, color: "#7A9A76", fontStyle: "italic", fontFamily: "Georgia,serif" }}>"Built for the American Legal Ecosystem"</span>
-              </div>
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${GOLD}60, transparent)`, margin: "14px 0 16px" }} />
-              <button onClick={() => setShowFeaturesPopup(false)} style={{ width: "100%", padding: "11px", background: "#EDE8DF", color: "#5A6A55", border: `1px solid ${GOLD}40`, borderRadius: "8px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* COMING SOON POPUP */}
       {showComingSoon && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 4000 }} onClick={() => setShowComingSoon(false)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ background: "#0D1B2A", borderRadius: "16px", padding: "48px 40px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #C9A84C", boxShadow: "0 0 60px rgba(201,168,76,0.35), 0 0 120px rgba(201,168,76,0.12)", position: "relative" }}>
-            <button onClick={() => setShowComingSoon(false)} style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: "#C9A84C", fontSize: 26, cursor: "pointer", lineHeight: 1, transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "rotate(90deg)"} onMouseLeave={(e) => e.currentTarget.style.transform = "rotate(0deg)"}>✕</button>
-            <img src="/ark-logo.png" alt="ARK Law AI" style={{ width: "72px", height: "72px", marginBottom: "18px", filter: "drop-shadow(0 0 16px rgba(201,168,76,0.6))" }} />
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#C9A84C", marginBottom: "6px", letterSpacing: "1px", textShadow: "0 0 20px rgba(201,168,76,0.5)" }}>ARK LAW AI</div>
-            <div style={{ fontSize: 11, color: "#3EB489", marginBottom: "28px", fontStyle: "italic" }}>America's Legal Intelligence Engine</div>
-            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "28px" }} />
-            <div style={{ fontSize: 28, marginBottom: "12px" }}>🚀</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#FAF6EE", marginBottom: "10px" }}>Coming Very Soon!</div>
-            <div style={{ fontSize: 13, color: "#B8C4D0", lineHeight: 1.7, marginBottom: "28px" }}>We're working hard to bring you something amazing.<br/><span style={{ color: "#C9A84C", fontWeight: 600 }}>Please stay tuned.</span></div>
-            <div style={{ height: "1px", background: "linear-gradient(to right, transparent, #C9A84C, transparent)", marginBottom: "24px" }} />
-            <button onClick={() => setShowComingSoon(false)} style={{ padding: "11px 40px", background: "linear-gradient(135deg, #C9A84C, #FFD700)", color: "#0D1B2A", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: 14, cursor: "pointer", letterSpacing: "0.5px", boxShadow: "0 4px 16px rgba(201,168,76,0.4)", transition: "transform 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.04)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-              ⚖️ Got it!
-            </button>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#1a1a1a",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #BF0A30",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
+            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#666",fontSize:24,cursor:"pointer"}}>✕</button>
+            <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px"}}/>
+            <div style={{fontSize:20,fontWeight:700,color:"#ececec",marginBottom:"8px"}}>Coming Soon!</div>
+            <div style={{fontSize:13,color:"#666",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
+            <button onClick={()=>setShowComingSoon(false)} style={{padding:"10px 32px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:14,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Got it!</button>
           </div>
         </div>
       )}
