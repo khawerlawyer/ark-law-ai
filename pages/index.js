@@ -80,8 +80,8 @@ export default function Landing() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          width: 260px;
-          height: 310px;
+          width: 240px;
+          height: 300px;
           border-radius: 24px;
           cursor: pointer;
           transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s ease;
@@ -298,7 +298,7 @@ export default function Landing() {
 
         {/* Cards row */}
         <div className="cards-row" style={{
-          display: "flex", gap: "24px", alignItems: "center", justifyContent: "center",
+          display: "flex", gap: "14px", alignItems: "center", justifyContent: "center", flexWrap: "wrap",
           animation: "scaleIn 0.8s cubic-bezier(.34,1.56,.64,1) both",
           animationDelay: "0.3s",
         }}>
@@ -392,6 +392,68 @@ export default function Landing() {
               background: "linear-gradient(to top, rgba(178,34,52,0.08), transparent)",
               pointerEvents: "none",
             }} />
+          </div>
+
+          {/* ── OR 2 ── */}
+          <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}60`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+          </div>
+
+          {/* ── INDIA CARD ── */}
+          <div className="landing-card in-card"
+            style={{ boxShadow: hovered === "in" ? "0 30px 80px rgba(255,153,51,0.35), 0 0 0 1px rgba(255,153,51,0.2)" : "0 20px 60px rgba(0,0,0,0.5)" }}
+            onMouseEnter={() => setHovered("in")}
+            onMouseLeave={() => setHovered(null)}
+            onClick={() => router.push("/india")}
+          >
+            {hovered === "in" && <div className="pulse-ring" style={{ border: "1px solid rgba(255,153,51,0.5)" }} />}
+            <div className="card-bg" style={{ background: "linear-gradient(160deg, #1A0D00 0%, #2A1500 40%, #120A00 100%)" }} />
+            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(255,153,51,0.15) 0%, transparent 60%)" }} />
+            <img className="flag-emoji" src="https://flagcdn.com/w640/in.png" alt="India Flag" style={{ animationDelay: "1s" }} />
+            <div className="card-content">
+              <div className="country-name" style={{ color: "#FFF5E8" }}>India</div>
+              <div className="country-sub" style={{ color: "#C4A87A" }}>
+                Indian Law & Statutes<br/>
+                All States · Supreme Court
+              </div>
+              <button className="enter-btn" style={{ background: "linear-gradient(135deg, #FF9933, #e07800)", color: "white" }}>
+                Enter <span style={{ fontSize: 16 }}>→</span>
+              </button>
+            </div>
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(255,153,51,0.08), transparent)", pointerEvents: "none" }} />
+          </div>
+
+          {/* ── OR 3 ── */}
+          <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}60`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+          </div>
+
+          {/* ── BANGLADESH CARD ── */}
+          <div className="landing-card bd-card"
+            style={{ boxShadow: hovered === "bd" ? "0 30px 80px rgba(0,106,78,0.35), 0 0 0 1px rgba(0,106,78,0.2)" : "0 20px 60px rgba(0,0,0,0.5)" }}
+            onMouseEnter={() => setHovered("bd")}
+            onMouseLeave={() => setHovered(null)}
+            onClick={() => router.push("/bangladesh")}
+          >
+            {hovered === "bd" && <div className="pulse-ring" style={{ border: "1px solid rgba(0,106,78,0.5)" }} />}
+            <div className="card-bg" style={{ background: "linear-gradient(160deg, #001A10 0%, #002A18 40%, #000F08 100%)" }} />
+            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(0,106,78,0.2) 0%, transparent 60%)" }} />
+            <img className="flag-emoji" src="https://flagcdn.com/w640/bd.png" alt="Bangladesh Flag" style={{ animationDelay: "1.5s" }} />
+            <div className="card-content">
+              <div className="country-name" style={{ color: "#E8FFF5" }}>Bangladesh</div>
+              <div className="country-sub" style={{ color: "#8AC4A8" }}>
+                Bangladesh Law & Statutes<br/>
+                All Divisions · Supreme Court
+              </div>
+              <button className="enter-btn" style={{ background: "linear-gradient(135deg, #006A4E, #004d38)", color: "white" }}>
+                Enter <span style={{ fontSize: 16 }}>→</span>
+              </button>
+            </div>
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(0,106,78,0.08), transparent)", pointerEvents: "none" }} />
           </div>
         </div>
 
