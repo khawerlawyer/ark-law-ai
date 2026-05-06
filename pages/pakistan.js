@@ -711,7 +711,7 @@ export default function App() {
         .msg-wrap{max-width:720px;margin:0 auto;padding:0 16px;}
         .msg-actions{opacity:0;transition:opacity 0.15s;}
         .msg-row:hover .msg-actions{opacity:1;}
-        .qcard{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:12px;padding:14px 16px;cursor:pointer;transition:background 0.15s;text-align:left;}
+        .qcard{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:10px;padding:9px 12px;cursor:pointer;transition:background 0.15s;text-align:left;}
         .qcard:hover{background:#333;}
         .input-wrap{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:16px;transition:border-color 0.2s;}
         .input-wrap:focus-within{border-color:#555;}
@@ -731,7 +731,7 @@ export default function App() {
           <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
             <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
-              <span style={{fontSize:14,fontWeight:700,color:"#ececec",fontFamily:"Georgia,serif",letterSpacing:"0.5px"}}>ARK LAW AI 🇵🇰</span>
+              <span style={{fontSize:14,fontWeight:700,color:"#ececec",fontFamily:"Georgia,serif",letterSpacing:"0.5px"}}><img src="https://flagcdn.com/w40/pk.png" alt="PK" style={{width:"20px",height:"14px",borderRadius:"2px",marginRight:"5px",verticalAlign:"middle"}}/>ARK LAW AI</span>
             </div>
             <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#b4b4b4",transition:"all 0.15s"}}
@@ -842,7 +842,7 @@ export default function App() {
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
                 ← 🌍
               </button>
-              <select value={isUrdu?"ur":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
+              <select value={isUrdu?"ur":"en"} onChange={e=>setIsUrdu(e.target.value==="ur")}
                 style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">🌐 English</option>
                 <option value="ur">Urdu</option>
@@ -896,19 +896,19 @@ export default function App() {
 
             {/* Empty state */}
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
-              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 20px",animation:"fadeSlideUp 0.4s ease"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"18px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
+              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#ececec",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
                   {isUrdu ? "آج میں آپ کی کیسے مدد کر سکتا ہوں؟" : "How can I help you today?"}
                 </h2>
-                <p style={{fontSize:14,color:"#666",marginBottom:"28px",textAlign:"center"}}>
+                <p style={{fontSize:14,color:"#666",marginBottom:"16px",textAlign:"center"}}>
                   {isUrdu ? "ARK Law AI پاکستان  -  آپ کا قانونی مددگار" : "ARK Law AI Pakistan  -  your expert Pakistani law assistant"}
                 </p>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:"10px",width:"100%",maxWidth:"660px"}}>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
-                      <div style={{fontSize:13.5,color:"#d1d1d1",lineHeight:1.45,marginBottom:"8px"}}>{q}</div>
-                      <div style={{fontSize:11,color:"#555",display:"flex",alignItems:"center",gap:"4px"}}>
+                      <div style={{fontSize:12,color:"#d1d1d1",lineHeight:1.4,marginBottom:"5px"}}>{q}</div>
+                      <div style={{fontSize:10,color:"#555",display:"flex",alignItems:"center",gap:"3px"}}>
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                         Ask ARK
                       </div>
@@ -1109,7 +1109,7 @@ export default function App() {
               {draftStep==="type-selection" && (
                 <div>
                   <h4 style={{color:"#ececec",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"18px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">-- Select Document Type --</option>
                     <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
                     <option value="contract">📄 General Contract</option>
