@@ -26,6 +26,9 @@ export default function AdminPanel() {
   const [usTheme,   setUsTheme]   = useState(() => {
     try { return localStorage.getItem("arklaw_us_theme") || "chatgpt"; } catch { return "chatgpt"; }
   });
+  const [pkTheme,   setPkTheme]   = useState(() => {
+    try { return localStorage.getItem("arklaw_pk_theme") || "chatgpt"; } catch { return "chatgpt"; }
+  });
 
   // ── Auth check ──
   useEffect(() => {
@@ -144,7 +147,7 @@ export default function AdminPanel() {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 2, marginBottom: 0 }}>
-          {[["users","👥 Users"], ["stats","📊 Stats"], ["tokens","⚡ Tokens"], ["theme","🎨 Theme"]].map(([t, label]) => (
+          {[["users","👥 Users"], ["stats","📊 Stats"], ["tokens","⚡ Tokens"], ["theme","🎨 US Theme"], ["pktheme","🇵🇰 PK Theme"]].map(([t, label]) => (
             <button key={t} className="tab-btn"
               style={{ background: tab === t ? NAVY_SURFACE : NAVY_MID, color: tab === t ? GOLD : TEXT_MUTED, borderBottom: tab === t ? `2px solid ${GOLD}` : "2px solid transparent" }}
               onClick={() => setTab(t)}>{label}</button>
@@ -386,6 +389,57 @@ export default function AdminPanel() {
                     <a href="/usa-classic" target="_blank" style={{ padding: "6px 12px", background: "#001F5B", color: "#E8D97A", border: "1px solid #BF0A30", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open Classic UI ↗</a>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── PK THEME TAB ── */}
+          {tab === "pktheme" && (
+            <div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 15, color: GOLD, marginBottom: 10 }}>🇵🇰 Pakistan Version Theme</div>
+              <p style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20, lineHeight: 1.6 }}>
+                Choose which UI theme the Pakistan version displays. ChatGPT style is the default modern dark theme.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div onClick={() => { setPkTheme("chatgpt"); localStorage.setItem("arklaw_pk_theme","chatgpt"); setMsg("✅ ChatGPT theme applied for Pakistan version."); }}
+                  style={{ background: pkTheme === "chatgpt" ? "#212121" : NAVY_MID, border: `2px solid ${pkTheme === "chatgpt" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
+                  <div style={{ background: "#212121", borderRadius: 8, padding: "12px 14px", marginBottom: 12, border: "1px solid #333" }}>
+                    <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                      <div style={{ width: 60, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
+                      <div style={{ width: 40, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
+                    </div>
+                    <div style={{ width: "100%", height: 6, background: "#2f2f2f", borderRadius: 3, marginBottom: 4 }} />
+                    <div style={{ width: "80%", height: 6, background: "#2f2f2f", borderRadius: 3 }} />
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: pkTheme === "chatgpt" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>ChatGPT Style {pkTheme === "chatgpt" && "✓"}</div>
+                  <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Dark #212121 background, minimal sidebar, centered chat.</div>
+                </div>
+                <div onClick={() => { setPkTheme("classic"); localStorage.setItem("arklaw_pk_theme","classic"); setMsg("✅ Classic green theme applied for Pakistan version."); }}
+                  style={{ background: pkTheme === "classic" ? "#1B2E1A" : NAVY_MID, border: `2px solid ${pkTheme === "classic" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
+                  <div style={{ background: "#1B2E1A", borderRadius: 8, padding: "10px 12px", marginBottom: 12, border: "2px solid #4CAF7D" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, borderBottom: "1px solid #2A4A2A", paddingBottom: 6 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: GOLD }} />
+                      <div style={{ flex: 1, height: 6, background: GOLD, borderRadius: 3, opacity: 0.6 }} />
+                      <div style={{ width: 30, height: 6, background: "#4CAF7D", borderRadius: 3 }} />
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <div style={{ width: 50, background: "#F5F1E8", borderRadius: 4, padding: 4 }}>
+                        <div style={{ height: 4, background: "#ccc", borderRadius: 2, marginBottom: 3 }} />
+                        <div style={{ height: 4, background: "#ccc", borderRadius: 2 }} />
+                      </div>
+                      <div style={{ flex: 1, background: "white", borderRadius: 4, padding: 4 }}>
+                        <div style={{ height: 4, background: "#eee", borderRadius: 2, marginBottom: 3 }} />
+                        <div style={{ height: 4, background: "#eee", borderRadius: 2, width: "70%" }} />
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: pkTheme === "classic" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>Classic Green Style {pkTheme === "classic" && "✓"}</div>
+                  <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Original ARK Pakistan dark green theme with cream sidebar.</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                <a href="/pakistan" target="_blank" style={{ padding: "6px 12px", background: "#212121", color: "#ececec", border: "1px solid #333", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open ChatGPT PK ↗</a>
+                <a href="/pakistan-classic" target="_blank" style={{ padding: "6px 12px", background: "#1B2E1A", color: "#E8D97A", border: "1px solid #4CAF7D", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open Classic PK ↗</a>
               </div>
             </div>
           )}
