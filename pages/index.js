@@ -47,7 +47,7 @@ export default function Landing() {
       <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
 
         {/* Main logo watermark */}
-        <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"380px",height:"380px",objectFit:"cover",borderRadius:"50%",opacity:0.045,animation:"floatBg 9s ease-in-out infinite"}}/>
+        <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"380px",height:"380px",objectFit:"cover",opacity:0.045,animation:"floatBg 9s ease-in-out infinite"}}/>
 
         {/* Scales of Justice - top left */}
         <svg width="200" height="200" viewBox="0 0 100 100" style={{position:"absolute",top:"5%",left:"4%",opacity:0.045,animation:"bgPulse 7s ease-in-out infinite"}}>
@@ -112,8 +112,8 @@ export default function Landing() {
 
         {/* Logo + brand */}
         <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
-          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(135deg,#1A3A6B 0%,#2E6BC4 40%,#1A4A8A 60%,#0D2550 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 5s linear infinite"}}>
+          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",objectFit:"contain",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",color:"#021A4A",WebkitTextFillColor:"#021A4A"}}>
             ARK LAW AI
           </div>
           <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
