@@ -889,6 +889,18 @@ export default function AppIN() {
             </div>
           </div>
 
+          {/* Search chats */}
+          <div style={{padding:"6px 8px 4px",flexShrink:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:"7px",padding:"8px 11px",background:"#FFFFFF",borderRadius:"10px",border:"1px solid #C8BFB0",transition:"border-color 0.15s"}}
+              onFocus={e=>e.currentTarget.style.borderColor="#9A8A75"}
+              onBlur={e=>e.currentTarget.style.borderColor="#C8BFB0"}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2.5" strokeLinecap="round" style={{flexShrink:0}}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search chats"
+                style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:13,color:"#1A1209",fontFamily:"DM Sans,sans-serif"}}/>
+              {searchQuery && <button onClick={()=>setSearchQuery("")} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:16,lineHeight:1,padding:"0 2px",display:"flex",alignItems:"center"}}>&times;</button>}
+            </div>
+          </div>
+
           {/* Tools */}
           <div style={{padding:"4px 6px",flexShrink:0}}>
             <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
@@ -921,7 +933,7 @@ export default function AppIN() {
 
           {/* Recents label */}
           <div style={{padding:"2px 16px 4px",flexShrink:0}}>
-            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>Recents</span>
+            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>{searchQuery?"Results":"Recents"}</span>
           </div>
 
           {/* Sessions list */}
@@ -963,8 +975,7 @@ export default function AppIN() {
                   {isUrdu ? "लॉग इन" : "Log in"}
                 </button>
                 <button onClick={()=>setShowSignupPopup(true)}
-                  style={{flex:1,padding:"9px 0",background:"#B35400",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="#e8e8e8"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
+                  style={{flex:1,padding:"9px 0",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>
                   Sign up
                 </button>
               </div>
@@ -1483,7 +1494,7 @@ export default function AppIN() {
                 <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
                 <input name="password" type="password" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="Enter your password"/>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#FF9933",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"10px"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>Log in</button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"10px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Log in</button>
               <button type="button" onClick={()=>setShowLoginPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"12px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:12,margin:0}}>Don't have an account?{" "}<span onClick={()=>{setShowLoginPopup(false);setShowSignupPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Sign up</span></p>
             </form>
@@ -1569,7 +1580,7 @@ export default function AppIN() {
                   </select>
                 </div>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#FF9933",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>Create Account  -  500,000 Free Credits ✨</button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits ✨</button>
               <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
