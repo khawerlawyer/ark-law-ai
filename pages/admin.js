@@ -221,12 +221,58 @@ export default function AdminPanel() {
                         ["Created", selected.created_at ? new Date(selected.created_at).toLocaleDateString() : "—"],
                         ["Last Login", selected.last_login ? new Date(selected.last_login).toLocaleString() : "Never"],
                         ["Chat Sessions", (() => { try { return JSON.parse(selected.chat_history || "[]").length + " sessions"; } catch { return "0 sessions"; } })()],
+                        ["Total Messages", (() => { try { const ss = JSON.parse(selected.chat_history || "[]"); return ss.reduce((a,s)=>a+(s.messages?.length||0),0) + " msgs"; } catch { return "—"; } })()],
+                        ["Avg Msgs/Session", (() => { try { const ss = JSON.parse(selected.chat_history || "[]"); if(!ss.length) return "—"; const t=ss.reduce((a,s)=>a+(s.messages?.length||0),0); return Math.round(t/ss.length)+" msgs"; } catch { return "—"; } })()],
                       ].map(([k, v]) => (
                         <div key={k} style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${NAVY_BORDER}`, padding: "5px 0", fontSize: 11 }}>
                           <span style={{ color: TEXT_MUTED }}>{k}</span>
                           <span style={{ color: "#FAF6EE", fontWeight: 500, textAlign: "right", maxWidth: 140, wordBreak: "break-all" }}>{v || "—"}</span>
                         </div>
                       ))}
+
+                      {/* Session time breakdown */}
+                      {(() => {
+                        try {
+                          const sessions = JSON.parse(selected.chat_history || "[]");
+                          if (!sessions.length) return null;
+                          const totalExchanges = sessions.reduce((acc, s) => {
+                            const msgs = s.messages || [];
+                            return acc + Math.min(msgs.filter(m=>m.role==="user").length, msgs.filter(m=>m.role==="assistant").length);
+                          }, 0);
+                          const totalMins = totalExchanges * 2;
+                          const totalStr = totalMins < 1 ? "< 1 min" : totalMins < 60 ? totalMins + " min" : Math.floor(totalMins/60) + "h " + (totalMins%60) + "m";
+                          return (
+                            <div style={{ marginTop: 14 }}>
+                              <div style={{ fontSize: 11, color: GOLD, fontWeight: 700, marginBottom: 8 }}>🕐 Session Activity</div>
+                              <div style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", gap: 4 }}>
+                                {sessions.map((s, i) => {
+                                  const msgs = s.messages || [];
+                                  const userMsgs = msgs.filter(m=>m.role==="user").length;
+                                  const aiMsgs   = msgs.filter(m=>m.role==="assistant").length;
+                                  const estMins  = Math.min(userMsgs, aiMsgs) * 2;
+                                  const timeStr  = estMins < 1 ? "< 1 min" : estMins < 60 ? "~"+estMins+" min" : "~"+Math.round(estMins/60)+"h "+estMins%60+"m";
+                                  return (
+                                    <div key={i} style={{ background: NAVY_SURFACE, borderRadius: 6, padding: "6px 8px", fontSize: 10 }}>
+                                      <div style={{ color: "#FAF6EE", fontWeight: 600, marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                        {i+1}. {s.title || "Untitled session"}
+                                      </div>
+                                      <div style={{ display: "flex", gap: 8 }}>
+                                        <span style={{ color: GREEN }}>💬 {userMsgs} Q</span>
+                                        <span style={{ color: TEXT_MUTED }}>🤖 {aiMsgs} A</span>
+                                        <span style={{ color: GOLD }}>⏱ {timeStr}</span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div style={{ marginTop: 6, padding: "6px 8px", background: GOLD+"18", borderRadius: 6, border: "1px solid "+GOLD+"40", fontSize: 10, display: "flex", justifyContent: "space-between" }}>
+                                <span style={{ color: TEXT_MUTED }}>Est. total time</span>
+                                <span style={{ color: GOLD, fontWeight: 700 }}>{totalStr}</span>
+                              </div>
+                            </div>
+                          );
+                        } catch { return null; }
+                      })()}
                       {/* Token adjustment */}
                       <div style={{ marginTop: 14 }}>
                         <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 6 }}>⚡ Adjust Tokens</div>
