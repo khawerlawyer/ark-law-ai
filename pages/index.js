@@ -115,8 +115,8 @@ export default function Landing() {
 
         {/* Logo + brand */}
         <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
-          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"68px",height:"68px",borderRadius:"50%",objectFit:"cover",marginBottom:"10px",filter:"drop-shadow(0 4px 12px rgba(201,168,76,0.28))"}}/>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(24px,4vw,34px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 45%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 4s linear infinite"}}>
+          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 45%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 4s linear infinite"}}>
             ARK LAW AI
           </div>
           <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
@@ -160,16 +160,14 @@ export default function Landing() {
             </div>
           )}
 
-          <button className="enter-btn" disabled={!sel} onClick={()=>sel&&router.push(chosen.route)}
-            style={{background:chosen?`linear-gradient(135deg,${chosen.accent},${chosen.accent}cc)`:"#D8D0C4",color:chosen?"white":"#A89880",cursor:chosen?"pointer":"not-allowed",boxShadow:chosen?`0 4px 16px ${chosen.accent}35`:"none"}}>
-            {chosen ? (
-              <>
-                <img src={chosen.flag} alt="" style={{width:"18px",height:"12px",borderRadius:"2px",objectFit:"cover"}}/>
-                Enter {chosen.label}
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </>
-            ) : "Select a jurisdiction above"}
-          </button>
+          {chosen && (
+            <button className="enter-btn" onClick={()=>router.push(chosen.route)}
+              style={{background:`linear-gradient(135deg,${chosen.accent},${chosen.accent}cc)`,color:"white",cursor:"pointer",boxShadow:`0 4px 16px ${chosen.accent}35`}}>
+              <img src={chosen.flag} alt="" style={{width:"18px",height:"12px",borderRadius:"2px",objectFit:"cover"}}/>
+              Enter {chosen.label}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          )}
 
         </div>
 
