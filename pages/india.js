@@ -324,6 +324,16 @@ export default function AppIN() {
   const [showChatMenu,       setShowChatMenu]       = useState(false);
   const [sessionMenu,       setSessionMenu]       = useState(null);
   const [searchQuery,       setSearchQuery]       = useState("");
+  const [showSearchPopup,   setShowSearchPopup]   = useState(false);
+
+  useEffect(()=>{
+    const handler=(e)=>{
+      if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();setShowSearchPopup(true);}
+      if(e.key==="Escape"){setShowSearchPopup(false);setSearchQuery("");}
+    };
+    window.addEventListener("keydown",handler);
+    return ()=>window.removeEventListener("keydown",handler);
+  },[]);
   const [inTheme, setInTheme] = useState("chatgpt");
   useEffect(() => {
     try {
@@ -799,14 +809,16 @@ export default function AppIN() {
         <title>ARK LAW AI India - Legal Assistant</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for India law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512.png" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&family=DM+Sans:wght@700;800&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#212121" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="ARK Law AI" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js');});}` }} />
       </Head>
 
@@ -889,16 +901,15 @@ export default function AppIN() {
             </div>
           </div>
 
-          {/* Search chats */}
+          {/* Search chats button */}
           <div style={{padding:"6px 8px 4px",flexShrink:0}}>
-            <div style={{display:"flex",alignItems:"center",gap:"7px",padding:"8px 11px",background:"#FFFFFF",borderRadius:"10px",border:"1px solid #C8BFB0",transition:"border-color 0.15s"}}
-              onFocus={e=>e.currentTarget.style.borderColor="#9A8A75"}
-              onBlur={e=>e.currentTarget.style.borderColor="#C8BFB0"}>
+            <button onClick={()=>setShowSearchPopup(true)}
+              style={{display:"flex",alignItems:"center",gap:"9px",width:"100%",padding:"8px 11px",background:"#FFFFFF",borderRadius:"10px",border:"1px solid #C8BFB0",cursor:"pointer",transition:"all 0.15s",textAlign:"left"}}
+              onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#9A8A75";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C8BFB0";}}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2.5" strokeLinecap="round" style={{flexShrink:0}}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search chats"
-                style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:13,color:"#1A1209",fontFamily:"DM Sans,sans-serif"}}/>
-              {searchQuery && <button onClick={()=>setSearchQuery("")} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:16,lineHeight:1,padding:"0 2px",display:"flex",alignItems:"center"}}>&times;</button>}
-            </div>
+              <span style={{fontSize:13,color:"#8A7A65",fontFamily:"DM Sans,sans-serif",fontWeight:400}}>Search chats...</span>
+            </button>
           </div>
 
           {/* Tools */}
@@ -938,9 +949,9 @@ export default function AppIN() {
 
           {/* Sessions list */}
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
-            {[...allSessions.filter(s=>!s.archived).filter(s=>!searchQuery||s.title?.toLowerCase().includes(searchQuery.toLowerCase()))].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
+            {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
               <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>{searchQuery?"No results found":"No conversations yet"}</div>
-            ) : [...allSessions.filter(s=>!s.archived).filter(s=>!searchQuery||s.title?.toLowerCase().includes(searchQuery.toLowerCase()))].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(s=>{
+            ) : [...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(s=>{
               const active=s.id===activeChatId;
               return(
                 <div key={s.id} style={{position:"relative",group:true}}
@@ -1716,6 +1727,161 @@ export default function AppIN() {
           </div>
         </div>
       )}
+      {/* ── Search Chats Popup ── */}
+      {showSearchPopup && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.25)",display:"flex",alignItems:"flex-start",justifyContent:"center",zIndex:3000,paddingTop:"60px"}}
+          onClick={()=>{setShowSearchPopup(false);setSearchQuery("");}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"90%",maxWidth:"580px",boxShadow:"0 16px 60px rgba(0,0,0,0.18)",border:"1px solid #C8BFB0",overflow:"hidden",animation:"fadeSlideUp 0.2s ease"}}>
+
+            {/* Search input row */}
+            <div style={{display:"flex",alignItems:"center",gap:"10px",padding:"14px 18px",borderBottom:"1px solid #E4DDD0"}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2.5" strokeLinecap="round" style={{flexShrink:0}}>
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input autoFocus value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}
+                placeholder="Search chats..."
+                style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:16,color:"#1A1209",fontFamily:"DM Sans,sans-serif"}}/>
+              {searchQuery && (
+                <button onClick={()=>setSearchQuery("")} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1,padding:"0 4px"}}>&times;</button>
+              )}
+              <button onClick={()=>{setShowSearchPopup(false);setSearchQuery("");}}
+                style={{background:"#F0EBE0",border:"none",cursor:"pointer",color:"#7A6A55",fontSize:11,padding:"5px 10px",borderRadius:"6px",fontWeight:600,flexShrink:0}}>
+                ESC
+              </button>
+            </div>
+
+            {/* Results */}
+            <div style={{maxHeight:"420px",overflowY:"auto"}}>
+              {searchQuery.trim() === "" ? (
+                /* No query — show grouped by date */
+                <div>
+                  {/* New chat option */}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
+                    style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
+                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A1209" strokeWidth="2" strokeLinecap="round">
+                      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span style={{fontSize:14,color:"#1A1209",fontWeight:500}}>New chat</span>
+                  </div>
+                  <div style={{height:"1px",background:"#E4DDD0",margin:"0 18px"}}/>
+                  {/* Sessions grouped by date */}
+                  {(()=>{
+                    const now = new Date();
+                    const today     = s => { const d=new Date(s.updatedAt||Date.now()); return d.toDateString()===now.toDateString(); };
+                    const yesterday = s => { const d=new Date(s.updatedAt||0); const y=new Date(now); y.setDate(y.getDate()-1); return d.toDateString()===y.toDateString(); };
+                    const prev7     = s => { const d=new Date(s.updatedAt||0); return d>new Date(now-7*86400000) && !today(s) && !yesterday(s); };
+                    const older     = s => !today(s) && !yesterday(s) && !prev7(s);
+
+                    const groups = [
+                      {label:"Today",         sessions:allSessions.filter(s=>!s.archived&&today(s))},
+                      {label:"Yesterday",     sessions:allSessions.filter(s=>!s.archived&&yesterday(s))},
+                      {label:"Previous 7 Days",sessions:allSessions.filter(s=>!s.archived&&prev7(s))},
+                      {label:"Older",         sessions:allSessions.filter(s=>!s.archived&&older(s))},
+                    ].filter(g=>g.sessions.length>0);
+
+                    if(allSessions.filter(s=>!s.archived).length===0) return(
+                      <div style={{padding:"30px 18px",textAlign:"center",color:"#9A8A75",fontSize:13}}>No conversations yet</div>
+                    );
+
+                    return groups.map(({label,sessions})=>(
+                      <div key={label}>
+                        <div style={{padding:"10px 18px 4px",fontSize:11,fontWeight:700,color:"#9A8A75",letterSpacing:"0.4px"}}>{label}</div>
+                        {sessions.map(s=>(
+                          <div key={s.id} onClick={()=>{loadSession(s.id);setShowSearchPopup(false);setSearchQuery("");}}
+                            style={{display:"flex",alignItems:"center",gap:"12px",padding:"9px 18px",cursor:"pointer",transition:"background 0.12s"}}
+                            onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
+                            onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8A75" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}>
+                              <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            <span style={{fontSize:14,color:"#1A1209",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.title||"Untitled"}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ));
+                  })()}
+                </div>
+              ) : (
+                /* Search results */
+                <div>
+                  {(()=>{
+                    const q = searchQuery.toLowerCase();
+                    // Search in session titles AND message content
+                    const results = allSessions.filter(s=>!s.archived).map(s=>{
+                      const titleMatch = s.title?.toLowerCase().includes(q);
+                      const msgMatch = (s.messages||[]).find(m=>m.content?.toLowerCase().includes(q));
+                      if(!titleMatch && !msgMatch) return null;
+                      return {s, titleMatch, msgMatch};
+                    }).filter(Boolean);
+
+                    if(results.length===0) return(
+                      <div style={{padding:"30px 18px",textAlign:"center",color:"#9A8A75"}}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C8BFB0" strokeWidth="1.5" style={{marginBottom:10,display:"block",margin:"0 auto 10px"}}>
+                          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <div style={{fontSize:14,fontWeight:600,color:"#7A6A55",marginBottom:4}}>No results for "{searchQuery}"</div>
+                        <div style={{fontSize:12}}>Try searching by title or message content</div>
+                      </div>
+                    );
+
+                    return (
+                      <div>
+                        <div style={{padding:"10px 18px 4px",fontSize:11,fontWeight:700,color:"#9A8A75"}}>{results.length} result{results.length!==1?"s":""}</div>
+                        {results.map(({s, titleMatch, msgMatch})=>{
+                          // Highlight matching text
+                          const highlight = (text, q) => {
+                            if(!text) return text;
+                            const idx = text.toLowerCase().indexOf(q);
+                            if(idx<0) return text;
+                            return <>{text.slice(0,idx)}<mark style={{background:"#FFE08A",borderRadius:2,padding:"0 1px"}}>{text.slice(idx,idx+q.length)}</mark>{text.slice(idx+q.length)}</>;
+                          };
+                          const snippet = msgMatch?.content;
+                          const snipIdx = snippet?.toLowerCase().indexOf(q)||0;
+                          const snipStart = Math.max(0, snipIdx-30);
+                          const snipText = snippet?.substring(snipStart, snipStart+80)+(snippet?.length>(snipStart+80)?"...":"");
+
+                          return(
+                            <div key={s.id} onClick={()=>{loadSession(s.id);setShowSearchPopup(false);setSearchQuery("");}}
+                              style={{display:"flex",alignItems:"flex-start",gap:"12px",padding:"10px 18px",cursor:"pointer",transition:"background 0.12s"}}
+                              onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
+                              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8A75" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0,marginTop:2}}>
+                                <circle cx="12" cy="12" r="10"/>
+                              </svg>
+                              <div style={{minWidth:0}}>
+                                <div style={{fontSize:14,color:"#1A1209",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                                  {highlight(s.title||"Untitled", searchQuery)}
+                                </div>
+                                {msgMatch && (
+                                  <div style={{fontSize:11,color:"#7A6A55",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                                    {snipStart>0&&"..."}{highlight(snipText, searchQuery)}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+
+            {/* Footer branding */}
+            <div style={{padding:"10px 18px",borderTop:"1px solid #E4DDD0",display:"flex",alignItems:"center",justifyContent:"space-between",background:"#F9F6F0"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"7px"}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:18,height:18,objectFit:"contain"}}/>
+                <span style={{fontSize:11,fontWeight:700,color:"#021A4A",letterSpacing:"0.5px"}}>ARK LAW AI</span>
+              </div>
+              <span style={{fontSize:10,color:"#9A8A75"}}>Search by title or message content</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Session context menu */}
       {sessionMenu && (
         <>
