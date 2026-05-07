@@ -209,6 +209,22 @@ export default function App() {
   const [searchQuery,       setSearchQuery]       = useState("");
   const [showSearchPopup,   setShowSearchPopup]   = useState(false);
 
+  // ── Custom modal system (replaces alert/confirm/prompt) ──────────────────────
+  const [arkModal, setArkModal] = useState(null);
+  // arkModal: {type:"alert"|"confirm"|"prompt", title, message, icon, resolve, inputVal, inputPlaceholder, confirmLabel, confirmColor}
+
+  const arkAlert = (message, title="ARK LAW AI", icon="ℹ️") => new Promise(resolve => {
+    setArkModal({type:"alert", title, message, icon, resolve});
+  });
+  const arkConfirm = (message, title="ARK LAW AI", icon="❓", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(resolve => {
+    setArkModal({type:"confirm", title, message, icon, confirmLabel, confirmColor, resolve});
+  });
+  const arkPrompt = (message, defaultVal="", title="ARK LAW AI", placeholder="") => new Promise(resolve => {
+    setArkModal({type:"prompt", title, message, icon:"✏️", resolve, inputVal:defaultVal, inputPlaceholder:placeholder});
+  });
+
+
+
   useEffect(()=>{
     const handler=(e)=>{
       if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();setShowSearchPopup(true);}
@@ -404,10 +420,10 @@ export default function App() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) alert("📲 Install ARK LAW AI on iPhone / iPad:\n\n1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! ✅");
-    else if (isFirefox) alert("📲 Install ARK LAW AI on Firefox:\n\n1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! ✅");
-    else if (isSamsungBrowser) alert("📲 Install ARK LAW AI on Samsung Browser:\n\n1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\"  -  done! ✅");
-    else alert("📲 Install ARK LAW AI:\n\nOn Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\"  -  done! ✅\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on iPhone / iPad", "📲");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on Firefox", "📲");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! ✅", "Install on Samsung Browser", "📲");
+    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu at top right\n2. Tap \"Add to Home screen\" then \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "\xf0\x9f\x93\xb2");
   };
 
   // ── Save chat history to server ──
@@ -527,13 +543,13 @@ export default function App() {
   };
 
   const startVoiceInput = () => {
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { alert("Voice recognition not supported. Please use Chrome or Edge."); return; }
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { arkAlert("Voice recognition is not supported on this browser.\nPlease use Chrome or Edge for best experience.", "ARK LAW AI", "🎤"); return; }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US"; recognition.continuous = false; recognition.interimResults = false;
     recognition.onstart  = () => setIsListening(true);
     recognition.onresult = (event) => { setInput(event.results[0][0].transcript); setIsListening(false); };
-    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") alert("No speech detected."); };
+    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") arkAlert("No speech detected. Please speak clearly and try again.", "Voice Input", "🎤"); };
     recognition.onend    = () => setIsListening(false);
     recognition.start();
   };
@@ -579,7 +595,7 @@ export default function App() {
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) { alert("Failed to generate document. Please try again."); setDraftStep("gathering-info"); }
+    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
@@ -595,11 +611,11 @@ export default function App() {
   };
 
   const compareDocuments = async () => {
-    if (!doc1 || !doc2) { alert("Please upload both documents"); return; }
-    if (!compareFocus.trim()) { alert("Please specify a focal point for comparison"); return; }
+    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "📋"); return; }
+    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "📋"); return; }
     const maxSize = 5 * 1024 * 1024;
-    if (doc1.size > maxSize) { alert("Document 1 is too large. Maximum size is 5MB."); return; }
-    if (doc2.size > maxSize) { alert("Document 2 is too large. Maximum size is 5MB."); return; }
+    if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
+    if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
     setComparingDocs(true); setComparisonResult("");
     try {
       const readFileAsBase64 = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result.split(",")[1]); reader.onerror = reject; reader.readAsDataURL(file); });
@@ -884,7 +900,7 @@ export default function App() {
                     <div style={{fontSize:13,fontWeight:600,color:"#1A1209",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
                     <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Free</div>
                   </div>
-                  <button onClick={e=>{e.stopPropagation();alert("Upgrade feature coming soon!");}}
+                  <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "🚀");}}
                     style={{padding:"5px 11px",background:"#FFFFFF",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:11,fontWeight:600,flexShrink:0,transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#A89880";}}
                     onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C0B49A";}}>
@@ -984,7 +1000,7 @@ export default function App() {
                         }},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);if(confirm("Delete this conversation?")){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
                       ].map(({icon,label,action,red})=>(
                         <button key={label} onClick={action}
                           style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
@@ -1245,7 +1261,7 @@ export default function App() {
                     <option value="loan-agreement">💰 Loan Agreement</option>
                     <option value="trust-deed">🏛️ Trust Agreement</option>
                   </select>
-                  <button onClick={()=>{if(!draftType){alert("Please select a document type");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#4CAF7D":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#3D9B6A";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#4CAF7D";}}>
                     Next: Provide Information →
@@ -1361,7 +1377,7 @@ export default function App() {
               try{
                 const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
                 const data=await res.json();
-                if(!res.ok){alert(data.error||"Invalid email or password");return;}
+                if(!res.ok){arkAlert(data.error||"Invalid email or password. Please try again.", "Login Failed", "❌");return;}
                 const restoredTokens=data.user.tokens||500000;
                 const userWithTokens={...data.user,tokens:restoredTokens};
                 localStorage.setItem("arklaw_user",JSON.stringify(userWithTokens));
@@ -1375,8 +1391,8 @@ export default function App() {
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
                 }
                 setShowLoginPopup(false);
-                alert("Welcome back, "+data.user.name+"! You have "+restoredTokens.toLocaleString()+" credits remaining.");
-              }catch(error){alert("Login failed. Please try again.");}
+                arkAlert("Welcome back, "+data.user.name+"!\n\nYou have "+restoredTokens.toLocaleString()+" credits remaining.", "Welcome Back 👋", "✅");
+              }catch(error){arkAlert("Login failed. Please check your connection and try again.", "Login Error", "❌");}
             }}>
               <div style={{marginBottom:"11px"}}>
                 <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
@@ -1410,9 +1426,9 @@ export default function App() {
               try{
                 const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"Pakistan"})});
                 const data=await res.json();
-                if(res.ok){setShowSignupPopup(false);alert("Account created! 500,000 FREE credits awarded! Please log in.");setShowLoginPopup(true);}
-                else{alert(data.error||"Signup failed.");}
-              }catch(error){alert("Signup failed: "+error.message);}
+                if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n🎉 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "🎉");setShowLoginPopup(true);}
+                else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "❌");}
+              }catch(error){arkAlert("Signup failed: "+error.message, "Signup Error", "❌");}
             }}>
               {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
                 <div key={n} style={{marginBottom:"10px"}}>
@@ -1561,7 +1577,7 @@ export default function App() {
                 const selected = messages.filter((_,i)=>shareSelected.includes(i));
                 const text = selected.map(m=>(m.role==="user"?"You: ":"ARK Law AI: ")+m.content).join("\n\n---\n\n");
                 if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
-                else{navigator.clipboard.writeText(text).then(()=>{alert("Copied to clipboard!");setShowSharePopup(false);}).catch(()=>{});}
+                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "✅");}).catch(()=>{});}
               }} disabled={shareSelected.length===0}
                 style={{padding:"8px 20px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"8px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:"6px"}}
                 onMouseEnter={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#2A1E10";}}
@@ -1576,6 +1592,43 @@ export default function App() {
           </div>
         </div>
       )}
+      {/* ── ARK Modal ── */}
+      {arkModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
+          <div style={{background:"#FFFFFF",borderRadius:"18px",width:"90%",maxWidth:"400px",boxShadow:"0 20px 60px rgba(0,0,0,0.2)",border:"1px solid #C8BFB0",overflow:"hidden"}}>
+            <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",alignItems:"center",gap:"12px"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:32,height:32,objectFit:"contain",flexShrink:0}}/>
+              <div style={{fontSize:15,fontWeight:800,color:"#021A4A",fontFamily:"DM Sans,sans-serif"}}>{arkModal.title||"ARK LAW AI"}</div>
+              <div style={{marginLeft:"auto",fontSize:22}}>{arkModal.icon}</div>
+            </div>
+            <div style={{padding:"18px 20px"}}>
+              <div style={{fontSize:14,color:"#2A1E10",lineHeight:1.65,whiteSpace:"pre-line"}}>{arkModal.message}</div>
+              {arkModal.type==="prompt" && (
+                <input autoFocus value={arkModal.inputVal||""}
+                  onChange={e=>setArkModal(m=>({...m,inputVal:e.target.value}))}
+                  onKeyDown={e=>{if(e.key==="Enter"){const v=arkModal.inputVal;const r=arkModal.resolve;setArkModal(null);r(v);}if(e.key==="Escape"){setArkModal(null);arkModal.resolve(null);}}}
+                  placeholder={arkModal.inputPlaceholder||""}
+                  style={{width:"100%",marginTop:"12px",padding:"9px 12px",background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:"8px",fontSize:14,color:"#1A1209",outline:"none",fontFamily:"DM Sans,sans-serif"}}/>
+              )}
+            </div>
+            <div style={{padding:"12px 20px 16px",display:"flex",gap:"8px",justifyContent:"flex-end",background:"#F9F6F0",borderTop:"1px solid #EDE8DF"}}>
+              {arkModal.type!=="alert" && (
+                <button onClick={()=>{const r=arkModal.resolve;setArkModal(null);r(arkModal.type==="prompt"?null:false);}}
+                  style={{padding:"8px 18px",background:"transparent",color:"#7A6A55",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,fontFamily:"DM Sans,sans-serif"}}>
+                  Cancel
+                </button>
+              )}
+              <button onClick={()=>{const val=arkModal.type==="prompt"?arkModal.inputVal:arkModal.type==="confirm"?true:undefined;const r=arkModal.resolve;setArkModal(null);r(val);}}
+                style={{padding:"8px 20px",background:arkModal.confirmColor||"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"DM Sans,sans-serif"}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.88"}
+                onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+                {arkModal.confirmLabel||"OK"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Search Chats Popup ── */}
       {showSearchPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.25)",display:"flex",alignItems:"flex-start",justifyContent:"center",zIndex:3000,paddingTop:"60px"}}
@@ -1771,9 +1824,9 @@ export default function App() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                const t=prompt("Rename conversation:",s.title.replace("📌 ",""));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("📌 ",""), "Rename Chat", "Conversation name...").then(t=>{
                 if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
-                setSessionMenu(null);
+                setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
               onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
@@ -1812,11 +1865,10 @@ export default function App() {
             <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
             {/* Delete */}
             <button onClick={()=>{
-                if(window.confirm("Delete this conversation? This cannot be undone.")){
+                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{ if(ok){
                   setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
                   if(activeChatId===sessionMenu.id) startNewChat();
-                }
-                setSessionMenu(null);
+                }});  setSessionMenu(null);
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#DC2626",textAlign:"left"}}
               onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
