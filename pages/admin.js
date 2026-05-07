@@ -19,6 +19,11 @@ export default function AdminPanel() {
   const [msg,setMsg]=useState("");
   const [visitors,setVisitors]=useState([]);
   const [editTokens,setEditTokens]=useState("");
+
+  const [arkModal, setArkModal] = useState(null);
+  const arkAlert  = (message, title="ARK LAW AI", icon="ℹ️") => new Promise(r => setArkModal({type:"alert",  title, message, icon, resolve:r}));
+  const arkConfirm = (message, title="ARK LAW AI", icon="❓", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(r => setArkModal({type:"confirm", title, message, icon, confirmLabel, confirmColor, resolve:r}));
+
   const [usTheme,setUsTheme]=useState(()=>{try{return localStorage.getItem("arklaw_us_theme")||"chatgpt";}catch{return"chatgpt";}});
   const [pkTheme,setPkTheme]=useState(()=>{try{return localStorage.getItem("arklaw_pk_theme")||"chatgpt";}catch{return"chatgpt";}});
 
@@ -43,7 +48,7 @@ export default function AdminPanel() {
     else setMsg("❌ "+d.error);}catch(e){setMsg("❌ "+e.message);}
   };
   const deleteUser=async(uid,email)=>{
-    if(!confirm("Delete "+email+"? Cannot be undone."))return;
+    const _del = await arkConfirm("Delete user "+email+"?\nThis action cannot be undone.", "Delete User", "🗑️", "Delete", "#DC2626"); if(!_del) return;
     try{const res=await fetch("/api/admin/delete-user",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:uid})});
     const d=await res.json();
     if(res.ok){setMsg("✅ Deleted");setUsers(p=>p.filter(u=>u.id!==uid));setSelected(null);}else setMsg("❌ "+d.error);}catch(e){setMsg("❌ "+e.message);}
@@ -348,7 +353,7 @@ export default function AdminPanel() {
                 <div style={{fontSize:14,fontWeight:700,color:TEXT}}>👁️ Non-Logged-In Visitor Activity</div>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={loadVisitors} style={btn(BLUE)}>🔄 Refresh</button>
-                  <button onClick={()=>{if(confirm("Clear all visitor data?")){localStorage.removeItem("arklaw_visitors");setVisitors([]);}}} style={btn(RED)}>🗑 Clear</button>
+                  <button onClick={async()=>{const ok=await arkConfirm("Clear all visitor tracking data?\nThis cannot be undone.", "Clear Visitors", "⚠️", "Clear", "#DC2626"); if(ok){localStorage.removeItem("arklaw_visitors");setVisitors([]);}}} style={btn(RED)}>🗑 Clear</button>
                 </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:12,marginBottom:16}}>
@@ -491,6 +496,34 @@ export default function AdminPanel() {
 
         </div>
       </div>
+      {/* ── ARK Modal ── */}
+      {arkModal && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999}}>
+          <div style={{background:"#FFFFFF",borderRadius:"18px",width:"90%",maxWidth:"400px",boxShadow:"0 20px 60px rgba(0,0,0,0.2)",border:"1px solid "+BORDER,overflow:"hidden"}}>
+            <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",alignItems:"center",gap:"12px"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:32,height:32,objectFit:"contain",flexShrink:0}}/>
+              <div style={{fontSize:15,fontWeight:800,color:BLUE,fontFamily:"DM Sans,sans-serif"}}>{arkModal.title}</div>
+              <div style={{marginLeft:"auto",fontSize:22}}>{arkModal.icon}</div>
+            </div>
+            <div style={{padding:"18px 20px"}}>
+              <div style={{fontSize:14,color:TEXT_MID,lineHeight:1.65,whiteSpace:"pre-line"}}>{arkModal.message}</div>
+            </div>
+            <div style={{padding:"12px 20px 16px",display:"flex",gap:"8px",justifyContent:"flex-end",background:"#F9F6F0",borderTop:"1px solid #EDE8DF"}}>
+              {arkModal.type!=="alert" && (
+                <button onClick={()=>{const r=arkModal.resolve;setArkModal(null);r(false);}}
+                  style={{padding:"8px 18px",background:"transparent",color:TEXT_MUTED,border:"1px solid "+BORDER,borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500}}>
+                  Cancel
+                </button>
+              )}
+              <button onClick={()=>{const r=arkModal.resolve;setArkModal(null);r(arkModal.type==="confirm"?true:undefined);}}
+                style={{padding:"8px 20px",background:arkModal.confirmColor||BLUE,color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>
+                {arkModal.confirmLabel||"OK"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }
