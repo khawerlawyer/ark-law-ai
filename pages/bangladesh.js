@@ -925,30 +925,37 @@ export default function AppBD() {
                 </button>
               </div>
             ) : (
-              <div>
-                {/* Token bar */}
-                <div style={{padding:"5px 10px",marginBottom:"4px",background:"#DDD6CB",borderRadius:"8px",display:"flex",alignItems:"center",gap:"8px"}}>
-                  <div style={{flex:1,height:"3px",background:"#C8BFB0",borderRadius:"2px",overflow:"hidden"}}>
-                    <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"2px"}}/>
-                  </div>
-                  <span style={{fontSize:10,color:"#8A7A65",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()}</span>
-                </div>
-                {/* User row */}
-                <button className="sb-item" onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}} style={{width:"100%"}}>
-                  <div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#C9A84C,#B8860B)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#111",flexShrink:0}}>
-                    {user.name?.charAt(0)?.toUpperCase()}
+              <div style={{padding:"4px 6px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 10px",borderRadius:"10px",cursor:"pointer",transition:"background 0.15s",position:"relative"}}
+                  onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <div style={{width:"34px",height:"34px",borderRadius:"50%",background:"#006A4E",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white",flexShrink:0,letterSpacing:"0.5px"}}>
+                    {(user.name||"U").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}
                   </div>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:13,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
-                    <div style={{fontSize:11,color:"#8A7A65",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.email}</div>
+                    <div style={{fontSize:13,fontWeight:600,color:"#1A1209",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
+                    <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Free</div>
                   </div>
+                  <button onClick={e=>{e.stopPropagation();alert("Upgrade feature coming soon!");}}
+                    style={{padding:"5px 11px",background:"#FFFFFF",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:11,fontWeight:600,flexShrink:0,transition:"all 0.15s"}}
+                    onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#A89880";}}
+                    onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C0B49A";}}>
+                    Upgrade
+                  </button>
                   {user?.email?.toLowerCase()==="khawer.profession@gmail.com" && (
                     <button onClick={e=>{e.stopPropagation();window.open("/admin","_blank");}}
-                      style={{padding:"2px 6px",background:"#006A4E",color:"white",border:"none",borderRadius:"4px",cursor:"pointer",fontSize:9,fontWeight:700,flexShrink:0}}>
+                      style={{position:"absolute",top:"-6px",right:"-4px",padding:"2px 6px",background:"#DC2626",color:"white",border:"none",borderRadius:"4px",cursor:"pointer",fontSize:9,fontWeight:700}}>
                       Admin
                     </button>
                   )}
-                </button>
+                </div>
+                <div style={{padding:"4px 10px 2px",display:"flex",alignItems:"center",gap:"8px"}}>
+                  <div style={{flex:1,height:"3px",background:"#C8BFB0",borderRadius:"2px",overflow:"hidden"}}>
+                    <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#006A4E":"#C9A84C",borderRadius:"2px"}}/>
+                  </div>
+                  <span style={{fontSize:9,color:"#9A8A75",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()} credits</span>
+                </div>
               </div>
             )}
             {/* Back + Language */}
