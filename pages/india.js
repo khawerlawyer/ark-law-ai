@@ -202,7 +202,7 @@ function INNewsWidget() {
     return () => clearInterval(id);
   }, [h, exp]);
   return (
-    <div style={{ position:"absolute", top:"12px", right:"12px", zIndex:10, width:"230px", background:"rgba(15,15,25,0.97)", border:"1px solid rgba(120,120,180,0.4)", borderRadius:"10px", boxShadow:"0 4px 24px rgba(0,0,0,0.5)", overflow:"hidden", fontFamily:"Segoe UI,sans-serif" }}>
+    <div style={{ position:"absolute", top:"12px", right:"12px", zIndex:10, width:"230px", background:"rgba(240,234,220,0.97)", border:"1px solid rgba(120,120,180,0.4)", borderRadius:"10px", boxShadow:"0 4px 24px rgba(0,0,0,0.5)", overflow:"hidden", fontFamily:"Segoe UI,sans-serif" }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"6px 10px", background:"#FF9933", cursor:"pointer" }} onClick={() => setExp(e => !e)}>
         <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
           <div style={{ width:"7px", height:"7px", borderRadius:"50%", background:"white", animation:"pulse 1.5s infinite" }} />
@@ -213,7 +213,7 @@ function INNewsWidget() {
       </div>
       {!exp && h[pos] && (
         <div style={{ padding:"8px 10px", minHeight:"60px" }}>
-          <div style={{ fontSize:11, color:"#E8F0FF", lineHeight:1.45, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{h[pos].title}</div>
+          <div style={{ fontSize:11, color:"#1A1209", lineHeight:1.45, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{h[pos].title}</div>
           <div style={{ display:"flex", justifyContent:"space-between", marginTop:"5px" }}>
             <span style={{ fontSize:9, color:"#88aaff", fontWeight:700 }}>{h[pos].source}</span>
             <a href={h[pos].url} target="_blank" rel="noopener noreferrer" style={{ fontSize:9, color:"#9DB8E8", textDecoration:"none" }}>Read ↗</a>
@@ -228,13 +228,13 @@ function INNewsWidget() {
           {h.map((item, i) => (
             <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
               style={{ display:"block", padding:"8px 10px", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,0.06)", background: i%2===0 ? "rgba(10,30,60,0.5)" : "transparent" }}>
-              <div style={{ fontSize:11, color:"#E8F0FF", lineHeight:1.4, marginBottom:"3px" }}>{item.title}</div>
+              <div style={{ fontSize:11, color:"#1A1209", lineHeight:1.4, marginBottom:"3px" }}>{item.title}</div>
               <span style={{ fontSize:9, color:"#88aaff", fontWeight:700 }}>{item.source}</span>
             </a>
           ))}
         </div>
       )}
-      <div style={{ padding:"4px 10px", background:"rgba(0,5,15,0.9)", display:"flex", justifyContent:"space-between" }}>
+      <div style={{ padding:"4px 10px", background:"rgba(220,212,198,0.95)", display:"flex", justifyContent:"space-between" }}>
         <span style={{ fontSize:8, color:"#556688", fontStyle:"italic" }}>NDTV · 5 min</span>
         <a href="https://news.google.com/search?q=India+legal+news" target="_blank" rel="noopener noreferrer" style={{ fontSize:8, color:"#88aaff", textDecoration:"none", fontWeight:700 }}>more ↗</a>
       </div>
@@ -805,48 +805,48 @@ export default function AppIN() {
 
       <style>{`
         *{margin:0;padding:0;box-sizing:border-box;}
-        html,body{height:100%;overflow:hidden;background:#212121;color:#ececec;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
+        html,body{height:100%;overflow:hidden;background:#F5F0E8;color:#1A1209;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
         #__next{height:100%;overflow:hidden;}
         ::-webkit-scrollbar{width:5px;}
         ::-webkit-scrollbar-track{background:transparent;}
-        ::-webkit-scrollbar-thumb{background:#444;border-radius:3px;}
-        ::-webkit-scrollbar-thumb:hover{background:#555;}
+        ::-webkit-scrollbar-thumb{background:#C0B49A;border-radius:3px;}
+        ::-webkit-scrollbar-thumb:hover{background:#A89880;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
         @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
         @keyframes dotBounce{0%,80%,100%{transform:scale(0.6);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
-        .sb-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:#ececec;transition:background 0.15s;text-decoration:none;width:100%;border:none;background:transparent;text-align:left;}
-        .sb-item:hover{background:#2f2f2f;}
-        .sb-item.active{background:#2f2f2f;}
+        .sb-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:#2A1E10;transition:background 0.15s;text-decoration:none;width:100%;border:none;background:transparent;text-align:left;}
+        .sb-item:hover{background:#D8D0C4;}
+        .sb-item.active{background:#D8D0C4;}
         .msg-wrap{max-width:720px;margin:0 auto;padding:0 16px;}
         .msg-actions{opacity:0;transition:opacity 0.15s;}
         .msg-row:hover .msg-actions{opacity:1;}
-        .qcard{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:10px;padding:9px 12px;cursor:pointer;transition:background 0.15s;text-align:left;}
-        .qcard:hover{background:#333;}
-        .input-wrap{background:#2f2f2f;border:1px solid #3a3a3a;border-radius:16px;transition:border-color 0.2s;}
-        .input-wrap:focus-within{border-color:#555;}
+        .qcard{background:#FFFFFF;border:1px solid #C0B49A;border-radius:10px;padding:9px 12px;cursor:pointer;transition:background 0.15s;text-align:left;}
+        .qcard:hover{background:#F0EBE0;}
+        .input-wrap{background:#FFFFFF;border:1px solid #C0B49A;border-radius:16px;transition:border-color 0.2s;}
+        .input-wrap{border-color:#B35400;}
         @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
       {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
       {inTheme === "chatgpt" && (
-      <div style={{display:"flex",height:"100vh",background:"#212121",color:"#ececec",overflow:"hidden"}}>
+      <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
         {/* ═══════════════════════════════════════════
             SIDEBAR
         ═══════════════════════════════════════════ */}
-        <div className="sidebar-desktop" style={{width:"260px",background:"#171717",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:"1px solid #2a2a2a",overflowY:"auto"}}>
+        <div className="sidebar-desktop" style={{width:"260px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:"1px solid #C8BFB0",overflowY:"auto"}}>
 
           {/* Logo + New Chat */}
           <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
             <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
-              <span style={{fontSize:14,fontWeight:800,color:"#ececec",fontFamily:"DM Sans,sans-serif",letterSpacing:"1px"}}>ARK LAW AI <img src="https://flagcdn.com/w40/in.png" alt="IN" style={{width:"18px",height:"12px",borderRadius:"2px",marginLeft:"5px",verticalAlign:"middle"}}/></span>
+              <span style={{fontSize:14,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"1px"}}>ARK LAW AI <img src="https://flagcdn.com/w40/in.png" alt="IN" style={{width:"18px",height:"12px",borderRadius:"2px",marginLeft:"5px",verticalAlign:"middle"}}/></span>
             </div>
             <button onClick={startNewChat} title="New chat"
-              style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#b4b4b4",transition:"all 0.15s"}}
+              style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
               onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#b4b4b4";}}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -871,7 +871,7 @@ export default function AppIN() {
             {showPracticeAreas && (
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
                 {PRACTICE_AREAS_IN.map((area,i)=>(
-                  <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#b4b4b4"}}
+                  <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
                     onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
                     <span>{isUrdu ? IN_LOCAL_AREAS[i] : area.label}</span>
@@ -881,22 +881,22 @@ export default function AppIN() {
             )}
           </div>
 
-          <div style={{height:"1px",background:"#2a2a2a",margin:"6px 12px",flexShrink:0}}/>
+          <div style={{height:"1px",background:"#DDD6CB",margin:"6px 12px",flexShrink:0}}/>
 
           {/* Recents label */}
           <div style={{padding:"2px 16px 4px",flexShrink:0}}>
-            <span style={{fontSize:11,fontWeight:600,color:"#8e8ea0",textTransform:"uppercase",letterSpacing:"0.6px"}}>Recents</span>
+            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>Recents</span>
           </div>
 
           {/* Sessions list */}
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}}>
             {allSessions.length===0 ? (
-              <div style={{padding:"16px 12px",color:"#555",fontSize:13,textAlign:"center"}}>No conversations yet</div>
+              <div style={{padding:"16px 12px",color:"#6A5A45",fontSize:13,textAlign:"center"}}>No conversations yet</div>
             ) : allSessions.map(s=>{
               const active=s.id===activeChatId;
               return(
                 <button key={s.id} className={"sb-item"+(active?" active":"")} onClick={()=>loadSession(s.id)}
-                  style={{fontSize:13,color:active?"#ececec":"#b4b4b4",width:"100%"}}>
+                  style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                   <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{s.title}</span>
                 </button>
@@ -905,16 +905,16 @@ export default function AppIN() {
           </div>
 
           {/* Bottom user section */}
-          <div style={{padding:"8px",borderTop:"1px solid #2a2a2a",flexShrink:0}}>
+          <div style={{padding:"8px",borderTop:"1px solid #C8BFB0",flexShrink:0}}>
             {!user ? (
               <div style={{display:"flex",gap:"6px",padding:"2px 4px"}}>
                 <button onClick={()=>setShowLoginPopup(true)}
-                  style={{flex:1,padding:"9px 0",background:"transparent",color:"#ececec",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
+                  style={{flex:1,padding:"9px 0",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
                   onMouseEnter={e=>e.currentTarget.style.background="#2f2f2f"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                   {isUrdu ? "लॉग इन" : "Log in"}
                 </button>
                 <button onClick={()=>setShowSignupPopup(true)}
-                  style={{flex:1,padding:"9px 0",background:"white",color:"#212121",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
+                  style={{flex:1,padding:"9px 0",background:"#B35400",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
                   onMouseEnter={e=>e.currentTarget.style.background="#e8e8e8"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
                   Sign up
                 </button>
@@ -922,11 +922,11 @@ export default function AppIN() {
             ) : (
               <div>
                 {/* Token bar */}
-                <div style={{padding:"5px 10px",marginBottom:"4px",background:"#2a2a2a",borderRadius:"8px",display:"flex",alignItems:"center",gap:"8px"}}>
-                  <div style={{flex:1,height:"3px",background:"#3a3a3a",borderRadius:"2px",overflow:"hidden"}}>
+                <div style={{padding:"5px 10px",marginBottom:"4px",background:"#DDD6CB",borderRadius:"8px",display:"flex",alignItems:"center",gap:"8px"}}>
+                  <div style={{flex:1,height:"3px",background:"#C8BFB0",borderRadius:"2px",overflow:"hidden"}}>
                     <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"2px"}}/>
                   </div>
-                  <span style={{fontSize:10,color:"#666",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()}</span>
+                  <span style={{fontSize:10,color:"#8A7A65",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()}</span>
                 </div>
                 {/* User row */}
                 <button className="sb-item" onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}} style={{width:"100%"}}>
@@ -935,7 +935,7 @@ export default function AppIN() {
                   </div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:13,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
-                    <div style={{fontSize:11,color:"#666",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.email}</div>
+                    <div style={{fontSize:11,color:"#8A7A65",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.email}</div>
                   </div>
                   {user?.email?.toLowerCase()==="khawer.profession@gmail.com" && (
                     <button onClick={e=>{e.stopPropagation();window.open("/admin","_blank");}}
@@ -949,13 +949,13 @@ export default function AppIN() {
             {/* Back + Language */}
             <div style={{display:"flex",gap:"4px",marginTop:"4px",padding:"0 2px"}}>
               <button onClick={()=>router.push("/")}
-                style={{padding:"6px 8px",background:"transparent",color:"#666",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
+                style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
                 ← 🌍
               </button>
               <select value={isUrdu?"hi":"en"} onChange={e=>setIsUrdu(e.target.value==="hi")}
-                style={{flex:1,padding:"5px 8px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
+                style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">🌐 English</option>
                 <option value="hi">Hindi</option>
               </select>
@@ -966,10 +966,10 @@ export default function AppIN() {
         {/* ═══════════════════════════════════════════
             MAIN CONTENT
         ═══════════════════════════════════════════ */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#212121"}}>
+        <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
           {/* Top bar  -  tagline + news widget */}
-          <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #2a2a2a",flexShrink:0,minHeight:"52px"}}>
+          <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",flexShrink:0,minHeight:"52px"}}>
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
@@ -982,7 +982,7 @@ export default function AppIN() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
                 <div style={{fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Satyameva Jayate</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#FF9933,transparent)",marginTop:"3px"}}/>
-                <div style={{fontSize:"10px",fontStyle:"italic",color:"#555",letterSpacing:"1.2px",marginTop:"2px"}}>Constitution of India</div>
+                <div style={{fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px"}}>Constitution of India</div>
               </div>
             )}
             {/* Right: news + mobile auth */}
@@ -990,8 +990,8 @@ export default function AppIN() {
               {!isMobile && <INNewsWidget />}
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
-                  <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#ececec",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
-                  <button onClick={()=>setShowSignupPopup(true)} style={{padding:"6px 12px",background:"white",color:"#212121",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:600}}>Sign up</button>
+                  <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
+                  <button onClick={()=>setShowSignupPopup(true)} style={{padding:"6px 12px",background:"#B35400",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:600}}>Sign up</button>
                 </div>
               )}
               {isMobile && user && (
@@ -1010,17 +1010,17 @@ export default function AppIN() {
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
-                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#ececec",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
                   {isUrdu ? "How can I help you today?" : "How can I help you today?"}
                 </h2>
-                <p style={{fontSize:14,color:"#666",marginBottom:"16px",textAlign:"center"}}>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>
                   {isUrdu ? "ARK Law AI India" : "ARK Law AI India  -  your expert legal assistant"}
                 </p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? IN_LOCAL_QUERIES : QUICK_QUERIES_IN).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
-                      <div style={{fontSize:12,color:"#d1d1d1",lineHeight:1.4,marginBottom:"5px"}}>{q}</div>
-                      <div style={{fontSize:10,color:"#555",display:"flex",alignItems:"center",gap:"3px"}}>
+                      <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,marginBottom:"5px"}}>{q}</div>
+                      <div style={{fontSize:10,color:"#6A5A45",display:"flex",alignItems:"center",gap:"3px"}}>
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                         Ask ARK
                       </div>
@@ -1039,7 +1039,7 @@ export default function AppIN() {
                       {/* Avatar */}
                       <div style={{flexShrink:0,marginTop:"2px"}}>
                         {msg.role==="assistant" ? (
-                          <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",border:"1px solid #333"}}/>
+                          <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",border:"1px solid #C8BFB0"}}/>
                         ) : (
                           <div style={{width:"30px",height:"30px",borderRadius:"50%",background:"linear-gradient(135deg,#667eea,#764ba2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white"}}>
                             {user?.name?.charAt(0)?.toUpperCase()||"U"}
@@ -1048,17 +1048,17 @@ export default function AppIN() {
                       </div>
                       {/* Text */}
                       <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:13,fontWeight:600,color:"#ececec",marginBottom:"5px"}}>
+                        <div style={{fontSize:13,fontWeight:600,color:"#1A1209",marginBottom:"5px"}}>
                           {msg.role==="assistant" ? "ARK Law AI" : (user?.name||"You")}
                         </div>
-                        <div style={{fontSize:14.5,color:"#d1d1d1",lineHeight:1.7}}>
+                        <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
                           <div className="msg-actions" style={{display:"flex",gap:"4px",marginTop:"10px",flexWrap:"wrap"}}>
                             <button onClick={()=>speakText(msg.content,i)}
-                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:currentSpeakingIndex===i?"#4CAF7D":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:currentSpeakingIndex===i?"#B35400":"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
                               onMouseLeave={e=>{e.currentTarget.style.borderColor="#333";e.currentTarget.style.color=currentSpeakingIndex===i?"#4CAF7D":"#666";}}>
                               {currentSpeakingIndex===i
@@ -1067,12 +1067,12 @@ export default function AppIN() {
                               <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
                             </button>
                             <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
                             <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #333",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
@@ -1091,7 +1091,7 @@ export default function AppIN() {
                       <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
                       <div style={{paddingTop:"6px",display:"flex",gap:"5px",alignItems:"center"}}>
                         {[0,1,2].map(i=>(
-                          <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#666",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
+                          <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#9A8A75",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
                         ))}
                       </div>
                     </div>
@@ -1103,15 +1103,15 @@ export default function AppIN() {
           </div>
 
           {/* ═══════════════════ INPUT AREA ═══════════════════ */}
-          <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#212121",flexShrink:0}}>
+          <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#F5F0E8",flexShrink:0}}>
 
             {/* Attached files */}
             {uploadedFiles.length>0 && (
               <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
                 {uploadedFiles.map((file,idx)=>(
-                  <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#2f2f2f",border:"1px solid #3a3a3a",borderRadius:"8px",fontSize:12,color:"#d1d1d1"}}>
+                  <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
                     <span>📎 {file.name}</span>
-                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#666",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
                   </div>
                 ))}
               </div>
@@ -1120,7 +1120,7 @@ export default function AppIN() {
             {/* Input box */}
             <div className="input-wrap" style={{maxWidth:"720px",margin:"0 auto",padding:"10px 12px",display:"flex",alignItems:"flex-end",gap:"8px"}}>
               {/* Attach */}
-              <label htmlFor="file-us" style={{cursor:"pointer",color:"#666",display:"flex",alignItems:"center",padding:"4px",borderRadius:"6px",flexShrink:0,transition:"color 0.15s"}}
+              <label htmlFor="file-us" style={{cursor:"pointer",color:"#8A7A65",display:"flex",alignItems:"center",padding:"4px",borderRadius:"6px",flexShrink:0,transition:"color 0.15s"}}
                 onMouseEnter={e=>e.currentTarget.style.color="#ececec"} onMouseLeave={e=>e.currentTarget.style.color="#666"}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.42 16.41a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 <input id="file-us" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" style={{display:"none"}} onChange={e=>{const files=Array.from(e.target.files);if(files.length)setUploadedFiles(prev=>[...prev,...files]);}}/>
@@ -1133,7 +1133,7 @@ export default function AppIN() {
                 onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
                 placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about Indian law...")}
                 rows={1}
-                style={{flex:1,background:"transparent",border:"none",color:"#ececec",fontSize:15,lineHeight:1.6,resize:"none",outline:"none",fontFamily:"inherit",maxHeight:"180px",overflowY:"auto"}}
+                style={{flex:1,background:"transparent",border:"none",color:"#1A1209",fontSize:15,lineHeight:1.6,resize:"none",outline:"none",fontFamily:"inherit",maxHeight:"180px",overflowY:"auto"}}
               />
 
               {/* Mic */}
@@ -1146,10 +1146,10 @@ export default function AppIN() {
 
               {/* Send */}
               <button onClick={()=>sendMessage()} disabled={loading||(!input.trim()&&!uploadedFiles.length)}
-                style={{width:"32px",height:"32px",borderRadius:"8px",background:(loading||(!input.trim()&&!uploadedFiles.length))?"#333":"white",border:"none",cursor:(loading||(!input.trim()&&!uploadedFiles.length))?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.2s"}}>
+                style={{width:"32px",height:"32px",borderRadius:"8px",background:(loading||(!(input.trim())&&!uploadedFiles.length))?"#C8BFB0":"#B35400",border:"none",cursor:(loading||(!input.trim()&&!uploadedFiles.length))?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.2s"}}>
                 {loading
                   ?<div style={{width:"13px",height:"13px",border:"2px solid #666",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-                  :<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={(!input.trim()&&!uploadedFiles.length)?"#555":"#212121"} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                  :<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={(!input.trim()&&!uploadedFiles.length)?"#8A7A65":"white"} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                 }
               </button>
             </div>
@@ -1169,7 +1169,7 @@ export default function AppIN() {
           <div style={{color:"#E8D97A",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#A8C0E8",fontSize:13}}>Loading classic India UI...</div>
           <button onClick={()=>{localStorage.setItem("arklaw_in_theme","classic");window.location.href="/india-classic";}} style={{padding:"10px 24px",background:"#FF9933",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
-          <button onClick={()=>{setInTheme("chatgpt");localStorage.setItem("arklaw_in_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#666",border:"1px solid #333",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
+          <button onClick={()=>{setInTheme("chatgpt");localStorage.setItem("arklaw_in_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
@@ -1179,7 +1179,7 @@ export default function AppIN() {
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
-          <div style={{background:"#1a1a2e",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
+          <div style={{background:"#F0EBE0",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
             <div style={{background:"linear-gradient(135deg,#001F5B,#0d0d2b)",padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #FF9933"}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",borderRadius:"50%",objectFit:"cover"}}/>
@@ -1193,10 +1193,10 @@ export default function AppIN() {
                 <span style={{fontSize:10,color:"#A8C0E8"}}>📰 Source:</span>
                 <span style={{fontSize:11,color:"#FF9933",fontWeight:600}}>{selectedNews.source}</span>
               </div>
-              <p style={{color:"#d1d1d1",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
+              <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
                 <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}>⚖️ Legal Analysis:</h4>
-                {newsLoading?<div style={{color:"#666",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#b4b4b4",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
+                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
@@ -1208,20 +1208,20 @@ export default function AppIN() {
 
       {showDraftPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#1a1a1a",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
-            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #333",position:"sticky",top:0,background:"#1a1a1a",zIndex:2}}>
+            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover"}}/>
                 <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>✍️ AI Legal Document Drafting</div></div>
               </div>
-              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
+                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">-- Select Document Type --</option>
                     <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
                     <option value="contract">📄 General Contract</option>
@@ -1241,49 +1241,49 @@ export default function AppIN() {
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#e07800";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#FF9933";}}>
                     Next: Provide Information →
                   </button>
-                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
               )}
               {draftStep==="gathering-info" && (
                 <div>
-                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
                   <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
-                    <div style={{background:"#2a2a2a",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #3a3a3a"}}>
-                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#1a1a1a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
+                    <div style={{background:"#DDD6CB",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #C0B49A"}}>
+                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
-                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#FF9933",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#e07800";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#FF9933";}}>
                       {draftGenerating?"⏳ Generating...":"🚀 Generate with AI"}
                     </button>
                   </div>
-                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
                 </div>
               )}
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
                   <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
-                  <h4 style={{color:"#ececec",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
-                  <p style={{color:"#666",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
+                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
+                  <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
               {draftStep==="completed" && (
                 <div>
-                  <h4 style={{color:"#ececec",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
-                  <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
+                  <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
                   <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #FF9933",marginBottom:"14px"}}>
                     <div style={{color:"#FF9933",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
-                    <div style={{color:"#b4b4b4",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
+                    <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
-                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
+                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
                     <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#FF9933",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>📥 DOCX</button>
                     <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
                   </div>
-                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
+                  <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
               )}
             </div>
@@ -1293,32 +1293,32 @@ export default function AppIN() {
 
       {showComparePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#1a1a1a",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
-            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #333",position:"sticky",top:0,background:"#1a1a1a",zIndex:2}}>
+            <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover"}}/>
                 <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>⚖️ Compare Legal Documents</div></div>
               </div>
-              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#A8C0E8",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
-                  <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"7px",fontSize:11,outline:"none"}}/>
+                  <label style={{color:"#5A4A35",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
+                  <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
                   {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
-                <label style={{color:"#A8C0E8",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
-                <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",color:"#ececec",borderRadius:"7px",fontSize:12,outline:"none"}}/>
+                <label style={{color:"#5A4A35",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
+                <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
-              {comparingDocs && <div style={{padding:"16px",background:"#2a2a2a",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#b4b4b4",fontSize:13}}>⏳ Analyzing documents...</div>}
+              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
-                <div style={{marginBottom:"14px",padding:"14px",background:"#2a2a2a",borderRadius:"8px",border:"1px solid #3a3a3a"}}>
-                  <div style={{color:"#ececec",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
-                  <div style={{color:"#b4b4b4",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
+                <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
+                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
+                  <div style={{color:"#4A3A28",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
                 </div>
               )}
               <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
@@ -1329,7 +1329,7 @@ export default function AppIN() {
                 </button>
                 {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
               </div>
-              <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
+              <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
           </div>
         </div>
@@ -1338,7 +1338,7 @@ export default function AppIN() {
       {/* LOGIN POPUP */}
       {showLoginPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#1a1a1a",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #FF9933",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
+          <div style={{background:"#F5F0E8",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #FF9933",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"16px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
@@ -1370,16 +1370,16 @@ export default function AppIN() {
               }catch(error){alert("Login failed. Please try again.");}
             }}>
               <div style={{marginBottom:"11px"}}>
-                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
-                <input name="email" type="email" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="your@email.com"/>
+                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
+                <input name="email" type="email" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="your@email.com"/>
               </div>
               <div style={{marginBottom:"16px"}}>
-                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
-                <input name="password" type="password" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="Enter your password"/>
+                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
+                <input name="password" type="password" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="Enter your password"/>
               </div>
               <button type="submit" style={{width:"100%",padding:"11px",background:"#FF9933",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"10px"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>Log in</button>
-              <button type="button" onClick={()=>setShowLoginPopup(false)} style={{width:"100%",padding:"9px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"12px"}}>Cancel</button>
-              <p style={{textAlign:"center",color:"#666",fontSize:12,margin:0}}>Don't have an account?{" "}<span onClick={()=>{setShowLoginPopup(false);setShowSignupPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Sign up</span></p>
+              <button type="button" onClick={()=>setShowLoginPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"12px"}}>Cancel</button>
+              <p style={{textAlign:"center",color:"#8A7A65",fontSize:12,margin:0}}>Don't have an account?{" "}<span onClick={()=>{setShowLoginPopup(false);setShowSignupPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Sign up</span></p>
             </form>
           </div>
         </div>
@@ -1388,7 +1388,7 @@ export default function AppIN() {
       {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#1a1a1a",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #FF9933",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
+          <div style={{background:"#F5F0E8",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #FF9933",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
@@ -1407,25 +1407,25 @@ export default function AppIN() {
             }}>
               {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
                 <div key={n} style={{marginBottom:"10px"}}>
-                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>{l}</label>
-                  <input name={n} type={t} required={true} minLength={n==="password"?6:undefined} style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder={ph}/>
+                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>{l}</label>
+                  <input name={n} type={t} required={true} minLength={n==="password"?6:undefined} style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder={ph}/>
                 </div>
               ))}
               <div style={{marginBottom:"10px"}}>
-                <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Profession *</label>
-                <select name="profession" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none",cursor:"pointer"}}>
+                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Profession *</label>
+                <select name="profession" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none",cursor:"pointer"}}>
                   <option value="">Select profession...</option>
                   <option>Attorney</option><option>Paralegal</option><option>Legal Assistant</option><option>Law Clerk</option><option>Law Student</option><option>Judge</option><option>Other</option>
                 </select>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"10px"}}>
                 <div>
-                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
-                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
+                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
+                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
                 </div>
                 <div>
-                  <label style={{color:"#A8C0E8",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
-                  <select name="province" required style={{width:"100%",padding:"9px 12px",background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"7px",color:"#ececec",fontSize:13,outline:"none",cursor:"pointer"}}>
+                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
+                  <select name="province" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none",cursor:"pointer"}}>
                     <option value="">Select state/province...</option>
                     <option key="Andhra Pradesh">Andhra Pradesh</option>
                     <option key="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -1464,8 +1464,8 @@ export default function AppIN() {
                 </div>
               </div>
               <button type="submit" style={{width:"100%",padding:"11px",background:"#FF9933",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>Create Account  -  500,000 Free Credits ✨</button>
-              <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#2a2a2a",color:"#b4b4b4",border:"1px solid #3a3a3a",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
-              <p style={{textAlign:"center",color:"#666",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
+              <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
+              <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
           </div>
         </div>
@@ -1474,60 +1474,60 @@ export default function AppIN() {
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.8)",pointerEvents:"all"}}>
-          <div style={{background:"#1a1a1a",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #FF9933",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
-            <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #333",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#1a1a1a"}}>
+            <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #C8BFB0",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#F5F0E8"}}>
               <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
                 <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:GOLD}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#A8C0E8"}}>/ My Account</span></div>
               </div>
-              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#666",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#FF9933,transparent)",flexShrink:0}}/>
             <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
-              <div style={{flex:"0 0 52%",padding:"14px 16px",overflowY:"auto",borderRight:"1px solid #2a2a2a"}}>
+              <div style={{flex:"0 0 52%",padding:"14px 16px",overflowY:"auto",borderRight:"1px solid #C8BFB0"}}>
                 <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px"}}>
                   <div style={{width:"44px",height:"44px",borderRadius:"50%",background:"linear-gradient(135deg,#FF9933,#8B0000)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",fontWeight:700,color:"white",flexShrink:0}}>{user.name.charAt(0).toUpperCase()}</div>
-                  <div><div style={{color:"#ececec",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#666",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
+                  <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
-                <div style={{background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
+                <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
                   <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
                   <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
-                    <div style={{flex:1,height:"6px",background:"#333",borderRadius:"3px",overflow:"hidden"}}>
+                    <div style={{flex:1,height:"6px",background:"#D8D0C4",borderRadius:"3px",overflow:"hidden"}}>
                       <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
                     </div>
-                    <span style={{fontSize:13,fontWeight:800,color:"#ececec",fontFamily:"Georgia,serif"}}>{userTokens.toLocaleString()}</span>
+                    <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"Georgia,serif"}}>{userTokens.toLocaleString()}</span>
                   </div>
-                  <div style={{fontSize:9,color:"#666"}}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
+                  <div style={{fontSize:9,color:"#8A7A65"}}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
                 </div>
-                <div style={{background:"#2a2a2a",border:"1px solid #3a3a3a",borderRadius:"10px",padding:"10px 12px",marginBottom:"12px"}}>
+                <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"12px"}}>
                   <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"8px"}}>Profile</div>
                   {[{k:"Profession",v:user.profession},{k:"City",v:user.city},{k:"State",v:user.province},{k:"Country",v:user.country||"United States"}].filter(x=>x.v).map(({k,v})=>(
-                    <div key={k} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #333",paddingBottom:"5px",marginBottom:"5px"}}>
-                      <span style={{fontSize:9,color:"#666",textTransform:"uppercase"}}>{k}</span>
-                      <span style={{fontSize:11,color:"#ececec",fontWeight:600}}>{v}</span>
+                    <div key={k} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",paddingBottom:"5px",marginBottom:"5px"}}>
+                      <span style={{fontSize:9,color:"#8A7A65",textTransform:"uppercase"}}>{k}</span>
+                      <span style={{fontSize:11,color:"#1A1209",fontWeight:600}}>{v}</span>
                     </div>
                   ))}
                 </div>
                 <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#FF9933",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>🚪 Logout &amp; Save History</button>
               </div>
               <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{padding:"12px 14px",borderBottom:"1px solid #2a2a2a",flexShrink:0}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#ececec",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
-                  <div style={{fontSize:9,color:"#666",marginTop:"2px"}}>Your saved conversations</div>
+                <div style={{padding:"12px 14px",borderBottom:"1px solid #C8BFB0",flexShrink:0}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
+                  <div style={{fontSize:9,color:"#8A7A65",marginTop:"2px"}}>Your saved conversations</div>
                 </div>
                 <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
                     ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
                     :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
-                      <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#2a2a2a",padding:"8px 10px",borderRadius:"8px",border:"1px solid #333",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
-                        <div style={{color:"#ececec",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
-                        <div style={{color:"#666",fontSize:9}}>{session.messages.filter(m=>m.role==="user").length} message(s)</div>
+                      <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#DDD6CB",padding:"8px 10px",borderRadius:"8px",border:"1px solid #C8BFB0",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
+                        <div style={{color:"#1A1209",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
+                        <div style={{color:"#8A7A65",fontSize:9}}>{session.messages.filter(m=>m.role==="user").length} message(s)</div>
                       </div>
                     ))
                   }
                 </div>
-                <div style={{padding:"8px 10px",borderTop:"1px solid #2a2a2a",background:"#1a1a1a",flexShrink:0,textAlign:"center"}}>
+                <div style={{padding:"8px 10px",borderTop:"1px solid #C8BFB0",background:"#F5F0E8",flexShrink:0,textAlign:"center"}}>
                   <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}>✓ History auto-saved</span>
                 </div>
               </div>
@@ -1538,11 +1538,11 @@ export default function AppIN() {
 
       {showComingSoon && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
-          <div onClick={e=>e.stopPropagation()} style={{background:"#1a1a1a",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #FF9933",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
-            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#666",fontSize:24,cursor:"pointer"}}>✕</button>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #FF9933",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
+            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
             <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px"}}/>
-            <div style={{fontSize:20,fontWeight:700,color:"#ececec",marginBottom:"8px"}}>Coming Soon!</div>
-            <div style={{fontSize:13,color:"#666",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
+            <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
+            <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
             <button onClick={()=>setShowComingSoon(false)} style={{padding:"10px 32px",background:"#FF9933",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:14,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#e07800"} onMouseLeave={e=>e.currentTarget.style.background="#FF9933"}>Got it!</button>
           </div>
         </div>
