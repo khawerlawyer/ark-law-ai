@@ -22,7 +22,10 @@ export default function Landing() {
         <title>ARK LAW AI - Choose Your Jurisdiction</title>
         <meta name="description" content="ARK Law AI: AI-powered legal assistant for Pakistan, USA, India and Bangladesh." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512.png" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
       </Head>
 
@@ -113,7 +116,7 @@ export default function Landing() {
         {/* Logo + brand */}
         <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
           <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",objectFit:"contain",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",color:"#021A4A",WebkitTextFillColor:"#021A4A"}}>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(120deg,#021A4A 0%,#021A4A 30%,#2E6BC4 45%,#6BA3E8 50%,#2E6BC4 55%,#021A4A 70%,#021A4A 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 4s linear infinite"}}>
             ARK LAW AI
           </div>
           <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
