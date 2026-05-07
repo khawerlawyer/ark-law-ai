@@ -30,7 +30,7 @@ export default function Landing() {
 
       <style>{`
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; background: ${NAVY}; }
+        html, body { height: 100%; overflow: hidden; background: #F5F0E8; }
 
         @keyframes shimmer {
           0%   { background-position: -200% center; }
@@ -86,7 +86,7 @@ export default function Landing() {
           cursor: pointer;
           transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s ease;
           overflow: hidden;
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid rgba(180,160,120,0.25);
         }
         .landing-card:hover {
           transform: translateY(-14px) scale(1.03);
@@ -100,16 +100,16 @@ export default function Landing() {
           height: 67px;
           object-fit: cover;
           border-radius: 6px;
-          filter: drop-shadow(0 10px 28px rgba(0,0,0,0.7)) brightness(1.05) saturate(1.2);
+          filter: drop-shadow(0 6px 16px rgba(0,0,0,0.2)) brightness(1.02) saturate(1.1);
           animation: flagFloat 3.5s ease-in-out infinite;
           position: relative; z-index: 2;
           border: 2px solid rgba(255,255,255,0.15);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.12);
           transform-origin: left center;
           transition: filter 0.3s ease;
         }
         .landing-card:hover .flag-emoji {
-          filter: drop-shadow(0 12px 32px rgba(0,0,0,0.8)) brightness(1.12) saturate(1.3);
+          filter: drop-shadow(0 8px 20px rgba(0,0,0,0.25)) brightness(1.05) saturate(1.15);
           animation: flagFloat 2s ease-in-out infinite;
         }
         .landing-card .card-content {
@@ -198,28 +198,28 @@ export default function Landing() {
         }
       `}</style>
 
-      {/* Background */}
+      {/* Background — warm cream with subtle warm gradients */}
       <div style={{
         position: "fixed", inset: 0,
-        background: `radial-gradient(ellipse at 20% 50%, #0A1F12 0%, transparent 60%),
-                     radial-gradient(ellipse at 80% 30%, #0A0F1E 0%, transparent 60%),
-                     radial-gradient(ellipse at 50% 90%, #0D1B0A 0%, transparent 50%),
-                     ${NAVY}`,
+        background: `radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                     radial-gradient(ellipse at 80% 30%, rgba(201,168,76,0.06) 0%, transparent 60%),
+                     radial-gradient(ellipse at 50% 100%, rgba(180,140,50,0.05) 0%, transparent 50%),
+                     #F5F0E8`,
         zIndex: 0,
       }} />
 
-      {/* Subtle star dots */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", opacity: 0.4 }}>
-        {Array.from({ length: 60 }).map((_, i) => (
+      {/* Subtle warm dot texture */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", opacity: 0.35 }}>
+        {Array.from({ length: 40 }).map((_, i) => (
           <div key={i} style={{
             position: "absolute",
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            width: `${Math.random() * 2 + 1}px`,
-            height: `${Math.random() * 2 + 1}px`,
+            left: `${(i * 37.3) % 100}%`,
+            top: `${(i * 53.7) % 100}%`,
+            width: `${(i % 3) + 2}px`,
+            height: `${(i % 3) + 2}px`,
             borderRadius: "50%",
-            background: "white",
-            opacity: Math.random() * 0.6 + 0.2,
+            background: "#C9A84C",
+            opacity: 0.15 + (i % 5) * 0.04,
           }} />
         ))}
       </div>
@@ -271,7 +271,7 @@ export default function Landing() {
           <div style={{
             fontFamily: "'Crimson Pro', serif",
             fontSize: "clamp(11px, 1.5vw, 14px)",
-            color: "#9DB89A",
+            color: "#8A7A65",
             fontStyle: "italic",
             letterSpacing: "1.5px",
             marginTop: "6px",
@@ -289,7 +289,7 @@ export default function Landing() {
           <div style={{
             fontFamily: "'Crimson Pro', serif",
             fontSize: "clamp(13px, 2vw, 16px)",
-            color: "#B8C4D0",
+            color: "#8A7A65",
             marginTop: "10px",
             letterSpacing: "0.5px",
             textAlign: "center",
@@ -305,7 +305,7 @@ export default function Landing() {
 
           {/* ── PAKISTAN CARD ── */}
           <div className="landing-card pk-card"
-            style={{ boxShadow: hovered === "pk" ? `0 30px 80px rgba(76,175,125,0.35), 0 0 0 1px rgba(76,175,125,0.2)` : "0 20px 60px rgba(0,0,0,0.5)" }}
+            style={{ boxShadow: hovered === "pk" ? `0 30px 80px rgba(76,175,125,0.35), 0 0 0 1px rgba(76,175,125,0.2)` : "0 8px 32px rgba(180,160,120,0.2)" }}
             onMouseEnter={() => setHovered("pk")}
             onMouseLeave={() => setHovered(null)}
             onClick={() => router.push("/pakistan")}
@@ -326,7 +326,7 @@ export default function Landing() {
 
             <div className="card-content">
               <div className="country-name" style={{ color: "#E8F5E0" }}>Pakistan</div>
-              <div className="country-sub" style={{ color: "#9DB89A" }}>
+              <div className="country-sub" style={{ color: "#3A6A4A" }}>
                 Pakistani Law & Statutes<br/>
                 All Provinces & Federal Areas
               </div>
@@ -338,14 +338,14 @@ export default function Landing() {
             {/* Bottom glow */}
             <div style={{
               position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
-              background: "linear-gradient(to top, rgba(76,175,125,0.08), transparent)",
+              background: "linear-gradient(to top, rgba(76,175,125,0.05), transparent)",
               pointerEvents: "none",
             }} />
           </div>
 
           {/* ── DIVIDER ── */}
           <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
             <div style={{
               width: "36px", height: "36px", borderRadius: "50%",
               border: `1px solid ${GOLD}40`,
@@ -355,12 +355,12 @@ export default function Landing() {
               fontSize: "11px", color: GOLD, letterSpacing: "1px",
               fontWeight: 700,
             }}>OR</div>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
           </div>
 
           {/* ── USA CARD ── */}
           <div className="landing-card us-card"
-            style={{ boxShadow: hovered === "us" ? `0 30px 80px rgba(178,34,52,0.35), 0 0 0 1px rgba(178,34,52,0.2)` : "0 20px 60px rgba(0,0,0,0.5)" }}
+            style={{ boxShadow: hovered === "us" ? `0 30px 80px rgba(178,34,52,0.35), 0 0 0 1px rgba(178,34,52,0.2)` : "0 8px 32px rgba(180,160,120,0.2)" }}
             onMouseEnter={() => setHovered("us")}
             onMouseLeave={() => setHovered(null)}
             onClick={() => router.push("/usa")}
@@ -377,7 +377,7 @@ export default function Landing() {
             <img className="flag-emoji" src="https://flagcdn.com/w640/us.png" alt="USA Flag" style={{ animationDelay: "0.5s" }} />
 
             <div className="card-content">
-              <div className="country-name" style={{ color: "#FFF0F0" }}>United States</div>
+              <div className="country-name" style={{ color: "#3A0A10" }}>United States</div>
               <div className="country-sub" style={{ color: "#C4A0A5" }}>
                 US Federal & State Law<br/>
                 All 50 States · Federal Courts
@@ -389,32 +389,32 @@ export default function Landing() {
 
             <div style={{
               position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
-              background: "linear-gradient(to top, rgba(178,34,52,0.08), transparent)",
+              background: "linear-gradient(to top, rgba(178,34,52,0.05), transparent)",
               pointerEvents: "none",
             }} />
           </div>
 
           {/* ── OR 2 ── */}
           <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
-            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}60`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
+            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}90`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
           </div>
 
           {/* ── INDIA CARD ── */}
           <div className="landing-card in-card"
-            style={{ boxShadow: hovered === "in" ? "0 30px 80px rgba(255,153,51,0.35), 0 0 0 1px rgba(255,153,51,0.2)" : "0 20px 60px rgba(0,0,0,0.5)" }}
+            style={{ boxShadow: hovered === "in" ? "0 20px 50px rgba(255,153,51,0.2), 0 0 0 1px rgba(255,153,51,0.12)" : "0 8px 32px rgba(180,160,120,0.2)" }}
             onMouseEnter={() => setHovered("in")}
             onMouseLeave={() => setHovered(null)}
             onClick={() => router.push("/india")}
           >
             {hovered === "in" && <div className="pulse-ring" style={{ border: "1px solid rgba(255,153,51,0.5)" }} />}
-            <div className="card-bg" style={{ background: "linear-gradient(160deg, #1A0D00 0%, #2A1500 40%, #120A00 100%)" }} />
-            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(255,153,51,0.15) 0%, transparent 60%)" }} />
+            <div className="card-bg" style={{ background: "linear-gradient(160deg, #FEF3E6 0%, #FDEBD0 40%, #FFF8F0 100%)" }} />
+            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(255,153,51,0.12) 0%, transparent 60%)" }} />
             <img className="flag-emoji" src="https://flagcdn.com/w640/in.png" alt="India Flag" style={{ animationDelay: "1s" }} />
             <div className="card-content">
-              <div className="country-name" style={{ color: "#FFF5E8" }}>India</div>
-              <div className="country-sub" style={{ color: "#C4A87A" }}>
+              <div className="country-name" style={{ color: "#3A1A00" }}>India</div>
+              <div className="country-sub" style={{ color: "#7A5A2A" }}>
                 Indian Law & Statutes<br/>
                 All States · Supreme Court
               </div>
@@ -422,30 +422,30 @@ export default function Landing() {
                 Enter <span style={{ fontSize: 16 }}>→</span>
               </button>
             </div>
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(255,153,51,0.08), transparent)", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(255,153,51,0.05), transparent)", pointerEvents: "none" }} />
           </div>
 
           {/* ── OR 3 ── */}
           <div className="mobile-or" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
-            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}60`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
-            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}60, transparent)` }} />
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
+            <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `1px solid ${GOLD}90`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: GOLD, letterSpacing: "0.5px" }}>OR</div>
+            <div className="or-line" style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${GOLD}80, transparent)` }} />
           </div>
 
           {/* ── BANGLADESH CARD ── */}
           <div className="landing-card bd-card"
-            style={{ boxShadow: hovered === "bd" ? "0 30px 80px rgba(0,106,78,0.35), 0 0 0 1px rgba(0,106,78,0.2)" : "0 20px 60px rgba(0,0,0,0.5)" }}
+            style={{ boxShadow: hovered === "bd" ? "0 20px 50px rgba(0,106,78,0.2), 0 0 0 1px rgba(0,106,78,0.12)" : "0 8px 32px rgba(180,160,120,0.2)" }}
             onMouseEnter={() => setHovered("bd")}
             onMouseLeave={() => setHovered(null)}
             onClick={() => router.push("/bangladesh")}
           >
             {hovered === "bd" && <div className="pulse-ring" style={{ border: "1px solid rgba(0,106,78,0.5)" }} />}
-            <div className="card-bg" style={{ background: "linear-gradient(160deg, #001A10 0%, #002A18 40%, #000F08 100%)" }} />
-            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(0,106,78,0.2) 0%, transparent 60%)" }} />
+            <div className="card-bg" style={{ background: "linear-gradient(160deg, #E6F5EF 0%, #D0EDE0 40%, #F0FAF5 100%)" }} />
+            <div className="card-bg" style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(0,106,78,0.12) 0%, transparent 60%)" }} />
             <img className="flag-emoji" src="https://flagcdn.com/w640/bd.png" alt="Bangladesh Flag" style={{ animationDelay: "1.5s" }} />
             <div className="card-content">
-              <div className="country-name" style={{ color: "#E8FFF5" }}>Bangladesh</div>
-              <div className="country-sub" style={{ color: "#8AC4A8" }}>
+              <div className="country-name" style={{ color: "#003A28" }}>Bangladesh</div>
+              <div className="country-sub" style={{ color: "#3A6A4A" }}>
                 Bangladesh Law & Statutes<br/>
                 All Divisions · Supreme Court
               </div>
@@ -453,7 +453,7 @@ export default function Landing() {
                 Enter <span style={{ fontSize: 16 }}>→</span>
               </button>
             </div>
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(0,106,78,0.08), transparent)", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, rgba(0,106,78,0.05), transparent)", pointerEvents: "none" }} />
           </div>
         </div>
 
@@ -462,7 +462,7 @@ export default function Landing() {
           marginTop: "20px",
           fontFamily: "'Crimson Pro', serif",
           fontSize: "12px",
-          color: "#4A6A56",
+          color: "#7A6A45",
           letterSpacing: "1.5px",
           textTransform: "uppercase",
           animation: "fadeUp 0.8s ease both",
@@ -477,7 +477,7 @@ export default function Landing() {
           marginTop: "10px",
           fontFamily: "'Crimson Pro', serif",
           fontSize: "11px",
-          color: "#3A5A38",
+          color: "#8A7A55",
           fontStyle: "italic",
           letterSpacing: "0.5px",
           animation: "fadeUp 0.8s ease both",
