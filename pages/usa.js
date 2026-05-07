@@ -797,19 +797,12 @@ export default function AppUSA() {
             </div>
           </div>
 
-          {/* Search chats button */}
-          <div style={{padding:"6px 8px 4px",flexShrink:0}}>
-            <button onClick={()=>setShowSearchPopup(true)}
-              style={{display:"flex",alignItems:"center",gap:"9px",width:"100%",padding:"8px 11px",background:"#FFFFFF",borderRadius:"10px",border:"1px solid #C8BFB0",cursor:"pointer",transition:"all 0.15s",textAlign:"left"}}
-              onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#9A8A75";}}
-              onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C8BFB0";}}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2.5" strokeLinecap="round" style={{flexShrink:0}}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span style={{fontSize:13,color:"#8A7A65",fontFamily:"DM Sans,sans-serif",fontWeight:400}}>Search chats...</span>
-            </button>
-          </div>
-
           {/* Tools */}
           <div style={{padding:"4px 6px",flexShrink:0}}>
+            <button className="sb-item" onClick={()=>setShowSearchPopup(true)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Search chats</span>
+            </button>
             <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
               <span>{isUrdu ? UR.compareTitle : "Compare Documents"}</span>
