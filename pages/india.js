@@ -1131,7 +1131,7 @@ export default function AppIN() {
                 value={input}
                 onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(180,e.target.scrollHeight)+"px";}}
                 onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
-                placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about US law...")}
+                placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about Indian law...")}
                 rows={1}
                 style={{flex:1,background:"transparent",border:"none",color:"#ececec",fontSize:15,lineHeight:1.6,resize:"none",outline:"none",fontFamily:"inherit",maxHeight:"180px",overflowY:"auto"}}
               />
