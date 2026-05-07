@@ -14,11 +14,8 @@ const JURISDICTIONS = [
 
 export default function Landing() {
   const router    = useRouter();
-  const [sel,     setSel]     = useState(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
-  const chosen = JURISDICTIONS.find(j => j.id === sel);
-
   return (
     <>
       <Head>
@@ -37,8 +34,8 @@ export default function Landing() {
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes floatBg{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 10px))}}
         @keyframes bgPulse{0%,100%{opacity:0.045}50%{opacity:0.08}}
-        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #D8D0C4;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;}
-        .jcard:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.07);}
+        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #D8D0C4;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;}
+        .jcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1);border-color:#C9A84C!important;}
         .jcard.selected{border-width:2px;box-shadow:0 4px 20px rgba(0,0,0,0.09);}
         .jcard .acc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;transition:opacity 0.2s;}
         .enter-btn{width:100%;padding:12px 0;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"DM Sans",sans-serif;}
@@ -133,41 +130,17 @@ export default function Landing() {
 
           <div className="grid2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"14px"}}>
             {JURISDICTIONS.map(j => (
-              <div key={j.id} className={"jcard"+(sel===j.id?" selected":"")}
-                style={{borderColor:sel===j.id?j.accent:"#D8D0C4",background:sel===j.id?j.light:"#FFFFFF"}}
-                onClick={()=>setSel(j.id)}>
-                <div className="acc" style={{background:j.accent,opacity:sel===j.id?1:0}}/>
+              <div key={j.id} className="jcard"
+                style={{borderColor:"#D8D0C4",background:"#FFFFFF"}}
+                onClick={()=>router.push(j.route)}>
                 <img className="flag" src={j.flag} alt={j.label} style={{width:"30px",height:"21px",objectFit:"cover",borderRadius:"3px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.12)"}}/>
                 <div style={{minWidth:0}}>
                   <div style={{fontSize:13,fontWeight:700,color:"#1A1209",lineHeight:1.2}}>{j.label}</div>
                   <div style={{fontSize:10,color:"#8A7A65",marginTop:"2px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.sub}</div>
                 </div>
-                {sel===j.id && (
-                  <div style={{marginLeft:"auto",flexShrink:0}}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="11" fill={j.accent}/>
-                      <polyline points="7 12 10.5 15.5 17 9" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                )}
               </div>
             ))}
           </div>
-
-          {chosen && (
-            <div style={{fontSize:11,color:"#9A8A75",marginBottom:"11px",textAlign:"center",fontStyle:"italic",fontFamily:"'Crimson Pro',serif",animation:"fadeUp 0.25s ease"}}>
-              {chosen.detail}
-            </div>
-          )}
-
-          {chosen && (
-            <button className="enter-btn" onClick={()=>router.push(chosen.route)}
-              style={{background:`linear-gradient(135deg,${chosen.accent},${chosen.accent}cc)`,color:"white",cursor:"pointer",boxShadow:`0 4px 16px ${chosen.accent}35`}}>
-              <img src={chosen.flag} alt="" style={{width:"18px",height:"12px",borderRadius:"2px",objectFit:"cover"}}/>
-              Enter {chosen.label}
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
-          )}
 
         </div>
 
