@@ -219,6 +219,7 @@ export default function AppUSA() {
   const [installPrompt,      setInstallPrompt]      = useState(null);
   const [showInstallBtn,     setShowInstallBtn]     = useState(false);
   const [nameAsked,          setNameAsked]          = useState(false);
+  const [sidebarOpen,        setSidebarOpen]        = useState(true);
   const [usTheme,            setUsTheme]            = useState("chatgpt"); // "chatgpt" | "classic"
 
   const currentDate = useRef(
@@ -733,10 +734,10 @@ export default function AppUSA() {
         {/* ═══════════════════════════════════════════
             SIDEBAR
         ═══════════════════════════════════════════ */}
-        <div className="sidebar-desktop" style={{width:"260px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:"1px solid #C8BFB0",overflowY:"auto"}}>
+        <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease"}}>
 
           {/* Logo + New Chat */}
-          <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+          <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
             <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
               <span style={{fontSize:14,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"1px"}}>ARK LAW AI</span>
@@ -864,8 +865,18 @@ export default function AppUSA() {
         ═══════════════════════════════════════════ */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
-          {/* Top bar — tagline + news widget */}
-          <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",flexShrink:0,minHeight:"52px"}}>
+          {/* Top bar */}
+          <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",flexShrink:0,minHeight:"52px",background:"#EDE8DF",gap:"8px"}}>
+            {!isMobile && (
+              <button onClick={()=>setSidebarOpen(o=>!o)} title={sidebarOpen?"Close sidebar":"Open sidebar"}
+                style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0,transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </button>
+            )}
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
@@ -881,9 +892,24 @@ export default function AppUSA() {
                 <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}}>Constitution of the United States</div>
               </div>
             )}
-            {/* Right: news + mobile auth */}
+            {/* Right: share + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0}}>
-              {!isMobile && <USNewsWidget />}
+              {!isMobile && messages.filter(m=>m.role==="user").length>0 && (
+                <button onClick={()=>{
+                  const text = messages.filter(m=>m.role==="user").map(m=>m.content).join("\n\n");
+                  if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
+                  else{navigator.clipboard.writeText(text).then(()=>alert("Chat copied to clipboard!")).catch(()=>{});}
+                }}
+                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 14px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Share
+                </button>
+              )}
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
                   <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
