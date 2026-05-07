@@ -740,28 +740,49 @@ export default function AppUSA() {
         {/* ═══════════════════════════════════════════
             SIDEBAR
         ═══════════════════════════════════════════ */}
+        {/* Sidebar toggle when closed */}
+        {!sidebarOpen && !isMobile && (
+          <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
+            <button onClick={()=>setSidebarOpen(true)} title="Open sidebar"
+              style={{width:"30px",height:"30px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+            <button onClick={startNewChat} title="New chat"
+              style={{width:"30px",height:"30px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+        )}
         <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease"}}>
 
           {/* Logo + New Chat */}
           <div style={{padding:"10px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
-            <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",objectFit:"contain"}} />
+              <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"0.8px"}}>ARK LAW AI</span>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
               <button onClick={()=>setSidebarOpen(o=>!o)} title={sidebarOpen?"Close sidebar":"Open sidebar"}
-                style={{width:"30px",height:"30px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0,transition:"all 0.15s"}}
+                style={{width:"30px",height:"30px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
               </button>
-              <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover"}} />
-              <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"0.8px"}}>ARK LAW AI</span>
-            </div>
-            <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
+              <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
               onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#4A3A28";}}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
+            </div>
           </div>
 
           {/* Tools */}
@@ -919,7 +940,7 @@ export default function AppUSA() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",borderRadius:"50%",objectFit:"cover"}}/>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
                 <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
@@ -959,7 +980,14 @@ export default function AppUSA() {
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {[
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{setShowChatMenu(false);alert("Group chat feature coming soon!");}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{
+                          setShowChatMenu(false);
+                          const gId=Date.now();
+                          const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Welcome to Group Chat! You can invite others to collaborate on this legal research session. Share the session link or discuss together."}],isGroup:true};
+                          setAllSessions(prev=>[gSession,...prev]);
+                          setActiveChatId(gId);
+                          setMessages(gSession.messages);
+                        }},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);if(confirm("Delete this conversation?")){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}}},
@@ -996,7 +1024,7 @@ export default function AppUSA() {
             {/* Empty state */}
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
                   {isUrdu ? "¿En qué puedo ayudarle hoy?" : "How can I help you today?"}
                 </h2>
@@ -1026,7 +1054,7 @@ export default function AppUSA() {
                       {/* Avatar */}
                       <div style={{flexShrink:0,marginTop:"2px"}}>
                         {msg.role==="assistant" ? (
-                          <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",border:"1px solid #C8BFB0"}}/>
+                          <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",objectFit:"contain",border:"1px solid #C8BFB0"}}/>
                         ) : (
                           <div style={{width:"30px",height:"30px",borderRadius:"50%",background:"linear-gradient(135deg,#667eea,#764ba2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white"}}>
                             {user?.name?.charAt(0)?.toUpperCase()||"U"}
@@ -1075,7 +1103,7 @@ export default function AppUSA() {
                 <div style={{padding:"14px 0"}}>
                   <div className="msg-wrap">
                     <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
-                      <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
+                      <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",objectFit:"contain",flexShrink:0}}/>
                       <div style={{paddingTop:"6px",display:"flex",gap:"5px",alignItems:"center"}}>
                         {[0,1,2].map(i=>(
                           <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#9A8A75",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
@@ -1153,8 +1181,8 @@ export default function AppUSA() {
       {usTheme === "classic" && (
         <div style={{display:"flex",height:"100vh",background:"#001F5B",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"16px"}}>
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
-          <div style={{color:"#E8D97A",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
-          <div style={{color:"#A8C0E8",fontSize:13}}>Loading classic ARK UI...</div>
+          <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
+          <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
           <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
           <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
@@ -1169,15 +1197,15 @@ export default function AppUSA() {
           <div style={{background:"#F0EBE0",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
             <div style={{background:"linear-gradient(135deg,#001F5B,#0d0d2b)",padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #BF0A30"}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",borderRadius:"50%",objectFit:"cover"}}/>
-                <div><div style={{color:GOLD,fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#A8C0E8",fontSize:9}}>Legal News Analysis</div></div>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",objectFit:"contain"}}/>
+                <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
               </div>
               <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"25px"}}>
               <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #BF0A30"}}>
-                <span style={{fontSize:10,color:"#A8C0E8"}}>📰 Source:</span>
+                <span style={{fontSize:10,color:"#5A4A35"}}>📰 Source:</span>
                 <span style={{fontSize:11,color:"#BF0A30",fontWeight:600}}>{selectedNews.source}</span>
               </div>
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
@@ -1196,11 +1224,11 @@ export default function AppUSA() {
       {showDraftPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
           <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
-            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",objectFit:"contain"}}/>
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>✍️ AI Legal Document Drafting</div></div>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
               </div>
               <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
@@ -1252,7 +1280,7 @@ export default function AppUSA() {
               )}
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
-                  <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
+                  <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
                   <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
                   <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
@@ -1281,24 +1309,24 @@ export default function AppUSA() {
       {showComparePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
           <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
-            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>⚖️ Compare Legal Documents</div></div>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain"}}/>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
               </div>
               <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#5A4A35",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
                   {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name} — {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
-                <label style={{color:"#5A4A35",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
+                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
               {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
@@ -1326,10 +1354,10 @@ export default function AppUSA() {
       {showLoginPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
           <div style={{background:"#F5F0E8",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
-            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"16px",position:"relative",zIndex:1}}>
-              <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#A8C0E8"}}>Log in to your account</div></div>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain",flexShrink:0}}/>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>Log in to your account</div></div>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"18px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
@@ -1357,11 +1385,11 @@ export default function AppUSA() {
               }catch(error){alert("Login failed. Please try again.");}
             }}>
               <div style={{marginBottom:"11px"}}>
-                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
+                <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
                 <input name="email" type="email" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="your@email.com"/>
               </div>
               <div style={{marginBottom:"16px"}}>
-                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
+                <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Password</label>
                 <input name="password" type="password" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="Enter your password"/>
               </div>
               <button type="submit" style={{width:"100%",padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"10px"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Log in</button>
@@ -1376,10 +1404,10 @@ export default function AppUSA() {
       {showSignupPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
           <div style={{background:"#F5F0E8",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
-            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",borderRadius:"50%",objectFit:"cover"}}/>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
-              <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:GOLD}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#A8C0E8"}}>Create your free account — 500,000 credits</div></div>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain",flexShrink:0}}/>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account — 500,000 credits</div></div>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"14px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
@@ -1394,12 +1422,12 @@ export default function AppUSA() {
             }}>
               {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
                 <div key={n} style={{marginBottom:"10px"}}>
-                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>{l}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>{l}</label>
                   <input name={n} type={t} required={true} minLength={n==="password"?6:undefined} style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder={ph}/>
                 </div>
               ))}
               <div style={{marginBottom:"10px"}}>
-                <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Profession *</label>
+                <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Profession *</label>
                 <select name="profession" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none",cursor:"pointer"}}>
                   <option value="">Select profession...</option>
                   <option>Attorney</option><option>Paralegal</option><option>Legal Assistant</option><option>Law Clerk</option><option>Law Student</option><option>Judge</option><option>Other</option>
@@ -1407,11 +1435,11 @@ export default function AppUSA() {
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"10px"}}>
                 <div>
-                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
+                  <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
                   <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
                 </div>
                 <div>
-                  <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
+                  <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
                   <select name="province" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none",cursor:"pointer"}}>
                     <option value="">Select state...</option>
                     {["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia"].map(s=><option key={s}>{s}</option>)}
@@ -1430,11 +1458,11 @@ export default function AppUSA() {
       {showMyAccountPopup && user && (
         <div style={{position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.8)",pointerEvents:"all"}}>
           <div style={{background:"#F5F0E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
-            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",borderRadius:"50%",objectFit:"cover"}}/>
+            <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",objectFit:"contain"}}/>
             <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #C8BFB0",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#F5F0E8"}}>
               <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}}/>
-                <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:GOLD}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#A8C0E8"}}>/ My Account</span></div>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",objectFit:"contain"}}/>
+                <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
               </div>
               <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
@@ -1446,7 +1474,7 @@ export default function AppUSA() {
                   <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
-                  <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
+                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
                   <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
                     <div style={{flex:1,height:"6px",background:"#D8D0C4",borderRadius:"3px",overflow:"hidden"}}>
                       <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
@@ -1456,7 +1484,7 @@ export default function AppUSA() {
                   <div style={{fontSize:9,color:"#8A7A65"}}>{Math.round((userTokens/500000)*100)}% of 500,000 credits remaining</div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"12px"}}>
-                  <div style={{fontSize:10,color:"#A8C0E8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"8px"}}>Profile</div>
+                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"8px"}}>Profile</div>
                   {[{k:"Profession",v:user.profession},{k:"City",v:user.city},{k:"State",v:user.province},{k:"Country",v:user.country||"United States"}].filter(x=>x.v).map(({k,v})=>(
                     <div key={k} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",paddingBottom:"5px",marginBottom:"5px"}}>
                       <span style={{fontSize:9,color:"#8A7A65",textTransform:"uppercase"}}>{k}</span>
@@ -1495,7 +1523,7 @@ export default function AppUSA() {
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #BF0A30",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
             <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
-            <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",borderRadius:"50%",objectFit:"cover",marginBottom:"16px"}}/>
+            <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"16px"}}/>
             <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
             <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
             <button onClick={()=>setShowComingSoon(false)} style={{padding:"10px 32px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:14,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Got it!</button>
@@ -1574,7 +1602,15 @@ export default function AppUSA() {
               Share
             </button>
             {/* Start a group chat */}
-            <button onClick={()=>{setSessionMenu(null);alert("Group chat feature coming soon!");}}
+            <button onClick={()=>{
+              setSessionMenu(null);
+              const gId=Date.now();
+              const s=allSessions.find(x=>x.id===sessionMenu?.id);
+              const gSession={id:gId,title:"Group: "+(s?.title||"Chat"),messages:[{role:"assistant",content:"Group session started! This conversation can be shared with others. Use the Share button to copy and send."},...(s?.messages||[])],isGroup:true};
+              setAllSessions(prev=>[gSession,...prev]);
+              setActiveChatId(gId);
+              setMessages(gSession.messages);
+            }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
               onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
               onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
