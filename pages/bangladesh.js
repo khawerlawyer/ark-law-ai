@@ -1494,7 +1494,7 @@ export default function AppBD() {
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"10px"}}>
                 <div>
                   <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
-                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
+                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., Dhaka"/>
                 </div>
                 <div>
                   <label style={{color:"#5A4A35",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
