@@ -225,6 +225,7 @@ export default function AppUSA() {
   const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
   const [sessionMenu,       setSessionMenu]       = useState(null);
+  const [searchQuery,       setSearchQuery]       = useState("");
   const [usTheme,            setUsTheme]            = useState("chatgpt"); // "chatgpt" | "classic"
 
   const currentDate = useRef(
@@ -742,15 +743,23 @@ export default function AppUSA() {
         <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease"}}>
 
           {/* Logo + New Chat */}
-          <div style={{padding:"12px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
-            <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-              <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",borderRadius:"50%",objectFit:"cover"}} />
-              <span style={{fontSize:14,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"1px"}}>ARK LAW AI</span>
+          <div style={{padding:"10px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+              <button onClick={()=>setSidebarOpen(o=>!o)} title={sidebarOpen?"Close sidebar":"Open sidebar"}
+                style={{width:"30px",height:"30px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0,transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </button>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",borderRadius:"50%",objectFit:"cover"}} />
+              <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"0.8px"}}>ARK LAW AI</span>
             </div>
             <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
-              onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
-              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#b4b4b4";}}>
+              onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#4A3A28";}}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
           </div>
@@ -785,16 +794,25 @@ export default function AppUSA() {
 
           <div style={{height:"1px",background:"#DDD6CB",margin:"6px 12px",flexShrink:0}}/>
 
+          {/* Search */}
+          <div style={{padding:"4px 8px 2px",flexShrink:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:"7px",padding:"7px 10px",background:"#DDD6CB",borderRadius:"9px",border:"1px solid #C8BFB0"}}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2.5" strokeLinecap="round" style={{flexShrink:0}}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search chats"
+                style={{flex:1,background:"transparent",border:"none",outline:"none",fontSize:12,color:"#1A1209",fontFamily:"DM Sans,sans-serif"}}/>
+              {searchQuery && <button onClick={()=>setSearchQuery("")} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:14,lineHeight:1,padding:"0 2px"}}>&times;</button>}
+            </div>
+          </div>
           {/* Recents label */}
           <div style={{padding:"2px 16px 4px",flexShrink:0}}>
-            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>Recents</span>
+            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>{searchQuery ? "Results" : "Recents"}</span>
           </div>
 
           {/* Sessions list */}
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
-            {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
-              <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>No conversations yet</div>
-            ) : [...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(s=>{
+            {[...allSessions.filter(s=>!s.archived).filter(s=>!searchQuery||s.title?.toLowerCase().includes(searchQuery.toLowerCase()))].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
+              <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>{searchQuery?"No results found":"No conversations yet"}</div>
+            ) : [...allSessions.filter(s=>!s.archived).filter(s=>!searchQuery||s.title?.toLowerCase().includes(searchQuery.toLowerCase()))].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(s=>{
               const active=s.id===activeChatId;
               return(
                 <div key={s.id} style={{position:"relative",group:true}}
@@ -897,16 +915,7 @@ export default function AppUSA() {
 
           {/* Top bar */}
           <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",flexShrink:0,minHeight:"52px",background:"#EDE8DF",gap:"8px"}}>
-            {!isMobile && (
-              <button onClick={()=>setSidebarOpen(o=>!o)} title={sidebarOpen?"Close sidebar":"Open sidebar"}
-                style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0,transition:"all 0.15s"}}
-                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
-                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-              </button>
-            )}
+
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
