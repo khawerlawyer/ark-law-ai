@@ -115,7 +115,7 @@ export default function AdminPanel() {
       {/* Header */}
       <div style={{ background: "#1B2E1A", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `2px solid ${GOLD}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <img src="/ark-logo.png" alt="ARK" style={{ width: 40, height: 40 }} />
+          <img src="/ark-logo-us.png" alt="ARK" style={{ width: 40, height: 40 }} />
           <div>
             <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
             <div style={{ fontSize: 10, color: "#9DB89A" }}>Admin Control Panel</div>
