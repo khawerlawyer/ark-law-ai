@@ -205,6 +205,7 @@ export default function App() {
   const [shareSelected,      setShareSelected]      = useState([]);
   const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
+  const [sessionMenu,       setSessionMenu]       = useState(null);
 
   const currentDate = useRef(
     new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
@@ -711,7 +712,7 @@ export default function App() {
         @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
         @keyframes dotBounce{0%,80%,100%{transform:scale(0.6);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
         .sb-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:#2A1E10;transition:background 0.15s;text-decoration:none;width:100%;border:none;background:transparent;text-align:left;}
-        .sb-item:hover{background:#D8D0C4;}
+        .sb-item:hover{background:#D8D0C4;}.sb-item:hover button[id^="sm-"]{opacity:1!important;}
         .sb-item.active{background:#D8D0C4;}
         .msg-wrap{max-width:720px;margin:0 auto;padding:0 16px;}
         .msg-actions{opacity:0;transition:opacity 0.15s;}
@@ -782,17 +783,30 @@ export default function App() {
           </div>
 
           {/* Sessions list */}
-          <div style={{flex:1,overflowY:"auto",padding:"0 6px"}}>
-            {allSessions.length===0 ? (
-              <div style={{padding:"16px 12px",color:"#6A5A45",fontSize:13,textAlign:"center"}}>No conversations yet</div>
-            ) : allSessions.map(s=>{
+          <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
+            {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
+              <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>No conversations yet</div>
+            ) : [...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(s=>{
               const active=s.id===activeChatId;
               return(
-                <button key={s.id} className={"sb-item"+(active?" active":"")} onClick={()=>loadSession(s.id)}
-                  style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%"}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{s.title}</span>
-                </button>
+                <div key={s.id} style={{position:"relative",group:true}}
+                  onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
+                  <button className={"sb-item"+(active?" active":"")}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
+                    onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
+                    style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{s.title}</span>
+                  </button>
+                  {/* Hover three-dot button */}
+                  <button id={"sm-"+s.id}
+                    onClick={e=>{e.stopPropagation();const r=e.currentTarget.getBoundingClientRect();setSessionMenu({id:s.id,x:r.right,y:r.bottom});}}
+                    style={{position:"absolute",right:"4px",top:"50%",transform:"translateY(-50%)",width:"22px",height:"22px",background:active?"#D8D0C4":"transparent",border:"none",borderRadius:"5px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",opacity:0,transition:"opacity 0.15s",zIndex:2}}
+                    onMouseEnter={e=>{e.currentTarget.style.opacity="1";e.currentTarget.style.background="#D8D0C4";}}
+                    onMouseLeave={e=>{e.currentTarget.style.background=active?"#D8D0C4":"transparent";}}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -1528,6 +1542,95 @@ export default function App() {
           </div>
         </div>
       )}
+      {/* Session context menu */}
+      {sessionMenu && (
+        <>
+          <div style={{position:"fixed",inset:0,zIndex:500}} onClick={()=>setSessionMenu(null)}/>
+          <div style={{position:"fixed",left:Math.min(sessionMenu.x, typeof window!=="undefined"?window.innerWidth-210:400),top:Math.min(sessionMenu.y, typeof window!=="undefined"?window.innerHeight-260:400),background:"#FFFFFF",border:"1px solid #C8BFB0",borderRadius:"10px",boxShadow:"0 8px 28px rgba(0,0,0,0.13)",zIndex:501,minWidth:"195px",padding:"5px 0",animation:"fadeSlideUp 0.15s ease"}}>
+            {/* Share */}
+            <button onClick={()=>{
+                const s=allSessions.find(x=>x.id===sessionMenu.id);
+                if(!s) return;
+                setSessionMenu(null);
+                loadSession(s.id);
+                setTimeout(()=>{setShareSelected((s.messages||[]).map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);},100);
+              }}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Share
+            </button>
+            {/* Start a group chat */}
+            <button onClick={()=>{setSessionMenu(null);alert("Group chat feature coming soon!");}}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Start a group chat
+            </button>
+            <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
+            {/* Rename */}
+            <button onClick={()=>{
+                const s=allSessions.find(x=>x.id===sessionMenu.id);
+                if(!s) return;
+                const t=prompt("Rename conversation:",s.title.replace("📌 ",""));
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
+                setSessionMenu(null);
+              }}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Rename
+            </button>
+            <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
+            {/* Pin chat */}
+            <button onClick={()=>{
+                setAllSessions(prev=>prev.map(x=>{
+                  if(x.id!==sessionMenu.id) return x;
+                  const isPinned=x.title?.startsWith("📌 ");
+                  return {...x,title:isPinned?x.title.replace("📌 ",""):"📌 "+x.title.replace("📌 ",""),pinned:!isPinned};
+                }));
+                setSessionMenu(null);
+              }}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              {allSessions.find(x=>x.id===sessionMenu.id)?.pinned ? "Unpin chat" : "Pin chat"}
+            </button>
+            {/* Archive */}
+            <button onClick={()=>{
+                setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,archived:true}:x));
+                if(activeChatId===sessionMenu.id) startNewChat();
+                setSessionMenu(null);
+              }}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+              Archive
+            </button>
+            <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
+            {/* Delete */}
+            <button onClick={()=>{
+                if(window.confirm("Delete this conversation? This cannot be undone.")){
+                  setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
+                  if(activeChatId===sessionMenu.id) startNewChat();
+                }
+                setSessionMenu(null);
+              }}
+              style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#DC2626",textAlign:"left"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              Delete
+            </button>
+          </div>
+        </>
+      )}
+
       {/* Click outside to close chat menu */}
       {showChatMenu && <div style={{position:"fixed",inset:0,zIndex:150}} onClick={()=>setShowChatMenu(false)}/>}
 
