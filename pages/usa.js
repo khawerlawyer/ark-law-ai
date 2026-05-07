@@ -898,18 +898,7 @@ export default function AppUSA() {
             )}
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
-              {/* Share button */}
-              {!isMobile && messages.filter(m=>m.role==="user").length>0 && (
-                <button onClick={()=>setShowSharePopup(true)}
-                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 14px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
-                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
-                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
-                  </svg>
-                  Share
-                </button>
-              )}
+
               {/* Three-dot menu */}
               {!isMobile && (
                 <div style={{position:"relative"}}>
@@ -923,6 +912,17 @@ export default function AppUSA() {
                   </button>
                   {showChatMenu && (
                     <div style={{position:"absolute",top:"40px",right:"0",background:"#FFFFFF",border:"1px solid #C8BFB0",borderRadius:"10px",boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,minWidth:"200px",padding:"6px 0",animation:"fadeSlideUp 0.15s ease"}}>
+                      {/* Share item at top */}
+                      <button onClick={()=>{setShowChatMenu(false);setShareSelected(messages.map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+                        </svg>
+                        Share
+                      </button>
+                      <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {[
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{setShowChatMenu(false);alert("Group chat feature coming soon!");}},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
