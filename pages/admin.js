@@ -1,494 +1,494 @@
-// pages/admin.js
-// Admin Control Panel — accessible only to khawer.profession@gmail.com
+// pages/admin.js — ARK LAW AI Admin Panel (Cream Theme)
 
 import { useState, useEffect } from "react";
 import Head from "next/head";
 
-const GOLD        = "#C9A84C";
-const NAVY        = "#0D1B2A";
-const NAVY_MID    = "#162032";
-const NAVY_SURFACE= "#1E2D40";
-const NAVY_BORDER = "#2B3F57";
-const CREAM       = "#F5F1E8";
-const RED         = "#DC2626";
-const GREEN       = "#4CAF7D";
-const TEXT_MUTED  = "#6E8099";
+const CREAM="#F5F0E8",CREAM_CARD="#FFFFFF",CREAM_MID="#EDE8DF",BORDER="#C8BFB0",BORDER_LIGHT="#DDD6CB";
+const TEXT="#1A1209",TEXT_MID="#3A2A18",TEXT_MUTED="#7A6A55",TEXT_DIM="#9A8A75";
+const GOLD="#C9A84C",GREEN="#2E7D32",RED="#DC2626",BLUE="#021A4A";
+const SHADOW="0 2px 12px rgba(180,160,100,0.12)";
 
 export default function AdminPanel() {
-  const [authed,    setAuthed]    = useState(false);
-  const [checking,  setChecking]  = useState(true);
-  const [users,     setUsers]     = useState([]);
-  const [loading,   setLoading]   = useState(false);
-  const [search,    setSearch]    = useState("");
-  const [selected,  setSelected]  = useState(null);
-  const [tab,       setTab]       = useState("users");
-  const [msg,       setMsg]       = useState("");
-  const [usTheme,   setUsTheme]   = useState(() => {
-    try { return localStorage.getItem("arklaw_us_theme") || "chatgpt"; } catch { return "chatgpt"; }
-  });
-  const [pkTheme,   setPkTheme]   = useState(() => {
-    try { return localStorage.getItem("arklaw_pk_theme") || "chatgpt"; } catch { return "chatgpt"; }
-  });
+  const [authed,setAuthed]=useState(false);
+  const [checking,setChecking]=useState(true);
+  const [users,setUsers]=useState([]);
+  const [loading,setLoading]=useState(false);
+  const [search,setSearch]=useState("");
+  const [selected,setSelected]=useState(null);
+  const [tab,setTab]=useState("dashboard");
+  const [msg,setMsg]=useState("");
+  const [visitors,setVisitors]=useState([]);
+  const [editTokens,setEditTokens]=useState("");
+  const [usTheme,setUsTheme]=useState(()=>{try{return localStorage.getItem("arklaw_us_theme")||"chatgpt";}catch{return"chatgpt";}});
+  const [pkTheme,setPkTheme]=useState(()=>{try{return localStorage.getItem("arklaw_pk_theme")||"chatgpt";}catch{return"chatgpt";}});
 
-  // ── Auth check ──
-  useEffect(() => {
-    try {
-      const u = JSON.parse(localStorage.getItem("arklaw_user") || "{}");
-      if (u?.email?.toLowerCase() === "khawer.profession@gmail.com") {
-        setAuthed(true);
-        fetchUsers();
-      }
-    } catch {}
+  useEffect(()=>{
+    try{
+      const u=JSON.parse(localStorage.getItem("arklaw_user")||"{}");
+      if(u?.email?.toLowerCase()==="khawer.profession@gmail.com"){setAuthed(true);fetchUsers();loadVisitors();}
+    }catch{}
     setChecking(false);
-  }, []);
+  },[]);
 
-  const fetchUsers = async () => {
+  const loadVisitors=()=>{try{setVisitors(JSON.parse(localStorage.getItem("arklaw_visitors")||"[]"));}catch{}};
+  const fetchUsers=async()=>{
     setLoading(true);
-    try {
-      const res  = await fetch("/api/admin/users");
-      const data = await res.json();
-      if (res.ok) setUsers(data.users || []);
-      else setMsg("Error loading users: " + (data.error || "Unknown"));
-    } catch (e) { setMsg("Failed to fetch users: " + e.message); }
-    finally { setLoading(false); }
+    try{const res=await fetch("/api/admin/users");const d=await res.json();if(res.ok)setUsers(d.users||[]);else setMsg("Error: "+(d.error||"Unknown"));}
+    catch(e){setMsg("Failed: "+e.message);}finally{setLoading(false);}
+  };
+  const updateTokens=async(uid,val)=>{
+    try{const res=await fetch("/api/auth/save-history",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:uid,tokens:Number(val)})});
+    const d=await res.json();
+    if(res.ok){setMsg("✅ Credits updated");setUsers(p=>p.map(u=>u.id===uid?{...u,tokens:Number(val)}:u));if(selected?.id===uid)setSelected(p=>({...p,tokens:Number(val)}));}
+    else setMsg("❌ "+d.error);}catch(e){setMsg("❌ "+e.message);}
+  };
+  const deleteUser=async(uid,email)=>{
+    if(!confirm("Delete "+email+"? Cannot be undone."))return;
+    try{const res=await fetch("/api/admin/delete-user",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:uid})});
+    const d=await res.json();
+    if(res.ok){setMsg("✅ Deleted");setUsers(p=>p.filter(u=>u.id!==uid));setSelected(null);}else setMsg("❌ "+d.error);}catch(e){setMsg("❌ "+e.message);}
   };
 
-  const updateTokens = async (userId, newTokens) => {
-    try {
-      const res  = await fetch("/api/auth/save-history", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, tokens: newTokens }) });
-      const data = await res.json();
-      if (res.ok) { setMsg("✅ Tokens updated"); setUsers(prev => prev.map(u => u.id === userId ? { ...u, tokens: newTokens } : u)); }
-      else setMsg("❌ " + data.error);
-    } catch (e) { setMsg("❌ " + e.message); }
-  };
+  const getSessions=u=>{try{return JSON.parse(u.chat_history||"[]");}catch{return[];}};
+  const getTotalMsgs=u=>getSessions(u).reduce((a,s)=>a+(s.messages?.length||0),0);
+  const getEstTime=u=>{const ex=getSessions(u).reduce((a,s)=>{const m=s.messages||[];return a+Math.min(m.filter(x=>x.role==="user").length,m.filter(x=>x.role==="assistant").length);},0);return ex*2;};
+  const fmtTime=m=>m<1?"< 1 min":m<60?m+" min":Math.floor(m/60)+"h "+(m%60)+"m";
 
-  const deleteUser = async (userId, email) => {
-    if (!confirm(`Delete user ${email}? This cannot be undone.`)) return;
-    try {
-      const res  = await fetch("/api/admin/delete-user", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId }) });
-      const data = await res.json();
-      if (res.ok) { setMsg("✅ User deleted"); setUsers(prev => prev.filter(u => u.id !== userId)); setSelected(null); }
-      else setMsg("❌ " + data.error);
-    } catch (e) { setMsg("❌ " + e.message); }
-  };
-
-  const filtered = users.filter(u =>
-    u.email?.toLowerCase().includes(search.toLowerCase()) ||
-    u.name?.toLowerCase().includes(search.toLowerCase()) ||
-    u.city?.toLowerCase().includes(search.toLowerCase())
+  const filtered=users.filter(u=>
+    u.email?.toLowerCase().includes(search.toLowerCase())||
+    u.name?.toLowerCase().includes(search.toLowerCase())||
+    u.city?.toLowerCase().includes(search.toLowerCase())||
+    u.country?.toLowerCase().includes(search.toLowerCase())||
+    u.profession?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalTokens   = users.reduce((s, u) => s + (u.tokens || 0), 0);
-  const activeToday   = users.filter(u => u.last_login && new Date(u.last_login) > new Date(Date.now() - 86400000)).length;
-  const pkUsers       = users.filter(u => u.country !== "United States").length;
-  const usUsers       = users.filter(u => u.country === "United States").length;
+  const totalTokens=users.reduce((s,u)=>s+(u.tokens||0),0);
+  const activeToday=users.filter(u=>u.last_login&&new Date(u.last_login)>new Date(Date.now()-86400000)).length;
+  const active7d=users.filter(u=>u.last_login&&new Date(u.last_login)>new Date(Date.now()-7*86400000)).length;
+  const byCountry=users.reduce((acc,u)=>{const c=u.country||"Unknown";acc[c]=(acc[c]||0)+1;return acc;},{});
+  const byProfession=users.reduce((acc,u)=>{const p=u.profession||"Unknown";acc[p]=(acc[p]||0)+1;return acc;},{});
 
-  if (checking) return <div style={{ background: NAVY, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: GOLD, fontFamily: "Georgia,serif", fontSize: 18 }}>Checking access...</div>;
+  const TABS=[{id:"dashboard",icon:"📊",label:"Dashboard"},{id:"users",icon:"👥",label:"Users"},{id:"activity",icon:"📈",label:"Activity"},{id:"visitors",icon:"👁️",label:"Visitors"},{id:"tokens",icon:"⚡",label:"Credits"},{id:"theme",icon:"🎨",label:"Themes"}];
+  const card={background:CREAM_CARD,border:"1px solid "+BORDER_LIGHT,borderRadius:12,padding:"16px 18px",boxShadow:SHADOW};
+  const inp={width:"100%",padding:"8px 11px",background:CREAM_CARD,border:"1px solid "+BORDER,borderRadius:7,color:TEXT,fontSize:13,outline:"none",fontFamily:"inherit"};
+  const btn=(bg=BLUE)=>({padding:"7px 16px",background:bg,color:"white",border:"none",borderRadius:7,cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit"});
 
-  if (!authed) return (
-    <div style={{ background: NAVY, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ textAlign: "center", color: "#FAF6EE" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-        <div style={{ fontFamily: "Georgia,serif", fontSize: 20, color: RED, marginBottom: 8 }}>Access Denied</div>
-        <div style={{ fontSize: 13, color: TEXT_MUTED }}>This page is restricted to administrators only.</div>
-        <button onClick={() => window.close()} style={{ marginTop: 20, padding: "10px 24px", background: GOLD, color: NAVY, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700 }}>Close</button>
+  if(checking)return <div style={{background:CREAM,minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",color:BLUE,fontFamily:"DM Sans,sans-serif",fontSize:16}}>Checking access...</div>;
+  if(!authed)return(
+    <div style={{background:CREAM,minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:52,marginBottom:16}}>🔒</div>
+        <div style={{fontSize:20,fontWeight:700,color:RED,marginBottom:8}}>Access Denied</div>
+        <div style={{fontSize:13,color:TEXT_MUTED}}>Restricted to administrators only.</div>
+        <button onClick={()=>window.close()} style={{marginTop:20,...btn(BLUE)}}>Close</button>
       </div>
     </div>
   );
 
-  return (
+  return(
     <>
-      <Head><title>ARK LAW AI — Admin Panel</title></Head>
+      <Head>
+        <title>ARK LAW AI — Admin Panel</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+      </Head>
       <style>{`
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: ${NAVY}; color: #FAF6EE; font-family: Segoe UI, sans-serif; min-height: 100vh; }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: ${NAVY_MID}; } ::-webkit-scrollbar-thumb { background: ${GOLD}60; border-radius: 3px; }
-        table { border-collapse: collapse; width: 100%; }
-        th { background: ${NAVY_MID}; color: ${GOLD}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: left; }
-        td { padding: 9px 12px; font-size: 12px; border-bottom: 1px solid ${NAVY_BORDER}; vertical-align: middle; }
-        tr:hover td { background: ${NAVY_SURFACE}; cursor: pointer; }
-        input, select { background: ${NAVY_SURFACE}; border: 1px solid ${NAVY_BORDER}; color: #FAF6EE; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; }
-        input:focus, select:focus { border-color: ${GOLD}; }
-        .tab-btn { padding: 8px 18px; border: none; border-radius: 4px 4px 0 0; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html,body{background:${CREAM};color:${TEXT};font-family:"DM Sans",sans-serif;min-height:100vh;}
+        ::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:${CREAM_MID};}::-webkit-scrollbar-thumb{background:${BORDER};border-radius:3px;}
+        table{border-collapse:collapse;width:100%;}
+        th{background:${CREAM_MID};color:${TEXT_MUTED};font-size:10px;text-transform:uppercase;letter-spacing:0.6px;padding:10px 12px;text-align:left;border-bottom:1px solid ${BORDER};}
+        td{padding:10px 12px;font-size:13px;border-bottom:1px solid ${BORDER_LIGHT};color:${TEXT_MID};vertical-align:middle;}
+        tr:hover td{background:#FAF8F4;cursor:pointer;}
+        .tab-btn{padding:9px 16px;border:none;border-radius:8px 8px 0 0;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.15s;font-family:"DM Sans",sans-serif;display:flex;align-items:center;gap:6px;}
+        a{text-decoration:none;}
+        input:focus,select:focus{border-color:${BLUE}!important;outline:none;}
       `}</style>
 
       {/* Header */}
-      <div style={{ background: "#1B2E1A", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `2px solid ${GOLD}` }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <img src="/ark-logo-us.png" alt="ARK" style={{ width: 40, height: 40 }} />
+      <div style={{background:CREAM_CARD,borderBottom:"2px solid "+BORDER,padding:"10px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <img src="/ark-logo-us.png" alt="ARK" style={{width:40,height:40,objectFit:"contain"}}/>
           <div>
-            <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 700, color: GOLD }}>ARK LAW AI</div>
-            <div style={{ fontSize: 10, color: "#9DB89A" }}>Admin Control Panel</div>
+            <div style={{fontSize:17,fontWeight:800,color:BLUE,letterSpacing:"0.5px"}}>ARK LAW AI</div>
+            <div style={{fontSize:10,color:TEXT_MUTED}}>Admin Control Panel</div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ fontSize: 11, color: TEXT_MUTED }}>🔑 Logged in as: <span style={{ color: GOLD }}>Khawer Rabbani</span></div>
-          <button onClick={() => window.close()} style={{ padding: "6px 14px", background: RED, color: "white", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 11, fontWeight: 600 }}>Close</button>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:11,color:TEXT_MUTED}}>🔑 <b style={{color:TEXT}}>Khawer Rabbani</b></span>
+          <button onClick={fetchUsers} style={btn(BLUE)}>🔄 Refresh</button>
+          <button onClick={()=>window.close()} style={btn(RED)}>✕ Close</button>
         </div>
       </div>
 
-      <div style={{ padding: "20px 24px" }}>
-
+      <div style={{padding:"20px 24px"}}>
         {/* Stat cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:12,marginBottom:22}}>
           {[
-            { label: "Total Users", value: users.length, icon: "👥", color: GOLD },
-            { label: "Active Today", value: activeToday, icon: "🟢", color: GREEN },
-            { label: "Pakistan Users", value: pkUsers, icon: "🇵🇰", color: "#4CAF7D" },
-            { label: "US Users", value: usUsers, icon: "🇺🇸", color: "#BF0A30" },
-          ].map(({ label, value, icon, color }) => (
-            <div key={label} style={{ background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, borderRadius: 10, padding: "14px 16px" }}>
-              <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color, fontFamily: "Georgia,serif" }}>{value}</div>
-              <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 2 }}>{label}</div>
+            {label:"Total Users",value:users.length,icon:"👥",color:BLUE},
+            {label:"Active Today",value:activeToday,icon:"🟢",color:GREEN},
+            {label:"Active 7 Days",value:active7d,icon:"📅",color:"#B35400"},
+            {label:"Total Sessions",value:users.reduce((a,u)=>a+getSessions(u).length,0),icon:"💬",color:"#006A4E"},
+            {label:"Low Credits",value:users.filter(u=>(u.tokens||0)<50000).length,icon:"⚠️",color:RED},
+            {label:"Credits Pool",value:((totalTokens/1000000).toFixed(1))+"M",icon:"⚡",color:GOLD},
+          ].map(({label,value,icon,color})=>(
+            <div key={label} style={{...card}}>
+              <div style={{fontSize:22,marginBottom:5}}>{icon}</div>
+              <div style={{fontSize:22,fontWeight:800,color}}>{value}</div>
+              <div style={{fontSize:11,color:TEXT_MUTED,marginTop:2}}>{label}</div>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
-        <div style={{ display: "flex", gap: 2, marginBottom: 0 }}>
-          {[["users","👥 Users"], ["stats","📊 Stats"], ["tokens","⚡ Tokens"], ["theme","🎨 US Theme"], ["pktheme","🇵🇰 PK Theme"]].map(([t, label]) => (
-            <button key={t} className="tab-btn"
-              style={{ background: tab === t ? NAVY_SURFACE : NAVY_MID, color: tab === t ? GOLD : TEXT_MUTED, borderBottom: tab === t ? `2px solid ${GOLD}` : "2px solid transparent" }}
-              onClick={() => setTab(t)}>{label}</button>
+        <div style={{display:"flex",gap:2,borderBottom:"2px solid "+BORDER_LIGHT}}>
+          {TABS.map(t=>(
+            <button key={t.id} className="tab-btn"
+              style={{background:tab===t.id?CREAM_CARD:"transparent",color:tab===t.id?BLUE:TEXT_MUTED,borderBottom:tab===t.id?"2px solid "+BLUE:"2px solid transparent",marginBottom:"-2px"}}
+              onClick={()=>setTab(t.id)}>
+              {t.icon} {t.label}
+            </button>
           ))}
-          <div style={{ flex: 1, borderBottom: `2px solid ${NAVY_BORDER}` }} />
         </div>
 
-        {msg && (
-          <div style={{ padding: "8px 14px", background: msg.startsWith("✅") ? "#14532D" : "#7F1D1D", borderRadius: 6, marginTop: 12, fontSize: 12, display: "flex", justifyContent: "space-between" }}>
-            <span>{msg}</span>
-            <span style={{ cursor: "pointer", opacity: 0.7 }} onClick={() => setMsg("")}>✕</span>
-          </div>
-        )}
+        {/* Message */}
+        {msg&&<div style={{margin:"12px 0",padding:"9px 14px",background:msg.startsWith("✅")?"#F0FAF4":"#FEF2F2",border:"1px solid "+(msg.startsWith("✅")?"#A8D5B5":"#F0B8C0"),borderRadius:8,fontSize:13,display:"flex",justifyContent:"space-between",color:msg.startsWith("✅")?GREEN:RED}}>
+          <span>{msg}</span><button onClick={()=>setMsg("")} style={{background:"none",border:"none",cursor:"pointer",color:TEXT_MUTED,fontSize:16}}>✕</button>
+        </div>}
 
-        <div style={{ background: NAVY_SURFACE, border: `1px solid ${NAVY_BORDER}`, borderRadius: "0 6px 6px 6px", padding: 16, marginTop: 0 }}>
+        <div style={{background:CREAM_CARD,border:"1px solid "+BORDER_LIGHT,borderRadius:"0 12px 12px 12px",padding:18}}>
 
-          {/* ── USERS TAB ── */}
-          {tab === "users" && (
-            <div>
-              <div style={{ display: "flex", gap: 10, marginBottom: 14, alignItems: "center" }}>
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, email, city..." style={{ flex: 1 }} />
-                <button onClick={fetchUsers} style={{ padding: "6px 14px", background: GREEN, color: "white", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>🔄 Refresh</button>
-                <div style={{ fontSize: 11, color: TEXT_MUTED }}>{filtered.length} / {users.length} users</div>
-              </div>
-
-              {loading ? (
-                <div style={{ textAlign: "center", padding: 40, color: TEXT_MUTED }}>Loading users...</div>
-              ) : (
-                <div style={{ display: "flex", gap: 16 }}>
-                  {/* User list */}
-                  <div style={{ flex: 1, overflowX: "auto", maxHeight: "60vh", overflowY: "auto" }}>
-                    <table>
-                      <thead><tr>
-                        <th>Name</th><th>Email</th><th>Profession</th><th>City</th><th>Country</th><th>Tokens</th><th>Last Login</th><th>Actions</th>
-                      </tr></thead>
-                      <tbody>
-                        {filtered.map(u => (
-                          <tr key={u.id} onClick={() => setSelected(u)} style={{ background: selected?.id === u.id ? `${GOLD}15` : undefined }}>
-                            <td style={{ fontWeight: 600 }}>{u.name}</td>
-                            <td style={{ color: TEXT_MUTED }}>{u.email}</td>
-                            <td>{u.profession}</td>
-                            <td>{u.city}</td>
-                            <td>{u.country}</td>
-                            <td><span style={{ color: u.tokens > 100000 ? GREEN : GOLD, fontWeight: 700 }}>{(u.tokens || 0).toLocaleString()}</span></td>
-                            <td style={{ color: TEXT_MUTED, fontSize: 11 }}>{u.last_login ? new Date(u.last_login).toLocaleDateString() : "Never"}</td>
-                            <td>
-                              <button onClick={(e) => { e.stopPropagation(); deleteUser(u.id, u.email); }}
-                                style={{ padding: "3px 8px", background: RED, color: "white", border: "none", borderRadius: 3, cursor: "pointer", fontSize: 10 }}>Delete</button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+          {/* DASHBOARD */}
+          {tab==="dashboard"&&(
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+              <div style={{...card}}>
+                <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:12}}>🌍 Users by Country</div>
+                {Object.entries(byCountry).sort((a,b)=>b[1]-a[1]).map(([c,n])=>(
+                  <div key={c} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+                    <span style={{fontSize:12,color:TEXT_MID,minWidth:130}}>{c}</span>
+                    <div style={{flex:1,height:7,background:BORDER_LIGHT,borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:Math.max(4,(n/users.length)*100)+"%",background:BLUE,borderRadius:4}}/></div>
+                    <span style={{fontSize:12,fontWeight:700,color:BLUE,minWidth:22,textAlign:"right"}}>{n}</span>
                   </div>
+                ))}
+              </div>
+              <div style={{...card}}>
+                <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:12}}>💼 By Profession</div>
+                {Object.entries(byProfession).sort((a,b)=>b[1]-a[1]).map(([p,n])=>(
+                  <div key={p} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+                    <span style={{fontSize:12,color:TEXT_MID,minWidth:130}}>{p}</span>
+                    <div style={{flex:1,height:7,background:BORDER_LIGHT,borderRadius:4,overflow:"hidden"}}><div style={{height:"100%",width:Math.max(4,(n/users.length)*100)+"%",background:GREEN,borderRadius:4}}/></div>
+                    <span style={{fontSize:12,fontWeight:700,color:GREEN,minWidth:22,textAlign:"right"}}>{n}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{gridColumn:"1 / -1"}}>
+                <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:12}}>🆕 Recent Signups</div>
+                <table><thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Profession</th><th>City</th><th>Joined</th></tr></thead>
+                <tbody>{[...users].sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8).map(u=>(
+                  <tr key={u.id} onClick={()=>{setSelected(u);setEditTokens(u.tokens||0);setTab("users");}}>
+                    <td style={{fontWeight:600,color:TEXT}}>{u.name}</td><td style={{color:TEXT_MUTED}}>{u.email}</td>
+                    <td><span style={{background:CREAM_MID,borderRadius:4,padding:"2px 7px",fontSize:11}}>{u.country||"—"}</span></td>
+                    <td>{u.profession}</td><td>{u.city}</td>
+                    <td style={{color:TEXT_MUTED,fontSize:12}}>{u.created_at?new Date(u.created_at).toLocaleDateString():"—"}</td>
+                  </tr>
+                ))}</tbody></table>
+              </div>
+            </div>
+          )}
 
-                  {/* User detail panel */}
-                  {selected && (
-                    <div style={{ width: 280, background: NAVY_MID, borderRadius: 8, border: `1px solid ${NAVY_BORDER}`, padding: 16, flexShrink: 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                        <span style={{ fontFamily: "Georgia,serif", fontSize: 14, fontWeight: 700, color: GOLD }}>User Detail</span>
-                        <span style={{ cursor: "pointer", color: TEXT_MUTED }} onClick={() => setSelected(null)}>✕</span>
-                      </div>
-                      <div style={{ width: 48, height: 48, borderRadius: "50%", background: `linear-gradient(135deg, ${GOLD}, #3EB489)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 700, color: NAVY, marginBottom: 12 }}>{selected.name?.charAt(0)?.toUpperCase()}</div>
-                      {[
-                        ["Name", selected.name],
-                        ["Email", selected.email],
-                        ["Profession", selected.profession],
-                        ["City", selected.city],
-                        ["State/Province", selected.province],
-                        ["Country", selected.country],
-                        ["Created", selected.created_at ? new Date(selected.created_at).toLocaleDateString() : "—"],
-                        ["Last Login", selected.last_login ? new Date(selected.last_login).toLocaleString() : "Never"],
-                        ["Chat Sessions", (() => { try { return JSON.parse(selected.chat_history || "[]").length + " sessions"; } catch { return "0 sessions"; } })()],
-                        ["Total Messages", (() => { try { const ss = JSON.parse(selected.chat_history || "[]"); return ss.reduce((a,s)=>a+(s.messages?.length||0),0) + " msgs"; } catch { return "—"; } })()],
-                        ["Avg Msgs/Session", (() => { try { const ss = JSON.parse(selected.chat_history || "[]"); if(!ss.length) return "—"; const t=ss.reduce((a,s)=>a+(s.messages?.length||0),0); return Math.round(t/ss.length)+" msgs"; } catch { return "—"; } })()],
-                      ].map(([k, v]) => (
-                        <div key={k} style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${NAVY_BORDER}`, padding: "5px 0", fontSize: 11 }}>
-                          <span style={{ color: TEXT_MUTED }}>{k}</span>
-                          <span style={{ color: "#FAF6EE", fontWeight: 500, textAlign: "right", maxWidth: 140, wordBreak: "break-all" }}>{v || "—"}</span>
-                        </div>
+          {/* USERS */}
+          {tab==="users"&&(
+            <div style={{display:"flex",gap:16}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",gap:10,marginBottom:14,alignItems:"center"}}>
+                  <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name, email, city, country, profession..." style={{...inp,flex:1}}/>
+                  <button onClick={fetchUsers} style={btn(BLUE)}>🔄 Refresh</button>
+                  <span style={{fontSize:11,color:TEXT_MUTED,whiteSpace:"nowrap"}}>{filtered.length}/{users.length}</span>
+                </div>
+                {loading?<div style={{textAlign:"center",padding:40,color:TEXT_MUTED}}>Loading...</div>:(
+                  <div style={{overflowX:"auto",maxHeight:"60vh",overflowY:"auto"}}>
+                    <table><thead><tr>
+                      <th>Name</th><th>Email</th><th>Country</th><th>City</th><th>Province</th><th>Profession</th><th>Credits</th><th>Sessions</th><th>Est Time</th><th>Last Login</th><th>Joined</th><th>Actions</th>
+                    </tr></thead><tbody>
+                      {filtered.map(u=>(
+                        <tr key={u.id} onClick={()=>{setSelected(u);setEditTokens(u.tokens||0);}} style={{background:selected?.id===u.id?"#FAF8F4":""}}>
+                          <td style={{fontWeight:600,color:TEXT}}>{u.name}</td>
+                          <td style={{color:TEXT_MUTED,fontSize:12}}>{u.email}</td>
+                          <td><span style={{background:CREAM_MID,borderRadius:4,padding:"2px 7px",fontSize:11}}>{u.country||"—"}</span></td>
+                          <td>{u.city}</td><td>{u.province}</td><td>{u.profession}</td>
+                          <td><span style={{color:(u.tokens||0)>100000?GREEN:(u.tokens||0)>50000?GOLD:RED,fontWeight:700}}>{((u.tokens||0)/1000).toFixed(0)}K</span></td>
+                          <td style={{color:BLUE,fontWeight:600}}>{getSessions(u).length}</td>
+                          <td style={{color:TEXT_MUTED,fontSize:12}}>{fmtTime(getEstTime(u))}</td>
+                          <td style={{color:TEXT_MUTED,fontSize:12}}>{u.last_login?new Date(u.last_login).toLocaleDateString():"Never"}</td>
+                          <td style={{color:TEXT_MUTED,fontSize:12}}>{u.created_at?new Date(u.created_at).toLocaleDateString():"—"}</td>
+                          <td><button onClick={e=>{e.stopPropagation();deleteUser(u.id,u.email);}} style={{...btn(RED),padding:"3px 8px",fontSize:10}}>Delete</button></td>
+                        </tr>
                       ))}
-
-                      {/* Session time breakdown */}
-                      {(() => {
-                        try {
-                          const sessions = JSON.parse(selected.chat_history || "[]");
-                          if (!sessions.length) return null;
-                          const totalExchanges = sessions.reduce((acc, s) => {
-                            const msgs = s.messages || [];
-                            return acc + Math.min(msgs.filter(m=>m.role==="user").length, msgs.filter(m=>m.role==="assistant").length);
-                          }, 0);
-                          const totalMins = totalExchanges * 2;
-                          const totalStr = totalMins < 1 ? "< 1 min" : totalMins < 60 ? totalMins + " min" : Math.floor(totalMins/60) + "h " + (totalMins%60) + "m";
-                          return (
-                            <div style={{ marginTop: 14 }}>
-                              <div style={{ fontSize: 11, color: GOLD, fontWeight: 700, marginBottom: 8 }}>🕐 Session Activity</div>
-                              <div style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", gap: 4 }}>
-                                {sessions.map((s, i) => {
-                                  const msgs = s.messages || [];
-                                  const userMsgs = msgs.filter(m=>m.role==="user").length;
-                                  const aiMsgs   = msgs.filter(m=>m.role==="assistant").length;
-                                  const estMins  = Math.min(userMsgs, aiMsgs) * 2;
-                                  const timeStr  = estMins < 1 ? "< 1 min" : estMins < 60 ? "~"+estMins+" min" : "~"+Math.round(estMins/60)+"h "+estMins%60+"m";
-                                  return (
-                                    <div key={i} style={{ background: NAVY_SURFACE, borderRadius: 6, padding: "6px 8px", fontSize: 10 }}>
-                                      <div style={{ color: "#FAF6EE", fontWeight: 600, marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                        {i+1}. {s.title || "Untitled session"}
-                                      </div>
-                                      <div style={{ display: "flex", gap: 8 }}>
-                                        <span style={{ color: GREEN }}>💬 {userMsgs} Q</span>
-                                        <span style={{ color: TEXT_MUTED }}>🤖 {aiMsgs} A</span>
-                                        <span style={{ color: GOLD }}>⏱ {timeStr}</span>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              <div style={{ marginTop: 6, padding: "6px 8px", background: GOLD+"18", borderRadius: 6, border: "1px solid "+GOLD+"40", fontSize: 10, display: "flex", justifyContent: "space-between" }}>
-                                <span style={{ color: TEXT_MUTED }}>Est. total time</span>
-                                <span style={{ color: GOLD, fontWeight: 700 }}>{totalStr}</span>
+                    </tbody></table>
+                  </div>
+                )}
+              </div>
+              {/* Detail panel */}
+              {selected&&(
+                <div style={{width:290,flexShrink:0,background:CREAM_MID,borderRadius:12,border:"1px solid "+BORDER,padding:16,overflowY:"auto",maxHeight:"75vh"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:12,alignItems:"center"}}>
+                    <span style={{fontSize:14,fontWeight:700,color:BLUE}}>User Detail</span>
+                    <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",cursor:"pointer",color:TEXT_MUTED,fontSize:18}}>✕</button>
+                  </div>
+                  <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,"+BLUE+",#2E6BC4)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:800,color:"white",marginBottom:12}}>
+                    {selected.name?.charAt(0)?.toUpperCase()}
+                  </div>
+                  {[
+                    ["Full Name",selected.name],["Email",selected.email],["Profession",selected.profession],
+                    ["City",selected.city],["State/Province",selected.province],["Country",selected.country],
+                    ["Joined",selected.created_at?new Date(selected.created_at).toLocaleDateString():"—"],
+                    ["Last Login",selected.last_login?new Date(selected.last_login).toLocaleString():"Never"],
+                    ["Sessions",getSessions(selected).length+" sessions"],
+                    ["Total Messages",getTotalMsgs(selected)+" msgs"],
+                    ["Avg Msgs/Session",getSessions(selected).length?Math.round(getTotalMsgs(selected)/getSessions(selected).length)+" msgs":"—"],
+                    ["Est Total Time",fmtTime(getEstTime(selected))],
+                    ["Credits Left",(selected.tokens||0).toLocaleString()],
+                    ["Credits Used",(500000-(selected.tokens||0)).toLocaleString()],
+                    ["Usage %",Math.round((1-(selected.tokens||0)/500000)*100)+"%"],
+                  ].map(([k,v])=>(
+                    <div key={k} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid "+BORDER_LIGHT,padding:"5px 0",fontSize:11}}>
+                      <span style={{color:TEXT_MUTED}}>{k}</span>
+                      <span style={{color:TEXT,fontWeight:600,textAlign:"right",maxWidth:155,wordBreak:"break-all"}}>{v||"—"}</span>
+                    </div>
+                  ))}
+                  {/* Session breakdown */}
+                  {getSessions(selected).length>0&&(
+                    <div style={{marginTop:14}}>
+                      <div style={{fontSize:12,fontWeight:700,color:BLUE,marginBottom:8}}>🕐 Session Activity</div>
+                      <div style={{maxHeight:200,overflowY:"auto",display:"flex",flexDirection:"column",gap:5}}>
+                        {getSessions(selected).map((s,i)=>{
+                          const msgs=s.messages||[];
+                          const uM=msgs.filter(m=>m.role==="user").length;
+                          const aM=msgs.filter(m=>m.role==="assistant").length;
+                          return(
+                            <div key={i} style={{background:CREAM_CARD,borderRadius:8,padding:"7px 10px",border:"1px solid "+BORDER_LIGHT}}>
+                              <div style={{fontSize:11,fontWeight:700,color:TEXT,marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{i+1}. {s.title||"Untitled"}</div>
+                              <div style={{display:"flex",gap:8,fontSize:10,flexWrap:"wrap"}}>
+                                <span style={{color:GREEN}}>💬 {uM}Q</span>
+                                <span style={{color:TEXT_MUTED}}>🤖 {aM}A</span>
+                                <span style={{color:GOLD}}>⏱ {fmtTime(Math.min(uM,aM)*2)}</span>
+                                {s.pinned&&<span>📌</span>}
+                                {s.isGroup&&<span>👥</span>}
                               </div>
                             </div>
                           );
-                        } catch { return null; }
-                      })()}
-                      {/* Token adjustment */}
-                      <div style={{ marginTop: 14 }}>
-                        <div style={{ fontSize: 11, color: TEXT_MUTED, marginBottom: 6 }}>⚡ Adjust Tokens</div>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          <input id="tok-input" type="number" defaultValue={selected.tokens} style={{ flex: 1, width: "100%" }} />
-                          <button onClick={() => { const v = parseInt(document.getElementById("tok-input").value); if (!isNaN(v)) updateTokens(selected.id, v); }}
-                            style={{ padding: "5px 10px", background: GREEN, color: "white", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 11, fontWeight: 600 }}>Set</button>
-                        </div>
-                        <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
-                          {[100000, 250000, 500000].map(n => (
-                            <button key={n} onClick={() => updateTokens(selected.id, n)}
-                              style={{ flex: 1, padding: "4px 0", background: NAVY_SURFACE, color: GOLD, border: `1px solid ${GOLD}40`, borderRadius: 3, cursor: "pointer", fontSize: 9, fontWeight: 700 }}>{(n/1000)}K</button>
-                          ))}
-                        </div>
+                        })}
+                      </div>
+                      <div style={{marginTop:6,padding:"7px 10px",background:"#FAF8F4",borderRadius:8,border:"1px solid "+BORDER,display:"flex",justifyContent:"space-between",fontSize:12}}>
+                        <span style={{color:TEXT_MUTED}}>Total est. time</span>
+                        <span style={{color:BLUE,fontWeight:700}}>{fmtTime(getEstTime(selected))}</span>
                       </div>
                     </div>
                   )}
+                  {/* Adjust credits */}
+                  <div style={{marginTop:14}}>
+                    <div style={{fontSize:12,fontWeight:700,color:BLUE,marginBottom:8}}>⚡ Adjust Credits</div>
+                    <div style={{height:5,background:BORDER_LIGHT,borderRadius:3,marginBottom:8,overflow:"hidden"}}>
+                      <div style={{height:"100%",width:Math.max(2,(selected.tokens||0)/500000*100)+"%",background:(selected.tokens||0)>100000?GREEN:GOLD,borderRadius:3}}/>
+                    </div>
+                    <div style={{display:"flex",gap:6,marginBottom:8}}>
+                      <input type="number" value={editTokens} onChange={e=>setEditTokens(e.target.value)} style={{...inp,flex:1}}/>
+                      <button onClick={()=>updateTokens(selected.id,editTokens)} style={btn(GREEN)}>Set</button>
+                    </div>
+                    <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+                      {[100,250,500,1000].map(k=>(
+                        <button key={k} onClick={()=>{updateTokens(selected.id,k*1000);setEditTokens(k*1000);}} style={{padding:"4px 10px",background:CREAM_MID,color:BLUE,border:"1px solid "+BORDER,borderRadius:6,cursor:"pointer",fontSize:10,fontWeight:700}}>{k}K</button>
+                      ))}
+                    </div>
+                  </div>
+                  <button onClick={()=>deleteUser(selected.id,selected.email)} style={{...btn(RED),width:"100%",marginTop:14,padding:"9px 0"}}>🗑 Delete User</button>
                 </div>
               )}
             </div>
           )}
 
-          {/* ── STATS TAB ── */}
-          {tab === "stats" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div style={{ background: NAVY_MID, borderRadius: 8, padding: 16 }}>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 14, color: GOLD, marginBottom: 12 }}>📊 Profession Breakdown</div>
-                {Object.entries(users.reduce((acc, u) => { acc[u.profession || "Unknown"] = (acc[u.profession || "Unknown"] || 0) + 1; return acc; }, {}))
-                  .sort((a, b) => b[1] - a[1]).map(([prof, count]) => (
-                  <div key={prof} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontSize: 12 }}>{prof}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: Math.max(4, (count / users.length) * 120), height: 6, background: GREEN, borderRadius: 3 }} />
-                      <span style={{ fontSize: 11, color: GOLD, width: 20, textAlign: "right" }}>{count}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ background: NAVY_MID, borderRadius: 8, padding: 16 }}>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 14, color: GOLD, marginBottom: 12 }}>🌍 Country Breakdown</div>
-                {Object.entries(users.reduce((acc, u) => { const c = u.country || "Unknown"; acc[c] = (acc[c] || 0) + 1; return acc; }, {}))
-                  .sort((a, b) => b[1] - a[1]).map(([country, count]) => (
-                  <div key={country} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontSize: 12 }}>{country}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: Math.max(4, (count / users.length) * 120), height: 6, background: "#BF0A30", borderRadius: 3 }} />
-                      <span style={{ fontSize: 11, color: GOLD, width: 20, textAlign: "right" }}>{count}</span>
-                    </div>
-                  </div>
-                ))}
+          {/* ACTIVITY */}
+          {tab==="activity"&&(
+            <div>
+              <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:14}}>📈 Full Activity Log</div>
+              <div style={{overflowX:"auto"}}>
+                <table><thead><tr>
+                  <th>User</th><th>Email</th><th>Country</th><th>City</th><th>Sessions</th><th>Questions</th><th>AI Answers</th><th>Est Time</th><th>Credits Used</th><th>Credits Left</th><th>Last Active</th>
+                </tr></thead><tbody>
+                  {[...users].sort((a,b)=>getSessions(b).length-getSessions(a).length).map(u=>{
+                    const ss=getSessions(u);
+                    const allM=ss.flatMap(s=>s.messages||[]);
+                    const uM=allM.filter(m=>m.role==="user").length;
+                    const aM=allM.filter(m=>m.role==="assistant").length;
+                    return(
+                      <tr key={u.id} onClick={()=>{setSelected(u);setEditTokens(u.tokens||0);}}>
+                        <td style={{fontWeight:600,color:TEXT}}>{u.name}</td>
+                        <td style={{color:TEXT_MUTED,fontSize:12}}>{u.email}</td>
+                        <td><span style={{background:CREAM_MID,borderRadius:4,padding:"2px 6px",fontSize:11}}>{u.country||"—"}</span></td>
+                        <td>{u.city}</td>
+                        <td style={{color:BLUE,fontWeight:700}}>{ss.length}</td>
+                        <td style={{color:GREEN,fontWeight:600}}>{uM}</td>
+                        <td style={{color:TEXT_MUTED}}>{aM}</td>
+                        <td style={{color:GOLD,fontWeight:600}}>{fmtTime(getEstTime(u))}</td>
+                        <td style={{color:RED}}>{(500000-(u.tokens||0)).toLocaleString()}</td>
+                        <td style={{color:(u.tokens||0)>100000?GREEN:RED,fontWeight:700}}>{(u.tokens||0).toLocaleString()}</td>
+                        <td style={{color:TEXT_MUTED,fontSize:12}}>{u.last_login?new Date(u.last_login).toLocaleString():"Never"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody></table>
               </div>
             </div>
           )}
 
-          {/* ── TOKENS TAB ── */}
-          {tab === "tokens" && (
+          {/* VISITORS */}
+          {tab==="visitors"&&(
             <div>
-              <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-                <div style={{ flex: 1, background: NAVY_MID, borderRadius: 8, padding: 14, textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: GOLD, fontFamily: "Georgia,serif" }}>{totalTokens.toLocaleString()}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>Total Tokens Remaining</div>
-                </div>
-                <div style={{ flex: 1, background: NAVY_MID, borderRadius: 8, padding: 14, textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: GREEN, fontFamily: "Georgia,serif" }}>{users.length > 0 ? Math.round(totalTokens / users.length).toLocaleString() : 0}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>Avg Tokens per User</div>
-                </div>
-                <div style={{ flex: 1, background: NAVY_MID, borderRadius: 8, padding: 14, textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#BF0A30", fontFamily: "Georgia,serif" }}>{users.filter(u => (u.tokens || 0) < 50000).length}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>Low Balance (&lt;50K)</div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div style={{fontSize:14,fontWeight:700,color:TEXT}}>👁️ Non-Logged-In Visitor Activity</div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={loadVisitors} style={btn(BLUE)}>🔄 Refresh</button>
+                  <button onClick={()=>{if(confirm("Clear all visitor data?")){localStorage.removeItem("arklaw_visitors");setVisitors([]);}}} style={btn(RED)}>🗑 Clear</button>
                 </div>
               </div>
-              <table>
-                <thead><tr><th>User</th><th>Email</th><th>Tokens</th><th>% Remaining</th><th>Quick Set</th></tr></thead>
-                <tbody>
-                  {[...users].sort((a, b) => (a.tokens || 0) - (b.tokens || 0)).map(u => (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:12,marginBottom:16}}>
+                {[
+                  {label:"Total Visits",value:visitors.length,color:BLUE},
+                  {label:"Unique Pages",value:[...new Set(visitors.map(v=>v.page))].length,color:GREEN},
+                  {label:"Today",value:visitors.filter(v=>new Date(v.time)>new Date(Date.now()-86400000)).length,color:GOLD},
+                  {label:"Landing Page",value:visitors.filter(v=>v.page==="/").length,color:TEXT_MID},
+                ].map(({label,value,color})=>(
+                  <div key={label} style={{...card}}>
+                    <div style={{fontSize:20,fontWeight:800,color}}>{value}</div>
+                    <div style={{fontSize:11,color:TEXT_MUTED,marginTop:3}}>{label}</div>
+                  </div>
+                ))}
+              </div>
+              {visitors.length===0?(
+                <div style={{textAlign:"center",padding:"30px 20px",color:TEXT_MUTED}}>
+                  <div style={{fontSize:32,marginBottom:10}}>👁️</div>
+                  <div style={{fontSize:14,fontWeight:600,marginBottom:8}}>No visitor data yet</div>
+                  <div style={{fontSize:12,marginBottom:16}}>Add this snippet to each page's useEffect to track non-logged-in visitors:</div>
+                  <div style={{background:CREAM_MID,borderRadius:8,padding:"14px 16px",textAlign:"left",fontSize:11,fontFamily:"monospace",color:TEXT_MID,border:"1px solid "+BORDER}}>
+                    {"useEffect(()=>{"}<br/>
+                    {"  if(!user){"}<br/>
+                    {"    const v={page:window.location.pathname,"}<br/>
+                    {"      time:new Date().toISOString(),"}<br/>
+                    {"      ua:navigator.userAgent.substring(0,80)};"}<br/>
+                    {"    const arr=JSON.parse(localStorage.getItem"}<br/>
+                    {"      (\"arklaw_visitors\")||\"[]\");"}<br/>
+                    {"    arr.push(v); if(arr.length>500) arr.shift();"}<br/>
+                    {"    localStorage.setItem(\"arklaw_visitors\","}<br/>
+                    {"      JSON.stringify(arr));"}<br/>
+                    {"  }"}<br/>
+                    {"},[user]);"}
+                  </div>
+                </div>
+              ):(
+                <div style={{overflowX:"auto"}}>
+                  <table><thead><tr><th>#</th><th>Page</th><th>Time</th><th>Browser / Device</th></tr></thead>
+                  <tbody>
+                    {[...visitors].reverse().map((v,i)=>(
+                      <tr key={i}>
+                        <td style={{color:TEXT_DIM,fontSize:11}}>{visitors.length-i}</td>
+                        <td style={{fontWeight:600,color:BLUE}}>{v.page||"/"}</td>
+                        <td style={{color:TEXT_MUTED,fontSize:12}}>{new Date(v.time).toLocaleString()}</td>
+                        <td style={{color:TEXT_DIM,fontSize:11,maxWidth:280,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{v.ua||"—"}</td>
+                      </tr>
+                    ))}
+                  </tbody></table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* CREDITS */}
+          {tab==="tokens"&&(
+            <div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginBottom:16}}>
+                {[
+                  {label:"Total Remaining",value:totalTokens.toLocaleString(),color:BLUE},
+                  {label:"Avg per User",value:users.length?Math.round(totalTokens/users.length).toLocaleString():"0",color:GREEN},
+                  {label:"Total Used",value:(users.length*500000-totalTokens).toLocaleString(),color:RED},
+                  {label:"Below 50K",value:users.filter(u=>(u.tokens||0)<50000).length,color:RED},
+                ].map(({label,value,color})=>(
+                  <div key={label} style={{...card}}>
+                    <div style={{fontSize:20,fontWeight:800,color}}>{value}</div>
+                    <div style={{fontSize:11,color:TEXT_MUTED,marginTop:3}}>{label}</div>
+                  </div>
+                ))}
+              </div>
+              <table><thead><tr><th>User</th><th>Email</th><th>Country</th><th>Remaining</th><th>Used</th><th>Usage</th><th>Quick Set</th></tr></thead>
+              <tbody>
+                {[...users].sort((a,b)=>(a.tokens||0)-(b.tokens||0)).map(u=>{
+                  const pct=Math.round((u.tokens||0)/500000*100);
+                  return(
                     <tr key={u.id}>
-                      <td style={{ fontWeight: 600 }}>{u.name}</td>
-                      <td style={{ color: TEXT_MUTED }}>{u.email}</td>
-                      <td><span style={{ color: (u.tokens || 0) > 100000 ? GREEN : (u.tokens || 0) > 50000 ? GOLD : RED, fontWeight: 700 }}>{(u.tokens || 0).toLocaleString()}</span></td>
+                      <td style={{fontWeight:600,color:TEXT}}>{u.name}</td>
+                      <td style={{color:TEXT_MUTED,fontSize:12}}>{u.email}</td>
+                      <td style={{fontSize:12}}>{u.country||"—"}</td>
+                      <td><span style={{color:(u.tokens||0)>100000?GREEN:(u.tokens||0)>50000?GOLD:RED,fontWeight:700}}>{(u.tokens||0).toLocaleString()}</span></td>
+                      <td style={{color:TEXT_MUTED}}>{(500000-(u.tokens||0)).toLocaleString()}</td>
                       <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                          <div style={{ width: 80, height: 6, background: NAVY_BORDER, borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ width: Math.max(2, ((u.tokens || 0) / 500000) * 100) + "%", height: "100%", background: (u.tokens || 0) > 100000 ? GREEN : GOLD, borderRadius: 3 }} />
-                          </div>
-                          <span style={{ fontSize: 10, color: TEXT_MUTED }}>{Math.round(((u.tokens || 0) / 500000) * 100)}%</span>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <div style={{width:80,height:6,background:BORDER_LIGHT,borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:Math.max(2,pct)+"%",background:pct>50?GREEN:pct>20?GOLD:RED,borderRadius:3}}/></div>
+                          <span style={{fontSize:11,color:TEXT_MUTED}}>{pct}%</span>
                         </div>
                       </td>
                       <td>
-                        <div style={{ display: "flex", gap: 4 }}>
-                          {[100000, 500000].map(n => (
-                            <button key={n} onClick={() => updateTokens(u.id, n)}
-                              style={{ padding: "3px 8px", background: NAVY_BORDER, color: GOLD, border: "none", borderRadius: 3, cursor: "pointer", fontSize: 9, fontWeight: 700 }}>+{n/1000}K</button>
+                        <div style={{display:"flex",gap:4}}>
+                          {[100,250,500].map(k=>(
+                            <button key={k} onClick={()=>updateTokens(u.id,k*1000)} style={{padding:"3px 7px",background:CREAM_MID,color:BLUE,border:"1px solid "+BORDER,borderRadius:5,cursor:"pointer",fontSize:10,fontWeight:700}}>{k}K</button>
                           ))}
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  );
+                })}
+              </tbody></table>
             </div>
           )}
 
-          {/* ── THEME TAB ── */}
-          {tab === "theme" && (
+          {/* THEMES */}
+          {tab==="theme"&&(
             <div>
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 15, color: GOLD, marginBottom: 10 }}>🎨 US Version Theme</div>
-                <p style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20, lineHeight: 1.6 }}>
-                  Choose which UI theme the US version of ARK Law AI displays. The setting is saved in your browser and applied immediately when you visit the US version.
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                  {/* ChatGPT Theme */}
-                  <div onClick={() => { setUsTheme("chatgpt"); localStorage.setItem("arklaw_us_theme","chatgpt"); setMsg("✅ ChatGPT theme applied — refresh the US version to see it."); }}
-                    style={{ background: usTheme === "chatgpt" ? "#212121" : NAVY_MID, border: `2px solid ${usTheme === "chatgpt" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
-                    <div style={{ background: "#212121", borderRadius: 8, padding: "12px 14px", marginBottom: 12, border: "1px solid #333" }}>
-                      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                        <div style={{ width: 60, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
-                        <div style={{ width: 40, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
-                      </div>
-                      <div style={{ width: "100%", height: 6, background: "#2f2f2f", borderRadius: 3, marginBottom: 4 }} />
-                      <div style={{ width: "80%", height: 6, background: "#2f2f2f", borderRadius: 3 }} />
-                      <div style={{ marginTop: 10, padding: "6px 10px", background: "#2f2f2f", borderRadius: 8, border: "1px solid #3a3a3a", display: "flex", alignItems: "center", gap: 6 }}>
-                        <div style={{ flex: 1, height: 5, background: "#3a3a3a", borderRadius: 3 }} />
-                        <div style={{ width: 20, height: 20, background: "white", borderRadius: 6 }} />
-                      </div>
+              <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:6}}>🎨 Version Theme Settings</div>
+              <p style={{fontSize:12,color:TEXT_MUTED,marginBottom:20,lineHeight:1.6}}>Switch between ChatGPT-style and Classic ARK layout for each country version.</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+                {[
+                  {flag:"us",label:"United States",theme:usTheme,setTheme:setUsTheme,key:"arklaw_us_theme",route:"/usa",classicRoute:"/usa-classic",accentColor:RED},
+                  {flag:"pk",label:"Pakistan",theme:pkTheme,setTheme:setPkTheme,key:"arklaw_pk_theme",route:"/pakistan",classicRoute:"/pakistan-classic",accentColor:GREEN},
+                ].map(({flag,label,theme,setTheme,key,route,classicRoute,accentColor})=>(
+                  <div key={flag} style={{...card}}>
+                    <div style={{fontWeight:700,color:TEXT,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
+                      <img src={"https://flagcdn.com/w40/"+flag+".png"} style={{width:24,height:16,borderRadius:2,border:"1px solid "+BORDER}}/> {label}
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: usTheme === "chatgpt" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>ChatGPT Style {usTheme === "chatgpt" && "✓"}</div>
-                    <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Dark #212121 background, minimal sidebar, centered chat — matches ChatGPT's exact layout.</div>
-                  </div>
-
-                  {/* Classic Theme */}
-                  <div onClick={() => { setUsTheme("classic"); localStorage.setItem("arklaw_us_theme","classic"); setMsg("✅ Classic theme applied — refresh the US version to see it."); }}
-                    style={{ background: usTheme === "classic" ? "#001F5B" : NAVY_MID, border: `2px solid ${usTheme === "classic" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
-                    <div style={{ background: "#001F5B", borderRadius: 8, padding: "10px 12px", marginBottom: 12, border: "2px solid #BF0A30" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, borderBottom: "1px solid #003399", paddingBottom: 6 }}>
-                        <div style={{ width: 20, height: 20, borderRadius: "50%", background: GOLD }} />
-                        <div style={{ flex: 1, height: 6, background: GOLD, borderRadius: 3, opacity: 0.6 }} />
-                        <div style={{ width: 30, height: 6, background: "#BF0A30", borderRadius: 3 }} />
-                      </div>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <div style={{ width: 50, background: "#F5F1E8", borderRadius: 4, padding: 4 }}>
-                          <div style={{ height: 4, background: "#ccc", borderRadius: 2, marginBottom: 3 }} />
-                          <div style={{ height: 4, background: "#ccc", borderRadius: 2 }} />
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+                      {[{val:"chatgpt",label:"ChatGPT Style"},{val:"classic",label:"Classic ARK"}].map(({val,lab})=>(
+                        <div key={val} onClick={()=>{setTheme(val);localStorage.setItem(key,val);setMsg("✅ "+label+" theme → "+val);}}
+                          style={{padding:"11px 14px",border:"2px solid "+(theme===val?accentColor:BORDER),borderRadius:10,cursor:"pointer",background:theme===val?CREAM_MID:CREAM_CARD,transition:"all 0.15s"}}>
+                          <div style={{fontSize:13,fontWeight:700,color:theme===val?accentColor:TEXT}}>{val==="chatgpt"?"ChatGPT Style":"Classic ARK"} {theme===val&&"✓"}</div>
                         </div>
-                        <div style={{ flex: 1, background: "white", borderRadius: 4, padding: 4 }}>
-                          <div style={{ height: 4, background: "#eee", borderRadius: 2, marginBottom: 3 }} />
-                          <div style={{ height: 4, background: "#eee", borderRadius: 2, width: "70%" }} />
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: usTheme === "classic" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>Classic ARK Style {usTheme === "classic" && "✓"}</div>
-                    <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>US Navy/Red theme with cream sidebar, ARK branding header — original ARK Law AI design.</div>
+                    <div style={{display:"flex",gap:8}}>
+                      <a href={route} target="_blank" style={{...btn(accentColor),display:"inline-block",fontSize:11}}>Open ↗</a>
+                      <a href={classicRoute} target="_blank" style={{padding:"7px 14px",background:CREAM_MID,color:TEXT,border:"1px solid "+BORDER,borderRadius:7,fontSize:11,fontWeight:600,display:"inline-block"}}>Classic ↗</a>
+                    </div>
                   </div>
-                </div>
-
-                <div style={{ marginTop: 20, padding: "12px 16px", background: NAVY_MID, borderRadius: 8, border: `1px solid ${NAVY_BORDER}`, fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6 }}>
-                  ℹ️ <strong style={{ color: GOLD }}>How it works:</strong> The theme preference is stored in <code style={{ color: GOLD }}>localStorage</code> under the key <code style={{ color: GOLD }}>arklaw_us_theme</code>. When set to <strong>"chatgpt"</strong>, visiting <code style={{ color: GOLD }}>/usa</code> shows the ChatGPT-style layout. When set to <strong>"classic"</strong>, clicking the US version will redirect to <code style={{ color: GOLD }}>/usa-classic</code> — the original ARK navy/red design. You can also visit both directly.
-                  <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-                    <a href="/usa" target="_blank" style={{ padding: "6px 12px", background: "#212121", color: "#ececec", border: "1px solid #333", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open ChatGPT UI ↗</a>
-                    <a href="/usa-classic" target="_blank" style={{ padding: "6px 12px", background: "#001F5B", color: "#E8D97A", border: "1px solid #BF0A30", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open Classic UI ↗</a>
+                ))}
+                {[{flag:"in",label:"India",color:"#B35400",route:"/india"},{flag:"bd",label:"Bangladesh",color:"#006A4E",route:"/bangladesh"}].map(({flag,label,color,route})=>(
+                  <div key={flag} style={{...card}}>
+                    <div style={{fontWeight:700,color:TEXT,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
+                      <img src={"https://flagcdn.com/w40/"+flag+".png"} style={{width:24,height:16,borderRadius:2,border:"1px solid "+BORDER}}/> {label}
+                    </div>
+                    <a href={route} target="_blank" style={{...btn(color),display:"inline-flex",alignItems:"center",gap:5,fontSize:11}}>Open {label} ↗</a>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ── PK THEME TAB ── */}
-          {tab === "pktheme" && (
-            <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 15, color: GOLD, marginBottom: 10 }}>🇵🇰 Pakistan Version Theme</div>
-              <p style={{ fontSize: 12, color: TEXT_MUTED, marginBottom: 20, lineHeight: 1.6 }}>
-                Choose which UI theme the Pakistan version displays. ChatGPT style is the default modern dark theme.
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <div onClick={() => { setPkTheme("chatgpt"); localStorage.setItem("arklaw_pk_theme","chatgpt"); setMsg("✅ ChatGPT theme applied for Pakistan version."); }}
-                  style={{ background: pkTheme === "chatgpt" ? "#212121" : NAVY_MID, border: `2px solid ${pkTheme === "chatgpt" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
-                  <div style={{ background: "#212121", borderRadius: 8, padding: "12px 14px", marginBottom: 12, border: "1px solid #333" }}>
-                    <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                      <div style={{ width: 60, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
-                      <div style={{ width: 40, height: 8, background: "#2f2f2f", borderRadius: 4 }} />
-                    </div>
-                    <div style={{ width: "100%", height: 6, background: "#2f2f2f", borderRadius: 3, marginBottom: 4 }} />
-                    <div style={{ width: "80%", height: 6, background: "#2f2f2f", borderRadius: 3 }} />
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: pkTheme === "chatgpt" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>ChatGPT Style {pkTheme === "chatgpt" && "✓"}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Dark #212121 background, minimal sidebar, centered chat.</div>
-                </div>
-                <div onClick={() => { setPkTheme("classic"); localStorage.setItem("arklaw_pk_theme","classic"); setMsg("✅ Classic green theme applied for Pakistan version."); }}
-                  style={{ background: pkTheme === "classic" ? "#1B2E1A" : NAVY_MID, border: `2px solid ${pkTheme === "classic" ? GOLD : NAVY_BORDER}`, borderRadius: 12, padding: 20, cursor: "pointer", transition: "all 0.2s" }}>
-                  <div style={{ background: "#1B2E1A", borderRadius: 8, padding: "10px 12px", marginBottom: 12, border: "2px solid #4CAF7D" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, borderBottom: "1px solid #2A4A2A", paddingBottom: 6 }}>
-                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: GOLD }} />
-                      <div style={{ flex: 1, height: 6, background: GOLD, borderRadius: 3, opacity: 0.6 }} />
-                      <div style={{ width: 30, height: 6, background: "#4CAF7D", borderRadius: 3 }} />
-                    </div>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <div style={{ width: 50, background: "#F5F1E8", borderRadius: 4, padding: 4 }}>
-                        <div style={{ height: 4, background: "#ccc", borderRadius: 2, marginBottom: 3 }} />
-                        <div style={{ height: 4, background: "#ccc", borderRadius: 2 }} />
-                      </div>
-                      <div style={{ flex: 1, background: "white", borderRadius: 4, padding: 4 }}>
-                        <div style={{ height: 4, background: "#eee", borderRadius: 2, marginBottom: 3 }} />
-                        <div style={{ height: 4, background: "#eee", borderRadius: 2, width: "70%" }} />
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: pkTheme === "classic" ? GOLD : TEXT_MUTED, marginBottom: 4 }}>Classic Green Style {pkTheme === "classic" && "✓"}</div>
-                  <div style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.5 }}>Original ARK Pakistan dark green theme with cream sidebar.</div>
-                </div>
-              </div>
-              <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-                <a href="/pakistan" target="_blank" style={{ padding: "6px 12px", background: "#212121", color: "#ececec", border: "1px solid #333", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open ChatGPT PK ↗</a>
-                <a href="/pakistan-classic" target="_blank" style={{ padding: "6px 12px", background: "#1B2E1A", color: "#E8D97A", border: "1px solid #4CAF7D", borderRadius: 6, fontSize: 11, textDecoration: "none", fontWeight: 600 }}>Open Classic PK ↗</a>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>
