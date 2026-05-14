@@ -17,6 +17,18 @@ export default function Landing() {
   const [mounted,      setMounted]      = useState(false);
   useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
 
+  // Track landing page visitors
+  useEffect(()=>{
+    try {
+      const v={page:window.location.pathname,time:new Date().toISOString(),ua:navigator.userAgent.substring(0,80)};
+      const arr=JSON.parse(localStorage.getItem("arklaw_visitors")||"[]");
+      arr.push(v);
+      if(arr.length>500) arr.shift();
+      localStorage.setItem("arklaw_visitors",JSON.stringify(arr));
+    } catch(e){}
+  },[]);
+
+
   return (
     <>
       <Head>
