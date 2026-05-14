@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -6,7 +6,7 @@ const GOLD  = "#C9A84C";
 const CREAM = "#F5F0E8";
 
 const JURISDICTIONS = [
-  { id:"pk", label:"Pakistan",      sub:"Pakistani Law & Statutes",   flag:"https://flagcdn.com/w40/pk.png", route:"/pakistan",   accent:"#2E7D32", light:"#EAF5EE", border:"#A8D5B5", detail:"All Provinces · Federal Courts · Supreme Court", passcode:"1939PAK" },
+  { id:"pk", label:"Pakistan",      sub:"Pakistani Law & Statutes",   flag:"https://flagcdn.com/w40/pk.png", route:"/pakistan",   accent:"#2E7D32", light:"#EAF5EE", border:"#A8D5B5", detail:"All Provinces · Federal Courts · Supreme Court" },
   { id:"us", label:"United States", sub:"US Federal & State Law",     flag:"https://flagcdn.com/w40/us.png", route:"/usa",        accent:"#BF0A30", light:"#FCEEF0", border:"#F0B8C0", detail:"All 50 States · Federal Courts · Supreme Court",  passcode:"1939USA" },
   { id:"in", label:"India",         sub:"Indian Law & Statutes",      flag:"https://flagcdn.com/w40/in.png", route:"/india",      accent:"#B35400", light:"#FEF3E6", border:"#F5C89A", detail:"All States · High Courts · Supreme Court",          passcode:"1939Roorkee" },
   { id:"bd", label:"Bangladesh",    sub:"Bangladesh Law & Statutes",  flag:"https://flagcdn.com/w40/bd.png", route:"/bangladesh", accent:"#006A4E", light:"#E6F5EF", border:"#98D5B8", detail:"All Divisions · High Court · Supreme Court",        passcode:"1939BANGLA" },
@@ -15,42 +15,7 @@ const JURISDICTIONS = [
 export default function Landing() {
   const router         = useRouter();
   const [mounted,      setMounted]      = useState(false);
-  const [lockedCard,   setLockedCard]   = useState(null);   // which card was clicked
-  const [passInput,    setPassInput]    = useState("");
-  const [passError,    setPassError]    = useState("");
-  const [passShake,    setPassShake]    = useState(false);
-  const [showPass,     setShowPass]     = useState(false);  // toggle visibility
-  const inputRef = useRef(null);
-
   useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
-
-  const openPasscode = (j) => {
-    setLockedCard(j);
-    setPassInput("");
-    setPassError("");
-    setShowPass(false);
-    setTimeout(() => inputRef.current?.focus(), 100);
-  };
-
-  const closePasscode = () => {
-    setLockedCard(null);
-    setPassInput("");
-    setPassError("");
-  };
-
-  const submitPasscode = () => {
-    if (passInput === lockedCard.passcode) {
-      setPassError("");
-      setLockedCard(null);
-      router.push(lockedCard.route);
-    } else {
-      setPassError("Incorrect passcode. Please try again.");
-      setPassShake(true);
-      setTimeout(() => setPassShake(false), 500);
-      setPassInput("");
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  };
 
   return (
     <>
@@ -73,13 +38,9 @@ export default function Landing() {
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes floatBg{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 10px))}}
         @keyframes bgPulse{0%,100%{opacity:0.045}50%{opacity:0.08}}
-        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #C8BFB0;background:#EEEBE4;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;filter:grayscale(30%);opacity:0.82;}
-        .jcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1);border-color:#9A8A75!important;filter:grayscale(0%);opacity:1;}
+        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #D8D0C4;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;}
+        .jcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1);border-color:#C9A84C!important;}
         .jcard .acc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;transition:opacity 0.2s;}
-        .lock-icon{position:absolute;top:7px;right:8px;opacity:0.45;}
-        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-        .shake{animation:shake 0.4s ease;}
-        .pass-dots input[type=password]{letter-spacing:4px;font-size:20px;}
         .enter-btn{width:100%;padding:12px 0;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"DM Sans",sans-serif;}
         .enter-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.14);}
         @media(max-width:480px){.grid2{grid-template-columns:1fr !important;}}
@@ -173,16 +134,10 @@ export default function Landing() {
           <div className="grid2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"14px"}}>
             {JURISDICTIONS.map(j => (
               <div key={j.id} className="jcard"
-                onClick={()=>openPasscode(j)}>
-                {/* Lock icon top-right */}
-                <div className="lock-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A6A55" strokeWidth="2.5" strokeLinecap="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                  </svg>
-                </div>
-                <img className="flag" src={j.flag} alt={j.label} style={{width:"30px",height:"21px",objectFit:"cover",borderRadius:"3px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.12)",opacity:0.72}}/>
+                onClick={()=>router.push(j.route)}>
+                <img className="flag" src={j.flag} alt={j.label} style={{width:"30px",height:"21px",objectFit:"cover",borderRadius:"3px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.12)"}}/>
                 <div style={{minWidth:0}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"#5A4A38",lineHeight:1.2}}>{j.label}</div>
+                  <div style={{fontSize:13,fontWeight:700,color:"#1A1209",lineHeight:1.2}}>{j.label}</div>
                   <div style={{fontSize:10,color:"#9A8A75",marginTop:"2px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.sub}</div>
                 </div>
               </div>
@@ -191,61 +146,7 @@ export default function Landing() {
 
         </div>
 
-        {/* Passcode Popup */}
-        {lockedCard && (
-          <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,animation:"fadeUp 0.2s ease"}}
-            onClick={closePasscode}>
-            <div onClick={e=>e.stopPropagation()} className={passShake?"shake":""} style={{background:"#FFFFFF",borderRadius:"20px",width:"90%",maxWidth:"360px",boxShadow:"0 24px 64px rgba(0,0,0,0.22)",border:"1px solid #C8BFB0",overflow:"hidden"}}>
-              {/* Header */}
-              <div style={{padding:"20px 22px 16px",borderBottom:"1px solid #EDE8DF",display:"flex",alignItems:"center",gap:"12px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:36,height:36,objectFit:"contain",flexShrink:0}}/>
-                <div>
-                  <div style={{fontSize:15,fontWeight:800,color:"#021A4A",fontFamily:"DM Sans,sans-serif"}}>ARK LAW AI</div>
-                  <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Restricted Access</div>
-                </div>
-                <button onClick={closePasscode} style={{marginLeft:"auto",background:"none",border:"none",cursor:"pointer",color:"#9A8A75",fontSize:20,lineHeight:1}}>✕</button>
-              </div>
-              {/* Flag + country */}
-              <div style={{padding:"18px 22px 0",textAlign:"center"}}>
-                <img src={lockedCard.flag} alt={lockedCard.label} style={{width:48,height:32,objectFit:"cover",borderRadius:5,boxShadow:"0 2px 8px rgba(0,0,0,0.15)",marginBottom:10}}/>
-                <div style={{fontSize:16,fontWeight:700,color:"#1A1209",fontFamily:"DM Sans,sans-serif"}}>{lockedCard.label}</div>
-                <div style={{fontSize:12,color:"#8A7A65",marginBottom:18,marginTop:3}}>{lockedCard.sub}</div>
-                <div style={{fontSize:13,color:"#3A2A18",marginBottom:12,fontWeight:500}}>Enter passcode to access</div>
-                {/* Passcode input */}
-                <div style={{position:"relative",marginBottom:8}}>
-                  <input ref={inputRef}
-                    type={showPass?"text":"password"}
-                    value={passInput}
-                    onChange={e=>{ setPassInput(e.target.value); setPassError(""); }}
-                    onKeyDown={e=>{ if(e.key==="Enter") submitPasscode(); if(e.key==="Escape") closePasscode(); }}
-                    placeholder="Enter passcode..."
-                    style={{width:"100%",padding:"11px 44px 11px 16px",border:"2px solid "+(passError?"#DC2626":passInput?"#021A4A":"#C8BFB0"),borderRadius:10,fontSize:15,color:"#1A1209",outline:"none",fontFamily:"DM Sans,sans-serif",background:"#F9F6F0",letterSpacing:passInput&&!showPass?"4px":"normal",transition:"border-color 0.2s"}}
-                  />
-                  {/* Eye toggle */}
-                  <button onClick={()=>setShowPass(p=>!p)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:"#8A7A65",display:"flex",alignItems:"center"}}>
-                    {showPass
-                      ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                      : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    }
-                  </button>
-                </div>
-                {passError && <div style={{fontSize:12,color:"#DC2626",marginBottom:8,fontWeight:500}}>⚠️ {passError}</div>}
-              </div>
-              {/* Footer buttons */}
-              <div style={{padding:"14px 22px 20px",display:"flex",gap:8}}>
-                <button onClick={closePasscode} style={{flex:1,padding:"10px 0",background:"transparent",color:"#7A6A55",border:"1px solid #C8BFB0",borderRadius:9,cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"DM Sans,sans-serif"}}>
-                  Cancel
-                </button>
-                <button onClick={submitPasscode} disabled={!passInput}
-                  style={{flex:2,padding:"10px 0",background:passInput?"#021A4A":"#C8BFB0",color:"white",border:"none",borderRadius:9,cursor:passInput?"pointer":"not-allowed",fontSize:13,fontWeight:700,fontFamily:"DM Sans,sans-serif",transition:"background 0.15s"}}
-                  onMouseEnter={e=>{ if(passInput) e.currentTarget.style.background="#0A2A6A"; }}
-                  onMouseLeave={e=>{ if(passInput) e.currentTarget.style.background="#021A4A"; }}>
-                  Unlock Access →
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Passcode Popup */}}
         <div style={{marginTop:"18px",fontSize:"11px",color:"#B0A080",textAlign:"center",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px",animation:"fadeUp 0.8s ease 0.3s both"}}>
           Powered by ARK Lex AI LLC &middot; &copy; 2026 &middot; <span style={{color:"#C9A84C"}}>arklaw.ai</span>
         </div>
