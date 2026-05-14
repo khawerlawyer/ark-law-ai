@@ -274,7 +274,6 @@ export default function AdminPanel() {
                   </div>
                 </div>
               </div>
-              </div>
               {/* Recent Signups */}
               <div style={{gridColumn:"1 / -1"}}>
                 <div style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:12}}>🆕 Recent Signups</div>
