@@ -146,7 +146,7 @@ export default function Landing() {
 
         </div>
 
-        {/* Passcode Popup */}}
+        {/* Footer */}
         <div style={{marginTop:"18px",fontSize:"11px",color:"#B0A080",textAlign:"center",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px",animation:"fadeUp 0.8s ease 0.3s both"}}>
           Powered by ARK Lex AI LLC &middot; &copy; 2026 &middot; <span style={{color:"#C9A84C"}}>arklaw.ai</span>
         </div>
