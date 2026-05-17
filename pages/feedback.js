@@ -53,7 +53,7 @@ export default function Feedback() {
   return (
     <>
       <Head>
-        <title>ARK LAW AI — Feedback</title>
+        <title>ARK LAW AI — Phase 1 Controlled Testing 2026</title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@1,300&display=swap" rel="stylesheet" />
       </Head>
@@ -76,8 +76,8 @@ export default function Feedback() {
         <div style={{background:"#FFFFFF",borderRadius:20,border:`1px solid ${BORDER}`,boxShadow:"0 12px 48px rgba(180,160,100,0.14)",overflow:"hidden"}}>
 
           {/* Header */}
-          <div style={{background:BLUE,padding:"22px 28px",display:"flex",alignItems:"center",gap:14}}>
-            <img src="/ark-logo-us.png" alt="ARK" style={{width:46,height:46,objectFit:"contain",flexShrink:0}}/>
+          <div style={{background:BLUE,padding:"24px 28px",display:"flex",alignItems:"center",gap:16}}>
+            <img src="/ark-logo-us.png" alt="ARK" style={{width:56,height:56,objectFit:"contain",flexShrink:0,filter:"brightness(1.1)"}}/>
             <div>
               <div style={{fontFamily:"DM Sans,sans-serif",fontSize:20,fontWeight:800,color:"white",letterSpacing:"0.5px",
                 background:`linear-gradient(120deg,white 0%,white 35%,#A8C8FF 50%,white 65%,white 100%)`,
@@ -86,7 +86,7 @@ export default function Feedback() {
                 ARK LAW AI
               </div>
               <div style={{fontSize:12,color:"rgba(255,255,255,0.75)",marginTop:2,fontFamily:"Crimson Pro,serif",fontStyle:"italic"}}>
-                Feedback &amp; Support
+                Feedback — Phase 1 Controlled Testing 2026
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function Feedback() {
             {!submitted ? (
               <form onSubmit={handleSubmit}>
                 <p style={{fontSize:13,color:MUTED,marginBottom:22,lineHeight:1.6}}>
-                  We value your feedback. Please let us know about any issues or suggestions — we read every submission.
+                  Thank you for participating in ARK LAW AI's Phase 1 Controlled Testing 2026. Please share your experience, issues, or suggestions below.
                 </p>
 
                 {/* Name */}
