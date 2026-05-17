@@ -999,6 +999,19 @@ export default function AppUSA() {
             )}
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
+              {/* Feedback button */}
+              {!isMobile && (
+                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  Feedback
+                </button>
+              )}
 
               {/* Three-dot menu */}
               {!isMobile && (
