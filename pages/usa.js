@@ -209,6 +209,8 @@ export default function AppUSA() {
   const [messages,           setMessages]           = useState([]);
   const [input,              setInput]              = useState("");
   const [loading,            setLoading]            = useState(false);
+  const [isStreaming,         setIsStreaming]         = useState(false);
+  const [streamingIdx,        setStreamingIdx]        = useState(-1);
   const [reactions,          setReactions]          = useState({});
   const [uploadedFiles,      setUploadedFiles]      = useState([]);
 
@@ -533,6 +535,8 @@ export default function AppUSA() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
+    setIsStreaming(true);
+    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
@@ -562,14 +566,18 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: accumulatedContent }; return n; }); } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"}); } } catch (e) {}
           }
         }
       }
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     }
   };
 
@@ -758,6 +766,10 @@ export default function AppUSA() {
         ::-webkit-scrollbar-thumb:hover{background:#A89880;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
+        
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
+
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
         @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
@@ -1096,6 +1108,9 @@ export default function AppUSA() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
+                          {isStreaming && idx===streamingIdx && msg.role==="assistant" && (
+                            <span className="streaming-cursor"/>
+                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
