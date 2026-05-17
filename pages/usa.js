@@ -566,7 +566,7 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"}); } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
           }
         }
       }
@@ -686,6 +686,7 @@ export default function AppUSA() {
   };
 
   const renderMessageContent = (content) => {
+    if (!content) return null;
     const lines = content.split("\n");
     const elements = [];
     let currentParagraph = [];
@@ -1108,7 +1109,7 @@ export default function AppUSA() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
-                          {isStreaming && idx===streamingIdx && msg.role==="assistant" && (
+                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
                             <span className="streaming-cursor"/>
                           )}
                         </div>
