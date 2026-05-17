@@ -27,14 +27,43 @@ export default function Feedback() {
     setError("");
     setLoading(true);
     try {
-      // Save to localStorage as a simple log (replace with API call if needed)
-      const entry = { ...form, timestamp: new Date().toISOString(), source: document.referrer || "direct" };
+      // Detect which version the user came from
+      const version = document.referrer.includes("/pakistan") ? "Pakistan"
+                    : document.referrer.includes("/india")    ? "India"
+                    : document.referrer.includes("/bangladesh") ? "Bangladesh"
+                    : document.referrer.includes("/usa")      ? "USA"
+                    : "Unknown";
+
+      const entry = {
+        name: form.name.trim(),
+        location: form.location.trim(),
+        issue: form.issue.trim(),
+        version,
+        timestamp: new Date().toISOString(),
+      };
+
+      // Try API first
+      let apiSuccess = false;
+      try {
+        const res2 = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(entry),
+        });
+        const d = await res2.json();
+        if (res2.ok && d.success) apiSuccess = true;
+        else if (d.error === "TABLE_MISSING") {
+          // Table not created yet — still save locally
+          console.warn("ark_feedback table missing in Supabase. Create it with: id(bigint), name(text), location(text), issue(text), version(text), submitted_at(timestamptz)");
+        }
+      } catch(e) { /* network issue — fallback to localStorage */ }
+
+      // Always save to localStorage as backup
       const existing = JSON.parse(localStorage.getItem("arklaw_feedback") || "[]");
       existing.push(entry);
       localStorage.setItem("arklaw_feedback", JSON.stringify(existing));
-      // Optional: POST to an API endpoint
-      // await fetch("/api/feedback", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(entry) });
-      await new Promise(r => setTimeout(r, 600)); // small delay for feel
+
+      await new Promise(r => setTimeout(r, 400));
       setSubmitted(true);
     } catch(err) {
       setError("Failed to submit. Please try again.");
