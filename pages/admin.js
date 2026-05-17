@@ -18,6 +18,18 @@ export default function AdminPanel() {
   const [tab,setTab]=useState("dashboard");
   const [msg,setMsg]=useState("");
   const [visitors,setVisitors]=useState([]);
+  const [feedback,setFeedback]=useState([]);
+  const [fbLoading,setFbLoading]=useState(false);
+
+  const fetchFeedback = async () => {
+    setFbLoading(true);
+    try {
+      const res = await fetch("/api/feedback");
+      if (res.ok) { const d = await res.json(); if (d.feedback?.length) { setFeedback(d.feedback); setFbLoading(false); return; } }
+    } catch(e) {}
+    try { const local = JSON.parse(localStorage.getItem("arklaw_feedback")||"[]"); setFeedback([...local].reverse()); } catch(e) {}
+    setFbLoading(false);
+  };
   const [editTokens,setEditTokens]=useState("");
 
   const [arkModal, setArkModal] = useState(null);
@@ -98,7 +110,7 @@ export default function AdminPanel() {
   const byCountry=users.reduce((acc,u)=>{const c=u.country||"Unknown";acc[c]=(acc[c]||0)+1;return acc;},{});
   const byProfession=users.reduce((acc,u)=>{const p=u.profession||"Unknown";acc[p]=(acc[p]||0)+1;return acc;},{});
 
-  const TABS=[{id:"dashboard",icon:"📊",label:"Dashboard"},{id:"users",icon:"👥",label:"Users"},{id:"activity",icon:"📈",label:"Activity"},{id:"visitors",icon:"👁️",label:"Visitors"},{id:"tokens",icon:"⚡",label:"Credits"},{id:"theme",icon:"🎨",label:"Themes"}];
+  const TABS=[{id:"dashboard",icon:"📊",label:"Dashboard"},{id:"users",icon:"👥",label:"Users"},{id:"activity",icon:"📈",label:"Activity"},{id:"visitors",icon:"👁️",label:"Visitors"},{id:"feedback",icon:"💬",label:"Feedback"},{id:"tokens",icon:"⚡",label:"Credits"},{id:"theme",icon:"🎨",label:"Themes"}];
   const card={background:CREAM_CARD,border:"1px solid "+BORDER_LIGHT,borderRadius:12,padding:"16px 18px",boxShadow:SHADOW};
   const inp={width:"100%",padding:"8px 11px",background:CREAM_CARD,border:"1px solid "+BORDER,borderRadius:7,color:TEXT,fontSize:13,outline:"none",fontFamily:"inherit"};
   const btn=(bg=BLUE)=>({padding:"7px 16px",background:bg,color:"white",border:"none",borderRadius:7,cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit"});
@@ -180,7 +192,7 @@ export default function AdminPanel() {
           {TABS.map(t=>(
             <button key={t.id} className="tab-btn"
               style={{background:tab===t.id?CREAM_CARD:"transparent",color:tab===t.id?BLUE:TEXT_MUTED,borderBottom:tab===t.id?"2px solid "+BLUE:"2px solid transparent",marginBottom:"-2px"}}
-              onClick={()=>setTab(t.id)}>
+              onClick={()=>{setTab(t.id);if(t.id==="feedback")fetchFeedback();}}>
               {t.icon} {t.label}
             </button>
           ))}
@@ -496,6 +508,76 @@ export default function AdminPanel() {
             </div>
           )}
 
+
+          {/* FEEDBACK */}
+          {tab==="feedback"&&(
+            <div>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div style={{fontSize:14,fontWeight:700,color:TEXT}}>💬 Phase 1 Controlled Testing — Feedback</div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={fetchFeedback} style={btn(BLUE)}>🔄 Refresh</button>
+                  <button onClick={()=>window.open("/feedback","_blank","width=520,height=680")} style={btn(GREEN)}>+ New Feedback</button>
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:12,marginBottom:16}}>
+                {[
+                  {label:"Total Submissions", value:feedback.length, color:BLUE},
+                  {label:"This Week", value:feedback.filter(f=>{try{return new Date(f.submitted_at||f.timestamp)>new Date(Date.now()-7*86400000);}catch{return false;}}).length, color:GREEN},
+                  {label:"Pakistan", value:feedback.filter(f=>f.version==="Pakistan").length, color:"#2E7D32"},
+                  {label:"USA", value:feedback.filter(f=>f.version==="USA").length, color:"#BF0A30"},
+                  {label:"India", value:feedback.filter(f=>f.version==="India").length, color:"#B35400"},
+                  {label:"Bangladesh", value:feedback.filter(f=>f.version==="Bangladesh").length, color:"#006A4E"},
+                ].map(({label,value,color})=>(
+                  <div key={label} style={{...card}}>
+                    <div style={{fontSize:20,fontWeight:800,color}}>{value}</div>
+                    <div style={{fontSize:11,color:TEXT_MUTED,marginTop:3}}>{label}</div>
+                  </div>
+                ))}
+              </div>
+              {fbLoading ? (
+                <div style={{textAlign:"center",padding:40,color:TEXT_MUTED}}>Loading feedback...</div>
+              ) : feedback.length===0 ? (
+                <div style={{textAlign:"center",padding:"40px 20px",color:TEXT_MUTED}}>
+                  <div style={{fontSize:32,marginBottom:10}}>💬</div>
+                  <div style={{fontSize:14,fontWeight:600,marginBottom:6}}>No feedback yet</div>
+                  <div style={{fontSize:12}}>Feedback submitted by users will appear here. Make sure the Supabase <code style={{background:CREAM_MID,padding:"1px 6px",borderRadius:4}}>ark_feedback</code> table is created.</div>
+                  <div style={{marginTop:14,background:CREAM_MID,borderRadius:8,padding:"12px 16px",textAlign:"left",fontSize:11,fontFamily:"monospace",color:TEXT_MID,border:"1px solid "+BORDER}}>
+                    CREATE TABLE ark_feedback (<br/>
+                    &nbsp;&nbsp;id bigserial PRIMARY KEY,<br/>
+                    &nbsp;&nbsp;name text NOT NULL,<br/>
+                    &nbsp;&nbsp;location text,<br/>
+                    &nbsp;&nbsp;issue text,<br/>
+                    &nbsp;&nbsp;version text,<br/>
+                    &nbsp;&nbsp;submitted_at timestamptz DEFAULT now()<br/>
+                    );
+                  </div>
+                </div>
+              ) : (
+                <div style={{overflowX:"auto"}}>
+                  <table><thead><tr><th>#</th><th>Name</th><th>Location</th><th>Version</th><th>Issue / Feedback</th><th>Submitted</th></tr></thead>
+                  <tbody>
+                    {feedback.map((f,i)=>(
+                      <tr key={i}>
+                        <td style={{color:TEXT_DIM,fontSize:11}}>{feedback.length-i}</td>
+                        <td style={{fontWeight:600,color:TEXT}}>{f.name}</td>
+                        <td style={{color:TEXT_MUTED}}>{f.location}</td>
+                        <td>
+                          <span style={{background:CREAM_MID,borderRadius:4,padding:"2px 8px",fontSize:11,fontWeight:600,
+                            color:f.version==="USA"?"#BF0A30":f.version==="Pakistan"?"#2E7D32":f.version==="India"?"#B35400":f.version==="Bangladesh"?"#006A4E":TEXT_MID}}>
+                            {f.version||"—"}
+                          </span>
+                        </td>
+                        <td style={{maxWidth:320,wordBreak:"break-word",color:TEXT_MID,lineHeight:1.5}}>{f.issue}</td>
+                        <td style={{color:TEXT_MUTED,fontSize:12,whiteSpace:"nowrap"}}>
+                          {new Date(f.submitted_at||f.timestamp||Date.now()).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody></table>
+                </div>
+              )}
+            </div>
+          )}
           {/* CREDITS */}
           {tab==="tokens"&&(
             <div>
