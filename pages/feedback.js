@@ -77,7 +77,9 @@ export default function Feedback() {
 
           {/* Header */}
           <div style={{background:BLUE,padding:"24px 28px",display:"flex",alignItems:"center",gap:16}}>
-            <img src="/ark-logo-us.png" alt="ARK" style={{width:56,height:56,objectFit:"contain",flexShrink:0,filter:"brightness(1.1)"}}/>
+            <div style={{width:60,height:60,borderRadius:"50%",background:"white",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 2px 12px rgba(0,0,0,0.25)"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:50,height:50,objectFit:"contain"}}/>
+            </div>
             <div>
               <div style={{fontFamily:"DM Sans,sans-serif",fontSize:20,fontWeight:800,color:"white",letterSpacing:"0.5px",
                 background:`linear-gradient(120deg,white 0%,white 35%,#A8C8FF 50%,white 65%,white 100%)`,
