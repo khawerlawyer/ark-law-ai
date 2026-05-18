@@ -492,7 +492,7 @@ export default function AppIN() {
     }
   }, []);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
@@ -645,16 +645,17 @@ export default function AppIN() {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Hindi. You MUST respond entirely in Hindi (हिंदी). All answers must be in Hindi. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI India, an expert legal assistant specializing EXCLUSIVELY in India law  -  Constitution, IPC, CPC, and all applicable India statutes. You ONLY answer questions about India law. If asked about other countries, politely decline. Always title disclaimers "Professional Disclaimer by ARK LAW AI India". Reference relevant India statutes and case law. ${langInstruction}]`;
-      const conversationPairs = [];
-      for (let i = 0; i < messages.length; i++) {
-        const m = messages[i];
-        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
-        if (m.role === "user") conversationPairs.push(m);
-        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
-      }
-      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
-      const messagesWithContext = [...conversationPairs, newUserMsg];
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI India, an AI legal assistant that answers EXCLUSIVELY about India law. You MUST ONLY answer questions related to India law, statutes, courts, and legal procedures. If the user asks about any other country's law, REFUSE and redirect to India law only. NEVER reference laws of USA, UK, Pakistan, India, Bangladesh, or any other jurisdiction unless the user is specifically asking how India law compares. Always title disclaimers "Professional Disclaimer by ARK LAW AI India". Reference only India statutes, case law, and legal authorities. ${langInstruction}]`;
+      const cleanHistory = messages
+        .filter(m => m.role === "user" || m.role === "assistant")
+        .filter(m => m.content && m.content.trim())
+        .map(m => m.role === "user" ? {role:"user",content:m.content.replace(/^\[System:.*?\]\n\n/s,"").trim()} : m)
+        .slice(-12);
+      const systemMsg = {role:"user",content:systemNote};
+      const newUserMsg = {role:"user",content:messageContent};
+      const messagesWithContext = cleanHistory.length > 0
+        ? [systemMsg, {role:"assistant",content:"Understood. I am ARK Law AI India. I answer exclusively about India law."}, ...cleanHistory, newUserMsg]
+        : [systemMsg, {role:"assistant",content:"Understood. I am ARK Law AI India. I answer exclusively about India law."}, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
@@ -669,7 +670,7 @@ export default function AppIN() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){} } } catch (e) {}
           }
         }
       }
@@ -735,14 +736,14 @@ export default function AppIN() {
       const res  = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }) });
       const data = await res.json();
       setDraftContent(data.reply);
-      setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
+      setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-IN")}`);
       setDraftStep("completed");
     } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
   const downloadDraft = (format) => {
-    const timestamp = new Date().toLocaleDateString("en-PK");
+    const timestamp = new Date().toLocaleDateString("en-IN");
     let content = `ARK LAW AI India - LEGAL DOCUMENT DRAFT\n${"=".repeat(50)}\n\nDocument Type: ${draftType.toUpperCase()}\nTitle: ${draftTitle}\nCreated: ${timestamp}\nJurisdiction: United States of America\n\n${"=".repeat(50)}\n\n${draftContent}\n\n${"=".repeat(50)}\nThis document was generated by ARK Law AI USA and should be reviewed by a licensed US attorney before execution.`;
     if (format === "pdf") { window.print(); return; }
     const blob = new Blob([content], { type: "text/plain" });
@@ -775,7 +776,7 @@ export default function AppIN() {
 
   const downloadComparisonPDF = () => {
     if (!comparisonResult) return;
-    const timestamp = new Date().toLocaleDateString("en-PK");
+    const timestamp = new Date().toLocaleDateString("en-IN");
     const pdfContent = `ARK LAW AI - LEGAL DOCUMENT COMPARISON REPORT\n${"=".repeat(80)}\n\nDate: ${timestamp}\nFocal Point: ${compareFocus}\nDocument 1: ${doc1?.name || "Document 1"}\nDocument 2: ${doc2?.name || "Document 2"}\n\n${"=".repeat(80)}\n\n${comparisonResult}\n\n${"=".repeat(80)}\nGenerated by: ARK Law AI`.trim();
     const blob = new Blob([pdfContent], { type: "text/plain" });
     const url  = URL.createObjectURL(blob);
@@ -1396,20 +1397,22 @@ export default function AppIN() {
               {draftStep==="type-selection" && (
                 <div>
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                  <select value={draftType} onChange={e=>
                     <option value="">-- Select Document Type --</option>
-                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
-                    <option value="contract">📄 General Contract</option>
-                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
                     <option value="affidavit">⚖️ Affidavit</option>
+                    <option value="contract">📄 General Contract (Indian Contract Act)</option>
+                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
+                    <option value="rent_agreement">🏠 Rent Agreement</option>
+                    <option value="sale_deed">🏘️ Sale Deed</option>
+                    <option value="power_attorney">📝 Power of Attorney</option>
+                    <option value="employment">💼 Employment Contract</option>
+                    <option value="partnership">🤝 Partnership Deed</option>
                     <option value="will">📜 Will / Testament</option>
-                    <option value="power-of-attorney">🔑 Power of Attorney</option>
-                    <option value="employment-agreement">💼 Employment Agreement</option>
-                    <option value="partnership-deed">🤝 Partnership Agreement</option>
-                    <option value="sale-deed">🏘️ Real Estate Purchase Agreement</option>
-                    <option value="divorce-agreement">💔 Divorce Settlement Agreement</option>
-                    <option value="loan-agreement">💰 Loan Agreement</option>
-                    <option value="trust-deed">🏛️ Trust Agreement</option>
+                    <option value="divorce_petition">⚖️ Divorce Petition (Hindu Marriage Act)</option>
+                    <option value="legal_notice">📬 Legal Notice</option>
+                    <option value="cheque_bounce">💰 Cheque Bounce Notice (Section 138)</option>
+                    <option value="consumer">🛒 Consumer Complaint (CPGRAMS)</option>
+                    <option value="mou">🤝 Memorandum of Understanding (MOU)</option>
                   </select>
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#FF9933":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
