@@ -389,7 +389,7 @@ export default function AppUSA() {
     }
   }, []);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
@@ -557,6 +557,12 @@ export default function AppUSA() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
+      let rafId = null;
+      const flush = () => {
+        setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
+        try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
+        rafId=null;
+      };
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -566,10 +572,12 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; if(!rafId) rafId=requestAnimationFrame(flush); } } catch(e) {}
           }
         }
       }
+      if(rafId) cancelAnimationFrame(rafId);
+      flush();
       setLoading(false);
       setIsStreaming(false);
       setStreamingIdx(-1);
