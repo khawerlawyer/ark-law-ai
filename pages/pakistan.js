@@ -190,6 +190,8 @@ export default function App() {
   const [messages,           setMessages]           = useState([]);
   const [input,              setInput]              = useState("");
   const [loading,            setLoading]            = useState(false);
+  const [isStreaming,         setIsStreaming]         = useState(false);
+  const [streamingIdx,        setStreamingIdx]        = useState(-1);
   const [reactions,          setReactions]          = useState({});
   const [uploadedFiles,      setUploadedFiles]      = useState([]);
 
@@ -505,6 +507,8 @@ export default function App() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
+    setIsStreaming(true);
+    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
@@ -531,14 +535,18 @@ export default function App() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: accumulatedContent }; return n; }); } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
           }
         }
       }
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     }
   };
 
@@ -647,6 +655,7 @@ export default function App() {
   };
 
   const renderMessageContent = (content) => {
+    if (!content) return null;
     const lines = content.split("\n");
     const elements = [];
     let currentParagraph = [];
@@ -749,6 +758,10 @@ export default function App() {
         ::-webkit-scrollbar-thumb:hover{background:#A89880;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
+        
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
+
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
         @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
@@ -977,6 +990,19 @@ export default function App() {
             )}
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
+              {/* Feedback button */}
+              {!isMobile && (
+                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  Feedback
+                </button>
+              )}
 
               {/* Three-dot menu */}
               {!isMobile && (
@@ -1087,6 +1113,9 @@ export default function App() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
+                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
+                            <span className="streaming-cursor"/>
+                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
