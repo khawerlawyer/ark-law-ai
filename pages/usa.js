@@ -535,8 +535,6 @@ export default function AppUSA() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
-    setIsStreaming(true);
-    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
@@ -563,7 +561,7 @@ export default function AppUSA() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
-      let lastUpdate = 0;
+      // Collect entire response first, then display all at once
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -573,33 +571,17 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.content) {
-                accumulatedContent += parsed.content;
-                // Throttle React updates to every 30ms — fast but not every token
-                const now = Date.now();
-                if (now - lastUpdate > 30) {
-                  lastUpdate = now;
-                  const snapshot = accumulatedContent;
-                  setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:snapshot}; return n; });
-                }
-              }
-            } catch(e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) accumulatedContent += parsed.content; } catch(e) {}
           }
         }
       }
-      // Final update with complete content
+      // Show complete answer instantly
       setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
-      try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
+      try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"auto"});}catch(e){}
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     }
   };
 
