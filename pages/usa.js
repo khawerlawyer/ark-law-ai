@@ -563,6 +563,7 @@ export default function AppUSA() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
+      let lastUpdate = 0;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -576,15 +577,19 @@ export default function AppUSA() {
               const parsed = JSON.parse(data);
               if (parsed.content) {
                 accumulatedContent += parsed.content;
-                // Direct DOM update — zero React re-render lag during streaming
-                const el = document.getElementById("stream-" + streamingMessageIndex);
-                if (el) el.textContent = accumulatedContent;
+                // Throttle React updates to every 30ms — fast but not every token
+                const now = Date.now();
+                if (now - lastUpdate > 30) {
+                  lastUpdate = now;
+                  const snapshot = accumulatedContent;
+                  setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:snapshot}; return n; });
+                }
               }
             } catch(e) {}
           }
         }
       }
-      // Single React state update after stream completes
+      // Final update with complete content
       setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
       try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
@@ -785,8 +790,6 @@ export default function AppUSA() {
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
         
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
 
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
@@ -1137,12 +1140,8 @@ export default function AppUSA() {
                         <div style={{fontSize:13,fontWeight:600,color:"#1A1209",marginBottom:"5px"}}>
                           {msg.role==="assistant" ? "ARK Law AI" : (user?.name||"You")}
                         </div>
-                        <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}
-                          id={isStreaming && i===streamingIdx ? "stream-"+i : undefined}>
+                        <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
-                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
-                            <span className="streaming-cursor"/>
-                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
