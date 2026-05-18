@@ -351,7 +351,7 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
@@ -511,16 +511,17 @@ export default function App() {
     setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
-      const conversationPairs = [];
-      for (let i = 0; i < messages.length; i++) {
-        const m = messages[i];
-        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
-        if (m.role === "user") conversationPairs.push(m);
-        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
-      }
-      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
-      const messagesWithContext = [...conversationPairs, newUserMsg];
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Pakistan, an AI legal assistant that answers EXCLUSIVELY about Pakistan law. You MUST ONLY answer questions related to Pakistan law, statutes, courts, and legal procedures. If the user asks about any other country's law, REFUSE and redirect to Pakistan law only. NEVER reference laws of USA, UK, Pakistan, India, Bangladesh, or any other jurisdiction unless the user is specifically asking how Pakistan law compares. Always title disclaimers "Professional Disclaimer by ARK LAW AI Pakistan". Reference only Pakistan statutes, case law, and legal authorities. ${langInstruction}]`;
+      const cleanHistory = messages
+        .filter(m => m.role === "user" || m.role === "assistant")
+        .filter(m => m.content && m.content.trim())
+        .map(m => m.role === "user" ? { role: "user", content: m.content.replace(/^\[System:.*?\]\n\n/s, "").trim() } : m)
+        .slice(-12);
+      const systemMsg = { role: "user", content: systemNote };
+      const newUserMsg = { role: "user", content: messageContent };
+      const messagesWithContext = cleanHistory.length > 0
+        ? [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI Pakistan, your Pakistani law assistant." }, ...cleanHistory, newUserMsg]
+        : [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI Pakistan, your Pakistani law assistant." }, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
@@ -535,7 +536,7 @@ export default function App() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){} } } catch (e) {}
           }
         }
       }
@@ -1284,20 +1285,22 @@ export default function App() {
               {draftStep==="type-selection" && (
                 <div>
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                  <select value={draftType} onChange={e=>
                     <option value="">-- Select Document Type --</option>
-                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
-                    <option value="contract">📄 General Contract</option>
-                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
                     <option value="affidavit">⚖️ Affidavit</option>
-                    <option value="will">📜 Will / Testament</option>
-                    <option value="power-of-attorney">🔑 Power of Attorney</option>
-                    <option value="employment-agreement">💼 Employment Agreement</option>
-                    <option value="partnership-deed">🤝 Partnership Agreement</option>
-                    <option value="sale-deed">🏘️ Real Estate Purchase Agreement</option>
-                    <option value="divorce-agreement">💔 Divorce Settlement Agreement</option>
-                    <option value="loan-agreement">💰 Loan Agreement</option>
-                    <option value="trust-deed">🏛️ Trust Agreement</option>
+                    <option value="contract">📄 General Contract (Pakistani Law)</option>
+                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
+                    <option value="tenancy">🏠 Tenancy Agreement</option>
+                    <option value="sale_deed">🏘️ Sale Deed</option>
+                    <option value="power_attorney">📝 Power of Attorney (Wakalatnama)</option>
+                    <option value="employment">💼 Employment Contract</option>
+                    <option value="partnership">🤝 Partnership Deed</option>
+                    <option value="divorce">⚖️ Divorce Deed (Talaqnama)</option>
+                    <option value="nikah">💍 Nikah Nama</option>
+                    <option value="will">📜 Will / Wasiyatnama</option>
+                    <option value="promissory_note">💰 Promissory Note / Hundnama</option>
+                    <option value="legal_notice">📬 Legal Notice</option>
+                    <option value="bail_application">⚖️ Bail Application</option>
                   </select>
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#4CAF7D":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
