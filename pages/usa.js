@@ -543,26 +543,26 @@ export default function AppUSA() {
         ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
       const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
-      const conversationPairs = [];
-      for (let i = 0; i < messages.length; i++) {
-        const m = messages[i];
-        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
-        if (m.role === "user") conversationPairs.push(m);
-        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
-      }
-      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
-      const messagesWithContext = [...conversationPairs, newUserMsg];
+      // Build clean conversation history (last 6 exchanges max, strip old system notes)
+      const cleanHistory = messages
+        .filter(m => m.role === "user" || m.role === "assistant")
+        .filter(m => m.content && m.content.trim())
+        .map(m => m.role === "user"
+          ? { role: "user", content: m.content.replace(/^\[System:.*?\]\n\n/s, "").trim() }
+          : m
+        )
+        .slice(-12); // last 6 pairs
+      const systemMsg = { role: "user", content: systemNote };
+      const newUserMsg = { role: "user", content: messageContent };
+      // Inject system as first message if history exists, otherwise alone
+      const messagesWithContext = cleanHistory.length > 0
+        ? [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, ...cleanHistory, newUserMsg]
+        : [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
-      let rafId = null;
-      const flush = () => {
-        setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
-        try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
-        rafId=null;
-      };
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -572,12 +572,21 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; if(!rafId) rafId=requestAnimationFrame(flush); } } catch(e) {}
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                accumulatedContent += parsed.content;
+                // Direct DOM update — zero React re-render lag during streaming
+                const el = document.getElementById("stream-" + streamingMessageIndex);
+                if (el) el.textContent = accumulatedContent;
+              }
+            } catch(e) {}
           }
         }
       }
-      if(rafId) cancelAnimationFrame(rafId);
-      flush();
+      // Single React state update after stream completes
+      setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
+      try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
       setIsStreaming(false);
       setStreamingIdx(-1);
@@ -1128,7 +1137,8 @@ export default function AppUSA() {
                         <div style={{fontSize:13,fontWeight:600,color:"#1A1209",marginBottom:"5px"}}>
                           {msg.role==="assistant" ? "ARK Law AI" : (user?.name||"You")}
                         </div>
-                        <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
+                        <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}
+                          id={isStreaming && i===streamingIdx ? "stream-"+i : undefined}>
                           {renderMessageContent(msg.content)}
                           {isStreaming && i===streamingIdx && msg.role==="assistant" && (
                             <span className="streaming-cursor"/>
