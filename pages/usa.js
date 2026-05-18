@@ -561,7 +561,6 @@ export default function AppUSA() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedContent = "";
-      // Collect entire response first, then display all at once
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -571,13 +570,17 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) accumulatedContent += parsed.content; } catch(e) {}
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                accumulatedContent += parsed.content;
+                setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
+              }
+            } catch(e) {}
           }
         }
       }
-      // Show complete answer instantly
-      setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
-      try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"auto"});}catch(e){}
+      try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
