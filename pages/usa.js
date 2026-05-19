@@ -1027,7 +1027,7 @@ export default function AppUSA() {
               </button>
 
               {/* Three-dot menu */}
-              {
+              {!isMobile && (
                 <div style={{position:"relative"}}>
                   <button onClick={()=>setShowChatMenu(m=>!m)}
                     style={{width:"34px",height:"34px",background:showChatMenu?"#D8D0C4":"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
