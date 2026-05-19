@@ -95,7 +95,7 @@ function USNewsWidget() {
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
           <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>· US Legal News</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>- US Legal News</span>
         </div>
         <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
       </div>
@@ -158,7 +158,7 @@ function USNewsWidget() {
         padding: "4px 10px", background: "rgba(0,10,40,0.9)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <span style={{ fontSize: 8, color: "#6A8AAA", fontStyle: "italic" }}>Reuters · Updates every 5 min</span>
+        <span style={{ fontSize: 8, color: "#6A8AAA", fontStyle: "italic" }}>Reuters - Updates every 5 min</span>
         <a href="https://reuters.com" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: 8, color: RED_US, textDecoration: "none", fontWeight: 700 }}>reuters.com ↗</a>
       </div>
@@ -234,14 +234,14 @@ export default function AppUSA() {
   const [arkModal, setArkModal] = useState(null);
   // arkModal: {type:"alert"|"confirm"|"prompt", title, message, icon, resolve, inputVal, inputPlaceholder, confirmLabel, confirmColor}
 
-  const arkAlert = (message, title="ARK LAW AI", icon="ℹ️") => new Promise(resolve => {
+  const arkAlert = (message, title="ARK LAW AI", icon="[INFO]") => new Promise(resolve => {
     setArkModal({type:"alert", title, message, icon, resolve});
   });
-  const arkConfirm = (message, title="ARK LAW AI", icon="❓", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(resolve => {
+  const arkConfirm = (message, title="ARK LAW AI", icon="[?]", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(resolve => {
     setArkModal({type:"confirm", title, message, icon, confirmLabel, confirmColor, resolve});
   });
   const arkPrompt = (message, defaultVal="", title="ARK LAW AI", placeholder="") => new Promise(resolve => {
-    setArkModal({type:"prompt", title, message, icon:"✏️", resolve, inputVal:defaultVal, inputPlaceholder:placeholder});
+    setArkModal({type:"prompt", title, message, icon:"", resolve, inputVal:defaultVal, inputPlaceholder:placeholder});
   });
 
 
@@ -277,14 +277,14 @@ export default function AppUSA() {
   const lastSavedCountRef = useRef(0);
 
   const PRACTICE_AREAS_PK = [
-    { id: "general",        label: "General Legal",          icon: "⚖️"  },
-    { id: "criminal",       label: "Criminal Law",            icon: "🔒"  },
-    { id: "corporate",      label: "Corporate & Business",    icon: "🏢"  },
-    { id: "family",         label: "Family Law",              icon: "👨‍👩‍👧" },
-    { id: "immigration",    label: "Immigration Law",         icon: "🗽"  },
-    { id: "employment",     label: "Employment Law",          icon: "👷"  },
-    { id: "taxation",       label: "Tax & IRS",               icon: "💰"  },
-    { id: "constitution",   label: "Constitutional Law",      icon: "📜"  },
+    { id: "general",        label: "General Legal",          icon: ""  },
+    { id: "criminal",       label: "Criminal Law",            icon: ""  },
+    { id: "corporate",      label: "Corporate & Business",    icon: ""  },
+    { id: "family",         label: "Family Law",              icon: "‍‍" },
+    { id: "immigration",    label: "Immigration Law",         icon: ""  },
+    { id: "employment",     label: "Employment Law",          icon: ""  },
+    { id: "taxation",       label: "Tax & IRS",               icon: ""  },
+    { id: "constitution",   label: "Constitutional Law",      icon: ""  },
   ];
 
   const QUICK_QUERIES_PK = [
@@ -332,12 +332,12 @@ export default function AppUSA() {
   };
 
   const newsDatabase = [
-    { headline: "🇺🇸 Supreme Court Rules on Fourth Amendment Digital Privacy", source: "United States Supreme Court", fullText: "The Supreme Court of the United States has issued a landmark ruling expanding Fourth Amendment protections to digital data stored in the cloud. The decision requires law enforcement to obtain a warrant before accessing stored digital communications and cloud-based files. The ruling has wide implications for federal and state investigations, tech companies, and individual privacy rights. Lower courts must now apply this standard retroactively to pending cases." },
-    { headline: "🇺🇸 IRS Announces Major Changes to Tax Filing Rules", source: "Internal Revenue Service (IRS)", fullText: "The IRS has announced significant changes to federal tax filing requirements for individuals and businesses. Key updates include: (1) New thresholds for reporting gig economy income, (2) Expanded child tax credit eligibility, (3) Updated standard deduction amounts for all filing categories. Taxpayers are advised to consult a certified tax professional for compliance. The changes take effect for the upcoming tax year and apply to all federal filings." },
-    { headline: "🇺🇸 Federal Court Clarifies Employment Discrimination Standards", source: "US Court of Appeals - Ninth Circuit", fullText: "A significant ruling from the Ninth Circuit Court of Appeals has clarified standards for proving employment discrimination under Title VII of the Civil Rights Act. The court held that circumstantial evidence, when taken in totality, can be sufficient to establish discriminatory intent. This ruling affects workplace discrimination claims across all federal jurisdictions and provides clearer guidance for plaintiffs and employers navigating Title VII claims." },
-    { headline: "🇺🇸 DOL Issues New Overtime and Minimum Wage Guidelines", source: "US Department of Labor", fullText: "The Department of Labor has issued updated guidelines on overtime eligibility and minimum wage requirements under the Fair Labor Standards Act (FLSA). New provisions include: (1) Raised salary threshold for exempt employees, (2) Expanded coverage for remote workers, (3) Stricter enforcement mechanisms for wage theft violations. Employers must update their payroll policies within 90 days. Non-compliance may result in back-pay liability and civil penalties." },
-    { headline: "🇺🇸 Real Estate: New Federal Rules on Landlord-Tenant Disputes", source: "Department of Housing and Urban Development (HUD)", fullText: "HUD has issued new federal guidelines governing landlord-tenant disputes, with emphasis on eviction protections and habitability standards. The rules clarify that tenants have enforceable rights to safe and sanitary housing, and that retaliatory evictions are prohibited under federal law. State and local housing courts are directed to apply these standards in pending eviction proceedings. Tenants may file complaints with HUD's Office of Fair Housing." },
-    { headline: "🇺🇸 Immigration Court Backlogs Prompt Emergency Procedural Reforms", source: "Executive Office for Immigration Review (EOIR)", fullText: "The EOIR has announced emergency procedural reforms to address a record backlog of over 3 million pending immigration cases. Changes include: (1) Expanded use of video hearings, (2) Priority scheduling for asylum cases older than two years, (3) New guidelines for continuance requests. Immigration attorneys and advocates are encouraged to review the updated procedural manual. The reforms aim to reduce average case wait times from 5 years to under 3 years." },
+    { headline: " Supreme Court Rules on Fourth Amendment Digital Privacy", source: "United States Supreme Court", fullText: "The Supreme Court of the United States has issued a landmark ruling expanding Fourth Amendment protections to digital data stored in the cloud. The decision requires law enforcement to obtain a warrant before accessing stored digital communications and cloud-based files. The ruling has wide implications for federal and state investigations, tech companies, and individual privacy rights. Lower courts must now apply this standard retroactively to pending cases." },
+    { headline: " IRS Announces Major Changes to Tax Filing Rules", source: "Internal Revenue Service (IRS)", fullText: "The IRS has announced significant changes to federal tax filing requirements for individuals and businesses. Key updates include: (1) New thresholds for reporting gig economy income, (2) Expanded child tax credit eligibility, (3) Updated standard deduction amounts for all filing categories. Taxpayers are advised to consult a certified tax professional for compliance. The changes take effect for the upcoming tax year and apply to all federal filings." },
+    { headline: " Federal Court Clarifies Employment Discrimination Standards", source: "US Court of Appeals - Ninth Circuit", fullText: "A significant ruling from the Ninth Circuit Court of Appeals has clarified standards for proving employment discrimination under Title VII of the Civil Rights Act. The court held that circumstantial evidence, when taken in totality, can be sufficient to establish discriminatory intent. This ruling affects workplace discrimination claims across all federal jurisdictions and provides clearer guidance for plaintiffs and employers navigating Title VII claims." },
+    { headline: " DOL Issues New Overtime and Minimum Wage Guidelines", source: "US Department of Labor", fullText: "The Department of Labor has issued updated guidelines on overtime eligibility and minimum wage requirements under the Fair Labor Standards Act (FLSA). New provisions include: (1) Raised salary threshold for exempt employees, (2) Expanded coverage for remote workers, (3) Stricter enforcement mechanisms for wage theft violations. Employers must update their payroll policies within 90 days. Non-compliance may result in back-pay liability and civil penalties." },
+    { headline: " Real Estate: New Federal Rules on Landlord-Tenant Disputes", source: "Department of Housing and Urban Development (HUD)", fullText: "HUD has issued new federal guidelines governing landlord-tenant disputes, with emphasis on eviction protections and habitability standards. The rules clarify that tenants have enforceable rights to safe and sanitary housing, and that retaliatory evictions are prohibited under federal law. State and local housing courts are directed to apply these standards in pending eviction proceedings. Tenants may file complaints with HUD's Office of Fair Housing." },
+    { headline: " Immigration Court Backlogs Prompt Emergency Procedural Reforms", source: "Executive Office for Immigration Review (EOIR)", fullText: "The EOIR has announced emergency procedural reforms to address a record backlog of over 3 million pending immigration cases. Changes include: (1) Expanded use of video hearings, (2) Priority scheduling for asylum cases older than two years, (3) New guidelines for continuance requests. Immigration attorneys and advocates are encouraged to review the updated procedural manual. The reforms aim to reduce average case wait times from 5 years to under 3 years." },
   ];
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -360,7 +360,7 @@ export default function AppUSA() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
       if (saved.length > 0) {
@@ -414,7 +414,7 @@ export default function AppUSA() {
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -450,10 +450,10 @@ export default function AppUSA() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on iPhone / iPad", "📲");
-    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on Firefox", "📲");
-    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅", "Install on Samsung Browser", "📲");
-    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\" → \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "📲");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( [^ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! [OK]", "Install on iPhone / iPad", "[MOB]");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ... ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! [OK]", "Install on Firefox", "[MOB]");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu (  ) at the bottom\n2. Tap \"Add page to\" -> \"Home screen\"\n3. Tap \"Add\"  -  done! [OK]", "Install on Samsung Browser", "[MOB]");
+    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ... ) at the top right\n2. Tap \"Add to Home screen\" -> \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( + ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "[MOB]");
   };
 
   // ── Save chat history to server ──
@@ -486,7 +486,7 @@ export default function AppUSA() {
     } catch {}
   };
 
-  // ── Logout — saves tokens first ──
+  // ── Logout  -  saves tokens first ──
   const handleLogout = async () => {
     await saveHistory(allSessions, userTokens);
     localStorage.removeItem("arklaw_user");
@@ -522,7 +522,7 @@ export default function AppUSA() {
     }
     let messageContent = userMessage.trim();
     if (fileContents.length > 0) {
-      messageContent += "\n\n📎 Attached Files:\n";
+      messageContent += "\n\n Attached Files:\n";
       fileContents.forEach(file => {
         if (file.type === "text")          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
         else if (file.type === "document") messageContent += `\n${file.message}\n`;
@@ -540,7 +540,7 @@ export default function AppUSA() {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law  -  federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
       // Build clean conversation history (last 6 exchanges max, strip old system notes)
       const cleanHistory = messages
         .filter(m => m.role === "user" || m.role === "assistant")
@@ -583,19 +583,19 @@ export default function AppUSA() {
       try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
     } catch (error) {
-      setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
+      setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `[ERR] Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
     }
   };
 
   const startVoiceInput = () => {
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { arkAlert("Voice recognition is not supported on this browser.\nPlease use Chrome or Edge for best experience.", "ARK LAW AI", "🎤"); return; }
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { arkAlert("Voice recognition is not supported on this browser.\nPlease use Chrome or Edge for best experience.", "ARK LAW AI", "[MIC]"); return; }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US"; recognition.continuous = false; recognition.interimResults = false;
     recognition.onstart  = () => setIsListening(true);
     recognition.onresult = (event) => { setInput(event.results[0][0].transcript); setIsListening(false); };
-    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") arkAlert("No speech detected. Please speak clearly and try again.", "Voice Input", "🎤"); };
+    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") arkAlert("No speech detected. Please speak clearly and try again.", "Voice Input", "[MIC]"); };
     recognition.onend    = () => setIsListening(false);
     recognition.start();
   };
@@ -603,7 +603,7 @@ export default function AppUSA() {
   const speakText = (text, messageIndex) => {
     if (isSpeaking && currentSpeakingIndex === messageIndex) { window.speechSynthesis.cancel(); setIsSpeaking(false); setCurrentSpeakingIndex(null); return; }
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/#{1,6}\s*/g,"").replace(/\*{1,3}([^*]+)\*{1,3}/g,"$1").replace(/\*+/g,"").replace(/_([^_]+)_/g,"$1").replace(/`{1,3}[^`]*`{1,3}/g,"").replace(/~~([^~]+)~~/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/!\[[^\]]*\]\([^)]+\)/g,"").replace(/^[-*+]\s+/gm,"").replace(/^\d+\.\s+/gm,"").replace(/^>\s+/gm,"").replace(/[-]{3,}/g,". ").replace(/[•·]/g," ").replace(/\n+/g," ").replace(/\s{2,}/g," ").trim();
+    const cleanText = text.replace(/#{1,6}\s*/g,"").replace(/\*{1,3}([^*]+)\*{1,3}/g,"$1").replace(/\*+/g,"").replace(/_([^_]+)_/g,"$1").replace(/`{1,3}[^`]*`{1,3}/g,"").replace(/~~([^~]+)~~/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/!\[[^\]]*\]\([^)]+\)/g,"").replace(/^[-*+]\s+/gm,"").replace(/^\d+\.\s+/gm,"").replace(/^>\s+/gm,"").replace(/[-]{3,}/g,". ").replace(/[--]/g," ").replace(/\n+/g," ").replace(/\s{2,}/g," ").trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 0.88; utterance.pitch = 0.92; utterance.volume = 1.0; utterance.lang = "en-US";
     const selectVoice = () => {
@@ -641,7 +641,7 @@ export default function AppUSA() {
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
+    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "[DOC]"); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
@@ -657,11 +657,11 @@ export default function AppUSA() {
   };
 
   const compareDocuments = async () => {
-    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "📋"); return; }
-    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "📋"); return; }
+    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "[CLB]"); return; }
+    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "[CLB]"); return; }
     const maxSize = 5 * 1024 * 1024;
-    if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
-    if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
+    if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "[WARN]"); return; }
+    if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "[WARN]"); return; }
     setComparingDocs(true); setComparisonResult("");
     try {
       const readFileAsBase64 = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result.split(",")[1]); reader.onerror = reject; reader.readAsDataURL(file); });
@@ -673,7 +673,7 @@ export default function AppUSA() {
       const data = await res.json();
       if (!data.reply) throw new Error("No response received from AI");
       setComparisonResult(data.reply);
-    } catch (error) { setComparisonResult(`❌ Error comparing documents: ${error.message}`); }
+    } catch (error) { setComparisonResult(`[ERR] Error comparing documents: ${error.message}`); }
     finally { setComparingDocs(false); }
   };
 
@@ -722,9 +722,9 @@ export default function AppUSA() {
         const imgUrl = imageMatch ? imageMatch[2] : urlMatch[1];
         const imgAlt = imageMatch ? imageMatch[1] : "Image";
         elements.push(<div key={`img-${index}`} style={{ marginBottom: "16px", marginTop: "16px" }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: "100%", height: "auto", borderRadius: "8px", border: `2px solid ${GOLD}`, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} onError={(e) => { e.target.style.display = "none"; }} /></div>);
-      } else if (trimmedLine.startsWith("•") || trimmedLine.startsWith("-")) {
+      } else if (trimmedLine.startsWith("-") || trimmedLine.startsWith("-")) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>•</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
+        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>-</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
       } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith("***") && trimmedLine.endsWith("***")) || (trimmedLine.endsWith(":") && trimmedLine.length < 60))) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
         elements.push(<h3 key={`h-${index}`} style={{ fontWeight: "bold", fontStyle: "italic", color: "#0D1B2A", marginTop: "16px", marginBottom: "8px", fontSize: "15px" }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, "")}</h3>);
@@ -944,7 +944,7 @@ export default function AppUSA() {
                     <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Free</div>
                   </div>
                   {/* Upgrade */}
-                  <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "🚀");}}
+                  <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "[GO]");}}
                     style={{padding:"5px 11px",background:"#FFFFFF",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:11,fontWeight:600,flexShrink:0,transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#A89880";}}
                     onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C0B49A";}}>
@@ -972,7 +972,7 @@ export default function AppUSA() {
                 style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
-                ← 🌍
+                ← 
               </button>
               <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
@@ -1059,9 +1059,9 @@ export default function AppUSA() {
                           setActiveChatId(gId);
                           setMessages(gSession.messages);
                         }},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN] "+s.title.replace("[PIN] ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
                         {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
                       ].map(({icon,label,action,red})=>(
                         <button key={label} onClick={action}
                           style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
@@ -1097,7 +1097,7 @@ export default function AppUSA() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US — su asistente legal experto" : "ARK Law AI US — your expert US law assistant"}</p>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US  -  su asistente legal experto" : "ARK Law AI US  -  your expert US law assistant"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
@@ -1192,7 +1192,7 @@ export default function AppUSA() {
               <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
-                    <span>📎 {file.name}</span>
+                    <span> {file.name}</span>
                     <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
                   </div>
                 ))}
@@ -1250,13 +1250,13 @@ export default function AppUSA() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
+          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version -></button>
           <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
       {/* ═══════════════════════════════════════════
-          POPUPS (US theme — navy/red)
+          POPUPS (US theme  -  navy/red)
       ═══════════════════════════════════════════ */}
 
       {showNewsPopup && selectedNews && (
@@ -1267,17 +1267,17 @@ export default function AppUSA() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",objectFit:"contain"}}/>
                 <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
               </div>
-              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"25px"}}>
               <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #BF0A30"}}>
-                <span style={{fontSize:10,color:"#5A4A35"}}>📰 Source:</span>
+                <span style={{fontSize:10,color:"#5A4A35"}}> Source:</span>
                 <span style={{fontSize:11,color:"#BF0A30",fontWeight:600}}>{selectedNews.source}</span>
               </div>
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
-                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}>⚖️ Legal Analysis:</h4>
+                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}> Legal Analysis:</h4>
                 {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
@@ -1295,14 +1295,14 @@ export default function AppUSA() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}> AI Legal Document Drafting</div></div>
               </div>
-              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>[CLB] Step 1: Select Document Type</h4>
                   <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">Select Document Type --</option>
                     <option value="rental-agreement">Rental/Lease Agreement</option>
@@ -1318,20 +1318,20 @@ export default function AppUSA() {
                     <option value="loan-agreement">Loan Agreement</option>
                     <option value="trust-deed">Trust Agreement</option>
                   </select>
-                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "[DOC]");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
-                    Next: Provide Information →
+                    Next: Provide Information ->
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
               )}
               {draftStep==="gathering-info" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Step 2: Provide Information</h4>
                   <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
                     <div style={{background:"#DDD6CB",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #C0B49A"}}>
-                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
+                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n- Party names and addresses\n- Terms and conditions\n- Duration/timeline\n- Special clauses\n- Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
@@ -1339,7 +1339,7 @@ export default function AppUSA() {
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#BF0A30";}}>
-                      {draftGenerating?"⏳ Generating...":"🚀 Generate with AI"}
+                      {draftGenerating?"⏳ Generating...":"[GO] Generate with AI"}
                     </button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
@@ -1354,16 +1354,16 @@ export default function AppUSA() {
               )}
               {draftStep==="completed" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>[OK] Document Generated!</h4>
                   <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
                   <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #BF0A30",marginBottom:"14px"}}>
-                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
+                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}>[WARN] LEGAL DISCLAIMER</div>
                     <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
-                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
-                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>📥 DOCX</button>
-                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
+                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}> New</button>
+                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}> DOCX</button>
+                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>[DOC] PDF</button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
@@ -1380,26 +1380,26 @@ export default function AppUSA() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}> Compare Legal Documents</div></div>
               </div>
-              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>[DOC] {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
-                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name} — {(file.size/1024/1024).toFixed(2)}MB</div>}
+                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
-                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
+                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
               {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
                 <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
-                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
+                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}> Comparison Report</div>
                   <div style={{color:"#4A3A28",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
                 </div>
               )}
@@ -1407,9 +1407,9 @@ export default function AppUSA() {
                 <button onClick={compareDocuments} disabled={comparingDocs}
                   style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
                   onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#BF0A30";}}>
-                  {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
+                  {comparingDocs?"⏳ Analyzing...":" Compare"}
                 </button>
-                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>[DOC] Download</button>}
               </div>
               <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
@@ -1434,7 +1434,7 @@ export default function AppUSA() {
               try{
                 const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
                 const data=await res.json();
-                if(!res.ok){arkAlert(data.error||"Invalid email or password. Please try again.", "Login Failed", "❌");return;}
+                if(!res.ok){arkAlert(data.error||"Invalid email or password. Please try again.", "Login Failed", "[ERR]");return;}
                 const restoredTokens=data.user.tokens||500000;
                 const userWithTokens={...data.user,tokens:restoredTokens};
                 localStorage.setItem("arklaw_user",JSON.stringify(userWithTokens));
@@ -1448,8 +1448,8 @@ export default function AppUSA() {
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
                 }
                 setShowLoginPopup(false);
-                arkAlert("Welcome back, "+data.user.name+"!\n\nYou have "+restoredTokens.toLocaleString()+" credits remaining.", "Welcome Back 👋", "✅");
-              }catch(error){arkAlert("Login failed. Please check your connection and try again.", "Login Error", "❌");}
+                arkAlert("Welcome back, "+data.user.name+"!\n\nYou have "+restoredTokens.toLocaleString()+" credits remaining.", "Welcome Back [HI]", "[OK]");
+              }catch(error){arkAlert("Login failed. Please check your connection and try again.", "Login Error", "[ERR]");}
             }}>
               <div style={{marginBottom:"11px"}}>
                 <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
@@ -1474,7 +1474,7 @@ export default function AppUSA() {
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account — 500,000 credits</div></div>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account  -  500,000 credits</div></div>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"14px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
@@ -1483,9 +1483,9 @@ export default function AppUSA() {
               try{
                 const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"United States"})});
                 const data=await res.json();
-                if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n🎉 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "🎉");setShowLoginPopup(true);}
-                else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "❌");}
-              }catch(error){arkAlert("Signup failed: "+error.message, "Signup Error", "❌");}
+                if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n[CEL] 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "[CEL]");setShowLoginPopup(true);}
+                else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "[ERR]");}
+              }catch(error){arkAlert("Signup failed: "+error.message, "Signup Error", "[ERR]");}
             }}>
               {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
                 <div key={n} style={{marginBottom:"10px"}}>
@@ -1513,7 +1513,7 @@ export default function AppUSA() {
                   </select>
                 </div>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account — 500,000 Free Credits ✨</button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits </button>
               <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
@@ -1531,7 +1531,7 @@ export default function AppUSA() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",objectFit:"contain"}}/>
                 <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
               </div>
-              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",flexShrink:0}}/>
             <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
@@ -1541,7 +1541,7 @@ export default function AppUSA() {
                   <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
-                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
+                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}> Credit Balance</div>
                   <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
                     <div style={{flex:1,height:"6px",background:"#D8D0C4",borderRadius:"3px",overflow:"hidden"}}>
                       <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
@@ -1559,16 +1559,16 @@ export default function AppUSA() {
                     </div>
                   ))}
                 </div>
-                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}>🚪 Logout &amp; Save History</button>
+                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}> Logout &amp; Save History</button>
               </div>
               <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{padding:"12px 14px",borderBottom:"1px solid #C8BFB0",flexShrink:0}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}> Chat History</div>
                   <div style={{fontSize:9,color:"#8A7A65",marginTop:"2px"}}>Your saved conversations</div>
                 </div>
                 <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
-                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
+                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}></div><div style={{fontSize:11}}>No conversations yet</div></div>
                     :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
                       <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#DDD6CB",padding:"8px 10px",borderRadius:"8px",border:"1px solid #C8BFB0",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
                         <div style={{color:"#1A1209",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
@@ -1578,7 +1578,7 @@ export default function AppUSA() {
                   }
                 </div>
                 <div style={{padding:"8px 10px",borderTop:"1px solid #C8BFB0",background:"#F5F0E8",flexShrink:0,textAlign:"center"}}>
-                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}>✓ History auto-saved</span>
+                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}> History auto-saved</span>
                 </div>
               </div>
             </div>
@@ -1589,7 +1589,7 @@ export default function AppUSA() {
       {showComingSoon && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #BF0A30",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
-            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
+            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}></button>
             <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"16px"}}/>
             <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
             <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
@@ -1598,14 +1598,14 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* ── Share Popup ── */}
+      {/* Share Popup ── */}
       {showSharePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowSharePopup(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"14px",width:"90%",maxWidth:"500px",border:"1px solid #C8BFB0",boxShadow:"0 12px 40px rgba(0,0,0,0.15)",overflow:"hidden"}}>
             {/* Header */}
             <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #E4DDD0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
-              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}>✕</button>
+              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}></button>
             </div>
             {/* Message selection */}
             <div style={{padding:"16px 20px",maxHeight:"320px",overflowY:"auto"}}>
@@ -1634,7 +1634,7 @@ export default function AppUSA() {
                 const selected = messages.filter((_,i)=>shareSelected.includes(i));
                 const text = selected.map(m=>(m.role==="user"?"You: ":"ARK Law AI: ")+m.content).join("\n\n---\n\n");
                 if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
-                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "✅");}).catch(()=>{});}
+                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "[OK]");}).catch(()=>{});}
               }} disabled={shareSelected.length===0}
                 style={{padding:"8px 20px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"8px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:"6px"}}
                 onMouseEnter={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#2A1E10";}}
@@ -1712,7 +1712,7 @@ export default function AppUSA() {
             {/* Results */}
             <div style={{maxHeight:"420px",overflowY:"auto"}}>
               {searchQuery.trim() === "" ? (
-                /* No query — show grouped by date */
+                /* No query  -  show grouped by date */
                 <div>
                   {/* New chat option */}
                   <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
@@ -1881,8 +1881,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                arkPrompt("Enter a new name for this conversation:", s.title.replace("📌 ",""), "Rename Chat", "Conversation name...").then(t=>{
-                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN] ",""), "Rename Chat", "Conversation name...").then(t=>{
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN] ":"")+t.trim()}:x));
                 setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
@@ -1896,8 +1896,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 setAllSessions(prev=>prev.map(x=>{
                   if(x.id!==sessionMenu.id) return x;
-                  const isPinned=x.title?.startsWith("📌 ");
-                  return {...x,title:isPinned?x.title.replace("📌 ",""):"📌 "+x.title.replace("📌 ",""),pinned:!isPinned};
+                  const isPinned=x.title?.startsWith("[PIN] ");
+                  return {...x,title:isPinned?x.title.replace("[PIN] ",""):"[PIN] "+x.title.replace("[PIN] ",""),pinned:!isPinned};
                 }));
                 setSessionMenu(null);
               }}
@@ -1922,7 +1922,7 @@ export default function AppUSA() {
             <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
             {/* Delete */}
             <button onClick={()=>{
-                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{ if(ok){
+                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{ if(ok){
                   setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
                   if(activeChatId===sessionMenu.id) startNewChat();
                 }});  setSessionMenu(null);
