@@ -1005,7 +1005,7 @@ export default function AppUSA() {
               </div>
             )}
             {/* Tagline - visible on all screens */}
-            {(
+            {!isMobile && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
                 <div style={{fontFamily:"'Playfair Display',serif",fontSize:isMobile?"12px":"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:isMobile?"1px":"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}}>We the People</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginTop:"3px"}}/>
