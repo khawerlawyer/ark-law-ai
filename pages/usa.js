@@ -76,6 +76,15 @@ function USNewsWidget() {
   const NAVY_D = "#001F5B";
   const RED_US = "#BF0A30";
 
+  // Menu icon SVGs (extracted to avoid SWC parse issues with inline SVG in object literals)
+  const _svgPin     = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>;
+  const _svgArchive = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>;
+  const _svgDelete  = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
+  const _svgGrp     = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+  const _svgShare   = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>;
+  const _svgRename  = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
+
+
   return (
     <div style={{
       position: "absolute", top: "12px", right: "12px", zIndex: 10,
@@ -747,6 +756,7 @@ export default function AppUSA() {
 
   return (
     <>
+
       <Head>
         <title>ARK LAW AI USA - Your Trusted US Legal Assistant</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for US law." />
@@ -1037,39 +1047,46 @@ export default function AppUSA() {
                       <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                     </svg>
                   </button>
-                  {showChatMenu && (
+                                {showChatMenu && (
                     <div style={{position:"absolute",top:"40px",right:"0",background:"#FFFFFF",border:"1px solid #C8BFB0",borderRadius:"10px",boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,minWidth:"200px",padding:"6px 0",animation:"fadeSlideUp 0.15s ease"}}>
-                      {/* Share item at top */}
+                      {/* Share */}
                       <button onClick={()=>{setShowChatMenu(false);setShareSelected(messages.map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
-                        </svg>
-                        Share
+                        {_svgShare} Share
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
-                      {[
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{
-                          setShowChatMenu(false);
-                          const gId=Date.now();
-                          const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Welcome to Group Chat! You can invite others to collaborate on this legal research session. Share the session link or discuss together."}],isGroup:true};
-                          setAllSessions(prev=>[gSession,...prev]);
-                          setActiveChatId(gId);
-                          setMessages(gSession.messages);
-                        }},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN] "+s.title.replace("[PIN] ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
-                      ].map(({icon,label,action,red})=>(
-                        <button key={label} onClick={action}
-                          style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
-                          onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                          onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                          {icon}{label}
-                        </button>
-                      ))}
+                      {/* Start group chat */}
+                      <button onClick={()=>{setShowChatMenu(false);const gId=Date.now();const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Group session started!"}],isGroup:true};setAllSessions(prev=>[gSession,...prev]);setActiveChatId(gId);setMessages(gSession.messages);}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        {_svgGrp} Start a group chat
+                      </button>
+                      <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
+                      {/* Pin */}
+                      <button onClick={()=>{setShowChatMenu(false);setAllSessions(prev=>prev.map(x=>{if(x.id!==activeChatId)return x;const p=x.title?.startsWith("[PIN] ");return{...x,title:p?x.title.replace("[PIN] ",""):"[PIN] "+x.title,pinned:!p};}));}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        {_svgPin} Pin chat
+                      </button>
+                      {/* Archive */}
+                      <button onClick={()=>{setShowChatMenu(false);setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        {_svgArchive} Archive
+                      </button>
+                      <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
+                      {/* Delete */}
+                      <button onClick={()=>{setShowChatMenu(false);if(window.confirm("Delete this conversation?")){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#DC2626",textAlign:"left"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        {_svgDelete} Delete
+                      </button>
                     </div>
                   )}
                 </div>
@@ -1250,7 +1267,7 @@ export default function AppUSA() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version -></button>
+          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version ></button>
           <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
@@ -1321,7 +1338,7 @@ export default function AppUSA() {
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "[DOC]");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
-                    Next: Provide Information ->
+                    Next: Provide Information >
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
