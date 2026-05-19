@@ -76,15 +76,6 @@ function USNewsWidget() {
   const NAVY_D = "#001F5B";
   const RED_US = "#BF0A30";
 
-  // Menu icon SVGs (extracted to avoid SWC parse issues with inline SVG in object literals)
-  const _svgPin     = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>;
-  const _svgArchive = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>;
-  const _svgDelete  = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
-  const _svgGrp     = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
-  const _svgShare   = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>;
-  const _svgRename  = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
-
-
   return (
     <div style={{
       position: "absolute", top: "12px", right: "12px", zIndex: 10,
@@ -154,7 +145,7 @@ function USNewsWidget() {
               }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(191,10,48,0.15)"}
               onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "rgba(0,30,80,0.5)" : "transparent"}
-            >
+            &gt;
               <div style={{ fontSize: 11, color: "#E8F0FF", lineHeight: 1.4, marginBottom: "3px" }}>{item.title}</div>
               <span style={{ fontSize: 9, color: RED_US, fontWeight: 700 }}>{item.source}</span>
             </a>
@@ -1054,7 +1045,7 @@ export default function AppUSA() {
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        {_svgShare} Share
+                        Share
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {/* Start group chat */}
@@ -1062,7 +1053,7 @@ export default function AppUSA() {
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        {_svgGrp} Start a group chat
+                        Start a group chat
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {/* Pin */}
@@ -1070,14 +1061,14 @@ export default function AppUSA() {
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        {_svgPin} Pin chat
+                        Pin chat
                       </button>
                       {/* Archive */}
                       <button onClick={()=>{setShowChatMenu(false);setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        {_svgArchive} Archive
+                        Archive
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {/* Delete */}
@@ -1085,7 +1076,7 @@ export default function AppUSA() {
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#DC2626",textAlign:"left"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        {_svgDelete} Delete
+                        Delete
                       </button>
                     </div>
                   )}
@@ -1267,7 +1258,7 @@ export default function AppUSA() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version ></button>
+          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &#x203A;</button>
           <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
@@ -1338,7 +1329,7 @@ export default function AppUSA() {
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "[DOC]");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
-                    Next: Provide Information >
+                    Next: Provide Information &rarr;
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
