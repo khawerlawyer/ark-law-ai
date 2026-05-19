@@ -74,7 +74,7 @@ function USNewsWidget() {
   }, [headlines, expanded]);
 
   const NAVY_D = "#001F5B";
-  const RED_US = "#006A4E";
+  const RED_US = "#BF0A30";
 
   return (
     <div style={{
@@ -167,105 +167,7 @@ function USNewsWidget() {
 }
 
 
-// News Widget for Bangladesh
-const BD_FALLBACK_NEWS = [
-  { title: "Bangladesh Supreme Court issues landmark ruling on constitutional rights", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "High Court clarifies property law under Transfer of Property Act 1882", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "NBR announces new income tax filing guidelines", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "Labour Court rules on worker compensation under Labour Act 2006", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "Family Court streamlines divorce proceedings under Muslim Family Law", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "Anti-Corruption Commission files charges in major case", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "Bangladesh Bank issues new regulatory guidelines", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
-  { title: "Land Reform Board announces new property registration rules", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" }
-];
-
-function BDNewsWidget() {
-  const [h, setH] = useState(BD_FALLBACK_NEWS);
-  const [pos, setPos] = useState(0);
-  const [exp, setExp] = useState(false);
-  useEffect(() => {
-    const go = async () => {
-      try {
-        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.thedailystar.net/rss.xml") + "&count=8");
-        const d = await res.json();
-        if (d && d.status === "ok" && d.items && d.items.length > 0)
-          setH(d.items.map(x => ({ title: x.title, source: "Daily Star", url: x.link })));
-      } catch(e) {}
-    };
-    go();
-    const iv = setInterval(go, 300000);
-    return () => clearInterval(iv);
-  }, []);
-  useEffect(() => {
-    if (!h.length || exp) return;
-    const id = setInterval(() => setPos(p => (p + 1) % h.length), 4000);
-    return () => clearInterval(id);
-  }, [h, exp]);
-  return (
-    <div style={{ position:"absolute", top:"12px", right:"12px", zIndex:10, width:"230px", background:"rgba(240,234,220,0.97)", border:"1px solid rgba(120,120,180,0.4)", borderRadius:"10px", boxShadow:"0 4px 24px rgba(0,0,0,0.5)", overflow:"hidden", fontFamily:"Segoe UI,sans-serif" }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"6px 10px", background:"#006A4E", cursor:"pointer" }} onClick={() => setExp(e => !e)}>
-        <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
-          <div style={{ width:"7px", height:"7px", borderRadius:"50%", background:"white", animation:"pulse 1.5s infinite" }} />
-          <span style={{ fontSize:10, fontWeight:700, color:"white", letterSpacing:"1px" }}>LIVE</span>
-          <span style={{ fontSize:10, color:"rgba(255,255,255,0.85)" }}> · Bangladesh Legal News</span>
-        </div>
-        <span style={{ fontSize:12, color:"white" }}>{exp ? "▲" : "▼"}</span>
-      </div>
-      {!exp && h[pos] && (
-        <div style={{ padding:"8px 10px", minHeight:"60px" }}>
-          <div style={{ fontSize:11, color:"#1A1209", lineHeight:1.45, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{h[pos].title}</div>
-          <div style={{ display:"flex", justifyContent:"space-between", marginTop:"5px" }}>
-            <span style={{ fontSize:9, color:"#88aaff", fontWeight:700 }}>{h[pos].source}</span>
-            <a href={h[pos].url} target="_blank" rel="noopener noreferrer" style={{ fontSize:9, color:"#9DB8E8", textDecoration:"none" }}>Read ↗</a>
-          </div>
-          <div style={{ display:"flex", gap:"3px", marginTop:"5px", justifyContent:"center" }}>
-            {h.slice(0,8).map((_, i) => <div key={i} onClick={() => setPos(i)} style={{ width:"5px", height:"5px", borderRadius:"50%", cursor:"pointer", background: i===pos ? "white" : "rgba(255,255,255,0.3)" }} />)}
-          </div>
-        </div>
-      )}
-      {exp && (
-        <div style={{ maxHeight:"280px", overflowY:"auto" }}>
-          {h.map((item, i) => (
-            <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
-              style={{ display:"block", padding:"8px 10px", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,0.06)", background: i%2===0 ? "rgba(10,30,60,0.5)" : "transparent" }}>
-              <div style={{ fontSize:11, color:"#1A1209", lineHeight:1.4, marginBottom:"3px" }}>{item.title}</div>
-              <span style={{ fontSize:9, color:"#88aaff", fontWeight:700 }}>{item.source}</span>
-            </a>
-          ))}
-        </div>
-      )}
-      <div style={{ padding:"4px 10px", background:"rgba(220,212,198,0.95)", display:"flex", justifyContent:"space-between" }}>
-        <span style={{ fontSize:8, color:"#556688", fontStyle:"italic" }}>Daily Star · 5 min</span>
-        <a href="https://news.google.com/search?q=Bangladesh+legal+news" target="_blank" rel="noopener noreferrer" style={{ fontSize:8, color:"#88aaff", textDecoration:"none", fontWeight:700 }}>more ↗</a>
-      </div>
-    </div>
-  );
-}
-
-const PRACTICE_AREAS_BD = [
-  { id: "general", label: "General Legal", icon: "⚖️" },
-  { id: "criminal", label: "Criminal Law", icon: "🔒" },
-  { id: "corporate", label: "Corporate & Business", icon: "🏢" },
-  { id: "family", label: "Family Law", icon: "👨‍👩‍👧" },
-  { id: "property", label: "Property Law", icon: "🏠" },
-  { id: "labour", label: "Labour Laws", icon: "👷" },
-  { id: "taxation", label: "Taxation", icon: "💰" },
-  { id: "constitution", label: "Constitutional Law", icon: "📜" },
-];
-const QUICK_QUERIES_BD = [
-  "What are my rights as a tenant in Bangladesh?",
-  "How do I file a case in Bangladesh court?",
-  "What is the divorce procedure in Bangladesh?",
-  "Explain inheritance laws in Bangladesh",
-  "What are employment rights under Bangladesh law?",
-  "How to draft a will in Bangladesh?",
-  "What is a power of attorney in Bangladesh?",
-  "Explain contract law in Bangladesh",
-];
-const BD_LOCAL_QUERIES = QUICK_QUERIES_BD;
-const BD_LOCAL_AREAS = PRACTICE_AREAS_BD.map(a => a.label);
-
-export default function AppBD() {
+export default function AppUSA() {
   const router = useRouter();
   const [user,               setUser]               = useState(null);
   const [userTokens,         setUserTokens]         = useState(500000);
@@ -352,13 +254,6 @@ export default function AppBD() {
     window.addEventListener("keydown",handler);
     return ()=>window.removeEventListener("keydown",handler);
   },[]);
-  const [bdTheme, setBdTheme] = useState("chatgpt");
-  useEffect(() => {
-    try {
-      const t = localStorage.getItem("arklaw_bd_theme");
-      if (t === "classic" || t === "chatgpt") setBdTheme(t);
-    } catch {}
-  }, []);
 
   // Track non-logged-in visitors
   useEffect(()=>{
@@ -372,6 +267,8 @@ export default function AppBD() {
       } catch(e){}
     }
   },[user]);
+
+  const [usTheme,            setUsTheme]            = useState("chatgpt"); // "chatgpt" | "classic"
 
   const currentDate = useRef(
     new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
@@ -456,16 +353,16 @@ export default function AppBD() {
     window.addEventListener("appinstalled", () => { setShowInstallBtn(false); setInstallPrompt(null); });
     // Read theme preference set by admin panel
     try {
-      const savedTheme = localStorage.getItem("arklaw_bd_theme");
+      const savedTheme = localStorage.getItem("arklaw_us_theme");
       if (savedTheme === "classic" || savedTheme === "chatgpt") setUsTheme(savedTheme);
     } catch {}
     return () => { window.removeEventListener("resize", handleResize); window.removeEventListener("beforeinstallprompt", handleInstallPrompt); };
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: isUrdu ? "Welcome to ARK Law AI Bangladesh  -  How can I help you today?" : "Welcome to ARK Law AI Bangladesh  -  Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     try {
-      const saved = JSON.parse(localStorage.getItem("arklaw_sessions_bd") || "[]");
+      const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
       if (saved.length > 0) {
         setAllSessions(saved);
         setActiveChatId(saved[0].id);
@@ -503,7 +400,7 @@ export default function AppBD() {
         const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
         return { ...s, messages, title };
       });
-      try { localStorage.setItem("arklaw_sessions_bd", JSON.stringify(updated.slice(0, 50))); } catch {}
+      try { localStorage.setItem("arklaw_sessions_us", JSON.stringify(updated.slice(0, 50))); } catch {}
       return updated;
     });
   }, [messages, activeChatId]);
@@ -517,7 +414,7 @@ export default function AppBD() {
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: isUrdu ? "Welcome to ARK Law AI Bangladesh  -  How can I help you today?" : "Welcome to ARK Law AI Bangladesh  -  Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -553,10 +450,10 @@ export default function AppBD() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on iPhone / iPad", "📲");
-    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on Firefox", "📲");
-    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! ✅", "Install on Samsung Browser", "📲");
-    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu at top right\n2. Tap \"Add to Home screen\" then \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "\xf0\x9f\x93\xb2");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on iPhone / iPad", "📲");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on Firefox", "📲");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅", "Install on Samsung Browser", "📲");
+    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\" → \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "📲");
   };
 
   // ── Save chat history to server ──
@@ -589,7 +486,7 @@ export default function AppBD() {
     } catch {}
   };
 
-  // ── Logout  -  saves tokens first ──
+  // ── Logout — saves tokens first ──
   const handleLogout = async () => {
     await saveHistory(allSessions, userTokens);
     localStorage.removeItem("arklaw_user");
@@ -638,24 +535,27 @@ export default function AppBD() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
-    setIsStreaming(true);
-    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
-        ? "IMPORTANT: The user has selected Bangla. You MUST respond entirely in Bangla (Bengali). All your answers, explanations, disclaimers, and suggestions must be in Bangla. Do not switch to English unless the user explicitly asks."
+        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Bangladesh, an AI legal assistant that answers EXCLUSIVELY about Bangladesh law. You MUST ONLY answer questions related to Bangladesh law, statutes, courts, and legal procedures. If the user asks about any other country's law, REFUSE and redirect to Bangladesh law only. NEVER reference laws of USA, UK, Pakistan, India, Bangladesh, or any other jurisdiction unless the user is specifically asking how Bangladesh law compares. Always title disclaimers "Professional Disclaimer by ARK LAW AI Bangladesh". Reference only Bangladesh statutes, case law, and legal authorities. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
+      // Build clean conversation history (last 6 exchanges max, strip old system notes)
       const cleanHistory = messages
         .filter(m => m.role === "user" || m.role === "assistant")
         .filter(m => m.content && m.content.trim())
-        .map(m => m.role === "user" ? {role:"user",content:m.content.replace(/^\[System:.*?\]\n\n/s,"").trim()} : m)
-        .slice(-12);
-      const systemMsg = {role:"user",content:systemNote};
-      const newUserMsg = {role:"user",content:messageContent};
+        .map(m => m.role === "user"
+          ? { role: "user", content: m.content.replace(/^\[System:.*?\]\n\n/s, "").trim() }
+          : m
+        )
+        .slice(-12); // last 6 pairs
+      const systemMsg = { role: "user", content: systemNote };
+      const newUserMsg = { role: "user", content: messageContent };
+      // Inject system as first message if history exists, otherwise alone
       const messagesWithContext = cleanHistory.length > 0
-        ? [systemMsg, {role:"assistant",content:"Understood. I am ARK Law AI Bangladesh. I answer exclusively about Bangladesh law."}, ...cleanHistory, newUserMsg]
-        : [systemMsg, {role:"assistant",content:"Understood. I am ARK Law AI Bangladesh. I answer exclusively about Bangladesh law."}, newUserMsg];
+        ? [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, ...cleanHistory, newUserMsg]
+        : [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
@@ -670,18 +570,21 @@ export default function AppBD() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){} } } catch (e) {}
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                accumulatedContent += parsed.content;
+                setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
+              }
+            } catch(e) {}
           }
         }
       }
+      try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     }
   };
 
@@ -736,15 +639,15 @@ export default function AppBD() {
       const res  = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }) });
       const data = await res.json();
       setDraftContent(data.reply);
-      setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-BD")}`);
+      setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
     } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
   const downloadDraft = (format) => {
-    const timestamp = new Date().toLocaleDateString("en-BD");
-    let content = `ARK LAW AI Bangladesh - LEGAL DOCUMENT DRAFT\n${"=".repeat(50)}\n\nDocument Type: ${draftType.toUpperCase()}\nTitle: ${draftTitle}\nCreated: ${timestamp}\nJurisdiction: United States of America\n\n${"=".repeat(50)}\n\n${draftContent}\n\n${"=".repeat(50)}\nThis document was generated by ARK Law AI USA and should be reviewed by a licensed US attorney before execution.`;
+    const timestamp = new Date().toLocaleDateString("en-PK");
+    let content = `ARK LAW AI USA - LEGAL DOCUMENT DRAFT\n${"=".repeat(50)}\n\nDocument Type: ${draftType.toUpperCase()}\nTitle: ${draftTitle}\nCreated: ${timestamp}\nJurisdiction: United States of America\n\n${"=".repeat(50)}\n\n${draftContent}\n\n${"=".repeat(50)}\nThis document was generated by ARK Law AI USA and should be reviewed by a licensed US attorney before execution.`;
     if (format === "pdf") { window.print(); return; }
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -776,7 +679,7 @@ export default function AppBD() {
 
   const downloadComparisonPDF = () => {
     if (!comparisonResult) return;
-    const timestamp = new Date().toLocaleDateString("en-BD");
+    const timestamp = new Date().toLocaleDateString("en-PK");
     const pdfContent = `ARK LAW AI - LEGAL DOCUMENT COMPARISON REPORT\n${"=".repeat(80)}\n\nDate: ${timestamp}\nFocal Point: ${compareFocus}\nDocument 1: ${doc1?.name || "Document 1"}\nDocument 2: ${doc2?.name || "Document 2"}\n\n${"=".repeat(80)}\n\n${comparisonResult}\n\n${"=".repeat(80)}\nGenerated by: ARK Law AI`.trim();
     const blob = new Blob([pdfContent], { type: "text/plain" });
     const url  = URL.createObjectURL(blob);
@@ -784,7 +687,7 @@ export default function AppBD() {
     a.href = url; a.download = `ARK_Document_Comparison_${Date.now()}.txt`; a.click();
     URL.revokeObjectURL(url);
     const printWindow = window.open("", "_blank");
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>ARK Law AI - Document Comparison Report</title><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.6;color:#000;max-width:800px;margin:0 auto;padding:20px;}.header{text-align:center;border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:30px;}.header h1{color:#0D1B2A;font-size:24pt;}.content{white-space:pre-wrap;text-align:justify;}.footer{margin-top:50px;padding-top:20px;border-top:2px solid #C9A84C;text-align:center;font-size:9pt;color:#666;}</style></head><body><div class="header"><h1>ARK LAW AI</h1><h2>LEGAL DOCUMENT COMPARISON REPORT</h2></div><div class="content">${comparisonResult.replace(/\n/g, "<br>")}</div><div class="footer"><p>Generated by ARK Law AI</p></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>ARK Law AI - Document Comparison Report</title><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.6;color:#000;max-width:800px;margin:0 auto;padding:20px;}.header{text-align:center;border-bottom:3px solid #C9A84C;padding-bottom:20px;margin-bottom:30px;}.header h1{color:#0D1B2A;font-size:24pt;}.content{white-space:pre-wrap;text-align:justify;}.footer{margin-top:50px;padding-top:20px;border-top:2px solid #C9A84C;text-align:center;font-size:9pt;color:#666;}</style></head><body><div class="header"><h1>ARK LAW AI <img src="https://flagcdn.com/w40/us.png" alt="US" style={{width:"18px",height:"12px",borderRadius:"2px",marginLeft:"5px",verticalAlign:"middle"}}/></h1><h2>LEGAL DOCUMENT COMPARISON REPORT</h2></div><div class="content">${comparisonResult.replace(/\n/g, "<br>")}</div><div class="footer"><p>Generated by ARK Law AI</p></div></body></html>`);
     printWindow.document.close();
     setTimeout(() => printWindow.print(), 500);
   };
@@ -845,8 +748,8 @@ export default function AppBD() {
   return (
     <>
       <Head>
-        <title>ARK LAW AI Bangladesh - Legal Assistant</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for Bangladesh law." />
+        <title>ARK LAW AI USA - Your Trusted US Legal Assistant</title>
+        <meta name="description" content="ARK Law AI: Expert AI legal assistant for US law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
@@ -872,8 +775,6 @@ export default function AppBD() {
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
         
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
 
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
@@ -888,12 +789,12 @@ export default function AppBD() {
         .qcard{background:#FFFFFF;border:1px solid #C0B49A;border-radius:10px;padding:9px 12px;cursor:pointer;transition:background 0.15s;text-align:left;}
         .qcard:hover{background:#F0EBE0;}
         .input-wrap{background:#FFFFFF;border:1px solid #C0B49A;border-radius:16px;transition:border-color 0.2s;}
-        .input-wrap:focus-within{border-color:#006A4E;}
+        .input-wrap{border-color:#BF0A30;}
         @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
       {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
-      {bdTheme === "chatgpt" && (
+      {usTheme === "chatgpt" && (
       <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
         {/* ═══════════════════════════════════════════
@@ -928,7 +829,7 @@ export default function AppBD() {
           <div style={{padding:"10px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
             <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",objectFit:"contain"}} />
-              <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"0.8px"}}>ARK LAW AI <img src="https://flagcdn.com/w40/bd.png" alt="BD" style={{width:"18px",height:"12px",borderRadius:"2px",marginLeft:"5px",verticalAlign:"middle"}}/></span>
+              <span style={{fontSize:13,fontWeight:800,color:"#1A1209",fontFamily:"DM Sans,sans-serif",letterSpacing:"0.8px"}}>ARK LAW AI</span>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
               <button onClick={()=>setSidebarOpen(o=>!o)} title={sidebarOpen?"Close sidebar":"Open sidebar"}
@@ -939,10 +840,10 @@ export default function AppBD() {
                   <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
               </button>
-              <button onClick={startNewChat} title="New chat"
+              <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
-              onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
-              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#b4b4b4";}}>
+              onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+              onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#4A3A28";}}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
             </div>
@@ -956,36 +857,31 @@ export default function AppBD() {
             </button>
             <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
-              <span>{isUrdu ? "দলিল তুলনা" : "Compare Documents"}</span>
+              <span>{isUrdu ? UR.compareTitle : "Compare Documents"}</span>
             </button>
             <button className="sb-item" onClick={()=>setShowDraftPopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              <span>{isUrdu ? "দলিল তৈরি" : "Draft Documents"}</span>
+              <span>{isUrdu ? UR.draftTitle : "Draft Documents"}</span>
             </button>
             <button className="sb-item" onClick={()=>setShowPracticeAreas(p=>!p)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>{isUrdu ? "আইনি বিষয়" : "Practice Areas"}</span>
+              <span>{isUrdu ? UR.areasLabel : "Practice Areas"}</span>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{marginLeft:"auto",transform:showPracticeAreas?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {showPracticeAreas && (
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
-                {PRACTICE_AREAS_BD.map((area,i)=>(
+                {PRACTICE_AREAS_PK.map((area,i)=>(
                   <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
                     onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
-                    <span>{isUrdu ? BD_LOCAL_AREAS[i] : area.label}</span>
+                    <span>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          <div style={{height:"1px",background:"#DDD6CB",margin:"6px 12px",flexShrink:0}}/>
 
-          {/* Recents label */}
-          <div style={{padding:"2px 16px 4px",flexShrink:0}}>
-            <span style={{fontSize:11,fontWeight:600,color:"#7A6A55",textTransform:"uppercase",letterSpacing:"0.6px"}}>{searchQuery?"Results":"Recents"}</span>
-          </div>
 
           {/* Sessions list */}
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
@@ -1022,27 +918,32 @@ export default function AppBD() {
               <div style={{display:"flex",gap:"6px",padding:"2px 4px"}}>
                 <button onClick={()=>setShowLoginPopup(true)}
                   style={{flex:1,padding:"9px 0",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="#2f2f2f"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  {isUrdu ? "লগ ইন" : "Log in"}
+                  onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  {isUrdu ? UR.login : "Log in"}
                 </button>
                 <button onClick={()=>setShowSignupPopup(true)}
-                  style={{flex:1,padding:"9px 0",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>
+                  style={{flex:1,padding:"9px 0",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>
                   Sign up
                 </button>
               </div>
             ) : (
               <div style={{padding:"4px 6px"}}>
+                {/* ChatGPT-style user card */}
                 <div style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 10px",borderRadius:"10px",cursor:"pointer",transition:"background 0.15s",position:"relative"}}
                   onClick={()=>{saveHistory(allSessions,userTokens);setShowMyAccountPopup(true);}}
                   onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
                   onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{width:"34px",height:"34px",borderRadius:"50%",background:"#006A4E",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white",flexShrink:0,letterSpacing:"0.5px"}}>
+                  {/* Initials avatar */}
+                  <div style={{width:"34px",height:"34px",borderRadius:"50%",background:"#BF0A30",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"white",flexShrink:0,letterSpacing:"0.5px"}}>
                     {(user.name||"U").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}
                   </div>
+                  {/* Name + Free */}
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:13,fontWeight:600,color:"#1A1209",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
                     <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Free</div>
                   </div>
+                  {/* Upgrade */}
                   <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "🚀");}}
                     style={{padding:"5px 11px",background:"#FFFFFF",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:11,fontWeight:600,flexShrink:0,transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#A89880";}}
@@ -1056,9 +957,10 @@ export default function AppBD() {
                     </button>
                   )}
                 </div>
+                {/* Credits bar */}
                 <div style={{padding:"4px 10px 2px",display:"flex",alignItems:"center",gap:"8px"}}>
                   <div style={{flex:1,height:"3px",background:"#C8BFB0",borderRadius:"2px",overflow:"hidden"}}>
-                    <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#006A4E":"#C9A84C",borderRadius:"2px"}}/>
+                    <div style={{height:"100%",width:Math.max(2,(userTokens/500000)*100)+"%",background:userTokens>100000?"#BF0A30":"#C9A84C",borderRadius:"2px"}}/>
                   </div>
                   <span style={{fontSize:9,color:"#9A8A75",whiteSpace:"nowrap"}}>{userTokens.toLocaleString()} credits</span>
                 </div>
@@ -1072,10 +974,10 @@ export default function AppBD() {
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
                 ← 🌍
               </button>
-              <select value={isUrdu?"bn":"en"} onChange={e=>setIsUrdu(e.target.value==="bn")}
+              <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
-                <option value="en">🌐 English</option>
-                <option value="bn">Bangla</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
               </select>
             </div>
           </div>
@@ -1086,9 +988,8 @@ export default function AppBD() {
         ═══════════════════════════════════════════ */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
-                    {/* Top bar */}
+          {/* Top bar */}
           <div style={{padding:isMobile?"10px 14px":"8px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #C8BFB0",flexShrink:0,minHeight:"52px",background:"#EDE8DF",gap:"8px"}}>
-
 
             {/* Mobile logo */}
             {isMobile && (
@@ -1106,9 +1007,9 @@ export default function AppBD() {
             {/* Tagline - visible on all screens */}
             {(
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <div style={{fontSize:isMobile?"12px":"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:isMobile?"1px":"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Joy Bangla</div>
-                <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",marginTop:"3px"}}/>
-                <div style={{fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px"}}>Constitution of Bangladesh</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:isMobile?"12px":"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:isMobile?"1px":"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite,taglineFadeIn 0.6s ease both",whiteSpace:"nowrap"}}>We the People</div>
+                <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginTop:"3px"}}/>
+                <div style={{fontFamily:"'Crimson Pro',serif",fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px",animation:"taglineFadeIn 0.6s ease 0.2s both"}}>Constitution of the United States</div>
               </div>
             )}
             {/* Right: share + menu + mobile auth */}
@@ -1176,7 +1077,7 @@ export default function AppBD() {
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
                   <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
-                  <button onClick={()=>setShowSignupPopup(true)} style={{padding:"6px 12px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:600}}>Sign up</button>
+                  <button onClick={()=>setShowSignupPopup(true)} style={{padding:"6px 12px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:600}}>Sign up</button>
                 </div>
               )}
               {isMobile && user && (
@@ -1196,9 +1097,9 @@ export default function AppBD() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI Bangladesh — su asistente legal experto" : "ARK Law AI Bangladesh — your expert Bangladesh law assistant"}</p>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US — su asistente legal experto" : "ARK Law AI US — your expert US law assistant"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
-                  {(isUrdu ? BD_LOCAL_QUERIES : QUICK_QUERIES_BD).slice(0,4).map((q,i)=>(
+                  {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
                       <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,marginBottom:"5px"}}>{q}</div>
                       <div style={{fontSize:10,color:"#6A5A45",display:"flex",alignItems:"center",gap:"3px"}}>
@@ -1234,15 +1135,12 @@ export default function AppBD() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
-                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
-                            <span className="streaming-cursor"/>
-                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
                           <div className="msg-actions" style={{display:"flex",gap:"4px",marginTop:"10px",flexWrap:"wrap"}}>
                             <button onClick={()=>speakText(msg.content,i)}
-                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:currentSpeakingIndex===i?"#006A4E":"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:currentSpeakingIndex===i?"#BF0A30":"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
                               onMouseLeave={e=>{e.currentTarget.style.borderColor="#333";e.currentTarget.style.color=currentSpeakingIndex===i?"#4CAF7D":"#666";}}>
                               {currentSpeakingIndex===i
@@ -1275,7 +1173,7 @@ export default function AppBD() {
                       <img src="/ark-logo-us.png" alt="ARK" style={{width:"30px",height:"30px",objectFit:"contain",flexShrink:0}}/>
                       <div style={{paddingTop:"6px",display:"flex",gap:"5px",alignItems:"center"}}>
                         {[0,1,2].map(i=>(
-                          <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#8A7A65",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
+                          <div key={i} style={{width:"7px",height:"7px",borderRadius:"50%",background:"#9A8A75",animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite`}}/>
                         ))}
                       </div>
                     </div>
@@ -1315,7 +1213,7 @@ export default function AppBD() {
                 value={input}
                 onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(180,e.target.scrollHeight)+"px";}}
                 onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
-                placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about Bangladesh law...")}
+                placeholder={isListening?(isUrdu?UR.listening:"Listening..."):uploadedFiles.length>0?`Ask about ${uploadedFiles.length} file(s)...`:(isUrdu?UR.placeholder:"Ask ARK Law AI about US law...")}
                 rows={1}
                 style={{flex:1,background:"transparent",border:"none",color:"#1A1209",fontSize:15,lineHeight:1.6,resize:"none",outline:"none",fontFamily:"inherit",maxHeight:"180px",overflowY:"auto"}}
               />
@@ -1330,7 +1228,7 @@ export default function AppBD() {
 
               {/* Send */}
               <button onClick={()=>sendMessage()} disabled={loading||(!input.trim()&&!uploadedFiles.length)}
-                style={{width:"32px",height:"32px",borderRadius:"8px",background:(loading||(!input.trim()&&!uploadedFiles.length))?"#C8BFB0":"#006A4E",border:"none",cursor:(loading||(!input.trim()&&!uploadedFiles.length))?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.2s"}}>
+                style={{width:"32px",height:"32px",borderRadius:"8px",background:(loading||(!(input.trim())&&!uploadedFiles.length))?"#C8BFB0":"#BF0A30",border:"none",cursor:(loading||(!input.trim()&&!uploadedFiles.length))?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.2s"}}>
                 {loading
                   ?<div style={{width:"13px",height:"13px",border:"2px solid #666",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
                   :<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={(!input.trim()&&!uploadedFiles.length)?"#8A7A65":"white"} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
@@ -1338,8 +1236,8 @@ export default function AppBD() {
               </button>
             </div>
 
-            <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#9A8A75"}}>
-              {isUrdu ? "ARK Law AI ভুল করতে পারে। Verify important legal information." : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
+            <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
+              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la información legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
@@ -1347,35 +1245,35 @@ export default function AppBD() {
       )} {/* end chatgpt theme */}
 
       {/* Classic theme redirect */}
-      {bdTheme === "classic" && (
+      {usTheme === "classic" && (
         <div style={{display:"flex",height:"100vh",background:"#001F5B",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"16px"}}>
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
-          <div style={{color:"#5A4A35",fontSize:13}}>Loading classic Bangladesh UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_bd_theme","classic");window.location.href="/bangladesh-classic";}} style={{padding:"10px 24px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
-          <button onClick={()=>{setBdTheme("chatgpt");localStorage.setItem("arklaw_bd_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
+          <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
+          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
+          <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
       {/* ═══════════════════════════════════════════
-          POPUPS (US theme  -  navy/red)
+          POPUPS (US theme — navy/red)
       ═══════════════════════════════════════════ */}
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
-          <div style={{background:"#F0EBE0",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #006A4E",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
-            <div style={{background:"linear-gradient(135deg,#001F5B,#0d0d2b)",padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #006A4E"}}>
+          <div style={{background:"#F0EBE0",borderRadius:"12px",width:"90%",maxWidth:"700px",maxHeight:"85vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 0 30px rgba(191,10,48,0.2)"}}>
+            <div style={{background:"linear-gradient(135deg,#001F5B,#0d0d2b)",padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #BF0A30"}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",objectFit:"contain"}}/>
-                <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI Bangladesh</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
+                <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
               </div>
               <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"25px"}}>
               <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
-              <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #006A4E"}}>
+              <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #BF0A30"}}>
                 <span style={{fontSize:10,color:"#5A4A35"}}>📰 Source:</span>
-                <span style={{fontSize:11,color:"#006A4E",fontWeight:600}}>{selectedNews.source}</span>
+                <span style={{fontSize:11,color:"#BF0A30",fontWeight:600}}>{selectedNews.source}</span>
               </div>
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
@@ -1392,12 +1290,12 @@ export default function AppBD() {
 
       {showDraftPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #006A4E",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"800px",maxHeight:"92vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",objectFit:"contain"}}/>
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
               </div>
               <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
@@ -1405,26 +1303,24 @@ export default function AppBD() {
               {draftStep==="type-selection" && (
                 <div>
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>
-                    <option value="">-- Select Document Type --</option>
-                    <option value="affidavit">⚖️ Affidavit</option>
-                    <option value="contract">📄 General Contract (Contract Act 1872)</option>
-                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
-                    <option value="tenancy">🏠 Tenancy Agreement</option>
-                    <option value="sale_deed">🏘️ Sale Deed</option>
-                    <option value="power_attorney">📝 Power of Attorney</option>
-                    <option value="employment">💼 Employment Contract (Labour Act 2006)</option>
-                    <option value="partnership">🤝 Partnership Deed</option>
-                    <option value="will">📜 Will / Testament</option>
-                    <option value="divorce">⚖️ Divorce Deed (Muslim Family Law)</option>
-                    <option value="nikah">💍 Kabinnama / Nikah Deed</option>
-                    <option value="legal_notice">📬 Legal Notice</option>
-                    <option value="cheque_bounce">💰 Dishonoured Cheque Notice</option>
-                    <option value="mou">🤝 Memorandum of Understanding (MOU)</option>
+                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                    <option value="">Select Document Type --</option>
+                    <option value="rental-agreement">Rental/Lease Agreement</option>
+                    <option value="contract">General Contract</option>
+                    <option value="nda">Non-Disclosure Agreement (NDA)</option>
+                    <option value="affidavit">Affidavit</option>
+                    <option value="will">Will / Testament</option>
+                    <option value="power-of-attorney">Power of Attorney</option>
+                    <option value="employment-agreement">Employment Agreement</option>
+                    <option value="partnership-deed">Partnership Agreement</option>
+                    <option value="sale-deed">Real Estate Purchase Agreement</option>
+                    <option value="divorce-agreement">Divorce Settlement Agreement</option>
+                    <option value="loan-agreement">Loan Agreement</option>
+                    <option value="trust-deed">Trust Agreement</option>
                   </select>
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
-                    style={{width:"100%",padding:"12px",background:draftType?"#006A4E":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
-                    onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#006A4E";}}>
+                    style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
+                    onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
                     Next: Provide Information →
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
@@ -1441,8 +1337,8 @@ export default function AppBD() {
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
                     <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
-                      style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
-                      onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#006A4E";}}>
+                      style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
+                      onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#BF0A30";}}>
                       {draftGenerating?"⏳ Generating...":"🚀 Generate with AI"}
                     </button>
                   </div>
@@ -1460,13 +1356,13 @@ export default function AppBD() {
                 <div>
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
                   <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
-                  <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #006A4E",marginBottom:"14px"}}>
-                    <div style={{color:"#006A4E",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
+                  <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #BF0A30",marginBottom:"14px"}}>
+                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
                     <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
                     <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
-                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}>📥 DOCX</button>
+                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>📥 DOCX</button>
                     <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
@@ -1479,12 +1375,12 @@ export default function AppBD() {
 
       {showComparePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #006A4E",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"14px",width:"90%",maxWidth:"600px",maxHeight:"90vh",overflow:"auto",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
               </div>
               <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
@@ -1493,7 +1389,7 @@ export default function AppBD() {
                 <div key={label} style={{marginBottom:"14px"}}>
                   <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
-                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
+                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name} — {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
@@ -1509,8 +1405,8 @@ export default function AppBD() {
               )}
               <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
                 <button onClick={compareDocuments} disabled={comparingDocs}
-                  style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
-                  onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#006A4E";}}>
+                  style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
+                  onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#BF0A30";}}>
                   {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
                 </button>
                 {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
@@ -1524,13 +1420,13 @@ export default function AppBD() {
       {/* LOGIN POPUP */}
       {showLoginPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#F5F0E8",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #006A4E",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
+          <div style={{background:"#F5F0E8",padding:"28px 24px 22px",borderRadius:"14px",width:"90%",maxWidth:"400px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",position:"relative",overflow:"hidden"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"16px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}>Log in to your account</div></div>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>Log in to your account</div></div>
             </div>
-            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",marginBottom:"18px"}}/>
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"18px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
               e.preventDefault();
               const fd=new FormData(e.target);
@@ -1543,10 +1439,10 @@ export default function AppBD() {
                 const userWithTokens={...data.user,tokens:restoredTokens};
                 localStorage.setItem("arklaw_user",JSON.stringify(userWithTokens));
                 setUser(userWithTokens);setUserTokens(restoredTokens);
-                const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_bd")||"[]");}catch{return [];}})();
+                const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_us")||"[]");}catch{return [];}})();
                 const serverHistoryUs=(data.user.chatHistory&&data.user.chatHistory.length>0)?data.user.chatHistory:localBackupUs;
                 if(serverHistoryUs.length>0){
-                  const greeting={role:"assistant",content:isUrdu?"Welcome to ARK Law AI Bangladesh  -  How can I help you today?":"Welcome to ARK Law AI Bangladesh  -  Your trusted AI legal companion for Bangladesh law.\n\nHow may I assist you today?"};
+                  const greeting={role:"assistant",content:isUrdu?"Bienvenido a ARK Law AI USA \u2014 Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n\u00bfen qu\u00e9 puedo ayudarle hoy?":"Welcome to ARK Law AI USA \u2014 Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?"};
                   const restoredSessions=serverHistoryUs.map(s=>({...s,messages:s.messages||[greeting]}));
                   setAllSessions(restoredSessions.slice(0,50));
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
@@ -1574,18 +1470,18 @@ export default function AppBD() {
       {/* SIGNUP POPUP */}
       {showSignupPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:3000,pointerEvents:"all"}}>
-          <div style={{background:"#F5F0E8",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #006A4E",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
+          <div style={{background:"#F5F0E8",padding:"22px 24px 18px",borderRadius:"14px",width:"90%",maxWidth:"480px",border:"2px solid #BF0A30",boxShadow:"0 8px 40px rgba(0,0,0,0.6)",maxHeight:"92vh",overflowY:"auto",position:"relative",overflow:"hidden"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account  -  500,000 credits</div></div>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account — 500,000 credits</div></div>
             </div>
-            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",marginBottom:"14px"}}/>
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"14px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
               e.preventDefault();
               const fd=new FormData(e.target);
               try{
-                const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"Bangladesh"})});
+                const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"United States"})});
                 const data=await res.json();
                 if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n🎉 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "🎉");setShowLoginPopup(true);}
                 else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "❌");}
@@ -1607,24 +1503,17 @@ export default function AppBD() {
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"10px"}}>
                 <div>
                   <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>City *</label>
-                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., Dhaka"/>
+                  <input name="city" type="text" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none"}} placeholder="e.g., New York"/>
                 </div>
                 <div>
                   <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"4px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>State *</label>
                   <select name="province" required style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"7px",color:"#1A1209",fontSize:13,outline:"none",cursor:"pointer"}}>
-                    <option value="">Select state/province...</option>
-                    <option key="Dhaka Division">Dhaka Division</option>
-                    <option key="Chittagong Division">Chittagong Division</option>
-                    <option key="Sylhet Division">Sylhet Division</option>
-                    <option key="Rajshahi Division">Rajshahi Division</option>
-                    <option key="Khulna Division">Khulna Division</option>
-                    <option key="Barisal Division">Barisal Division</option>
-                    <option key="Rangpur Division">Rangpur Division</option>
-                    <option key="Mymensingh Division">Mymensingh Division</option>
+                    <option value="">Select state...</option>
+                    {["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia"].map(s=><option key={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits ✨</button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account — 500,000 Free Credits ✨</button>
               <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
@@ -1635,20 +1524,20 @@ export default function AppBD() {
       {/* MY ACCOUNT POPUP */}
       {showMyAccountPopup && user && (
         <div style={{position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.8)",pointerEvents:"all"}}>
-          <div style={{background:"#F5F0E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #006A4E",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
+          <div style={{background:"#F5F0E8",borderRadius:"16px",width:"92%",maxWidth:"680px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"2px solid #BF0A30",boxShadow:"0 12px 48px rgba(0,0,0,0.6)",overflow:"hidden",position:"relative"}}>
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"260px",height:"260px",objectFit:"contain"}}/>
             <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #C8BFB0",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0,position:"relative",zIndex:1,background:"#F5F0E8"}}>
               <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",objectFit:"contain"}}/>
-                <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
               </div>
               <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",flexShrink:0}}/>
+            <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",flexShrink:0}}/>
             <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
               <div style={{flex:"0 0 52%",padding:"14px 16px",overflowY:"auto",borderRight:"1px solid #C8BFB0"}}>
                 <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px"}}>
-                  <div style={{width:"44px",height:"44px",borderRadius:"50%",background:"linear-gradient(135deg,#006A4E,#8B0000)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",fontWeight:700,color:"white",flexShrink:0}}>{user.name.charAt(0).toUpperCase()}</div>
+                  <div style={{width:"44px",height:"44px",borderRadius:"50%",background:"linear-gradient(135deg,#BF0A30,#8B0000)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",fontWeight:700,color:"white",flexShrink:0}}>{user.name.charAt(0).toUpperCase()}</div>
                   <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
@@ -1670,7 +1559,7 @@ export default function AppBD() {
                     </div>
                   ))}
                 </div>
-                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}>🚪 Logout &amp; Save History</button>
+                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}>🚪 Logout &amp; Save History</button>
               </div>
               <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{padding:"12px 14px",borderBottom:"1px solid #C8BFB0",flexShrink:0}}>
@@ -1679,7 +1568,7 @@ export default function AppBD() {
                 </div>
                 <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
-                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#8A7A65"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
+                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
                     :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
                       <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#DDD6CB",padding:"8px 10px",borderRadius:"8px",border:"1px solid #C8BFB0",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
                         <div style={{color:"#1A1209",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
@@ -1689,7 +1578,7 @@ export default function AppBD() {
                   }
                 </div>
                 <div style={{padding:"8px 10px",borderTop:"1px solid #C8BFB0",background:"#F5F0E8",flexShrink:0,textAlign:"center"}}>
-                  <span style={{fontSize:9,color:"#8A7A65",fontStyle:"italic"}}>✓ History auto-saved</span>
+                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}>✓ History auto-saved</span>
                 </div>
               </div>
             </div>
@@ -1699,12 +1588,12 @@ export default function AppBD() {
 
       {showComingSoon && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
-          <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #006A4E",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #BF0A30",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
             <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
             <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"16px"}}/>
             <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
             <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
-            <button onClick={()=>setShowComingSoon(false)} style={{padding:"10px 32px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:14,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}>Got it!</button>
+            <button onClick={()=>setShowComingSoon(false)} style={{padding:"10px 32px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:14,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>Got it!</button>
           </div>
         </div>
       )}
