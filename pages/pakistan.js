@@ -787,6 +787,10 @@ export default function App() {
         {/* ═══════════════════════════════════════════
             SIDEBAR
         ═══════════════════════════════════════════ */}
+        {/* Mobile overlay backdrop */}
+        {isMobile && sidebarOpen && (
+          <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:299}}/>
+        )}
         {/* Sidebar toggle when closed */}
         {!sidebarOpen && !isMobile && (
           <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
@@ -806,7 +810,7 @@ export default function App() {
             </button>
           </div>
         )}
-        <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease"}}>
+        <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:isMobile?0:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease",position:isMobile&&sidebarOpen?"absolute":"relative",zIndex:isMobile?300:1,top:0,left:0,bottom:0,boxShadow:isMobile&&sidebarOpen?"4px 0 20px rgba(0,0,0,0.15)":"none"}}>
 
           {/* Logo + New Chat */}
           <div style={{padding:"10px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
@@ -834,7 +838,7 @@ export default function App() {
 
           {/* Tools */}
           <div style={{padding:"4px 6px",flexShrink:0}}>
-            <button className="sb-item" onClick={()=>setShowSearchPopup(true)}>
+            <button className="sb-item" onClick={()=>setShowSearchPopup(true)} style={{cursor:"pointer"}}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <span>Search chats</span>
             </button>
@@ -881,7 +885,7 @@ export default function App() {
                 <div key={s.id} style={{position:"relative",group:true}}
                   onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
                   <button className={"sb-item"+(active?" active":"")}
-                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);if(isMobile)setSidebarOpen(false);}}
                     onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
                     style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -958,7 +962,7 @@ export default function App() {
               </button>
               <select value={isUrdu?"ur":"en"} onChange={e=>setIsUrdu(e.target.value==="ur")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
-                <option value="en">🌐 English</option>
+                <option value="en">English</option>
                 <option value="ur">Urdu</option>
               </select>
             </div>
@@ -977,14 +981,20 @@ export default function App() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
+                <button onClick={()=>setSidebarOpen(o=>!o)}
+                  style={{width:"32px",height:"32px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0}}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                  </svg>
+                </button>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
                 <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
-            {/* Desktop tagline */}
-            {!isMobile && (
+            {/* Tagline - visible on all screens */}
+            {(
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <div style={{fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Faith - Unity - Discipline</div>
+                <div style={{fontSize:isMobile?"12px":"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:isMobile?"1px":"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Faith - Unity - Discipline</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#4CAF7D,transparent)",marginTop:"3px"}}/>
                 <div style={{fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px"}}>Pakistan</div>
               </div>
@@ -992,8 +1002,7 @@ export default function App() {
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
               {/* Feedback button */}
-              {!isMobile && (
-                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+              <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
                   style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
                   onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
                   onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
@@ -1002,11 +1011,10 @@ export default function App() {
                     <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                   Feedback
-                </button>
-              )}
+              </button>
 
               {/* Three-dot menu */}
-              {!isMobile && (
+              {
                 <div style={{position:"relative"}}>
                   <button onClick={()=>setShowChatMenu(m=>!m)}
                     style={{width:"34px",height:"34px",background:showChatMenu?"#D8D0C4":"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
@@ -1286,21 +1294,21 @@ export default function App() {
                 <div>
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
                   <select value={draftType} onChange={e=>
-                    <option value="">-- Select Document Type --</option>
-                    <option value="affidavit">⚖️ Affidavit</option>
-                    <option value="contract">📄 General Contract (Pakistani Law)</option>
-                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
-                    <option value="tenancy">🏠 Tenancy Agreement</option>
-                    <option value="sale_deed">🏘️ Sale Deed</option>
-                    <option value="power_attorney">📝 Power of Attorney (Wakalatnama)</option>
-                    <option value="employment">💼 Employment Contract</option>
-                    <option value="partnership">🤝 Partnership Deed</option>
-                    <option value="divorce">⚖️ Divorce Deed (Talaqnama)</option>
-                    <option value="nikah">💍 Nikah Nama</option>
-                    <option value="will">📜 Will / Wasiyatnama</option>
-                    <option value="promissory_note">💰 Promissory Note / Hundnama</option>
-                    <option value="legal_notice">📬 Legal Notice</option>
-                    <option value="bail_application">⚖️ Bail Application</option>
+                    <option value="">Select Document Type --</option>
+                    <option value="affidavit">Affidavit</option>
+                    <option value="contract">General Contract (Pakistani Law)</option>
+                    <option value="nda">Non-Disclosure Agreement (NDA)</option>
+                    <option value="tenancy">Tenancy Agreement</option>
+                    <option value="sale_deed">Sale Deed</option>
+                    <option value="power_attorney">Power of Attorney (Wakalatnama)</option>
+                    <option value="employment">Employment Contract</option>
+                    <option value="partnership">Partnership Deed</option>
+                    <option value="divorce">Divorce Deed (Talaqnama)</option>
+                    <option value="nikah">Nikah Nama</option>
+                    <option value="will">Will / Wasiyatnama</option>
+                    <option value="promissory_note">Promissory Note / Hundnama</option>
+                    <option value="legal_notice">Legal Notice</option>
+                    <option value="bail_application">Bail Application</option>
                   </select>
                   <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#4CAF7D":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
@@ -1699,7 +1707,7 @@ export default function App() {
                 /* No query — show grouped by date */
                 <div>
                   {/* New chat option */}
-                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
                     style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
