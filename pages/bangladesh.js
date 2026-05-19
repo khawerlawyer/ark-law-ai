@@ -20,6 +20,7 @@ const LG_HOVER     = "#3D9B6A";
 // --- Live US News Widget ------------------------------------------------------
 
 
+const BD_FALLBACK_HEADLINES = [
   { title: "Bangladesh Supreme Court issues landmark ruling on constitutional rights", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
   { title: "High Court clarifies property law under Transfer of Property Act 1882", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
   { title: "NBR announces new income tax filing guidelines", source: "Daily Star", url: "https://news.google.com/search?q=Bangladesh+legal+news" },
@@ -747,15 +748,15 @@ export default function AppBD() {
             </button>
             <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
-              <span>{isUrdu ? "দলিল তুলনা" : "Compare Documents"}</span>
+              <span>{isUrdu ? "" : "Compare Documents"}</span>
             </button>
             <button className="sb-item" onClick={()=>setShowDraftPopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              <span>{isUrdu ? "দলিল তৈরি" : "Draft Documents"}</span>
+              <span>{isUrdu ? "" : "Draft Documents"}</span>
             </button>
             <button className="sb-item" onClick={()=>setShowPracticeAreas(p=>!p)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>{isUrdu ? "আইনি বিষয়" : "Practice Areas"}</span>
+              <span>{isUrdu ? "" : "Practice Areas"}</span>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{marginLeft:"auto",transform:showPracticeAreas?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {showPracticeAreas && (
@@ -814,7 +815,7 @@ export default function AppBD() {
                 <button onClick={()=>setShowLoginPopup(true)}
                   style={{flex:1,padding:"9px 0",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
                   onMouseEnter={e=>e.currentTarget.style.background="#2f2f2f"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  {isUrdu ? "লগ ইন" : "Log in"}
+                  {isUrdu ? "" : "Log in"}
                 </button>
                 <button onClick={()=>setShowSignupPopup(true)}
                   style={{flex:1,padding:"9px 0",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>
@@ -1137,7 +1138,7 @@ export default function AppBD() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#9A8A75"}}>
-              {isUrdu ? "ARK Law AI ভুল করতে পারে। Verify important legal information." : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
+              {isUrdu ? "" : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
