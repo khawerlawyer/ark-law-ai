@@ -389,7 +389,7 @@ export default function AppUSA() {
     }
   }, []);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
@@ -535,27 +535,23 @@ export default function AppUSA() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
+    setIsStreaming(true);
+    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
       const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
-      // Build clean conversation history (last 6 exchanges max, strip old system notes)
-      const cleanHistory = messages
-        .filter(m => m.role === "user" || m.role === "assistant")
-        .filter(m => m.content && m.content.trim())
-        .map(m => m.role === "user"
-          ? { role: "user", content: m.content.replace(/^\[System:.*?\]\n\n/s, "").trim() }
-          : m
-        )
-        .slice(-12); // last 6 pairs
-      const systemMsg = { role: "user", content: systemNote };
-      const newUserMsg = { role: "user", content: messageContent };
-      // Inject system as first message if history exists, otherwise alone
-      const messagesWithContext = cleanHistory.length > 0
-        ? [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, ...cleanHistory, newUserMsg]
-        : [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI USA, your US law assistant." }, newUserMsg];
+      const conversationPairs = [];
+      for (let i = 0; i < messages.length; i++) {
+        const m = messages[i];
+        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
+        if (m.role === "user") conversationPairs.push(m);
+        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
+      }
+      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
+      const messagesWithContext = [...conversationPairs, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
@@ -570,21 +566,18 @@ export default function AppUSA() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.content) {
-                accumulatedContent += parsed.content;
-                setMessages(prev => { const n=[...prev]; n[streamingMessageIndex]={...n[streamingMessageIndex],role:"assistant",content:accumulatedContent}; return n; });
-              }
-            } catch(e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
           }
         }
       }
-      try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){}
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
+      setIsStreaming(false);
+      setStreamingIdx(-1);
     }
   };
 
@@ -775,6 +768,8 @@ export default function AppUSA() {
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
         
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
 
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
@@ -1127,6 +1122,9 @@ export default function AppUSA() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
+                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
+                            <span className="streaming-cursor"/>
+                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
