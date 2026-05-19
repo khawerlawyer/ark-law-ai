@@ -439,7 +439,7 @@ export default function AppBD() {
         .filter(m => m.role === "user" || m.role === "assistant")
         .filter(m => m.content && m.content.trim())
         .map(m => m.role === "user" ? {role:"user",content:m.content.replace(/^\[System:.*?\]\n\n/s,"").trim()} : m)
-        .slice(-12);
+        .slice(-6);
       const systemMsg = {role:"user",content:systemNote};
       const newUserMsg = {role:"user",content:messageContent};
       const messagesWithContext = cleanHistory.length > 0
