@@ -1141,12 +1141,12 @@ export default function AppUSA() {
                             <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
                               style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
                             <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
                               style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
                           </div>
                         )}
