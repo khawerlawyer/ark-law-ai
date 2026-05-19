@@ -17,154 +17,7 @@ const LIGHT_GREEN  = "#4CAF7D";
 const LG_HOVER     = "#3D9B6A";
 
 
-// ─── Live US News Widget ──────────────────────────────────────────────────────
-function USNewsWidget() {
-  const [headlines, setHeadlines] = useState([]);
-  const [tickerPos, setTickerPos] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-  const tickerRef = useRef(null);
-
-  // Fallback headlines in case fetch fails
-  const fallbackHeadlines = [
-    { title: "Supreme Court hears landmark First Amendment case", source: "Reuters", url: "https://reuters.com" },
-    { title: "Senate advances bipartisan judicial reform bill", source: "AP News", url: "https://apnews.com" },
-    { title: "Federal court rules on immigration policy challenge", source: "NPR", url: "https://npr.org" },
-    { title: "DOJ announces new white-collar crime enforcement unit", source: "Bloomberg Law", url: "https://bloomberg.com" },
-    { title: "IRS updates tax filing guidelines for 2026", source: "Reuters", url: "https://reuters.com" },
-    { title: "SCOTUS takes up Fourth Amendment digital privacy case", source: "AP News", url: "https://apnews.com" },
-    { title: "New federal labor regulations take effect this week", source: "NPR", url: "https://npr.org" },
-    { title: "Class action lawsuit filed against major tech firm", source: "Bloomberg Law", url: "https://bloomberg.com" },
-  ];
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        // Use RSS2JSON to fetch Reuters legal news (no API key needed)
-        const rss = "https://feeds.reuters.com/reuters/topNews";
-        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}&count=8`);
-        const data = await res.json();
-        if (data.status === "ok" && data.items?.length) {
-          setHeadlines(data.items.map(item => ({
-            title: item.title,
-            source: "Reuters",
-            url: item.link,
-          })));
-        } else {
-          setHeadlines(fallbackHeadlines);
-        }
-      } catch {
-        setHeadlines(fallbackHeadlines);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNews();
-    const interval = setInterval(fetchNews, 5 * 60 * 1000); // refresh every 5 min
-    return () => clearInterval(interval);
-  }, []);
-
-  // Auto-scroll ticker
-  useEffect(() => {
-    if (!headlines.length || expanded) return;
-    const id = setInterval(() => {
-      setTickerPos(prev => (prev + 1) % headlines.length);
-    }, 4000);
-    return () => clearInterval(id);
-  }, [headlines, expanded]);
-
-  const NAVY_D = "#001F5B";
-  const RED_US = "#BF0A30";
-
-  return (
-    <div style={{
-      position: "absolute", top: "12px", right: "12px", zIndex: 10,
-      width: "230px",
-      background: "rgba(0,20,70,0.97)",
-      border: `1px solid ${RED_US}80`,
-      borderRadius: "10px",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-      overflow: "hidden",
-      fontFamily: "Segoe UI, sans-serif",
-    }}>
-      {/* Header */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "6px 10px", background: RED_US, cursor: "pointer",
-      }} onClick={() => setExpanded(e => !e)}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
-          <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>- US Legal News</span>
-        </div>
-        <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
-      </div>
-
-      {/* Ticker / Expanded view */}
-      {!expanded ? (
-        /* ── Ticker mode ── */
-        <div style={{ padding: "8px 10px", minHeight: "54px" }}>
-          {loading ? (
-            <div style={{ color: "#A8C0E8", fontSize: 10, fontStyle: "italic" }}>Loading headlines...</div>
-          ) : headlines.length > 0 ? (
-            <div>
-              <div style={{
-                fontSize: 11, color: "#E8F0FF", lineHeight: 1.45,
-                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-              }}>
-                {headlines[tickerPos]?.title}
-              </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "5px" }}>
-                <span style={{ fontSize: 9, color: RED_US, fontWeight: 700 }}>{headlines[tickerPos]?.source}</span>
-                <a href={headlines[tickerPos]?.url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 9, color: "#A8C0E8", textDecoration: "none" }}>Read ↗</a>
-              </div>
-              {/* Dot indicators */}
-              <div style={{ display: "flex", gap: "3px", marginTop: "5px", justifyContent: "center" }}>
-                {headlines.slice(0, 8).map((_, i) => (
-                  <div key={i} onClick={() => setTickerPos(i)} style={{
-                    width: "5px", height: "5px", borderRadius: "50%", cursor: "pointer",
-                    background: i === tickerPos ? "white" : "rgba(255,255,255,0.3)",
-                    transition: "background 0.3s",
-                  }} />
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        /* ── Expanded list mode ── */
-        <div style={{ maxHeight: "280px", overflowY: "auto" }}>
-          {loading ? (
-            <div style={{ padding: "12px 10px", color: "#A8C0E8", fontSize: 10, fontStyle: "italic" }}>Loading...</div>
-          ) : headlines.map((item, i) => (
-            <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
-              style={{ display: "block", padding: "8px 10px", textDecoration: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                background: i % 2 === 0 ? "rgba(0,30,80,0.5)" : "transparent",
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(191,10,48,0.15)"}
-              onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "rgba(0,30,80,0.5)" : "transparent"}
-            &gt;
-              <div style={{ fontSize: 11, color: "#E8F0FF", lineHeight: 1.4, marginBottom: "3px" }}>{item.title}</div>
-              <span style={{ fontSize: 9, color: RED_US, fontWeight: 700 }}>{item.source}</span>
-            </a>
-          ))}
-        </div>
-      )}
-
-      {/* Footer */}
-      <div style={{
-        padding: "4px 10px", background: "rgba(0,10,40,0.9)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <span style={{ fontSize: 8, color: "#6A8AAA", fontStyle: "italic" }}>Reuters - Updates every 5 min</span>
-        <a href="https://reuters.com" target="_blank" rel="noopener noreferrer"
-          style={{ fontSize: 8, color: RED_US, textDecoration: "none", fontWeight: 700 }}>reuters.com ↗</a>
-      </div>
-    </div>
-  );
-}
+// --- Live US News Widget ------------------------------------------------------
 
 
 export default function AppUSA() {
@@ -230,7 +83,7 @@ export default function AppUSA() {
   const [searchQuery,       setSearchQuery]       = useState("");
   const [showSearchPopup,   setShowSearchPopup]   = useState(false);
 
-  // ── Custom modal system (replaces alert/confirm/prompt) ──────────────────────
+  // -- Custom modal system (replaces alert/confirm/prompt) ----------------------
   const [arkModal, setArkModal] = useState(null);
   // arkModal: {type:"alert"|"confirm"|"prompt", title, message, icon, resolve, inputVal, inputPlaceholder, confirmLabel, confirmColor}
 
@@ -280,7 +133,7 @@ export default function AppUSA() {
     { id: "general",        label: "General Legal",          icon: ""  },
     { id: "criminal",       label: "Criminal Law",            icon: ""  },
     { id: "corporate",      label: "Corporate & Business",    icon: ""  },
-    { id: "family",         label: "Family Law",              icon: "‍‍" },
+    { id: "family",         label: "Family Law",              icon: "fam" },
     { id: "immigration",    label: "Immigration Law",         icon: ""  },
     { id: "employment",     label: "Employment Law",          icon: ""  },
     { id: "taxation",       label: "Tax & IRS",               icon: ""  },
@@ -306,28 +159,28 @@ export default function AppUSA() {
     compareTitle:    "Comparar Documentos",
     compareSubtitle: "Sube 2 docs para comparar",
     draftTitle:      "Redactar Documentos",
-    draftSubtitle:   "Contratos, declaraciones y más",
-    areasLabel:      "Áreas de Práctica",
-    placeholder:     "Pregúntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el micrófono...",
+    draftSubtitle:   "Contratos, declaraciones y mas",
+    areasLabel:      "Areas de Practica",
+    placeholder:     "Preguntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el microfono...",
     send:            "Enviar",
-    login:           "Iniciar sesión",
+    login:           "Iniciar sesion",
     listening:       "Escuchando...",
-    thinking:        "ARK está pensando...",
+    thinking:        "ARK esta pensando...",
     myAccount:       "Mi Cuenta",
-    newChat:         "Nueva sesión",
+    newChat:         "Nueva sesion",
     quickQueries: [
-      "¿Cuáles son mis derechos como inquilino en EE.UU.?",
-      "¿Cómo presento una demanda en EE.UU.?",
-      "¿Cuál es el proceso de divorcio en EE.UU.?",
+      "Cuales son mis derechos como inquilino en EE.UU.?",
+      "Como presento una demanda en EE.UU.?",
+      "Cual es el proceso de divorcio en EE.UU.?",
       "Explica las leyes de herencia en EE.UU.",
-      "¿Cuáles son mis derechos laborales en EE.UU.?",
-      "¿Cómo redacto un testamento en EE.UU.?",
-      "¿Qué es un poder notarial?",
+      "Cuales son mis derechos laborales en EE.UU.?",
+      "Como redacto un testamento en EE.UU.?",
+      "Que es un poder notarial?",
       "Explica la ley de contratos en EE.UU.",
     ],
     practiceAreas: [
       "Derecho General", "Derecho Penal", "Corporativo y Negocios",
-      "Derecho de Familia", "Inmigración", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
+      "Derecho de Familia", "Inmigracion", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
     ],
   };
 
@@ -340,9 +193,9 @@ export default function AppUSA() {
     { headline: " Immigration Court Backlogs Prompt Emergency Procedural Reforms", source: "Executive Office for Immigration Review (EOIR)", fullText: "The EOIR has announced emergency procedural reforms to address a record backlog of over 3 million pending immigration cases. Changes include: (1) Expanded use of video hearings, (2) Priority scheduling for asylum cases older than two years, (3) New guidelines for continuance requests. Immigration attorneys and advocates are encouraged to review the updated procedural manual. The reforms aim to reduce average case wait times from 5 years to under 3 years." },
   ];
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // EFFECTS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -360,7 +213,7 @@ export default function AppUSA() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\nEn que puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
       if (saved.length > 0) {
@@ -397,7 +250,7 @@ export default function AppUSA() {
       const updated = prev.map(s => {
         if (s.id !== activeChatId) return s;
         const firstUser = messages.find(m => m.role === "user");
-        const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "…" : "") : "New Chat";
+        const title = firstUser ? firstUser.content.substring(0, 40) + (firstUser.content.length > 40 ? "..." : "") : "New Chat";
         return { ...s, messages, title };
       });
       try { localStorage.setItem("arklaw_sessions_us", JSON.stringify(updated.slice(0, 50))); } catch {}
@@ -407,14 +260,14 @@ export default function AppUSA() {
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // HELPERS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\nEn que puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -434,9 +287,9 @@ export default function AppUSA() {
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // CORE FUNCTIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const handleInstallApp = async () => {
     if (installPrompt) {
@@ -456,7 +309,7 @@ export default function AppUSA() {
     else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ... ) at the top right\n2. Tap \"Add to Home screen\" -> \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( + ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "[MOB]");
   };
 
-  // ── Save chat history to server ──
+  // -- Save chat history to server --
   const saveHistory = async (sessionsToSave, tokensToSave) => {
     if (!user?.id) return;
     try {
@@ -470,7 +323,7 @@ export default function AppUSA() {
     } catch (err) { console.error("History save failed:", err); }
   };
 
-  // ── Persist tokens to Supabase immediately (fire-and-forget) ──
+  // -- Persist tokens to Supabase immediately (fire-and-forget) --
   const saveTokensToServer = (newTokens) => {
     const saved = localStorage.getItem("arklaw_user");
     if (!saved) return;
@@ -486,7 +339,7 @@ export default function AppUSA() {
     } catch {}
   };
 
-  // ── Logout  -  saves tokens first ──
+  // -- Logout  -  saves tokens first --
   const handleLogout = async () => {
     await saveHistory(allSessions, userTokens);
     localStorage.removeItem("arklaw_user");
@@ -538,7 +391,7 @@ export default function AppUSA() {
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
-        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
+        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Espanol). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
       const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law  -  federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
       // Build clean conversation history (last 6 exchanges max, strip old system notes)
@@ -741,9 +594,9 @@ export default function AppUSA() {
   const popupRow = { marginBottom: "11px" };
   const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // RENDER
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   return (
     <>
@@ -794,13 +647,13 @@ export default function AppUSA() {
         @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
-      {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
+      {/* =================== CHATGPT THEME =================== */}
       {usTheme === "chatgpt" && (
       <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             SIDEBAR
-        ═══════════════════════════════════════════ */}
+        =========================================== */}
         {/* Mobile overlay backdrop */}
         {isMobile && sidebarOpen && (
           <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:299}}/>
@@ -841,7 +694,7 @@ export default function AppUSA() {
                   <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
               </button>
-              <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
+              <button onClick={startNewChat} title={isUrdu ? "Nueva conversacion" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
               onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#4A3A28";}}>
@@ -873,7 +726,7 @@ export default function AppUSA() {
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
                 {PRACTICE_AREAS_PK.map((area,i)=>(
                   <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
-                    onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
+                    onClick={()=>{sendMessage(isUrdu?`Cuentame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
                     <span>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                   </button>
@@ -973,20 +826,20 @@ export default function AppUSA() {
                 style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
-                ← 
+                &larr; 
               </button>
               <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
                 <option value="en">English</option>
-                <option value="es">Español</option>
+                <option value="es">Espanol</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             MAIN CONTENT
-        ═══════════════════════════════════════════ */}
+        =========================================== */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
           {/* Top bar */}
@@ -1104,7 +957,7 @@ export default function AppUSA() {
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
-                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "en que puedo ayudarle hoy?" : "How can I help you today?"}</h2>
                 <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US  -  su asistente legal experto" : "ARK Law AI US  -  your expert US law assistant"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
@@ -1192,7 +1045,7 @@ export default function AppUSA() {
             </div>
           </div>
 
-          {/* ═══════════════════ INPUT AREA ═══════════════════ */}
+          {/* =================== INPUT AREA =================== */}
           <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#F5F0E8",flexShrink:0}}>
 
             {/* Attached files */}
@@ -1201,7 +1054,7 @@ export default function AppUSA() {
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
                     <span> {file.name}</span>
-                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>x</button>
                   </div>
                 ))}
               </div>
@@ -1245,7 +1098,7 @@ export default function AppUSA() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
-              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la información legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
+              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la informacion legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
@@ -1259,13 +1112,13 @@ export default function AppUSA() {
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
           <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &#x203A;</button>
-          <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
+          <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>&larr; Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
-      {/* ═══════════════════════════════════════════
+      {/* ===========================================
           POPUPS (US theme  -  navy/red)
-      ═══════════════════════════════════════════ */}
+      =========================================== */}
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
@@ -1286,7 +1139,7 @@ export default function AppUSA() {
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
                 <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}> Legal Analysis:</h4>
-                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
+                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}> Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
@@ -1343,11 +1196,11 @@ export default function AppUSA() {
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
-                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>&larr; Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#BF0A30";}}>
-                      {draftGenerating?"⏳ Generating...":"[GO] Generate with AI"}
+                      {draftGenerating?" Generating...":"[GO] Generate with AI"}
                     </button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
@@ -1356,7 +1209,7 @@ export default function AppUSA() {
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
                   <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
-                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
+                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}> Generating Your Document...</h4>
                   <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
@@ -1404,7 +1257,7 @@ export default function AppUSA() {
                 <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
-              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
+              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}> Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
                 <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
                   <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}> Comparison Report</div>
@@ -1415,7 +1268,7 @@ export default function AppUSA() {
                 <button onClick={compareDocuments} disabled={comparingDocs}
                   style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
                   onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#BF0A30";}}>
-                  {comparingDocs?"⏳ Analyzing...":" Compare"}
+                  {comparingDocs?" Analyzing...":" Compare"}
                 </button>
                 {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>[DOC] Download</button>}
               </div>
@@ -1606,7 +1459,7 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* Share Popup ── */}
+      {/* Share Popup -- */}
       {showSharePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowSharePopup(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"14px",width:"90%",maxWidth:"500px",border:"1px solid #C8BFB0",boxShadow:"0 12px 40px rgba(0,0,0,0.15)",overflow:"hidden"}}>
@@ -1657,7 +1510,7 @@ export default function AppUSA() {
           </div>
         </div>
       )}
-      {/* ── ARK Modal ── */}
+      {/* -- ARK Modal -- */}
       {arkModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
           <div style={{background:"#FFFFFF",borderRadius:"18px",width:"90%",maxWidth:"400px",boxShadow:"0 20px 60px rgba(0,0,0,0.2)",border:"1px solid #C8BFB0",overflow:"hidden"}}>
@@ -1694,7 +1547,7 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* ── Search Chats Popup ── */}
+      {/* -- Search Chats Popup -- */}
       {showSearchPopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.25)",display:"flex",alignItems:"flex-start",justifyContent:"center",zIndex:3000,paddingTop:"60px"}}
           onClick={()=>{setShowSearchPopup(false);setSearchQuery("");}}>
