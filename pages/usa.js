@@ -785,7 +785,7 @@ export default function AppUSA() {
         .qcard:hover{background:#F0EBE0;}
         .input-wrap{background:#FFFFFF;border:1px solid #C0B49A;border-radius:16px;transition:border-color 0.2s;}
         .input-wrap{border-color:#BF0A30;}
-        @media(max-width:768px){.sidebar-desktop{display:none!important;}}
+        @media(max-width:768px){.sidebar-desktop{position:fixed!important;top:0;left:0;bottom:0;z-index:400!important;box-shadow:4px 0 24px rgba(0,0,0,0.18)!important;}}
       `}</style>
 
       {/* =================== CHATGPT THEME =================== */}
@@ -796,6 +796,10 @@ export default function AppUSA() {
             SIDEBAR
         =========================================== */}
         {/* Sidebar toggle when closed */}
+        {/* Mobile backdrop */}
+        {isMobile && sidebarOpen && (
+          <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:399}}/>
+        )}
         {!sidebarOpen && !isMobile && (
           <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
             <button onClick={()=>setSidebarOpen(true)} title="Open sidebar"
@@ -884,7 +888,7 @@ export default function AppUSA() {
                 <div key={s.id} style={{position:"relative",group:true}}
                   onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
                   <button className={"sb-item"+(active?" active":"")}
-                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);if(isMobile)setSidebarOpen(false);}}
                     onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
                     style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -985,8 +989,14 @@ export default function AppUSA() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
-                <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
+                <button onClick={()=>setSidebarOpen(o=>!o)}
+                  style={{width:"32px",height:"32px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0}}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                  </svg>
+                </button>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"26px",height:"26px",objectFit:"contain"}}/>
+                <span style={{fontSize:13,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
             {/* Desktop tagline */}
@@ -1000,22 +1010,19 @@ export default function AppUSA() {
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
               {/* Feedback button */}
-              {!isMobile && (
-                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
-                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
-                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
-                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
-                  Feedback
-                </button>
-              )}
+              <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+                style={{display:"flex",alignItems:"center",gap:"6px",padding:isMobile?"5px 9px":"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:isMobile?11:12,fontWeight:500,transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {!isMobile && "Feedback"}
+              </button>
 
               {/* Three-dot menu */}
-              {!isMobile && (
-                <div style={{position:"relative"}}>
+              <div style={{position:"relative"}}>
                   <button onClick={()=>setShowChatMenu(m=>!m)}
                     style={{width:"34px",height:"34px",background:showChatMenu?"#D8D0C4":"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
@@ -1060,7 +1067,6 @@ export default function AppUSA() {
                     </div>
                   )}
                 </div>
-              )}
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
                   <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
@@ -1705,7 +1711,7 @@ export default function AppUSA() {
                 /* No query  -  show grouped by date */
                 <div>
                   {/* New chat option */}
-                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
                     style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
