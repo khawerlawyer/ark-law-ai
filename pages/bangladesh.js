@@ -307,8 +307,6 @@ export default function AppBD() {
   const [messages,           setMessages]           = useState([]);
   const [input,              setInput]              = useState("");
   const [loading,            setLoading]            = useState(false);
-  const [isStreaming,         setIsStreaming]         = useState(false);
-  const [streamingIdx,        setStreamingIdx]        = useState(-1);
   const [reactions,          setReactions]          = useState({});
   const [uploadedFiles,      setUploadedFiles]      = useState([]);
 
@@ -359,19 +357,6 @@ export default function AppBD() {
       if (t === "classic" || t === "chatgpt") setBdTheme(t);
     } catch {}
   }, []);
-
-  // Track non-logged-in visitors
-  useEffect(()=>{
-    if(!user){
-      try {
-        const v={page:window.location.pathname,time:new Date().toISOString(),ua:navigator.userAgent.substring(0,80)};
-        const arr=JSON.parse(localStorage.getItem("arklaw_visitors")||"[]");
-        arr.push(v);
-        if(arr.length>500) arr.shift();
-        localStorage.setItem("arklaw_visitors",JSON.stringify(arr));
-      } catch(e){}
-    }
-  },[user]);
 
   const currentDate = useRef(
     new Date().toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
@@ -638,8 +623,6 @@ export default function AppBD() {
     setUploadedFiles([]);
     setLoading(true);
     const streamingMessageIndex = updatedMessages.length;
-    setIsStreaming(true);
-    setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
@@ -669,18 +652,14 @@ export default function AppBD() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: accumulatedContent }; return n; }); } } catch (e) {}
           }
         }
       }
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     } catch (error) {
       setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
-      setIsStreaming(false);
-      setStreamingIdx(-1);
     }
   };
 
@@ -789,7 +768,6 @@ export default function AppBD() {
   };
 
   const renderMessageContent = (content) => {
-    if (!content) return null;
     const lines = content.split("\n");
     const elements = [];
     let currentParagraph = [];
@@ -870,10 +848,6 @@ export default function AppBD() {
         ::-webkit-scrollbar-thumb:hover{background:#A89880;}
         @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
         @keyframes spin{to{transform:rotate(360deg);}}
-        
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-        .streaming-cursor{display:inline-block;width:2px;height:14px;background:#1A1209;margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink 0.7s step-end infinite;}
-
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         @keyframes taglineShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
         @keyframes taglineFadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
@@ -1102,19 +1076,6 @@ export default function AppBD() {
             )}
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
-              {/* Feedback button */}
-              {!isMobile && (
-                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
-                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
-                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
-                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
-                  Feedback
-                </button>
-              )}
 
               {/* Three-dot menu */}
               {!isMobile && (
@@ -1186,8 +1147,12 @@ export default function AppBD() {
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
-                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI Bangladesh — su asistente legal experto" : "ARK Law AI Bangladesh — your expert Bangladesh law assistant"}</p>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>
+                  {isUrdu ? "How can I help you today?" : "How can I help you today?"}
+                </h2>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>
+                  {isUrdu ? "ARK Law AI Bangladesh" : "ARK Law AI Bangladesh  -  your expert legal assistant"}
+                </p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? BD_LOCAL_QUERIES : QUICK_QUERIES_BD).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
@@ -1225,9 +1190,6 @@ export default function AppBD() {
                         </div>
                         <div style={{fontSize:14.5,color:"#2A1E10",lineHeight:1.7}}>
                           {renderMessageContent(msg.content)}
-                          {isStreaming && i===streamingIdx && msg.role==="assistant" && (
-                            <span className="streaming-cursor"/>
-                          )}
                         </div>
                         {/* Actions */}
                         {msg.role==="assistant" && msg.content && (
