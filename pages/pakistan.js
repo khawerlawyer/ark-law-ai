@@ -80,7 +80,7 @@ function PKNewsWidget() {
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
           <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>- Pakistan Legal News</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}> Pakistan Legal News</span>
         </div>
         <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
       </div>
@@ -139,7 +139,7 @@ function PKNewsWidget() {
         padding: "4px 10px", background: "rgba(0,10,5,0.9)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <span style={{ fontSize: 8, color: "#5A7A56", fontStyle: "italic" }}>Dawn - Updates every 5 min</span>
+        <span style={{ fontSize: 8, color: "#5A7A56", fontStyle: "italic" }}>Dawn · Updates every 5 min</span>
         <a href="https://www.dawn.com" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: 8, color: "#4CAF7D", textDecoration: "none", fontWeight: 700 }}>dawn.com ↗</a>
       </div>
@@ -215,14 +215,14 @@ export default function App() {
   const [arkModal, setArkModal] = useState(null);
   // arkModal: {type:"alert"|"confirm"|"prompt", title, message, icon, resolve, inputVal, inputPlaceholder, confirmLabel, confirmColor}
 
-  const arkAlert = (message, title="ARK LAW AI", icon="[INFO]") => new Promise(resolve => {
+  const arkAlert = (message, title="ARK LAW AI", icon="ℹ️") => new Promise(resolve => {
     setArkModal({type:"alert", title, message, icon, resolve});
   });
-  const arkConfirm = (message, title="ARK LAW AI", icon="[?]", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(resolve => {
+  const arkConfirm = (message, title="ARK LAW AI", icon="❓", confirmLabel="Confirm", confirmColor="#1A1209") => new Promise(resolve => {
     setArkModal({type:"confirm", title, message, icon, confirmLabel, confirmColor, resolve});
   });
   const arkPrompt = (message, defaultVal="", title="ARK LAW AI", placeholder="") => new Promise(resolve => {
-    setArkModal({type:"prompt", title, message, icon:"", resolve, inputVal:defaultVal, inputPlaceholder:placeholder});
+    setArkModal({type:"prompt", title, message, icon:"✏️", resolve, inputVal:defaultVal, inputPlaceholder:placeholder});
   });
 
 
@@ -243,14 +243,14 @@ export default function App() {
   const lastSavedCountRef = useRef(0);
 
   const PRACTICE_AREAS_PK = [
-    { id: "general",      label: "General Legal",       icon: ""  },
-    { id: "criminal",     label: "Criminal Law",         icon: ""  },
-    { id: "corporate",    label: "Corporate & Business", icon: ""  },
-    { id: "family",       label: "Family Law",           icon: "‍‍" },
-    { id: "property",     label: "Property & Land",      icon: ""  },
-    { id: "labour",       label: "Labour Laws",          icon: ""  },
-    { id: "taxation",     label: "Taxation",             icon: ""  },
-    { id: "constitution", label: "Constitutional Law",   icon: ""  },
+    { id: "general",      label: "General Legal",       icon: "⚖️"  },
+    { id: "criminal",     label: "Criminal Law",         icon: "🔒"  },
+    { id: "corporate",    label: "Corporate & Business", icon: "🏢"  },
+    { id: "family",       label: "Family Law",           icon: "👨‍👩‍👧" },
+    { id: "property",     label: "Property & Land",      icon: "🏠"  },
+    { id: "labour",       label: "Labour Laws",          icon: "👷"  },
+    { id: "taxation",     label: "Taxation",             icon: "💰"  },
+    { id: "constitution", label: "Constitutional Law",   icon: "📜"  },
   ];
 
   const QUICK_QUERIES_PK = [
@@ -298,17 +298,17 @@ export default function App() {
   };
 
   const newsDatabase = [
-    { headline: " Supreme Court of Pakistan Ruling on Constitutional Rights", source: "Supreme Court of Pakistan Official Records", fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions." },
-    { headline: " New Tax Amendment Affects Business Sector", source: "Federal Board of Revenue (FBR)", fullText: "The Federal Board of Revenue has announced new amendments to the Income Tax Ordinance, 2001, effective immediately. Key changes include: (1) Modified tax rates for small and medium enterprises, (2) Enhanced deductions for research and development, (3) Stricter compliance requirements for corporate entities. Businesses are advised to consult with tax professionals to ensure compliance. The FBR has set a grace period of 30 days for voluntary compliance." },
-    { headline: " Family Court Interprets Guardianship Laws", source: "District Court - Family Division", fullText: "In a significant judgment, the Family Court has clarified provisions of the Guardians and Wards Act, 1890. The court ruled that guardianship decisions must prioritize the best interests of the child above all considerations. The judgment emphasizes that courts must conduct thorough investigations, hear all parties, and consider the child's wishes in guardianship matters. This ruling affects all guardianship petitions pending in courts across Pakistan." },
-    { headline: " Labour Ministry Issues New Worker Protection Guidelines", source: "Ministry of Labour, Employment & Manpower", fullText: "The Labour Ministry has issued comprehensive guidelines under the Workers' Compensation Act for improved worker protection. New provisions include: (1) Enhanced compensation for workplace injuries, (2) Mandatory insurance coverage for all workers, (3) Faster claim processing mechanisms. Employers must comply within 60 days. Non-compliance may result in penalties and legal action. Workers can file complaints through the ministry's online portal." },
-    { headline: " High Court Decision on Property Disputes", source: "Lahore High Court - Civil Division", fullText: "The Lahore High Court has established important guidelines for resolving property disputes under the Transfer of Property Act, 1882. The judgment clarifies that possession must be clearly established through documentary evidence, witness testimony, or adverse possession principles. Courts are directed to expedite property cases to reduce pending litigation. The ruling also addresses issues of land grabbing and unlawful occupation." },
-    { headline: " Procedural Changes in Criminal Courts", source: "Supreme Judicial Council", fullText: "New procedural rules have been implemented in criminal courts across Pakistan to expedite trials under the Code of Criminal Procedure, 1898. Changes include: (1) Mandatory video conferencing for witness examination, (2) Electronic filing of documents, (3) Stricter time limits for adjournments. These reforms aim to reduce case backlogs and ensure speedy justice. All courts must implement these procedures immediately." },
+    { headline: "🇵🇰 Supreme Court of Pakistan Ruling on Constitutional Rights", source: "Supreme Court of Pakistan Official Records", fullText: "The Supreme Court of Pakistan has issued a landmark ruling reaffirming citizens' fundamental rights under Articles 9 and 14 of the Constitution. The judgment emphasizes that all individuals have the right to life, liberty, and dignity. This ruling applies to all provincial and federal courts and establishes important precedent for cases involving human rights violations. The court also directed the government to ensure compliance across all institutions." },
+    { headline: "🇵🇰 New Tax Amendment Affects Business Sector", source: "Federal Board of Revenue (FBR)", fullText: "The Federal Board of Revenue has announced new amendments to the Income Tax Ordinance, 2001, effective immediately. Key changes include: (1) Modified tax rates for small and medium enterprises, (2) Enhanced deductions for research and development, (3) Stricter compliance requirements for corporate entities. Businesses are advised to consult with tax professionals to ensure compliance. The FBR has set a grace period of 30 days for voluntary compliance." },
+    { headline: "🇵🇰 Family Court Interprets Guardianship Laws", source: "District Court - Family Division", fullText: "In a significant judgment, the Family Court has clarified provisions of the Guardians and Wards Act, 1890. The court ruled that guardianship decisions must prioritize the best interests of the child above all considerations. The judgment emphasizes that courts must conduct thorough investigations, hear all parties, and consider the child's wishes in guardianship matters. This ruling affects all guardianship petitions pending in courts across Pakistan." },
+    { headline: "🇵🇰 Labour Ministry Issues New Worker Protection Guidelines", source: "Ministry of Labour, Employment & Manpower", fullText: "The Labour Ministry has issued comprehensive guidelines under the Workers' Compensation Act for improved worker protection. New provisions include: (1) Enhanced compensation for workplace injuries, (2) Mandatory insurance coverage for all workers, (3) Faster claim processing mechanisms. Employers must comply within 60 days. Non-compliance may result in penalties and legal action. Workers can file complaints through the ministry's online portal." },
+    { headline: "🇵🇰 High Court Decision on Property Disputes", source: "Lahore High Court - Civil Division", fullText: "The Lahore High Court has established important guidelines for resolving property disputes under the Transfer of Property Act, 1882. The judgment clarifies that possession must be clearly established through documentary evidence, witness testimony, or adverse possession principles. Courts are directed to expedite property cases to reduce pending litigation. The ruling also addresses issues of land grabbing and unlawful occupation." },
+    { headline: "🇵🇰 Procedural Changes in Criminal Courts", source: "Supreme Judicial Council", fullText: "New procedural rules have been implemented in criminal courts across Pakistan to expedite trials under the Code of Criminal Procedure, 1898. Changes include: (1) Mandatory video conferencing for witness examination, (2) Electronic filing of documents, (3) Stricter time limits for adjournments. These reforms aim to reduce case backlogs and ensure speedy justice. All courts must implement these procedures immediately." },
   ];
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // EFFECTS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -351,7 +351,7 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   useEffect(() => {
     if (activeChatId === null) return;
@@ -379,9 +379,9 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [allSessions]);
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // HELPERS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
@@ -406,9 +406,9 @@ export default function App() {
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // CORE FUNCTIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const handleInstallApp = async () => {
     if (installPrompt) {
@@ -422,9 +422,9 @@ export default function App() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( [^ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! [OK]", "Install on iPhone / iPad", "[MOB]");
-    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ... ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! [OK]", "Install on Firefox", "[MOB]");
-    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu (  ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! [OK]", "Install on Samsung Browser", "[MOB]");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( [^ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on iPhone / iPad", "📲");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ... ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on Firefox", "📲");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( = ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! ✅", "Install on Samsung Browser", "📲");
     else arkAlert("On Android Chrome:\n1. Tap the three-dot menu at top right\n2. Tap \"Add to Home screen\" then \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "\xf0\x9f\x93\xb2");
   };
 
@@ -511,17 +511,16 @@ export default function App() {
     setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Pakistan, an AI legal assistant that answers EXCLUSIVELY about Pakistan law. You MUST ONLY answer questions related to Pakistan law, statutes, courts, and legal procedures. If the user asks about any other country's law, REFUSE and redirect to Pakistan law only. NEVER reference laws of USA, UK, Pakistan, India, Bangladesh, or any other jurisdiction unless the user is specifically asking how Pakistan law compares. Always title disclaimers "Professional Disclaimer by ARK LAW AI Pakistan". Reference only Pakistan statutes, case law, and legal authorities. ${langInstruction}]`;
-      const cleanHistory = messages
-        .filter(m => m.role === "user" || m.role === "assistant")
-        .filter(m => m.content && m.content.trim())
-        .map(m => m.role === "user" ? { role: "user", content: m.content.replace(/^\[System:.*?\]\n\n/s, "").trim() } : m)
-        .slice(-12);
-      const systemMsg = { role: "user", content: systemNote };
-      const newUserMsg = { role: "user", content: messageContent };
-      const messagesWithContext = cleanHistory.length > 0
-        ? [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI Pakistan, your Pakistani law assistant." }, ...cleanHistory, newUserMsg]
-        : [systemMsg, { role: "assistant", content: "Understood. I am ARK Law AI Pakistan, your Pakistani law assistant." }, newUserMsg];
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
+      const conversationPairs = [];
+      for (let i = 0; i < messages.length; i++) {
+        const m = messages[i];
+        if (!m.content || (typeof m.content === "string" && !m.content.trim())) continue;
+        if (m.role === "user") conversationPairs.push(m);
+        if (m.role === "assistant" && conversationPairs.length > 0 && conversationPairs[conversationPairs.length - 1].role === "user") conversationPairs.push(m);
+      }
+      const newUserMsg = { role: "user", content: systemNote + "\n\n" + messageContent };
+      const messagesWithContext = [...conversationPairs, newUserMsg];
       const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: messagesWithContext }) });
       if (!res.ok) { let errText = `HTTP ${res.status}`; try { const j = await res.json(); errText = j.error || j.message || errText; } catch {} throw new Error(errText); }
       const reader = res.body.getReader();
@@ -536,7 +535,7 @@ export default function App() {
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") break;
-            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollTop=messagesEndRef.current.scrollHeight;}catch(e){} } } catch (e) {}
+            try { const parsed = JSON.parse(data); if (parsed.content) { accumulatedContent += parsed.content; setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { ...n[streamingMessageIndex], role: "assistant", content: accumulatedContent }; return n; }); try{if(messagesEndRef.current) messagesEndRef.current.scrollIntoView({behavior:"smooth",block:"end"});}catch(e){} } } catch (e) {}
           }
         }
       }
@@ -544,7 +543,7 @@ export default function App() {
       setIsStreaming(false);
       setStreamingIdx(-1);
     } catch (error) {
-      setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `[ERR] Error: ${error.message}. Please try again.` }; return n; });
+      setMessages(prev => { const n = [...prev]; n[streamingMessageIndex] = { role: "assistant", content: `❌ Error: ${error.message}. Please try again.` }; return n; });
       setLoading(false);
       setIsStreaming(false);
       setStreamingIdx(-1);
@@ -552,13 +551,13 @@ export default function App() {
   };
 
   const startVoiceInput = () => {
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { arkAlert("Voice recognition is not supported on this browser.\nPlease use Chrome or Edge for best experience.", "ARK LAW AI", "[MIC]"); return; }
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) { arkAlert("Voice recognition is not supported on this browser.\nPlease use Chrome or Edge for best experience.", "ARK LAW AI", "🎤"); return; }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US"; recognition.continuous = false; recognition.interimResults = false;
     recognition.onstart  = () => setIsListening(true);
     recognition.onresult = (event) => { setInput(event.results[0][0].transcript); setIsListening(false); };
-    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") arkAlert("No speech detected. Please speak clearly and try again.", "Voice Input", "[MIC]"); };
+    recognition.onerror  = (event) => { setIsListening(false); if (event.error === "no-speech") arkAlert("No speech detected. Please speak clearly and try again.", "Voice Input", "🎤"); };
     recognition.onend    = () => setIsListening(false);
     recognition.start();
   };
@@ -566,7 +565,7 @@ export default function App() {
   const speakText = (text, messageIndex) => {
     if (isSpeaking && currentSpeakingIndex === messageIndex) { window.speechSynthesis.cancel(); setIsSpeaking(false); setCurrentSpeakingIndex(null); return; }
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/#{1,6}\s*/g,"").replace(/\*{1,3}([^*]+)\*{1,3}/g,"$1").replace(/\*+/g,"").replace(/_([^_]+)_/g,"$1").replace(/`{1,3}[^`]*`{1,3}/g,"").replace(/~~([^~]+)~~/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/!\[[^\]]*\]\([^)]+\)/g,"").replace(/^[-*+]\s+/gm,"").replace(/^\d+\.\s+/gm,"").replace(/^>\s+/gm,"").replace(/[-]{3,}/g,". ").replace(/[--]/g," ").replace(/\n+/g," ").replace(/\s{2,}/g," ").trim();
+    const cleanText = text.replace(/#{1,6}\s*/g,"").replace(/\*{1,3}([^*]+)\*{1,3}/g,"$1").replace(/\*+/g,"").replace(/_([^_]+)_/g,"$1").replace(/`{1,3}[^`]*`{1,3}/g,"").replace(/~~([^~]+)~~/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/!\[[^\]]*\]\([^)]+\)/g,"").replace(/^[-*+]\s+/gm,"").replace(/^\d+\.\s+/gm,"").replace(/^>\s+/gm,"").replace(/[-]{3,}/g,". ").replace(/[•·]/g," ").replace(/\n+/g," ").replace(/\s{2,}/g," ").trim();
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 0.88; utterance.pitch = 0.92; utterance.volume = 1.0; utterance.lang = "en-US";
     const selectVoice = () => {
@@ -604,7 +603,7 @@ export default function App() {
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "[DOC]"); setDraftStep("gathering-info"); }
+    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", ""); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
@@ -620,11 +619,11 @@ export default function App() {
   };
 
   const compareDocuments = async () => {
-    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "[CLB]"); return; }
-    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "[CLB]"); return; }
+    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", ""); return; }
+    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", ""); return; }
     const maxSize = 5 * 1024 * 1024;
-    if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "[WARN]"); return; }
-    if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "[WARN]"); return; }
+    if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
+    if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
     setComparingDocs(true); setComparisonResult("");
     try {
       const readFileAsBase64 = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result.split(",")[1]); reader.onerror = reject; reader.readAsDataURL(file); });
@@ -636,7 +635,7 @@ export default function App() {
       const data = await res.json();
       if (!data.reply) throw new Error("No response received from AI");
       setComparisonResult(data.reply);
-    } catch (error) { setComparisonResult(`[ERR] Error comparing documents: ${error.message}`); }
+    } catch (error) { setComparisonResult(`❌ Error comparing documents: ${error.message}`); }
     finally { setComparingDocs(false); }
   };
 
@@ -685,9 +684,9 @@ export default function App() {
         const imgUrl = imageMatch ? imageMatch[2] : urlMatch[1];
         const imgAlt = imageMatch ? imageMatch[1] : "Image";
         elements.push(<div key={`img-${index}`} style={{ marginBottom: "16px", marginTop: "16px" }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: "100%", height: "auto", borderRadius: "8px", border: `2px solid ${GOLD}`, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} onError={(e) => { e.target.style.display = "none"; }} /></div>);
-      } else if (trimmedLine.startsWith("-") || trimmedLine.startsWith("-")) {
+      } else if (trimmedLine.startsWith("•") || trimmedLine.startsWith("-")) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>-</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
+        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}></span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
       } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith("***") && trimmedLine.endsWith("***")) || (trimmedLine.endsWith(":") && trimmedLine.length < 60))) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
         elements.push(<h3 key={`h-${index}`} style={{ fontWeight: "bold", fontStyle: "italic", color: "#0D1B2A", marginTop: "16px", marginBottom: "8px", fontSize: "15px" }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, "")}</h3>);
@@ -704,9 +703,9 @@ export default function App() {
   const popupRow = { marginBottom: "11px" };
   const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // RENDER
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const [pkTheme, setPkTheme] = useState("chatgpt");
 
@@ -732,7 +731,6 @@ export default function App() {
 
   return (
     <>
-
       <Head>
         <title>ARK LAW AI Pakistan - My Learned Friend</title>
         <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
@@ -781,17 +779,13 @@ export default function App() {
         @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
-      {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
+      {/* =================== CHATGPT THEME =================== */}
       {pkTheme === "chatgpt" && (
       <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             SIDEBAR
-        ═══════════════════════════════════════════ */}
-        {/* Mobile overlay backdrop */}
-        {isMobile && sidebarOpen && (
-          <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:299}}/>
-        )}
+        =========================================== */}
         {/* Sidebar toggle when closed */}
         {!sidebarOpen && !isMobile && (
           <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
@@ -811,7 +805,7 @@ export default function App() {
             </button>
           </div>
         )}
-        <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:isMobile?0:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease",position:isMobile&&sidebarOpen?"absolute":"relative",zIndex:isMobile?300:1,top:0,left:0,bottom:0,boxShadow:isMobile&&sidebarOpen?"4px 0 20px rgba(0,0,0,0.15)":"none"}}>
+        <div className="sidebar-desktop" style={{width:sidebarOpen?"260px":"0px",minWidth:sidebarOpen?"260px":"0px",background:"#EDE8DF",display:"flex",flexDirection:"column",height:"100%",flexShrink:0,borderRight:sidebarOpen?"1px solid #C8BFB0":"none",overflow:"hidden",transition:"width 0.25s ease,min-width 0.25s ease"}}>
 
           {/* Logo + New Chat */}
           <div style={{padding:"10px 10px 6px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,minWidth:"260px"}}>
@@ -828,7 +822,7 @@ export default function App() {
                   <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
               </button>
-              <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
+              <button onClick={startNewChat} title={isUrdu ? "Nueva conversacion" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
               onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#b4b4b4";}}>
@@ -839,7 +833,7 @@ export default function App() {
 
           {/* Tools */}
           <div style={{padding:"4px 6px",flexShrink:0}}>
-            <button className="sb-item" onClick={()=>setShowSearchPopup(true)} style={{cursor:"pointer"}}>
+            <button className="sb-item" onClick={()=>setShowSearchPopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <span>Search chats</span>
             </button>
@@ -860,7 +854,7 @@ export default function App() {
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
                 {PRACTICE_AREAS_PK.map((area,i)=>(
                   <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
-                    onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
+                    onClick={()=>{sendMessage(isUrdu?`Cuentame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
                     <span>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                   </button>
@@ -886,7 +880,7 @@ export default function App() {
                 <div key={s.id} style={{position:"relative",group:true}}
                   onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
                   <button className={"sb-item"+(active?" active":"")}
-                    onClick={()=>{loadSession(s.id);setSessionMenu(null);if(isMobile)setSidebarOpen(false);}}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
                     onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
                     style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -932,7 +926,7 @@ export default function App() {
                     <div style={{fontSize:13,fontWeight:600,color:"#1A1209",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</div>
                     <div style={{fontSize:11,color:"#8A7A65",marginTop:"1px"}}>Free</div>
                   </div>
-                  <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "[GO]");}}
+                  <button onClick={e=>{e.stopPropagation();arkAlert("Upgrade plans are coming soon!\nYou will be able to unlock unlimited credits, priority support, and more.", "Upgrade ARK LAW AI", "🚀");}}
                     style={{padding:"5px 11px",background:"#FFFFFF",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:11,fontWeight:600,flexShrink:0,transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#F0EBE0";e.currentTarget.style.borderColor="#A89880";}}
                     onMouseLeave={e=>{e.currentTarget.style.background="#FFFFFF";e.currentTarget.style.borderColor="#C0B49A";}}>
@@ -959,7 +953,7 @@ export default function App() {
                 style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
-                ← 
+                &larr; 🌍
               </button>
               <select value={isUrdu?"ur":"en"} onChange={e=>setIsUrdu(e.target.value==="ur")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
@@ -970,9 +964,9 @@ export default function App() {
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             MAIN CONTENT
-        ═══════════════════════════════════════════ */}
+        =========================================== */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
                     {/* Top bar */}
@@ -982,20 +976,14 @@ export default function App() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <button onClick={()=>setSidebarOpen(o=>!o)}
-                  style={{width:"32px",height:"32px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-                  </svg>
-                </button>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
                 <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
-            {/* Tagline - visible on all screens */}
+            {/* Desktop tagline */}
             {!isMobile && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                <div style={{fontSize:isMobile?"12px":"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:isMobile?"1px":"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Faith - Unity - Discipline</div>
+                <div style={{fontSize:"clamp(15px,1.6vw,20px)",fontWeight:700,letterSpacing:"3px",background:"linear-gradient(135deg,#C9A84C 0%,#FFE08A 40%,#C9A84C 60%,#B8860B 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"taglineShimmer 4s linear infinite",whiteSpace:"nowrap"}}>Faith - Unity - Discipline</div>
                 <div style={{width:"80px",height:"1px",background:"linear-gradient(to right,transparent,#4CAF7D,transparent)",marginTop:"3px"}}/>
                 <div style={{fontSize:"10px",fontStyle:"italic",color:"#6A5A45",letterSpacing:"1.2px",marginTop:"2px"}}>Pakistan</div>
               </div>
@@ -1003,7 +991,8 @@ export default function App() {
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
               {/* Feedback button */}
-              <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+              {!isMobile && (
+                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
                   style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
                   onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
                   onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
@@ -1012,7 +1001,8 @@ export default function App() {
                     <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                   Feedback
-              </button>
+                </button>
+              )}
 
               {/* Three-dot menu */}
               {!isMobile && (
@@ -1025,46 +1015,39 @@ export default function App() {
                       <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                     </svg>
                   </button>
-                                {showChatMenu && (
+                  {showChatMenu && (
                     <div style={{position:"absolute",top:"40px",right:"0",background:"#FFFFFF",border:"1px solid #C8BFB0",borderRadius:"10px",boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,minWidth:"200px",padding:"6px 0",animation:"fadeSlideUp 0.15s ease"}}>
-                      {/* Share */}
+                      {/* Share item at top */}
                       <button onClick={()=>{setShowChatMenu(false);setShareSelected(messages.map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
+                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+                        </svg>
                         Share
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
-                      {/* Start group chat */}
-                      <button onClick={()=>{setShowChatMenu(false);const gId=Date.now();const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Group session started!"}],isGroup:true};setAllSessions(prev=>[gSession,...prev]);setActiveChatId(gId);setMessages(gSession.messages);}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
-                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        Start a group chat
-                      </button>
-                      <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
-                      {/* Pin */}
-                      <button onClick={()=>{setShowChatMenu(false);setAllSessions(prev=>prev.map(x=>{if(x.id!==activeChatId)return x;const p=x.title?.startsWith("[PIN] ");return{...x,title:p?x.title.replace("[PIN] ",""):"[PIN] "+x.title,pinned:!p};}));}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
-                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        Pin chat
-                      </button>
-                      {/* Archive */}
-                      <button onClick={()=>{setShowChatMenu(false);setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
-                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        Archive
-                      </button>
-                      <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
-                      {/* Delete */}
-                      <button onClick={()=>{setShowChatMenu(false);if(window.confirm("Delete this conversation?")){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}}}
-                        style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#DC2626",textAlign:"left"}}
-                        onMouseEnter={e=>e.currentTarget.style.background="#FEF2F2"}
-                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        Delete
-                      </button>
+                      {[
+                        {icon:null, label:"Start a group chat", action:()=>{
+                          setShowChatMenu(false);
+                          const gId=Date.now();
+                          const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Welcome to Group Chat! You can invite others to collaborate on this legal research session. Share the session link or discuss together."}],isGroup:true};
+                          setAllSessions(prev=>[gSession,...prev]);
+                          setActiveChatId(gId);
+                          setMessages(gSession.messages);
+                        }},
+                        {icon:null, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN]  "+s.title.replace("[PIN]  ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
+                        {icon:null, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
+                        {icon:null, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
+                      ].map(({icon,label,action,red})=>(
+                        <button key={label} onClick={action}
+                          style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
+                          onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                          onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                          {icon}{label}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -1091,7 +1074,7 @@ export default function App() {
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
-                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "en que puedo ayudarle hoy?" : "How can I help you today?"}</h2>
                 <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI Pakistan  -  su asistente legal experto" : "ARK Law AI Pakistan  -  your expert Pakistani law assistant"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
@@ -1146,15 +1129,15 @@ export default function App() {
                                 :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
                               <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,like:!r.like,dislike:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].like)?"#1a3a1a":"transparent",color:(reactions[i]&&reactions[i].like)?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,dislike:!r.dislike,like:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].dislike)?"#3a1a1a":"transparent",color:(reactions[i]&&reactions[i].dislike)?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
                           </div>
                         )}
@@ -1182,7 +1165,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* ═══════════════════ INPUT AREA ═══════════════════ */}
+          {/* =================== INPUT AREA =================== */}
           <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#F5F0E8",flexShrink:0}}>
 
             {/* Attached files */}
@@ -1191,7 +1174,7 @@ export default function App() {
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
                     <span> {file.name}</span>
-                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}></button>
                   </div>
                 ))}
               </div>
@@ -1235,7 +1218,7 @@ export default function App() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
-              {isUrdu ? "ARK Law AI غلطیاں کر سکتا ہے۔ اہم قانونی معلومات کی تصدیق کریں۔" : "ARK Law AI Pakistan may make mistakes. Verify important legal information."}
+              "ARK Law AI Pakistan may make mistakes. Verify important legal information."
             </div>
           </div>
         </div>
@@ -1248,14 +1231,14 @@ export default function App() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic Pakistan UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_pk_theme","classic");window.location.href="/pakistan-classic";}} style={{padding:"10px 24px",background:"#4CAF7D",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &#x203A;</button>
-          <button onClick={()=>{setPkTheme("chatgpt");localStorage.setItem("arklaw_pk_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
+          <button onClick={()=>{localStorage.setItem("arklaw_pk_theme","classic");window.location.href="/pakistan-classic";}} style={{padding:"10px 24px",background:"#4CAF7D",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &rarr;</button>
+          <button onClick={()=>{setPkTheme("chatgpt");localStorage.setItem("arklaw_pk_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}> Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
-      {/* ═══════════════════════════════════════════
+      {/* ===========================================
           POPUPS (US theme  -  navy/red)
-      ═══════════════════════════════════════════ */}
+      =========================================== */}
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
@@ -1276,7 +1259,7 @@ export default function App() {
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
                 <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}> Legal Analysis:</h4>
-                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
+                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}> Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
@@ -1300,25 +1283,23 @@ export default function App() {
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>[CLB] Step 1: Select Document Type</h4>
-                  <select value={draftType} onChange={e=>
-                    <option value="">Select Document Type --</option>
-                    <option value="affidavit">Affidavit</option>
-                    <option value="contract">General Contract (Pakistani Law)</option>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}> Step 1: Select Document Type</h4>
+                  <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
+                    <option value="">-- Select Document Type --</option>
+                    <option value="rental-agreement">Rental/Lease Agreement</option>
+                    <option value="contract">General Contract</option>
                     <option value="nda">Non-Disclosure Agreement (NDA)</option>
-                    <option value="tenancy">Tenancy Agreement</option>
-                    <option value="sale_deed">Sale Deed</option>
-                    <option value="power_attorney">Power of Attorney (Wakalatnama)</option>
-                    <option value="employment">Employment Contract</option>
-                    <option value="partnership">Partnership Deed</option>
-                    <option value="divorce">Divorce Deed (Talaqnama)</option>
-                    <option value="nikah">Nikah Nama</option>
-                    <option value="will">Will / Wasiyatnama</option>
-                    <option value="promissory_note">Promissory Note / Hundnama</option>
-                    <option value="legal_notice">Legal Notice</option>
-                    <option value="bail_application">Bail Application</option>
+                    <option value="affidavit">Affidavit</option>
+                    <option value="will">Will / Testament</option>
+                    <option value="power-of-attorney">Power of Attorney</option>
+                    <option value="employment-agreement">Employment Agreement</option>
+                    <option value="partnership-deed">Partnership Agreement</option>
+                    <option value="sale-deed">Real Estate Purchase Agreement</option>
+                    <option value="divorce-agreement">Divorce Settlement Agreement</option>
+                    <option value="loan-agreement">Loan Agreement</option>
+                    <option value="trust-deed">Trust Agreement</option>
                   </select>
-                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "[DOC]");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#4CAF7D":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#3D9B6A";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#4CAF7D";}}>
                     Next: Provide Information &rarr;
@@ -1331,15 +1312,15 @@ export default function App() {
                   <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Step 2: Provide Information</h4>
                   <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
                     <div style={{background:"#DDD6CB",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #C0B49A"}}>
-                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n- Party names and addresses\n- Terms and conditions\n- Duration/timeline\n- Special clauses\n- Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
+                      <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
-                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}> Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#4CAF7D",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#3D9B6A";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#4CAF7D";}}>
-                      {draftGenerating?"⏳ Generating...":"[GO] Generate with AI"}
+                      {draftGenerating?"⏳ Generating...":"🚀 Generate with AI"}
                     </button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,marginTop:"10px"}}>Cancel</button>
@@ -1348,22 +1329,22 @@ export default function App() {
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
                   <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
-                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
+                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}> Generating Your Document...</h4>
                   <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
               {draftStep==="completed" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>[OK] Document Generated!</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Document Generated!</h4>
                   <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
                   <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #4CAF7D",marginBottom:"14px"}}>
-                    <div style={{color:"#4CAF7D",fontSize:10,fontWeight:600,marginBottom:"3px"}}>[WARN] LEGAL DISCLAIMER</div>
+                    <div style={{color:"#4CAF7D",fontSize:10,fontWeight:600,marginBottom:"3px"}}> LEGAL DISCLAIMER</div>
                     <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
                     <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}> New</button>
                     <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#4CAF7D",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#3D9B6A"} onMouseLeave={e=>e.currentTarget.style.background="#4CAF7D"}> DOCX</button>
-                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>[DOC] PDF</button>
+                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> PDF</button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
@@ -1387,7 +1368,7 @@ export default function App() {
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>[DOC] {label}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
                   {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
@@ -1396,7 +1377,7 @@ export default function App() {
                 <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
-              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
+              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}> Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
                 <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
                   <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}> Comparison Report</div>
@@ -1407,9 +1388,9 @@ export default function App() {
                 <button onClick={compareDocuments} disabled={comparingDocs}
                   style={{flex:1,padding:"11px",background:comparingDocs?"#333":"#4CAF7D",color:"white",border:"none",borderRadius:"8px",cursor:comparingDocs?"not-allowed":"pointer",fontWeight:700,fontSize:12}}
                   onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#3D9B6A";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#4CAF7D";}}>
-                  {comparingDocs?"⏳ Analyzing...":" Compare"}
+                  {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
                 </button>
-                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>[DOC] Download</button>}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> Download</button>}
               </div>
               <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
@@ -1434,7 +1415,7 @@ export default function App() {
               try{
                 const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
                 const data=await res.json();
-                if(!res.ok){arkAlert(data.error||"Invalid email or password. Please try again.", "Login Failed", "[ERR]");return;}
+                if(!res.ok){arkAlert(data.error||"Invalid email or password. Please try again.", "Login Failed", "❌");return;}
                 const restoredTokens=data.user.tokens||500000;
                 const userWithTokens={...data.user,tokens:restoredTokens};
                 localStorage.setItem("arklaw_user",JSON.stringify(userWithTokens));
@@ -1448,8 +1429,8 @@ export default function App() {
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
                 }
                 setShowLoginPopup(false);
-                arkAlert("Welcome back, "+data.user.name+"!\n\nYou have "+restoredTokens.toLocaleString()+" credits remaining.", "Welcome Back [HI]", "[OK]");
-              }catch(error){arkAlert("Login failed. Please check your connection and try again.", "Login Error", "[ERR]");}
+                arkAlert("Welcome back, "+data.user.name+"!\n\nYou have "+restoredTokens.toLocaleString()+" credits remaining.", "Welcome Back 👋", "✅");
+              }catch(error){arkAlert("Login failed. Please check your connection and try again.", "Login Error", "❌");}
             }}>
               <div style={{marginBottom:"11px"}}>
                 <label style={{color:"#3A2A18",fontSize:11,display:"block",marginBottom:"5px",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px"}}>Email Address</label>
@@ -1483,9 +1464,9 @@ export default function App() {
               try{
                 const res=await fetch("/api/auth/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:fd.get("email"),password:fd.get("password"),name:fd.get("name"),profession:fd.get("profession"),barOfPractice:"",city:fd.get("city"),province:fd.get("province"),country:"Pakistan"})});
                 const data=await res.json();
-                if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n[CEL] 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "[CEL]");setShowLoginPopup(true);}
-                else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "[ERR]");}
-              }catch(error){arkAlert("Signup failed: "+error.message, "Signup Error", "[ERR]");}
+                if(res.ok){setShowSignupPopup(false);arkAlert("Account created successfully!\n\n🎉 500,000 FREE credits awarded!\n\nPlease log in to start using ARK LAW AI.", "Account Created!", "🎉");setShowLoginPopup(true);}
+                else{arkAlert(data.error||"Signup failed. Please try again.", "Signup Failed", "❌");}
+              }catch(error){arkAlert("Signup failed: "+error.message, "Signup Error", "❌");}
             }}>
               {[{l:"Email *",n:"email",t:"email",ph:"your@email.com"},{l:"Password * (min 6 chars)",n:"password",t:"password",ph:"Minimum 6 characters"},{l:"Full Name *",n:"name",t:"text",ph:"Your full name"}].map(({l,n,t,ph})=>(
                 <div key={n} style={{marginBottom:"10px"}}>
@@ -1513,7 +1494,7 @@ export default function App() {
                   </select>
                 </div>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits </button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits ✨</button>
               <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
@@ -1598,7 +1579,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Share Popup ── */}
+      {/* ── Share Popup ── */}
       {showSharePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowSharePopup(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"14px",width:"90%",maxWidth:"500px",border:"1px solid #C8BFB0",boxShadow:"0 12px 40px rgba(0,0,0,0.15)",overflow:"hidden"}}>
@@ -1634,7 +1615,7 @@ export default function App() {
                 const selected = messages.filter((_,i)=>shareSelected.includes(i));
                 const text = selected.map(m=>(m.role==="user"?"You: ":"ARK Law AI: ")+m.content).join("\n\n---\n\n");
                 if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
-                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "[OK]");}).catch(()=>{});}
+                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "✅");}).catch(()=>{});}
               }} disabled={shareSelected.length===0}
                 style={{padding:"8px 20px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"8px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:"6px"}}
                 onMouseEnter={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#2A1E10";}}
@@ -1715,7 +1696,7 @@ export default function App() {
                 /* No query  -  show grouped by date */
                 <div>
                   {/* New chat option */}
-                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
                     style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
@@ -1881,8 +1862,8 @@ export default function App() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN] ",""), "Rename Chat", "Conversation name...").then(t=>{
-                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN] ":"")+t.trim()}:x));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN]  ",""), "Rename Chat", "Conversation name...").then(t=>{
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN]  ":"")+t.trim()}:x));
                 setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
@@ -1896,8 +1877,8 @@ export default function App() {
             <button onClick={()=>{
                 setAllSessions(prev=>prev.map(x=>{
                   if(x.id!==sessionMenu.id) return x;
-                  const isPinned=x.title?.startsWith("[PIN] ");
-                  return {...x,title:isPinned?x.title.replace("[PIN] ",""):"[PIN] "+x.title.replace("[PIN] ",""),pinned:!isPinned};
+                  const isPinned=x.title?.startsWith("[PIN]  ");
+                  return {...x,title:isPinned?x.title.replace("[PIN]  ",""):"[PIN]  "+x.title.replace("[PIN]  ",""),pinned:!isPinned};
                 }));
                 setSessionMenu(null);
               }}
