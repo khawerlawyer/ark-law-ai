@@ -95,7 +95,7 @@ function USNewsWidget() {
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
           <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>· US Legal News</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}> US Legal News</span>
         </div>
         <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
       </div>
@@ -207,7 +207,7 @@ function BDNewsWidget() {
         <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
           <div style={{ width:"7px", height:"7px", borderRadius:"50%", background:"white", animation:"pulse 1.5s infinite" }} />
           <span style={{ fontSize:10, fontWeight:700, color:"white", letterSpacing:"1px" }}>LIVE</span>
-          <span style={{ fontSize:10, color:"rgba(255,255,255,0.85)" }}> · Bangladesh Legal News</span>
+          <span style={{ fontSize:10, color:"rgba(255,255,255,0.85)" }}>  Bangladesh Legal News</span>
         </div>
         <span style={{ fontSize:12, color:"white" }}>{exp ? "▲" : "▼"}</span>
       </div>
@@ -394,28 +394,28 @@ export default function AppBD() {
     compareTitle:    "Comparar Documentos",
     compareSubtitle: "Sube 2 docs para comparar",
     draftTitle:      "Redactar Documentos",
-    draftSubtitle:   "Contratos, declaraciones y más",
-    areasLabel:      "Áreas de Práctica",
-    placeholder:     "Pregúntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el micrófono...",
+    draftSubtitle:   "Contratos, declaraciones y mas",
+    areasLabel:      "Areas de Practica",
+    placeholder:     "Preguntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el microfono...",
     send:            "Enviar",
-    login:           "Iniciar sesión",
+    login:           "Iniciar sesion",
     listening:       "Escuchando...",
-    thinking:        "ARK está pensando...",
+    thinking:        "ARK esta pensando...",
     myAccount:       "Mi Cuenta",
-    newChat:         "Nueva sesión",
+    newChat:         "Nueva sesion",
     quickQueries: [
-      "¿Cuáles son mis derechos como inquilino en EE.UU.?",
-      "¿Cómo presento una demanda en EE.UU.?",
-      "¿Cuál es el proceso de divorcio en EE.UU.?",
+      "Cuales son mis derechos como inquilino en EE.UU.?",
+      "Como presento una demanda en EE.UU.?",
+      "Cual es el proceso de divorcio en EE.UU.?",
       "Explica las leyes de herencia en EE.UU.",
-      "¿Cuáles son mis derechos laborales en EE.UU.?",
-      "¿Cómo redacto un testamento en EE.UU.?",
-      "¿Qué es un poder notarial?",
+      "Cuales son mis derechos laborales en EE.UU.?",
+      "Como redacto un testamento en EE.UU.?",
+      "Que es un poder notarial?",
       "Explica la ley de contratos en EE.UU.",
     ],
     practiceAreas: [
       "Derecho General", "Derecho Penal", "Corporativo y Negocios",
-      "Derecho de Familia", "Inmigración", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
+      "Derecho de Familia", "Inmigracion", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
     ],
   };
 
@@ -428,9 +428,9 @@ export default function AppBD() {
     { headline: "🇺🇸 Immigration Court Backlogs Prompt Emergency Procedural Reforms", source: "Executive Office for Immigration Review (EOIR)", fullText: "The EOIR has announced emergency procedural reforms to address a record backlog of over 3 million pending immigration cases. Changes include: (1) Expanded use of video hearings, (2) Priority scheduling for asylum cases older than two years, (3) New guidelines for continuance requests. Immigration attorneys and advocates are encouraged to review the updated procedural manual. The reforms aim to reduce average case wait times from 5 years to under 3 years." },
   ];
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // EFFECTS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -495,9 +495,9 @@ export default function AppBD() {
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // HELPERS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
@@ -522,9 +522,9 @@ export default function AppBD() {
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // CORE FUNCTIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   const handleInstallApp = async () => {
     if (installPrompt) {
@@ -538,9 +538,9 @@ export default function AppBD() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on iPhone / iPad", "📲");
-    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on Firefox", "📲");
-    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! ✅", "Install on Samsung Browser", "📲");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( [^ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on iPhone / iPad", "📲");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ... ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" - done! ✅", "Install on Firefox", "📲");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( = ) at the bottom\n2. Tap \"Add page to\" then \"Home screen\"\n3. Tap \"Add\" - done! ✅", "Install on Samsung Browser", "📲");
     else arkAlert("On Android Chrome:\n1. Tap the three-dot menu at top right\n2. Tap \"Add to Home screen\" then \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "\xf0\x9f\x93\xb2");
   };
 
@@ -610,7 +610,7 @@ export default function AppBD() {
     }
     let messageContent = userMessage.trim();
     if (fileContents.length > 0) {
-      messageContent += "\n\n📎 Attached Files:\n";
+      messageContent += "\n\n Attached Files:\n";
       fileContents.forEach(file => {
         if (file.type === "text")          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
         else if (file.type === "document") messageContent += `\n${file.message}\n`;
@@ -716,7 +716,7 @@ export default function AppBD() {
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
+    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", ""); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
@@ -732,8 +732,8 @@ export default function AppBD() {
   };
 
   const compareDocuments = async () => {
-    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "📋"); return; }
-    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "📋"); return; }
+    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", ""); return; }
+    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", ""); return; }
     const maxSize = 5 * 1024 * 1024;
     if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
     if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
@@ -798,7 +798,7 @@ export default function AppBD() {
         elements.push(<div key={`img-${index}`} style={{ marginBottom: "16px", marginTop: "16px" }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: "100%", height: "auto", borderRadius: "8px", border: `2px solid ${GOLD}`, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} onError={(e) => { e.target.style.display = "none"; }} /></div>);
       } else if (trimmedLine.startsWith("•") || trimmedLine.startsWith("-")) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>•</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
+        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}></span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
       } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith("***") && trimmedLine.endsWith("***")) || (trimmedLine.endsWith(":") && trimmedLine.length < 60))) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
         elements.push(<h3 key={`h-${index}`} style={{ fontWeight: "bold", fontStyle: "italic", color: "#0D1B2A", marginTop: "16px", marginBottom: "8px", fontSize: "15px" }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, "")}</h3>);
@@ -815,9 +815,9 @@ export default function AppBD() {
   const popupRow = { marginBottom: "11px" };
   const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
   // RENDER
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
 
   return (
     <>
@@ -862,17 +862,21 @@ export default function AppBD() {
         .qcard:hover{background:#F0EBE0;}
         .input-wrap{background:#FFFFFF;border:1px solid #C0B49A;border-radius:16px;transition:border-color 0.2s;}
         .input-wrap:focus-within{border-color:#006A4E;}
-        @media(max-width:768px){.sidebar-desktop{display:none!important;}}
+        @media(max-width:768px){.sidebar-desktop{position:fixed!important;top:0;left:0;bottom:0;z-index:400!important;box-shadow:4px 0 24px rgba(0,0,0,0.18)!important;}}
       `}</style>
 
-      {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
+      {/* =================== CHATGPT THEME =================== */}
       {bdTheme === "chatgpt" && (
       <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             SIDEBAR
-        ═══════════════════════════════════════════ */}
+        =========================================== */}
         {/* Sidebar toggle when closed */}
+        {/* Mobile backdrop */}
+        {isMobile && sidebarOpen && (
+          <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:399}}/>
+        )}
         {!sidebarOpen && !isMobile && (
           <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
             <button onClick={()=>setSidebarOpen(true)} title="Open sidebar"
@@ -925,22 +929,22 @@ export default function AppBD() {
             </button>
             <button className="sb-item" onClick={()=>setShowComparePopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
-              <span>{isUrdu ? "দলিল তুলনা" : "Compare Documents"}</span>
+              <span>"Compare Documents"</span>
             </button>
             <button className="sb-item" onClick={()=>setShowDraftPopup(true)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              <span>{isUrdu ? "দলিল তৈরি" : "Draft Documents"}</span>
+              <span>"Draft Documents"</span>
             </button>
             <button className="sb-item" onClick={()=>setShowPracticeAreas(p=>!p)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>{isUrdu ? "আইনি বিষয়" : "Practice Areas"}</span>
+              <span>"Practice Areas"</span>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{marginLeft:"auto",transform:showPracticeAreas?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {showPracticeAreas && (
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
                 {PRACTICE_AREAS_BD.map((area,i)=>(
                   <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
-                    onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
+                    onClick={()=>{sendMessage(isUrdu?`Cuentame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
                     <span>{isUrdu ? BD_LOCAL_AREAS[i] : area.label}</span>
                   </button>
@@ -966,7 +970,7 @@ export default function AppBD() {
                 <div key={s.id} style={{position:"relative",group:true}}
                   onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
                   <button className={"sb-item"+(active?" active":"")}
-                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);if(isMobile)setSidebarOpen(false);}}
                     onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
                     style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -992,7 +996,7 @@ export default function AppBD() {
                 <button onClick={()=>setShowLoginPopup(true)}
                   style={{flex:1,padding:"9px 0",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:500,transition:"background 0.15s"}}
                   onMouseEnter={e=>e.currentTarget.style.background="#2f2f2f"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  {isUrdu ? "লগ ইন" : "Log in"}
+                  "Log in"
                 </button>
                 <button onClick={()=>setShowSignupPopup(true)}
                   style={{flex:1,padding:"9px 0",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>
@@ -1039,20 +1043,20 @@ export default function AppBD() {
                 style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
-                ← 🌍
+                &larr; 🌍
               </button>
               <select value={isUrdu?"bn":"en"} onChange={e=>setIsUrdu(e.target.value==="bn")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
-                <option value="en">🌐 English</option>
+                <option value="en">English</option>
                 <option value="bn">Bangla</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════
+        {/* ===========================================
             MAIN CONTENT
-        ═══════════════════════════════════════════ */}
+        =========================================== */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
                     {/* Top bar */}
@@ -1062,8 +1066,14 @@ export default function AppBD() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
-                <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
+                <button onClick={()=>setSidebarOpen(o=>!o)}
+                  style={{width:"32px",height:"32px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0}}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                  </svg>
+                </button>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"26px",height:"26px",objectFit:"contain"}}/>
+                <span style={{fontSize:13,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
             {/* Desktop tagline */}
@@ -1077,9 +1087,20 @@ export default function AppBD() {
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
 
+              {/* Feedback button */}
+              <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+                style={{display:"flex",alignItems:"center",gap:"6px",padding:isMobile?"5px 9px":"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:isMobile?11:12,fontWeight:500,transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {!isMobile && "Feedback"}
+              </button>
+
               {/* Three-dot menu */}
-              {!isMobile && (
-                <div style={{position:"relative"}}>
+              <div style={{position:"relative"}}>
                   <button onClick={()=>setShowChatMenu(m=>!m)}
                     style={{width:"34px",height:"34px",background:showChatMenu?"#D8D0C4":"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
@@ -1102,7 +1123,7 @@ export default function AppBD() {
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {[
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{
+                        {icon:null, label:"Start a group chat", action:()=>{
                           setShowChatMenu(false);
                           const gId=Date.now();
                           const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Welcome to Group Chat! You can invite others to collaborate on this legal research session. Share the session link or discuss together."}],isGroup:true};
@@ -1110,9 +1131,9 @@ export default function AppBD() {
                           setActiveChatId(gId);
                           setMessages(gSession.messages);
                         }},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
+                        {icon:null, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN]  "+s.title.replace("[PIN]  ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
+                        {icon:null, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
+                        {icon:null, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
                       ].map(({icon,label,action,red})=>(
                         <button key={label} onClick={action}
                           style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
@@ -1124,7 +1145,6 @@ export default function AppBD() {
                     </div>
                   )}
                 </div>
-              )}
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
                   <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
@@ -1151,7 +1171,7 @@ export default function AppBD() {
                   {isUrdu ? "How can I help you today?" : "How can I help you today?"}
                 </h2>
                 <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>
-                  {isUrdu ? "ARK Law AI Bangladesh" : "ARK Law AI Bangladesh  -  your expert legal assistant"}
+                  {"ARK Law AI Bangladesh  -  your expert legal assistant"}
                 </p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? BD_LOCAL_QUERIES : QUICK_QUERIES_BD).slice(0,4).map((q,i)=>(
@@ -1203,15 +1223,15 @@ export default function AppBD() {
                                 :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
                               <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,like:!r.like,dislike:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].like)?"#1a3a1a":"transparent",color:(reactions[i]&&reactions[i].like)?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
-                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,dislike:!r.dislike,like:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].dislike)?"#3a1a1a":"transparent",color:(reactions[i]&&reactions[i].dislike)?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
                           </div>
                         )}
@@ -1239,7 +1259,7 @@ export default function AppBD() {
             </div>
           </div>
 
-          {/* ═══════════════════ INPUT AREA ═══════════════════ */}
+          {/* =================== INPUT AREA =================== */}
           <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#F5F0E8",flexShrink:0}}>
 
             {/* Attached files */}
@@ -1247,8 +1267,8 @@ export default function AppBD() {
               <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
-                    <span>📎 {file.name}</span>
-                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
+                    <span> {file.name}</span>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}></button>
                   </div>
                 ))}
               </div>
@@ -1292,7 +1312,7 @@ export default function AppBD() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#9A8A75"}}>
-              {isUrdu ? "ARK Law AI ভুল করতে পারে। Verify important legal information." : "ARK Law AI Bangladesh may make mistakes. Verify important legal information."}
+              "ARK Law AI Bangladesh may make mistakes. Verify important legal information."
             </div>
           </div>
         </div>
@@ -1305,14 +1325,14 @@ export default function AppBD() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic Bangladesh UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_bd_theme","classic");window.location.href="/bangladesh-classic";}} style={{padding:"10px 24px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
-          <button onClick={()=>{setBdTheme("chatgpt");localStorage.setItem("arklaw_bd_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
+          <button onClick={()=>{localStorage.setItem("arklaw_bd_theme","classic");window.location.href="/bangladesh-classic";}} style={{padding:"10px 24px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &rarr;</button>
+          <button onClick={()=>{setBdTheme("chatgpt");localStorage.setItem("arklaw_bd_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}> Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
-      {/* ═══════════════════════════════════════════
+      {/* ===========================================
           POPUPS (US theme  -  navy/red)
-      ═══════════════════════════════════════════ */}
+      =========================================== */}
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
@@ -1322,18 +1342,18 @@ export default function AppBD() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",objectFit:"contain"}}/>
                 <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI Bangladesh</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
               </div>
-              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"25px"}}>
               <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #006A4E"}}>
-                <span style={{fontSize:10,color:"#5A4A35"}}>📰 Source:</span>
+                <span style={{fontSize:10,color:"#5A4A35"}}> Source:</span>
                 <span style={{fontSize:11,color:"#006A4E",fontWeight:600}}>{selectedNews.source}</span>
               </div>
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
-                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}>⚖️ Legal Analysis:</h4>
-                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
+                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}> Legal Analysis:</h4>
+                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}> Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
@@ -1350,47 +1370,47 @@ export default function AppBD() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}> AI Legal Document Drafting</div></div>
               </div>
-              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}> Step 1: Select Document Type</h4>
                   <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">-- Select Document Type --</option>
-                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
-                    <option value="contract">📄 General Contract</option>
-                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
-                    <option value="affidavit">⚖️ Affidavit</option>
-                    <option value="will">📜 Will / Testament</option>
-                    <option value="power-of-attorney">🔑 Power of Attorney</option>
-                    <option value="employment-agreement">💼 Employment Agreement</option>
-                    <option value="partnership-deed">🤝 Partnership Agreement</option>
-                    <option value="sale-deed">🏘️ Real Estate Purchase Agreement</option>
-                    <option value="divorce-agreement">💔 Divorce Settlement Agreement</option>
-                    <option value="loan-agreement">💰 Loan Agreement</option>
-                    <option value="trust-deed">🏛️ Trust Agreement</option>
+                    <option value="rental-agreement">Rental/Lease Agreement</option>
+                    <option value="contract">General Contract</option>
+                    <option value="nda">Non-Disclosure Agreement (NDA)</option>
+                    <option value="affidavit">Affidavit</option>
+                    <option value="will">Will / Testament</option>
+                    <option value="power-of-attorney">Power of Attorney</option>
+                    <option value="employment-agreement">Employment Agreement</option>
+                    <option value="partnership-deed">Partnership Agreement</option>
+                    <option value="sale-deed">Real Estate Purchase Agreement</option>
+                    <option value="divorce-agreement">Divorce Settlement Agreement</option>
+                    <option value="loan-agreement">Loan Agreement</option>
+                    <option value="trust-deed">Trust Agreement</option>
                   </select>
-                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#006A4E":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#006A4E";}}>
-                    Next: Provide Information →
+                    Next: Provide Information &rarr;
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
               )}
               {draftStep==="gathering-info" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Step 2: Provide Information</h4>
                   <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
                     <div style={{background:"#DDD6CB",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #C0B49A"}}>
                       <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
-                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}> Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#006A4E";}}>
@@ -1403,22 +1423,22 @@ export default function AppBD() {
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
                   <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
-                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
+                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}> Generating Your Document...</h4>
                   <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
               {draftStep==="completed" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Document Generated!</h4>
                   <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
                   <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #006A4E",marginBottom:"14px"}}>
-                    <div style={{color:"#006A4E",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
+                    <div style={{color:"#006A4E",fontSize:10,fontWeight:600,marginBottom:"3px"}}> LEGAL DISCLAIMER</div>
                     <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
-                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
-                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}>📥 DOCX</button>
-                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
+                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}> New</button>
+                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}> DOCX</button>
+                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> PDF</button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
@@ -1435,26 +1455,26 @@ export default function AppBD() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh</div><div style={{fontSize:11,color:"#5A4A35"}}> Compare Legal Documents</div></div>
               </div>
-              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
                   {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
-                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
+                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
-              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
+              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}> Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
                 <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
-                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
+                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}> Comparison Report</div>
                   <div style={{color:"#4A3A28",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
                 </div>
               )}
@@ -1464,7 +1484,7 @@ export default function AppBD() {
                   onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#004d38";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#006A4E";}}>
                   {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
                 </button>
-                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> Download</button>}
               </div>
               <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
@@ -1593,7 +1613,7 @@ export default function AppBD() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",objectFit:"contain"}}/>
                 <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI Bangladesh <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
               </div>
-              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
+              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#006A4E,transparent)",flexShrink:0}}/>
             <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
@@ -1603,7 +1623,7 @@ export default function AppBD() {
                   <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
-                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
+                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}> Credit Balance</div>
                   <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
                     <div style={{flex:1,height:"6px",background:"#D8D0C4",borderRadius:"3px",overflow:"hidden"}}>
                       <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
@@ -1621,16 +1641,16 @@ export default function AppBD() {
                     </div>
                   ))}
                 </div>
-                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}>🚪 Logout &amp; Save History</button>
+                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#006A4E",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#004d38"} onMouseLeave={e=>e.currentTarget.style.background="#006A4E"}> Logout &amp; Save History</button>
               </div>
               <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{padding:"12px 14px",borderBottom:"1px solid #C8BFB0",flexShrink:0}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}> Chat History</div>
                   <div style={{fontSize:9,color:"#8A7A65",marginTop:"2px"}}>Your saved conversations</div>
                 </div>
                 <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
-                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#8A7A65"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
+                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#8A7A65"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}></div><div style={{fontSize:11}}>No conversations yet</div></div>
                     :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
                       <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#DDD6CB",padding:"8px 10px",borderRadius:"8px",border:"1px solid #C8BFB0",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
                         <div style={{color:"#1A1209",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
@@ -1640,7 +1660,7 @@ export default function AppBD() {
                   }
                 </div>
                 <div style={{padding:"8px 10px",borderTop:"1px solid #C8BFB0",background:"#F5F0E8",flexShrink:0,textAlign:"center"}}>
-                  <span style={{fontSize:9,color:"#8A7A65",fontStyle:"italic"}}>✓ History auto-saved</span>
+                  <span style={{fontSize:9,color:"#8A7A65",fontStyle:"italic"}}> History auto-saved</span>
                 </div>
               </div>
             </div>
@@ -1651,7 +1671,7 @@ export default function AppBD() {
       {showComingSoon && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #006A4E",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
-            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
+            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}></button>
             <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"16px"}}/>
             <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
             <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
@@ -1667,7 +1687,7 @@ export default function AppBD() {
             {/* Header */}
             <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #E4DDD0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
-              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}>✕</button>
+              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}></button>
             </div>
             {/* Message selection */}
             <div style={{padding:"16px 20px",maxHeight:"320px",overflowY:"auto"}}>
@@ -1774,10 +1794,10 @@ export default function AppBD() {
             {/* Results */}
             <div style={{maxHeight:"420px",overflowY:"auto"}}>
               {searchQuery.trim() === "" ? (
-                /* No query — show grouped by date */
+                /* No query  -  show grouped by date */
                 <div>
                   {/* New chat option */}
-                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
                     style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
@@ -1943,8 +1963,8 @@ export default function AppBD() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                arkPrompt("Enter a new name for this conversation:", s.title.replace("📌 ",""), "Rename Chat", "Conversation name...").then(t=>{
-                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN]  ",""), "Rename Chat", "Conversation name...").then(t=>{
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN]  ":"")+t.trim()}:x));
                 setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
@@ -1958,8 +1978,8 @@ export default function AppBD() {
             <button onClick={()=>{
                 setAllSessions(prev=>prev.map(x=>{
                   if(x.id!==sessionMenu.id) return x;
-                  const isPinned=x.title?.startsWith("📌 ");
-                  return {...x,title:isPinned?x.title.replace("📌 ",""):"📌 "+x.title.replace("📌 ",""),pinned:!isPinned};
+                  const isPinned=x.title?.startsWith("[PIN]  ");
+                  return {...x,title:isPinned?x.title.replace("[PIN]  ",""):"[PIN]  "+x.title.replace("[PIN]  ",""),pinned:!isPinned};
                 }));
                 setSessionMenu(null);
               }}
@@ -1984,7 +2004,7 @@ export default function AppBD() {
             <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
             {/* Delete */}
             <button onClick={()=>{
-                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{ if(ok){
+                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{ if(ok){
                   setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
                   if(activeChatId===sessionMenu.id) startNewChat();
                 }});  setSessionMenu(null);
