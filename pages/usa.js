@@ -522,7 +522,7 @@ export default function AppUSA() {
     }
     let messageContent = userMessage.trim();
     if (fileContents.length > 0) {
-      messageContent += "\n\n📎 Attached Files:\n";
+      messageContent += "\n\n Attached Files:\n";
       fileContents.forEach(file => {
         if (file.type === "text")          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
         else if (file.type === "document") messageContent += `\n${file.message}\n`;
@@ -1046,9 +1046,9 @@ export default function AppUSA() {
                           setActiveChatId(gId);
                           setMessages(gSession.messages);
                         }},
-                        {icon:null, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
+                        {icon:null, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN]  "+s.title.replace("[PIN]  ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
                         {icon:null, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:null, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
+                        {icon:null, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
                       ].map(({icon,label,action,red})=>(
                         <button key={label} onClick={action}
                           style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
@@ -1138,18 +1138,16 @@ export default function AppUSA() {
                                 :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
                               <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
                             </button>
-                            {(()=>{ const liked=!!(reactions[i]&&reactions[i].like); const disliked=!!(reactions[i]&&reactions[i].dislike); return (<>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...(prev[i]||{}),like:!liked,dislike:false}}));}}
-                              style={{padding:"4px 9px",background:liked?"#1a3a1a":"transparent",color:liked?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,like:!r.like,dislike:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].like)?"#1a3a1a":"transparent",color:(reactions[i]&&reactions[i].like)?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...(prev[i]||{}),dislike:!disliked,like:false}}));}}
-                              style={{padding:"4px 9px",background:disliked?"#3a1a1a":"transparent",color:disliked?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,dislike:!r.dislike,like:false}}));}}
+                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].dislike)?"#3a1a1a":"transparent",color:(reactions[i]&&reactions[i].dislike)?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
-                            </>); })()}
                           </div>
                         )}
                       </div>
@@ -1184,7 +1182,7 @@ export default function AppUSA() {
               <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
-                    <span>📎 {file.name}</span>
+                    <span> {file.name}</span>
                     <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}></button>
                   </div>
                 ))}
@@ -1873,8 +1871,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                arkPrompt("Enter a new name for this conversation:", s.title.replace("📌 ",""), "Rename Chat", "Conversation name...").then(t=>{
-                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN]  ",""), "Rename Chat", "Conversation name...").then(t=>{
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN]  ":"")+t.trim()}:x));
                 setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
@@ -1888,8 +1886,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 setAllSessions(prev=>prev.map(x=>{
                   if(x.id!==sessionMenu.id) return x;
-                  const isPinned=x.title?.startsWith("📌 ");
-                  return {...x,title:isPinned?x.title.replace("📌 ",""):"📌 "+x.title.replace("📌 ",""),pinned:!isPinned};
+                  const isPinned=x.title?.startsWith("[PIN]  ");
+                  return {...x,title:isPinned?x.title.replace("[PIN]  ",""):"[PIN]  "+x.title.replace("[PIN]  ",""),pinned:!isPinned};
                 }));
                 setSessionMenu(null);
               }}
@@ -1914,7 +1912,7 @@ export default function AppUSA() {
             <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
             {/* Delete */}
             <button onClick={()=>{
-                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{ if(ok){
+                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{ if(ok){
                   setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
                   if(activeChatId===sessionMenu.id) startNewChat();
                 }});  setSessionMenu(null);
