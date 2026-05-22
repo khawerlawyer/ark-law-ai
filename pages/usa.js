@@ -95,7 +95,7 @@ function USNewsWidget() {
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "white", animation: "pulse 1.5s infinite" }} />
           <span style={{ fontSize: 10, fontWeight: 700, color: "white", letterSpacing: "1px" }}>LIVE</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}> US Legal News</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.85)" }}>· US Legal News</span>
         </div>
         <span style={{ fontSize: 12, color: "white", lineHeight: 1 }}>{expanded ? "▲" : "▼"}</span>
       </div>
@@ -226,9 +226,6 @@ export default function AppUSA() {
   const [shareSelected,      setShareSelected]      = useState([]);
   const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
-  const [shareLink,          setShareLink]          = useState("");
-  const [shareLoading,       setShareLoading]       = useState(false);
-  const [shareMsgIdx,        setShareMsgIdx]        = useState(null);
   const [sessionMenu,       setSessionMenu]       = useState(null);
   const [searchQuery,       setSearchQuery]       = useState("");
   const [showSearchPopup,   setShowSearchPopup]   = useState(false);
@@ -309,28 +306,28 @@ export default function AppUSA() {
     compareTitle:    "Comparar Documentos",
     compareSubtitle: "Sube 2 docs para comparar",
     draftTitle:      "Redactar Documentos",
-    draftSubtitle:   "Contratos, declaraciones y mas",
-    areasLabel:      "Areas de Practica",
-    placeholder:     "Preguntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el microfono...",
+    draftSubtitle:   "Contratos, declaraciones y más",
+    areasLabel:      "Áreas de Práctica",
+    placeholder:     "Pregúntale a ARK Law AI sobre leyes de EE.UU. o haz clic en el micrófono...",
     send:            "Enviar",
-    login:           "Iniciar sesion",
+    login:           "Iniciar sesión",
     listening:       "Escuchando...",
-    thinking:        "ARK esta pensando...",
+    thinking:        "ARK está pensando...",
     myAccount:       "Mi Cuenta",
-    newChat:         "Nueva sesion",
+    newChat:         "Nueva sesión",
     quickQueries: [
-      "Cuales son mis derechos como inquilino en EE.UU.?",
-      "Como presento una demanda en EE.UU.?",
-      "Cual es el proceso de divorcio en EE.UU.?",
+      "¿Cuáles son mis derechos como inquilino en EE.UU.?",
+      "¿Cómo presento una demanda en EE.UU.?",
+      "¿Cuál es el proceso de divorcio en EE.UU.?",
       "Explica las leyes de herencia en EE.UU.",
-      "Cuales son mis derechos laborales en EE.UU.?",
-      "Como redacto un testamento en EE.UU.?",
-      "Que es un poder notarial?",
+      "¿Cuáles son mis derechos laborales en EE.UU.?",
+      "¿Cómo redacto un testamento en EE.UU.?",
+      "¿Qué es un poder notarial?",
       "Explica la ley de contratos en EE.UU.",
     ],
     practiceAreas: [
       "Derecho General", "Derecho Penal", "Corporativo y Negocios",
-      "Derecho de Familia", "Inmigracion", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
+      "Derecho de Familia", "Inmigración", "Derecho Laboral", "Impuestos", "Derecho Constitucional",
     ],
   };
 
@@ -343,9 +340,9 @@ export default function AppUSA() {
     { headline: "🇺🇸 Immigration Court Backlogs Prompt Emergency Procedural Reforms", source: "Executive Office for Immigration Review (EOIR)", fullText: "The EOIR has announced emergency procedural reforms to address a record backlog of over 3 million pending immigration cases. Changes include: (1) Expanded use of video hearings, (2) Priority scheduling for asylum cases older than two years, (3) New guidelines for continuance requests. Immigration attorneys and advocates are encouraged to review the updated procedural manual. The reforms aim to reduce average case wait times from 5 years to under 3 years." },
   ];
 
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
   // EFFECTS
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -363,7 +360,7 @@ export default function AppUSA() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\nEn que puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_us") || "[]");
       if (saved.length > 0) {
@@ -410,14 +407,14 @@ export default function AppUSA() {
 
   useEffect(() => { fetchNewsHeadlines(); }, []);
 
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
   // HELPERS
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
 
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA  -  Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\nEn que puedo ayudarle hoy?" : "Welcome to ARK Law AI USA  -  Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: isUrdu ? "Bienvenido a ARK Law AI USA — Su asistente legal de confianza para las leyes federales y estatales de EE.UU.\n\n¿En qué puedo ayudarle hoy?" : "Welcome to ARK Law AI USA — Your trusted AI legal companion for US federal and state law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -437,9 +434,9 @@ export default function AppUSA() {
     lastSavedCountRef.current = session.messages.filter(m => m.role === "user").length;
   };
 
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
   // CORE FUNCTIONS
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
 
   const handleInstallApp = async () => {
     if (installPrompt) {
@@ -453,10 +450,10 @@ export default function AppUSA() {
     const isSafari = /safari/.test(ua) && !/chrome/.test(ua);
     const isFirefox = /firefox/.test(ua);
     const isSamsungBrowser = /samsungbrowser/.test(ua);
-    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( [^ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! ✅", "Install on iPhone / iPad", "📲");
-    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ... ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\"  -  done! ✅", "Install on Firefox", "📲");
-    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( = ) at the bottom\n2. Tap \"Add page to\" &rarr; \"Home screen\"\n3. Tap \"Add\"  -  done! ✅", "Install on Samsung Browser", "📲");
-    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ... ) at the top right\n2. Tap \"Add to Home screen\" &rarr; \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( + ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "📲");
+    if (isIOS || isSafari) arkAlert("1. Tap the Share button ( ⎦↑ ) at the bottom of Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on iPhone / iPad", "📲");
+    else if (isFirefox) arkAlert("1. Tap the three-dot menu ( ⋮ ) in the address bar\n2. Tap \"Install\" or \"Add to Home Screen\"\n3. Tap \"Add\" — done! ✅", "Install on Firefox", "📲");
+    else if (isSamsungBrowser) arkAlert("1. Tap the three-line menu ( ☰ ) at the bottom\n2. Tap \"Add page to\" → \"Home screen\"\n3. Tap \"Add\" — done! ✅", "Install on Samsung Browser", "📲");
+    else arkAlert("On Android Chrome:\n1. Tap the three-dot menu ( ⋮ ) at the top right\n2. Tap \"Add to Home screen\" → \"Add\"\n\nOn Desktop Chrome / Edge:\n1. Look for the install icon ( ⊕ ) in the address bar\n2. Click it and follow the prompt.", "Install ARK LAW AI", "📲");
   };
 
   // ── Save chat history to server ──
@@ -489,7 +486,7 @@ export default function AppUSA() {
     } catch {}
   };
 
-  // ── Logout  -  saves tokens first ──
+  // ── Logout — saves tokens first ──
   const handleLogout = async () => {
     await saveHistory(allSessions, userTokens);
     localStorage.removeItem("arklaw_user");
@@ -525,7 +522,7 @@ export default function AppUSA() {
     }
     let messageContent = userMessage.trim();
     if (fileContents.length > 0) {
-      messageContent += "\n\n Attached Files:\n";
+      messageContent += "\n\n📎 Attached Files:\n";
       fileContents.forEach(file => {
         if (file.type === "text")          messageContent += `\n--- ${file.name} ---\n${file.data}\n`;
         else if (file.type === "document") messageContent += `\n${file.message}\n`;
@@ -543,9 +540,9 @@ export default function AppUSA() {
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
       const langInstruction = isUrdu
-        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Espanol). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
+        ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law  -  federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -637,7 +634,7 @@ export default function AppUSA() {
       setDraftContent(data.reply);
       setDraftTitle(`${draftType.charAt(0).toUpperCase() + draftType.slice(1)} - ${new Date().toLocaleDateString("en-PK")}`);
       setDraftStep("completed");
-    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", ""); setDraftStep("gathering-info"); }
+    } catch (error) { arkAlert("Failed to generate document. Please try again.", "Draft Documents", "📄"); setDraftStep("gathering-info"); }
     finally { setDraftGenerating(false); }
   };
 
@@ -653,8 +650,8 @@ export default function AppUSA() {
   };
 
   const compareDocuments = async () => {
-    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", ""); return; }
-    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", ""); return; }
+    if (!doc1 || !doc2) { arkAlert("Please upload both documents before comparing.", "Compare Documents", "📋"); return; }
+    if (!compareFocus.trim()) { arkAlert("Please specify a focal point for comparison.", "Compare Documents", "📋"); return; }
     const maxSize = 5 * 1024 * 1024;
     if (doc1.size > maxSize) { arkAlert("Document 1 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
     if (doc2.size > maxSize) { arkAlert("Document 2 exceeds the 5MB limit. Please upload a smaller file.", "File Too Large", "⚠️"); return; }
@@ -720,7 +717,7 @@ export default function AppUSA() {
         elements.push(<div key={`img-${index}`} style={{ marginBottom: "16px", marginTop: "16px" }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: "100%", height: "auto", borderRadius: "8px", border: `2px solid ${GOLD}`, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} onError={(e) => { e.target.style.display = "none"; }} /></div>);
       } else if (trimmedLine.startsWith("•") || trimmedLine.startsWith("-")) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}></span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
+        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>•</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
       } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith("***") && trimmedLine.endsWith("***")) || (trimmedLine.endsWith(":") && trimmedLine.length < 60))) {
         if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
         elements.push(<h3 key={`h-${index}`} style={{ fontWeight: "bold", fontStyle: "italic", color: "#0D1B2A", marginTop: "16px", marginBottom: "8px", fontSize: "15px" }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, "")}</h3>);
@@ -737,9 +734,9 @@ export default function AppUSA() {
   const popupRow = { marginBottom: "11px" };
   const popupWatermark = { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.04, pointerEvents: "none", zIndex: 0, width: "220px", height: "220px" };
 
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
   // RENDER
-  // ===========================================================================
+  // ═══════════════════════════════════════════════════════════════════════════
 
   return (
     <>
@@ -788,21 +785,17 @@ export default function AppUSA() {
         .qcard:hover{background:#F0EBE0;}
         .input-wrap{background:#FFFFFF;border:1px solid #C0B49A;border-radius:16px;transition:border-color 0.2s;}
         .input-wrap{border-color:#BF0A30;}
-        @media(max-width:768px){.sidebar-desktop{position:fixed!important;top:0;left:0;bottom:0;z-index:400!important;box-shadow:4px 0 24px rgba(0,0,0,0.18)!important;}}
+        @media(max-width:768px){.sidebar-desktop{display:none!important;}}
       `}</style>
 
-      {/* =================== CHATGPT THEME =================== */}
+      {/* ═══════════════════ CHATGPT THEME ═══════════════════ */}
       {usTheme === "chatgpt" && (
       <div style={{display:"flex",height:"100vh",background:"#F5F0E8",color:"#1A1209",overflow:"hidden"}}>
 
-        {/* ===========================================
+        {/* ═══════════════════════════════════════════
             SIDEBAR
-        =========================================== */}
+        ═══════════════════════════════════════════ */}
         {/* Sidebar toggle when closed */}
-        {/* Mobile backdrop */}
-        {isMobile && sidebarOpen && (
-          <div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:399}}/>
-        )}
         {!sidebarOpen && !isMobile && (
           <div style={{width:"46px",background:"#EDE8DF",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:"10px",borderRight:"1px solid #C8BFB0",flexShrink:0,gap:"8px"}}>
             <button onClick={()=>setSidebarOpen(true)} title="Open sidebar"
@@ -838,7 +831,7 @@ export default function AppUSA() {
                   <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
               </button>
-              <button onClick={startNewChat} title={isUrdu ? "Nueva conversacion" : "New chat"}
+              <button onClick={startNewChat} title={isUrdu ? "Nueva conversación" : "New chat"}
               style={{width:"34px",height:"34px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#4A3A28",transition:"all 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
               onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#4A3A28";}}>
@@ -870,7 +863,7 @@ export default function AppUSA() {
               <div style={{marginLeft:"14px",paddingLeft:"10px",borderLeft:"1px solid #2f2f2f"}}>
                 {PRACTICE_AREAS_PK.map((area,i)=>(
                   <button key={area.id} className="sb-item" style={{fontSize:12.5,padding:"5px 8px",color:"#4A3A28"}}
-                    onClick={()=>{sendMessage(isUrdu?`Cuentame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
+                    onClick={()=>{sendMessage(isUrdu?`Cuéntame sobre ${area.label} en los Estados Unidos`:`Tell me about ${area.label} in the United States`,true);setShowPracticeAreas(false);}}>
                     <span style={{fontSize:13}}>{area.icon}</span>
                     <span>{isUrdu ? UR.practiceAreas[i] : area.label}</span>
                   </button>
@@ -891,7 +884,7 @@ export default function AppUSA() {
                 <div key={s.id} style={{position:"relative",group:true}}
                   onMouseLeave={()=>{const el=document.getElementById("sm-"+s.id); if(el) el.style.opacity="0";}}>
                   <button className={"sb-item"+(active?" active":"")}
-                    onClick={()=>{loadSession(s.id);setSessionMenu(null);if(isMobile)setSidebarOpen(false);}}
+                    onClick={()=>{loadSession(s.id);setSessionMenu(null);}}
                     onContextMenu={e=>{e.preventDefault();setSessionMenu({id:s.id,x:e.clientX,y:e.clientY});}}
                     style={{fontSize:13,color:active?"#1A1209":"#4A3A28",width:"100%",paddingRight:"30px"}}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -970,20 +963,20 @@ export default function AppUSA() {
                 style={{padding:"6px 8px",background:"transparent",color:"#8A7A65",border:"none",cursor:"pointer",borderRadius:"6px",fontSize:11,display:"flex",alignItems:"center",gap:"4px",transition:"all 0.15s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="#2f2f2f";e.currentTarget.style.color="#ececec";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#666";}}>
-                &larr; 🌍
+                ← 🌍
               </button>
               <select value={isUrdu?"es":"en"} onChange={e=>setIsUrdu(e.target.value==="es")}
                 style={{flex:1,padding:"5px 8px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"6px",cursor:"pointer",fontSize:12,outline:"none"}}>
-                <option value="en">English</option>
-                <option value="es">Espaol</option>
+                <option value="en">🌐 English</option>
+                <option value="es">Español</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* ===========================================
+        {/* ═══════════════════════════════════════════
             MAIN CONTENT
-        =========================================== */}
+        ═══════════════════════════════════════════ */}
         <div style={{flex:1,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden",position:"relative",background:"#F5F0E8"}}>
 
           {/* Top bar */}
@@ -992,14 +985,8 @@ export default function AppUSA() {
             {/* Mobile logo */}
             {isMobile && (
               <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-                <button onClick={()=>setSidebarOpen(o=>!o)}
-                  style={{width:"32px",height:"32px",background:"transparent",border:"none",cursor:"pointer",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",flexShrink:0}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-                  </svg>
-                </button>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:"26px",height:"26px",objectFit:"contain"}}/>
-                <span style={{fontSize:13,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:"28px",height:"28px",objectFit:"contain"}}/>
+                <span style={{fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>ARK LAW AI</span>
               </div>
             )}
             {/* Desktop tagline */}
@@ -1013,19 +1000,22 @@ export default function AppUSA() {
             {/* Right: share + menu + mobile auth */}
             <div style={{display:"flex",alignItems:"center",gap:"8px",flexShrink:0,position:"relative"}}>
               {/* Feedback button */}
-              <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
-                style={{display:"flex",alignItems:"center",gap:"6px",padding:isMobile?"5px 9px":"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:isMobile?11:12,fontWeight:500,transition:"all 0.15s"}}
-                onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
-                onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                {!isMobile && "Feedback"}
-              </button>
+              {!isMobile && (
+                <button onClick={()=>window.open("/feedback","_blank","width=520,height=680,scrollbars=yes")}
+                  style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 13px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:500,transition:"all 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
+                  onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#7A6A55";}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  Feedback
+                </button>
+              )}
 
               {/* Three-dot menu */}
-              <div style={{position:"relative"}}>
+              {!isMobile && (
+                <div style={{position:"relative"}}>
                   <button onClick={()=>setShowChatMenu(m=>!m)}
                     style={{width:"34px",height:"34px",background:showChatMenu?"#D8D0C4":"transparent",border:"none",cursor:"pointer",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",color:"#7A6A55",transition:"all 0.15s"}}
                     onMouseEnter={e=>{e.currentTarget.style.background="#D8D0C4";e.currentTarget.style.color="#1A1209";}}
@@ -1037,17 +1027,7 @@ export default function AppUSA() {
                   {showChatMenu && (
                     <div style={{position:"absolute",top:"40px",right:"0",background:"#FFFFFF",border:"1px solid #C8BFB0",borderRadius:"10px",boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,minWidth:"200px",padding:"6px 0",animation:"fadeSlideUp 0.15s ease"}}>
                       {/* Share item at top */}
-                      <button onClick={async()=>{
-                        setShowChatMenu(false);setShareLink("");setShareLoading(true);setShareMsgIdx(null);setShowSharePopup(true);
-                        try{
-                          const session=allSessions.find(s=>s.id===activeChatId);
-                          const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                          const data=await res.json();
-                          if(data.shareUrl)setShareLink(data.shareUrl);
-                          else arkAlert("Error: "+(data.error||"Could not create link"),"Share Error","[ERR]");
-                        }catch(e){arkAlert("Network error: "+e.message,"Share Error","[ERR]");}
-                        setShareLoading(false);
-                      }}
+                      <button onClick={()=>{setShowChatMenu(false);setShareSelected(messages.map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);}}
                         style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
                         onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
@@ -1058,7 +1038,7 @@ export default function AppUSA() {
                       </button>
                       <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
                       {[
-                        {icon:null, label:"Start a group chat", action:()=>{
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>, label:"Start a group chat", action:()=>{
                           setShowChatMenu(false);
                           const gId=Date.now();
                           const gSession={id:gId,title:"Group Chat "+new Date().toLocaleDateString(),messages:[{role:"assistant",content:"Welcome to Group Chat! You can invite others to collaborate on this legal research session. Share the session link or discuss together."}],isGroup:true};
@@ -1066,9 +1046,9 @@ export default function AppUSA() {
                           setActiveChatId(gId);
                           setMessages(gSession.messages);
                         }},
-                        {icon:null, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"[PIN]  "+s.title.replace("[PIN]  ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
-                        {icon:null, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
-                        {icon:null, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label:"Pin chat", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){const pinned={...s,pinned:true,title:"📌 "+s.title.replace("📌 ","")};setAllSessions(prev=>prev.map(x=>x.id===activeChatId?pinned:x));}}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>, label:"Archive", action:()=>{setShowChatMenu(false);const s=allSessions.find(s=>s.id===activeChatId);if(s){setAllSessions(prev=>prev.map(x=>x.id===activeChatId?{...x,archived:true}:x));startNewChat();}}},
+                        {icon:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>, label:"Delete", red:true, action:()=>{setShowChatMenu(false);arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{if(ok){setAllSessions(prev=>prev.filter(s=>s.id!==activeChatId));startNewChat();}});}},
                       ].map(({icon,label,action,red})=>(
                         <button key={label} onClick={action}
                           style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"9px 16px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:red?"#DC2626":"#2A1E10",textAlign:"left",transition:"background 0.1s"}}
@@ -1080,6 +1060,7 @@ export default function AppUSA() {
                     </div>
                   )}
                 </div>
+              )}
               {isMobile && !user && (
                 <div style={{display:"flex",gap:"6px"}}>
                   <button onClick={()=>setShowLoginPopup(true)} style={{padding:"6px 12px",background:"transparent",color:"#1A1209",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>Log in</button>
@@ -1102,8 +1083,8 @@ export default function AppUSA() {
             {messages.filter(m=>m.role==="user").length===0 && !loading && (
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
-                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "en que puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US  -  su asistente legal experto" : "ARK Law AI US  -  your expert US law assistant"}</p>
+                <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US — su asistente legal experto" : "ARK Law AI US — your expert US law assistant"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
@@ -1157,34 +1138,15 @@ export default function AppUSA() {
                                 :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>}
                               <span>{currentSpeakingIndex===i?"Stop":"Listen"}</span>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,like:!r.like,dislike:false}}));}}
-                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].like)?"#1a3a1a":"transparent",color:(reactions[i]&&reactions[i].like)?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],like:!prev[i]?.like,dislike:false}}));}}
+                              style={{padding:"4px 9px",background:reactions[i]?.like?"#1a3a1a":"transparent",color:reactions[i]?.like?"#4CAF7D":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.like?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();const r=reactions[i]||{};setReactions(prev=>({...prev,[i]:{...r,dislike:!r.dislike,like:false}}));}}
-                              style={{padding:"4px 9px",background:(reactions[i]&&reactions[i].dislike)?"#3a1a1a":"transparent",color:(reactions[i]&&reactions[i].dislike)?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
+                            <button onClick={e=>{e.stopPropagation();setReactions(prev=>({...prev,[i]:{...prev[i],dislike:!prev[i]?.dislike,like:false}}));}}
+                              style={{padding:"4px 9px",background:reactions[i]?.dislike?"#3a1a1a":"transparent",color:reactions[i]?.dislike?"#EF4444":"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
-                            </button>
-                            <button onClick={async e=>{
-                              e.stopPropagation();
-                              setShareMsgIdx(i);setShareLink("");setShareLoading(true);setShowSharePopup(true);
-                              try{
-                                const msgsToShare=messages.slice(0,i+1);
-                                const session=allSessions.find(s=>s.id===activeChatId);
-                                const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                                const data=await res.json();
-                                if(data.shareUrl)setShareLink(data.shareUrl);
-                                else arkAlert("Error: "+(data.error||"Could not create link"),"Share Error","[ERR]");
-                              }catch(e2){arkAlert("Network error: "+e2.message,"Share Error","[ERR]");}
-                              setShareLoading(false);
-                            }}
-                              style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
-                              onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
-                              onMouseLeave={e=>{e.currentTarget.style.borderColor="#C8BFB0";e.currentTarget.style.color="#666";}}>
-                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                              <span>Share</span>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
                           </div>
                         )}
@@ -1212,7 +1174,7 @@ export default function AppUSA() {
             </div>
           </div>
 
-          {/* =================== INPUT AREA =================== */}
+          {/* ═══════════════════ INPUT AREA ═══════════════════ */}
           <div style={{padding:isMobile?"10px 12px 14px":"12px 24px 18px",background:"#F5F0E8",flexShrink:0}}>
 
             {/* Attached files */}
@@ -1220,8 +1182,8 @@ export default function AppUSA() {
               <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px",maxWidth:"720px",margin:"0 auto 8px"}}>
                 {uploadedFiles.map((file,idx)=>(
                   <div key={idx} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#E4DDD0",border:"1px solid #C0B49A",borderRadius:"8px",fontSize:12,color:"#2A1E10"}}>
-                    <span> {file.name}</span>
-                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}></button>
+                    <span>📎 {file.name}</span>
+                    <button onClick={()=>setUploadedFiles(prev=>prev.filter((_,i)=>i!==idx))} style={{background:"none",border:"none",color:"#8A7A65",cursor:"pointer",fontSize:15,lineHeight:1}}>×</button>
                   </div>
                 ))}
               </div>
@@ -1265,7 +1227,7 @@ export default function AppUSA() {
             </div>
 
             <div style={{textAlign:"center",marginTop:"8px",fontSize:11,color:"#444"}}>
-              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la informacion legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
+              {isUrdu ? "ARK Law AI USA puede cometer errores. Verifique la información legal importante." : "ARK Law AI USA may make mistakes. Verify important legal information."}
             </div>
           </div>
         </div>
@@ -1278,14 +1240,14 @@ export default function AppUSA() {
           <img src="/ark-logo-us.png" style={{width:64,height:64,borderRadius:"50%"}}/>
           <div style={{color:"#1A1209",fontFamily:"Georgia,serif",fontSize:20,fontWeight:700}}>Classic Theme</div>
           <div style={{color:"#5A4A35",fontSize:13}}>Loading classic ARK UI...</div>
-          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version &rarr;</button>
-          <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}> Back to ChatGPT Theme</button>
+          <button onClick={()=>{localStorage.setItem("arklaw_us_theme","classic");window.location.href="/usa-classic";}} style={{padding:"10px 24px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:13,fontWeight:700}}>Open Classic Version →</button>
+          <button onClick={()=>{setUsTheme("chatgpt");localStorage.setItem("arklaw_us_theme","chatgpt");}} style={{padding:"8px 20px",background:"transparent",color:"#8A7A65",border:"1px solid #C8BFB0",borderRadius:"8px",cursor:"pointer",fontSize:12}}>← Back to ChatGPT Theme</button>
         </div>
       )} {/* end classic theme */}
 
-      {/* ===========================================
-          POPUPS (US theme  -  navy/red)
-      =========================================== */}
+      {/* ═══════════════════════════════════════════
+          POPUPS (US theme — navy/red)
+      ═══════════════════════════════════════════ */}
 
       {showNewsPopup && selectedNews && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}}>
@@ -1295,18 +1257,18 @@ export default function AppUSA() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"40px",height:"40px",objectFit:"contain"}}/>
                 <div><div style={{color:"#1A1209",fontWeight:700,fontSize:14}}>ARK LAW AI USA</div><div style={{color:"#5A4A35",fontSize:9}}>Legal News Analysis</div></div>
               </div>
-              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}></button>
+              <button onClick={()=>setShowNewsPopup(false)} style={{background:"none",border:"none",color:GOLD,fontSize:28,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"25px"}}>
               <p style={{color:GOLD,fontSize:15,fontWeight:700,marginBottom:"10px",lineHeight:"1.6"}}>{selectedNews.headline}</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"15px",padding:"10px",background:"#001F5B",borderRadius:"4px",borderLeft:"3px solid #BF0A30"}}>
-                <span style={{fontSize:10,color:"#5A4A35"}}> Source:</span>
+                <span style={{fontSize:10,color:"#5A4A35"}}>📰 Source:</span>
                 <span style={{fontSize:11,color:"#BF0A30",fontWeight:600}}>{selectedNews.source}</span>
               </div>
               <p style={{color:"#2A1E10",fontSize:13,lineHeight:"1.8",marginBottom:"15px",whiteSpace:"pre-wrap"}}>{selectedNews.fullText}</p>
               <div style={{borderTop:"1px solid #333",paddingTop:"15px"}}>
-                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}> Legal Analysis:</h4>
-                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}> Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
+                <h4 style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:"8px"}}>⚖️ Legal Analysis:</h4>
+                {newsLoading?<div style={{color:"#8A7A65",fontSize:13,textAlign:"center",padding:"20px"}}>⏳ Analyzing...</div>:<div style={{color:"#4A3A28",fontSize:13,lineHeight:"1.8",whiteSpace:"pre-wrap"}}>{newsAnalysis}</div>}
               </div>
             </div>
             <div style={{padding:"15px 25px",borderTop:"1px solid #333",display:"flex",justifyContent:"flex-end"}}>
@@ -1323,47 +1285,47 @@ export default function AppUSA() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}> AI Legal Document Drafting</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>✍️ AI Legal Document Drafting</div></div>
               </div>
-              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
+              <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {draftStep==="type-selection" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}> Step 1: Select Document Type</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"14px",fontWeight:700}}>📋 Step 1: Select Document Type</h4>
                   <select value={draftType} onChange={e=>setDraftType(e.target.value)} style={{width:"100%",padding:"11px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"10px",fontSize:13,cursor:"pointer",outline:"none"}}>
                     <option value="">-- Select Document Type --</option>
-                    <option value="rental-agreement">Rental/Lease Agreement</option>
-                    <option value="contract">General Contract</option>
-                    <option value="nda">Non-Disclosure Agreement (NDA)</option>
-                    <option value="affidavit">Affidavit</option>
-                    <option value="will">Will / Testament</option>
-                    <option value="power-of-attorney">Power of Attorney</option>
-                    <option value="employment-agreement">Employment Agreement</option>
-                    <option value="partnership-deed">Partnership Agreement</option>
-                    <option value="sale-deed">Real Estate Purchase Agreement</option>
-                    <option value="divorce-agreement">Divorce Settlement Agreement</option>
-                    <option value="loan-agreement">Loan Agreement</option>
-                    <option value="trust-deed">Trust Agreement</option>
+                    <option value="rental-agreement">🏠 Rental/Lease Agreement</option>
+                    <option value="contract">📄 General Contract</option>
+                    <option value="nda">🔒 Non-Disclosure Agreement (NDA)</option>
+                    <option value="affidavit">⚖️ Affidavit</option>
+                    <option value="will">📜 Will / Testament</option>
+                    <option value="power-of-attorney">🔑 Power of Attorney</option>
+                    <option value="employment-agreement">💼 Employment Agreement</option>
+                    <option value="partnership-deed">🤝 Partnership Agreement</option>
+                    <option value="sale-deed">🏘️ Real Estate Purchase Agreement</option>
+                    <option value="divorce-agreement">💔 Divorce Settlement Agreement</option>
+                    <option value="loan-agreement">💰 Loan Agreement</option>
+                    <option value="trust-deed">🏛️ Trust Agreement</option>
                   </select>
-                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "");return;}setDraftStep("gathering-info");}} disabled={!draftType}
+                  <button onClick={()=>{if(!draftType){arkAlert("Please select a document type to continue.", "Draft Documents", "📄");return;}setDraftStep("gathering-info");}} disabled={!draftType}
                     style={{width:"100%",padding:"12px",background:draftType?"#BF0A30":"#333",color:"white",border:"none",borderRadius:"8px",cursor:draftType?"pointer":"not-allowed",fontWeight:700,fontSize:14,marginBottom:"10px"}}
                     onMouseEnter={e=>{if(draftType)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(draftType)e.currentTarget.style.background="#BF0A30";}}>
-                    Next: Provide Information &rarr;
+                    Next: Provide Information →
                   </button>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
                 </div>
               )}
               {draftStep==="gathering-info" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Step 2: Provide Information</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>📝 Step 2: Provide Information</h4>
                   <div style={{maxHeight:"400px",overflowY:"auto",padding:"4px"}}>
                     <div style={{background:"#DDD6CB",padding:"14px",borderRadius:"8px",marginBottom:"14px",border:"1px solid #C0B49A"}}>
                       <textarea placeholder={"Provide all necessary details for " + draftType + ":\n\n• Party names and addresses\n• Terms and conditions\n• Duration/timeline\n• Special clauses\n• Any other relevant information"} onChange={e=>setDraftRequirements({...draftRequirements,generalInfo:e.target.value})} style={{width:"100%",height:"200px",padding:"12px",background:"#F5F0E8",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"6px",fontSize:13,fontFamily:"inherit",lineHeight:"1.6",outline:"none",resize:"vertical"}}></textarea>
                     </div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginTop:"14px"}}>
-                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}> Back</button>
+                    <button onClick={()=>setDraftStep("type-selection")} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>← Back</button>
                     <button onClick={()=>generateDocument(draftRequirements)} disabled={draftGenerating}
                       style={{flex:2,padding:"11px",background:draftGenerating?"#333":"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:draftGenerating?"not-allowed":"pointer",fontWeight:700,fontSize:13}}
                       onMouseEnter={e=>{if(!draftGenerating)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!draftGenerating)e.currentTarget.style.background="#BF0A30";}}>
@@ -1376,22 +1338,22 @@ export default function AppUSA() {
               {draftStep==="generating" && (
                 <div style={{textAlign:"center",padding:"40px 20px"}}>
                   <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"16px",opacity:0.7,animation:"pulse 2s infinite"}}/>
-                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}> Generating Your Document...</h4>
+                  <h4 style={{color:"#1A1209",fontSize:16,marginBottom:"12px",fontWeight:700}}>⏳ Generating Your Document...</h4>
                   <p style={{color:"#8A7A65",fontSize:13}}>AI is drafting a comprehensive, US law-compliant document.</p>
                 </div>
               )}
               {draftStep==="completed" && (
                 <div>
-                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}> Document Generated!</h4>
+                  <h4 style={{color:"#1A1209",fontSize:15,marginBottom:"8px",fontWeight:700}}>✅ Document Generated!</h4>
                   <textarea value={draftContent} onChange={e=>setDraftContent(e.target.value)} style={{width:"100%",height:"340px",padding:"14px",background:"#111",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"8px",marginBottom:"12px",fontSize:13,fontFamily:"'Times New Roman',serif",lineHeight:"1.8",outline:"none",resize:"vertical"}}></textarea>
                   <div style={{background:"rgba(191,10,48,0.15)",padding:"10px 14px",borderRadius:"8px",borderLeft:"3px solid #BF0A30",marginBottom:"14px"}}>
-                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}> LEGAL DISCLAIMER</div>
+                    <div style={{color:"#BF0A30",fontSize:10,fontWeight:600,marginBottom:"3px"}}>⚠️ LEGAL DISCLAIMER</div>
                     <div style={{color:"#4A3A28",fontSize:10,lineHeight:"1.5"}}>AI-generated for reference only. Review with a licensed US attorney before use.</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",marginBottom:"10px"}}>
-                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}> New</button>
-                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}> DOCX</button>
-                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> PDF</button>
+                    <button onClick={()=>{setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{flex:1,padding:"11px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>🔄 New</button>
+                    <button onClick={()=>downloadDraft("docx")} style={{flex:1,padding:"11px",background:"#BF0A30",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}} onMouseEnter={e=>e.currentTarget.style.background="#a00828"} onMouseLeave={e=>e.currentTarget.style.background="#BF0A30"}>📥 DOCX</button>
+                    <button onClick={()=>downloadDraft("pdf")} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 PDF</button>
                   </div>
                   <button onClick={()=>{setShowDraftPopup(false);setDraftStep("type-selection");setDraftContent("");setDraftRequirements({});}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Close</button>
                 </div>
@@ -1408,26 +1370,26 @@ export default function AppUSA() {
             <div style={{padding:"18px 22px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #C8BFB0",position:"sticky",top:0,background:"#F5F0E8",zIndex:2}}>
               <div style={{display:"flex",alignItems:"center",gap:"12px"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain"}}/>
-                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}> Compare Legal Documents</div></div>
+                <div><div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:11,color:"#5A4A35"}}>⚖️ Compare Legal Documents</div></div>
               </div>
-              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
+              <button onClick={()=>setShowComparePopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{padding:"20px 22px",position:"relative",zIndex:1}}>
               {[{label:"Document 1",setter:setDoc1,file:doc1},{label:"Document 2",setter:setDoc2,file:doc2}].map(({label,setter,file})=>(
                 <div key={label} style={{marginBottom:"14px"}}>
-                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> {label}</label>
+                  <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>📄 {label}</label>
                   <input type="file" accept=".pdf,.docx,.doc" onChange={e=>setter(e.target.files?.[0])} style={{width:"100%",padding:"8px 10px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:11,outline:"none"}}/>
-                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name}  -  {(file.size/1024/1024).toFixed(2)}MB</div>}
+                  {file && <div style={{marginTop:"4px",fontSize:10,color:file.size>5*1024*1024?"#EF4444":"#4CAF7D"}}>{file.name} — {(file.size/1024/1024).toFixed(2)}MB</div>}
                 </div>
               ))}
               <div style={{marginBottom:"14px"}}>
-                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}> Focal Point</label>
+                <label style={{color:"#3A2A18",fontSize:11,fontWeight:700,display:"block",marginBottom:"6px",textTransform:"uppercase",letterSpacing:"0.4px"}}>🎯 Focal Point</label>
                 <input type="text" value={compareFocus} onChange={e=>setCompareFocus(e.target.value)} placeholder="e.g., payment terms, liability clauses..." style={{width:"100%",padding:"9px 12px",background:"#DDD6CB",border:"1px solid #C0B49A",color:"#1A1209",borderRadius:"7px",fontSize:12,outline:"none"}}/>
               </div>
-              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}> Analyzing documents...</div>}
+              {comparingDocs && <div style={{padding:"16px",background:"#DDD6CB",borderRadius:"8px",textAlign:"center",marginBottom:"12px",color:"#4A3A28",fontSize:13}}>⏳ Analyzing documents...</div>}
               {comparisonResult && !comparingDocs && (
                 <div style={{marginBottom:"14px",padding:"14px",background:"#DDD6CB",borderRadius:"8px",border:"1px solid #C0B49A"}}>
-                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}> Comparison Report</div>
+                  <div style={{color:"#1A1209",fontSize:12,fontWeight:700,marginBottom:"8px"}}>📊 Comparison Report</div>
                   <div style={{color:"#4A3A28",fontSize:11,lineHeight:"1.6",whiteSpace:"pre-wrap",maxHeight:"280px",overflowY:"auto"}}>{comparisonResult}</div>
                 </div>
               )}
@@ -1437,7 +1399,7 @@ export default function AppUSA() {
                   onMouseEnter={e=>{if(!comparingDocs)e.currentTarget.style.background="#a00828";}} onMouseLeave={e=>{if(!comparingDocs)e.currentTarget.style.background="#BF0A30";}}>
                   {comparingDocs?"⏳ Analyzing...":"🔍 Compare"}
                 </button>
-                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}> Download</button>}
+                {comparisonResult && <button onClick={downloadComparisonPDF} style={{flex:1,padding:"11px",background:GOLD,color:NAVY,border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:700,fontSize:12}}>📄 Download</button>}
               </div>
               <button onClick={()=>{setShowComparePopup(false);setDoc1(null);setDoc2(null);setCompareFocus("");setComparisonResult("");}} style={{width:"100%",padding:"10px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
@@ -1502,7 +1464,7 @@ export default function AppUSA() {
             <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",opacity:0.04,pointerEvents:"none",zIndex:0,width:"200px",height:"200px",objectFit:"contain"}}/>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",position:"relative",zIndex:1}}>
               <img src="/ark-logo-us.png" alt="ARK" style={{width:"34px",height:"34px",objectFit:"contain",flexShrink:0}}/>
-              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account  -  500,000 credits</div></div>
+              <div><div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA</div><div style={{fontSize:10,color:"#5A4A35"}}>Create your free account — 500,000 credits</div></div>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",marginBottom:"14px"}}/>
             <form style={{position:"relative",zIndex:1}} onSubmit={async(e)=>{
@@ -1541,7 +1503,7 @@ export default function AppUSA() {
                   </select>
                 </div>
               </div>
-              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account  -  500,000 Free Credits ✨</button>
+              <button type="submit" style={{width:"100%",padding:"11px",background:"#1A1209",color:"white",border:"none",borderRadius:"7px",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:"8px"}} onMouseEnter={e=>e.currentTarget.style.background="#3A2A18"} onMouseLeave={e=>e.currentTarget.style.background="#1A1209"}>Create Account — 500,000 Free Credits ✨</button>
               <button type="button" onClick={()=>setShowSignupPopup(false)} style={{width:"100%",padding:"9px",background:"#DDD6CB",color:"#4A3A28",border:"1px solid #C0B49A",borderRadius:"7px",cursor:"pointer",fontSize:13,marginBottom:"10px"}}>Cancel</button>
               <p style={{textAlign:"center",color:"#8A7A65",fontSize:11,margin:0}}>Already have an account?{" "}<span onClick={()=>{setShowSignupPopup(false);setShowLoginPopup(true);}} style={{color:"#4CAF7D",cursor:"pointer",textDecoration:"underline",fontWeight:600}}>Log in</span></p>
             </form>
@@ -1559,7 +1521,7 @@ export default function AppUSA() {
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"32px",height:"32px",objectFit:"contain"}}/>
                 <div style={{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:"#1A1209"}}>ARK LAW AI USA <span style={{fontSize:11,fontWeight:400,color:"#5A4A35"}}>/ My Account</span></div>
               </div>
-              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}></button>
+              <button onClick={()=>setShowMyAccountPopup(false)} style={{background:"none",border:"none",color:"#8A7A65",fontSize:22,cursor:"pointer"}}>✕</button>
             </div>
             <div style={{height:"1px",background:"linear-gradient(to right,transparent,#BF0A30,transparent)",flexShrink:0}}/>
             <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",zIndex:1}}>
@@ -1569,7 +1531,7 @@ export default function AppUSA() {
                   <div><div style={{color:"#1A1209",fontSize:14,fontWeight:700,fontFamily:"Georgia,serif"}}>{user.name}</div><div style={{color:"#8A7A65",fontSize:10,marginTop:"2px"}}>{user.email}</div></div>
                 </div>
                 <div style={{background:"#DDD6CB",border:"1px solid #C0B49A",borderRadius:"10px",padding:"10px 12px",marginBottom:"10px"}}>
-                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}> Credit Balance</div>
+                  <div style={{fontSize:10,color:"#5A4A35",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"}}>⚡ Credit Balance</div>
                   <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"4px"}}>
                     <div style={{flex:1,height:"6px",background:"#D8D0C4",borderRadius:"3px",overflow:"hidden"}}>
                       <div style={{height:"100%",width:String(Math.max(2,(userTokens/500000)*100))+"%",background:userTokens>100000?"#4CAF7D":"#C9A84C",borderRadius:"3px"}}></div>
@@ -1587,16 +1549,16 @@ export default function AppUSA() {
                     </div>
                   ))}
                 </div>
-                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}> Logout &amp; Save History</button>
+                <button onClick={handleLogout} style={{width:"100%",padding:"10px",background:"#DC2626",color:"white",border:"none",borderRadius:"8px",fontWeight:700,fontSize:13,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#b91c1c"} onMouseLeave={e=>e.currentTarget.style.background="#DC2626"}>🚪 Logout &amp; Save History</button>
               </div>
               <div style={{flex:"0 0 48%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{padding:"12px 14px",borderBottom:"1px solid #C8BFB0",flexShrink:0}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}> Chat History</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#1A1209",textTransform:"uppercase",letterSpacing:"0.5px"}}>💬 Chat History</div>
                   <div style={{fontSize:9,color:"#8A7A65",marginTop:"2px"}}>Your saved conversations</div>
                 </div>
                 <div style={{flex:1,overflowY:"auto",padding:"8px 10px"}}>
                   {allSessions.filter(s=>s.messages.some(m=>m.role==="user")).length===0
-                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}></div><div style={{fontSize:11}}>No conversations yet</div></div>
+                    ?<div style={{textAlign:"center",padding:"24px 12px",color:"#444"}}><div style={{fontSize:28,marginBottom:"6px",opacity:0.4}}>💬</div><div style={{fontSize:11}}>No conversations yet</div></div>
                     :allSessions.filter(s=>s.messages.some(m=>m.role==="user")).map(session=>(
                       <div key={session.id} onClick={()=>{loadSession(session.id);setShowMyAccountPopup(false);}} style={{background:"#DDD6CB",padding:"8px 10px",borderRadius:"8px",border:"1px solid #C8BFB0",cursor:"pointer",marginBottom:"5px"}} onMouseEnter={e=>e.currentTarget.style.background="#333"} onMouseLeave={e=>e.currentTarget.style.background="#2a2a2a"}>
                         <div style={{color:"#1A1209",fontSize:11,fontWeight:600,marginBottom:"2px"}}>{session.title}</div>
@@ -1606,7 +1568,7 @@ export default function AppUSA() {
                   }
                 </div>
                 <div style={{padding:"8px 10px",borderTop:"1px solid #C8BFB0",background:"#F5F0E8",flexShrink:0,textAlign:"center"}}>
-                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}> History auto-saved</span>
+                  <span style={{fontSize:9,color:"#444",fontStyle:"italic"}}>✓ History auto-saved</span>
                 </div>
               </div>
             </div>
@@ -1617,7 +1579,7 @@ export default function AppUSA() {
       {showComingSoon && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowComingSoon(false)}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#F5F0E8",borderRadius:"16px",padding:"40px 36px",maxWidth:"400px",width:"90%",textAlign:"center",border:"2px solid #BF0A30",boxShadow:"0 0 60px rgba(191,10,48,0.3)"}}>
-            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}></button>
+            <button onClick={()=>setShowComingSoon(false)} style={{position:"absolute",top:"16px",right:"18px",background:"none",border:"none",color:"#8A7A65",fontSize:24,cursor:"pointer"}}>✕</button>
             <img src="/ark-logo-us.png" alt="ARK" style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"16px"}}/>
             <div style={{fontSize:20,fontWeight:700,color:"#1A1209",marginBottom:"8px"}}>Coming Soon!</div>
             <div style={{fontSize:13,color:"#8A7A65",lineHeight:1.7,marginBottom:"24px"}}>We're working on something great. Stay tuned.</div>
@@ -1628,148 +1590,55 @@ export default function AppUSA() {
 
       {/* ── Share Popup ── */}
       {showSharePopup && (
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000,backdropFilter:"blur(2px)"}}
-          onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);setShareMsgIdx(null);}}>
-          <div onClick={e=>e.stopPropagation()}
-            style={{background:"#FFFFFF",borderRadius:"18px",width:"92%",maxWidth:"420px",boxShadow:"0 32px 80px rgba(0,0,0,0.25)",overflow:"hidden",animation:"fadeSlideUp 0.2s ease"}}>
-
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowSharePopup(false)}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"14px",width:"90%",maxWidth:"500px",border:"1px solid #C8BFB0",boxShadow:"0 12px 40px rgba(0,0,0,0.15)",overflow:"hidden"}}>
             {/* Header */}
-            <div style={{padding:"20px 22px 16px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",borderBottom:"1px solid #F0EBE0"}}>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:20,fontWeight:800,color:"#0D0D0D",fontFamily:"Georgia,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:3}}>
-                  {allSessions.find(s=>s.id===activeChatId)?.title||"Legal Chat"}
-                </div>
-                <div style={{fontSize:12,color:"#8A7A65"}}>
-                  {shareMsgIdx!==null?(shareMsgIdx+1):messages.length} messages &middot; ARK Law AI USA
-                </div>
-              </div>
-              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);setShareMsgIdx(null);}}
-                style={{background:"none",border:"none",cursor:"pointer",color:"#9A8A75",width:32,height:32,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,marginLeft:8}}
-                onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                onMouseLeave={e=>e.currentTarget.style.background="none"}>&#x2715;</button>
+            <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #E4DDD0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
+              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}>✕</button>
             </div>
-
-            {/* Chat preview */}
-            <div style={{margin:"16px 22px 14px",background:"#F9F7F4",border:"1px solid #E8E0D5",borderRadius:"12px",padding:"14px 16px",position:"relative"}}>
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:22,height:22,objectFit:"contain"}}/>
-                <span style={{fontSize:13,fontWeight:700,color:"#1A1209"}}>ARK Law AI</span>
-                <span style={{fontSize:11,color:"#9A8A75",marginLeft:"auto"}}>USA Legal</span>
-              </div>
-              {(shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages).slice(0,3).map((msg,idx)=>(
-                <div key={idx} style={{marginBottom:5}}>
-                  <span style={{fontSize:10,fontWeight:700,color:msg.role==="assistant"?"#BF0A30":"#5A7A4A",marginRight:5,textTransform:"uppercase",letterSpacing:"0.4px"}}>{msg.role==="assistant"?"ARK":"You"}</span>
-                  <span style={{fontSize:12,color:"#3A2A18",lineHeight:1.5}}>{(msg.content||"").substring(0,80)}{(msg.content||"").length>80?"...":""}</span>
-                </div>
-              ))}
-              {(shareMsgIdx!==null?shareMsgIdx+1:messages.length)>3&&<div style={{fontSize:11,color:"#9A8A75",marginTop:4}}>+{(shareMsgIdx!==null?shareMsgIdx+1:messages.length)-3} more</div>}
-              <div style={{position:"absolute",bottom:8,right:12,fontSize:10,fontWeight:800,color:"rgba(0,0,0,0.09)",fontFamily:"Georgia,serif"}}>ARK LAW AI</div>
-            </div>
-
-            {/* Link row - shown after generation */}
-            {shareLink&&!shareLoading&&(
-              <div style={{margin:"0 22px 14px",display:"flex",gap:8,background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:"10px",padding:"9px 12px",alignItems:"center"}}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2" strokeLinecap="round" style={{flexShrink:0}}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                <span style={{flex:1,fontSize:11,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{shareLink}</span>
-                <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}}
-                  style={{padding:"4px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
-              </div>
-            )}
-
-            {/* Social buttons — click triggers generation + opens platform */}
-            <div style={{padding:"0 22px 24px"}}>
-              {shareLoading&&(
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"12px 0",marginBottom:8}}>
-                  <div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#1A1209",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-                  <span style={{fontSize:12,color:"#7A6A55"}}>Generating link...</span>
-                </div>
-              )}
-              <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",opacity:shareLoading?0.4:1,transition:"opacity 0.2s"}}>
-                {[
-                  {label:"Copy link", bg:"#1A1209", platform:null},
-                  {label:"X",         bg:"#000000", platform:"twitter"},
-                  {label:"LinkedIn",  bg:"#0A66C2", platform:"linkedin"},
-                  {label:"WhatsApp",  bg:"#25D366", platform:"whatsapp"},
-                  {label:"Reddit",    bg:"#FF4500", platform:"reddit"},
-                ].map(({label,bg,platform})=>{
-                  const getUrl=(link)=>{
-                    const enc=encodeURIComponent(link);
-                    if(!platform) return null;
-                    if(platform==="twitter")  return "https://twitter.com/intent/tweet?text=Check+out+this+legal+chat+on+ARK+LAW+AI:&url="+enc;
-                    if(platform==="linkedin") return "https://www.linkedin.com/sharing/share-offsite/?url="+enc;
-                    if(platform==="whatsapp") return "https://wa.me/?text=Check+out+this+ARK+LAW+AI+legal+chat:+"+enc;
-                    if(platform==="reddit")   return "https://reddit.com/submit?url="+enc+"&title=ARK+LAW+AI+Legal+Chat";
-                    return null;
-                  };
-                  const icons={
-                    "Copy link":<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
-                    "X":<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
-                    "LinkedIn":<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>,
-                    "WhatsApp":<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>,
-                    "Reddit":<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>,
-                  };
-                  const handleClick=async()=>{
-                    if(shareLoading) return;
-                    // If link already exists, use it directly
-                    if(shareLink){
-                      if(!platform){navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");return;}
-                      window.open(getUrl(shareLink),"_blank","noopener,noreferrer");
-                      return;
-                    }
-                    if(!platform){
-                      // Copy link - just generate and copy
-                      setShareLoading(true);
-                      try{
-                        const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
-                        const session=allSessions.find(s=>s.id===activeChatId);
-                        const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                        const data=await res.json();
-                        if(data.shareUrl){setShareLink(data.shareUrl);navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}
-                        else arkAlert(data.error||"Could not create link","Share Error","[ERR]");
-                      }catch(e){arkAlert("Network error: "+e.message,"Share Error","[ERR]");}
-                      setShareLoading(false);
-                      return;
-                    }
-                    // For social platforms: open window FIRST (must be synchronous),
-                    // then redirect it after getting the link
-                    const newWin=window.open("about:blank","_blank","noopener,noreferrer");
-                    setShareLoading(true);
-                    try{
-                      const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
-                      const session=allSessions.find(s=>s.id===activeChatId);
-                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                      const data=await res.json();
-                      if(data.shareUrl){
-                        setShareLink(data.shareUrl);
-                        if(newWin) newWin.location.href=getUrl(data.shareUrl);
-                      } else {
-                        if(newWin) newWin.close();
-                        arkAlert(data.error||"Could not create link","Share Error","[ERR]");
-                      }
-                    }catch(e){
-                      if(newWin) newWin.close();
-                      arkAlert("Network error: "+e.message,"Share Error","[ERR]");
-                    }
-                    setShareLoading(false);
-                  };
-                  return(
-                    <div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
-                      <button onClick={handleClick} disabled={shareLoading}
-                        style={{width:52,height:52,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:shareLoading?"wait":"pointer",transition:"transform 0.15s,box-shadow 0.15s",boxShadow:"0 2px 8px rgba(0,0,0,0.12)"}}
-                        onMouseEnter={e=>{if(!shareLoading){e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 20px rgba(0,0,0,0.2)";}}}
-                        onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.12)";}}>
-                        {icons[label]}
-                      </button>
-                      <span style={{fontSize:11,color:"#5A4A35",fontWeight:500}}>{label}</span>
+            {/* Message selection */}
+            <div style={{padding:"16px 20px",maxHeight:"320px",overflowY:"auto"}}>
+              <div style={{fontSize:12,color:"#7A6A55",marginBottom:"10px",fontWeight:600}}>Select messages to share:</div>
+              <div style={{display:"flex",flexDirection:"column",gap:"6px"}}>
+                <label style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 12px",background:"#F5F0E8",borderRadius:"8px",cursor:"pointer",border:"1px solid #C8BFB0"}}>
+                  <input type="checkbox" checked={shareSelectAll} onChange={e=>{setShareSelectAll(e.target.checked);setShareSelected(e.target.checked?messages.map((_,i)=>i):[]);}} style={{width:"15px",height:"15px",accentColor:"#1A1209"}}/>
+                  <span style={{fontSize:12,fontWeight:600,color:"#2A1E10"}}>Select all messages</span>
+                </label>
+                {messages.map((msg,i)=>(
+                  <label key={i} style={{display:"flex",alignItems:"flex-start",gap:"10px",padding:"8px 12px",background:shareSelected.includes(i)?"#EDE8DF":"transparent",borderRadius:"8px",cursor:"pointer",border:"1px solid transparent",transition:"all 0.1s"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                    onMouseLeave={e=>e.currentTarget.style.background=shareSelected.includes(i)?"#EDE8DF":"transparent"}>
+                    <input type="checkbox" checked={shareSelected.includes(i)} onChange={e=>{setShareSelected(prev=>e.target.checked?[...prev,i]:prev.filter(x=>x!==i));setShareSelectAll(false);}} style={{width:"15px",height:"15px",marginTop:"2px",accentColor:"#1A1209",flexShrink:0}}/>
+                    <div style={{minWidth:0}}>
+                      <div style={{fontSize:11,fontWeight:600,color:"#7A6A55",marginBottom:"2px"}}>{msg.role==="user"?"You":"ARK Law AI"}</div>
+                      <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"340px"}}>{msg.content?.substring(0,100)}{msg.content?.length>100?"...":""}</div>
                     </div>
-                  );
-                })}
+                  </label>
+                ))}
               </div>
+            </div>
+            {/* Footer actions */}
+            <div style={{padding:"12px 20px",borderTop:"1px solid #E4DDD0",display:"flex",gap:"8px",justifyContent:"flex-end"}}>
+              <button onClick={()=>{
+                const selected = messages.filter((_,i)=>shareSelected.includes(i));
+                const text = selected.map(m=>(m.role==="user"?"You: ":"ARK Law AI: ")+m.content).join("\n\n---\n\n");
+                if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
+                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "✅");}).catch(()=>{});}
+              }} disabled={shareSelected.length===0}
+                style={{padding:"8px 20px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"8px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:"6px"}}
+                onMouseEnter={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#2A1E10";}}
+                onMouseLeave={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#1A1209";}}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                Share {shareSelected.length>0?`(${shareSelected.length})`:""} 
+              </button>
+              <button onClick={()=>setShowSharePopup(false)} style={{padding:"8px 16px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
             </div>
           </div>
         </div>
       )}
-
       {/* ── ARK Modal ── */}
       {arkModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
@@ -1833,10 +1702,10 @@ export default function AppUSA() {
             {/* Results */}
             <div style={{maxHeight:"420px",overflowY:"auto"}}>
               {searchQuery.trim() === "" ? (
-                /* No query  -  show grouped by date */
+                /* No query — show grouped by date */
                 <div>
                   {/* New chat option */}
-                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");if(isMobile)setSidebarOpen(false);}}
+                  <div onClick={()=>{startNewChat();setShowSearchPopup(false);setSearchQuery("");}}
                     style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 18px",cursor:"pointer",transition:"background 0.12s"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
@@ -1973,16 +1842,7 @@ export default function AppUSA() {
                 if(!s) return;
                 setSessionMenu(null);
                 loadSession(s.id);
-                setTimeout(async()=>{
-                  setShareLink("");setShareLoading(true);setShareMsgIdx(null);setShowSharePopup(true);
-                  try{
-                    const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:s.messages||[],title:s.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                    const data=await res.json();
-                    if(data.shareUrl)setShareLink(data.shareUrl);
-                    else arkAlert("Error: "+(data.error||"Could not create link"),"Share Error","[ERR]");
-                  }catch(e){arkAlert("Network error: "+e.message,"Share Error","[ERR]");}
-                  setShareLoading(false);
-                },100);
+                setTimeout(()=>{setShareSelected((s.messages||[]).map((_,i)=>i));setShareSelectAll(true);setShowSharePopup(true);},100);
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
               onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
@@ -2011,8 +1871,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 const s=allSessions.find(x=>x.id===sessionMenu.id);
                 if(!s) return;
-                arkPrompt("Enter a new name for this conversation:", s.title.replace("[PIN]  ",""), "Rename Chat", "Conversation name...").then(t=>{
-                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"[PIN]  ":"")+t.trim()}:x));
+                arkPrompt("Enter a new name for this conversation:", s.title.replace("📌 ",""), "Rename Chat", "Conversation name...").then(t=>{
+                if(t&&t.trim()) setAllSessions(prev=>prev.map(x=>x.id===sessionMenu.id?{...x,title:(x.pinned?"📌 ":"")+t.trim()}:x));
                 setSessionMenu(null);});
               }}
               style={{display:"flex",alignItems:"center",gap:"10px",width:"100%",padding:"8px 14px",background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#2A1E10",textAlign:"left"}}
@@ -2026,8 +1886,8 @@ export default function AppUSA() {
             <button onClick={()=>{
                 setAllSessions(prev=>prev.map(x=>{
                   if(x.id!==sessionMenu.id) return x;
-                  const isPinned=x.title?.startsWith("[PIN]  ");
-                  return {...x,title:isPinned?x.title.replace("[PIN]  ",""):"[PIN]  "+x.title.replace("[PIN]  ",""),pinned:!isPinned};
+                  const isPinned=x.title?.startsWith("📌 ");
+                  return {...x,title:isPinned?x.title.replace("📌 ",""):"📌 "+x.title.replace("📌 ",""),pinned:!isPinned};
                 }));
                 setSessionMenu(null);
               }}
@@ -2052,7 +1912,7 @@ export default function AppUSA() {
             <div style={{height:"1px",background:"#E4DDD0",margin:"4px 0"}}/>
             {/* Delete */}
             <button onClick={()=>{
-                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "[DEL]", "Delete", "#DC2626").then(ok=>{ if(ok){
+                arkConfirm("Are you sure you want to delete this conversation?\nThis action cannot be undone.", "Delete Conversation", "🗑️", "Delete", "#DC2626").then(ok=>{ if(ok){
                   setAllSessions(prev=>prev.filter(x=>x.id!==sessionMenu.id));
                   if(activeChatId===sessionMenu.id) startNewChat();
                 }});  setSessionMenu(null);
