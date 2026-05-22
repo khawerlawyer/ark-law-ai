@@ -1716,7 +1716,23 @@ export default function AppUSA() {
                       window.open(getUrl(shareLink),"_blank","noopener,noreferrer");
                       return;
                     }
-                    // Generate link first, then open platform
+                    if(!platform){
+                      // Copy link - just generate and copy
+                      setShareLoading(true);
+                      try{
+                        const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
+                        const session=allSessions.find(s=>s.id===activeChatId);
+                        const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
+                        const data=await res.json();
+                        if(data.shareUrl){setShareLink(data.shareUrl);navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}
+                        else arkAlert(data.error||"Could not create link","Share Error","[ERR]");
+                      }catch(e){arkAlert("Network error: "+e.message,"Share Error","[ERR]");}
+                      setShareLoading(false);
+                      return;
+                    }
+                    // For social platforms: open window FIRST (must be synchronous),
+                    // then redirect it after getting the link
+                    const newWin=window.open("about:blank","_blank","noopener,noreferrer");
                     setShareLoading(true);
                     try{
                       const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
@@ -1725,13 +1741,14 @@ export default function AppUSA() {
                       const data=await res.json();
                       if(data.shareUrl){
                         setShareLink(data.shareUrl);
-                        if(!platform){navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}
-                        else window.open(getUrl(data.shareUrl),"_blank","noopener,noreferrer");
+                        if(newWin) newWin.location.href=getUrl(data.shareUrl);
                       } else {
-                        arkAlert((data.error||"Could not create link")+" Make sure pages/api/share.js is deployed.","Share Error","[ERR]");
+                        if(newWin) newWin.close();
+                        arkAlert(data.error||"Could not create link","Share Error","[ERR]");
                       }
                     }catch(e){
-                      arkAlert("Network error. Make sure pages/api/share.js is deployed.","Share Error","[ERR]");
+                      if(newWin) newWin.close();
+                      arkAlert("Network error: "+e.message,"Share Error","[ERR]");
                     }
                     setShareLoading(false);
                   };
