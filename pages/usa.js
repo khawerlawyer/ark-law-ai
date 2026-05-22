@@ -226,6 +226,8 @@ export default function AppUSA() {
   const [shareSelected,      setShareSelected]      = useState([]);
   const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
+  const [shareLink,          setShareLink]          = useState("");
+  const [shareLoading,       setShareLoading]       = useState(false);
   const [sessionMenu,       setSessionMenu]       = useState(null);
   const [searchQuery,       setSearchQuery]       = useState("");
   const [showSearchPopup,   setShowSearchPopup]   = useState(false);
@@ -1594,57 +1596,108 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* ── Share Popup ── */}
+      {/* ── Share Popup ── ChatGPT-style with real shareable link */}
       {showSharePopup && (
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>setShowSharePopup(false)}>
-          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"14px",width:"90%",maxWidth:"500px",border:"1px solid #C8BFB0",boxShadow:"0 12px 40px rgba(0,0,0,0.15)",overflow:"hidden"}}>
-            {/* Header */}
-            <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #E4DDD0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
-              <button onClick={()=>setShowSharePopup(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}></button>
-            </div>
-            {/* Message selection */}
-            <div style={{padding:"16px 20px",maxHeight:"320px",overflowY:"auto"}}>
-              <div style={{fontSize:12,color:"#7A6A55",marginBottom:"10px",fontWeight:600}}>Select messages to share:</div>
-              <div style={{display:"flex",flexDirection:"column",gap:"6px"}}>
-                <label style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 12px",background:"#F5F0E8",borderRadius:"8px",cursor:"pointer",border:"1px solid #C8BFB0"}}>
-                  <input type="checkbox" checked={shareSelectAll} onChange={e=>{setShareSelectAll(e.target.checked);setShareSelected(e.target.checked?messages.map((_,i)=>i):[]);}} style={{width:"15px",height:"15px",accentColor:"#1A1209"}}/>
-                  <span style={{fontSize:12,fontWeight:600,color:"#2A1E10"}}>Select all messages</span>
-                </label>
-                {messages.map((msg,i)=>(
-                  <label key={i} style={{display:"flex",alignItems:"flex-start",gap:"10px",padding:"8px 12px",background:shareSelected.includes(i)?"#EDE8DF":"transparent",borderRadius:"8px",cursor:"pointer",border:"1px solid transparent",transition:"all 0.1s"}}
-                    onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                    onMouseLeave={e=>e.currentTarget.style.background=shareSelected.includes(i)?"#EDE8DF":"transparent"}>
-                    <input type="checkbox" checked={shareSelected.includes(i)} onChange={e=>{setShareSelected(prev=>e.target.checked?[...prev,i]:prev.filter(x=>x!==i));setShareSelectAll(false);}} style={{width:"15px",height:"15px",marginTop:"2px",accentColor:"#1A1209",flexShrink:0}}/>
-                    <div style={{minWidth:0}}>
-                      <div style={{fontSize:11,fontWeight:600,color:"#7A6A55",marginBottom:"2px"}}>{msg.role==="user"?"You":"ARK Law AI"}</div>
-                      <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"340px"}}>{msg.content?.substring(0,100)}{msg.content?.length>100?"...":""}</div>
-                    </div>
-                  </label>
-                ))}
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>{setShowSharePopup(false);setShareLink("");}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"90%",maxWidth:"480px",border:"1px solid #C8BFB0",boxShadow:"0 20px 60px rgba(0,0,0,0.2)",overflow:"hidden"}}>
+            <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <img src="/ark-logo-us.png" alt="ARK" style={{width:28,height:28,objectFit:"contain"}}/>
+                <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
               </div>
+              <button onClick={()=>{setShowSharePopup(false);setShareLink("");}} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}>&#x2715;</button>
             </div>
-            {/* Footer actions */}
-            <div style={{padding:"12px 20px",borderTop:"1px solid #E4DDD0",display:"flex",gap:"8px",justifyContent:"flex-end"}}>
-              <button onClick={()=>{
-                const selected = messages.filter((_,i)=>shareSelected.includes(i));
-                const text = selected.map(m=>(m.role==="user"?"You: ":"ARK Law AI: ")+m.content).join("\n\n---\n\n");
-                if(navigator.share){navigator.share({title:"ARK Law AI Chat",text}).catch(()=>{});}
-                else{navigator.clipboard.writeText(text).then(()=>{setShowSharePopup(false);arkAlert("Conversation copied to clipboard!\nYou can now paste and share it.", "Copied!", "✅");}).catch(()=>{});}
-              }} disabled={shareSelected.length===0}
-                style={{padding:"8px 20px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"8px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:"6px"}}
-                onMouseEnter={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#2A1E10";}}
-                onMouseLeave={e=>{if(shareSelected.length>0)e.currentTarget.style.background="#1A1209";}}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
-                </svg>
-                Share {shareSelected.length>0?`(${shareSelected.length})`:""} 
-              </button>
-              <button onClick={()=>setShowSharePopup(false)} style={{padding:"8px 16px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:13}}>Cancel</button>
+            <div style={{padding:"20px"}}>
+              {!shareLink ? (
+                <>
+                  <div style={{fontSize:12,color:"#7A6A55",marginBottom:"10px",fontWeight:600}}>Select messages to share:</div>
+                  <div style={{display:"flex",flexDirection:"column",gap:"5px",maxHeight:"240px",overflowY:"auto",marginBottom:16}}>
+                    <label style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 12px",background:"#F5F0E8",borderRadius:"8px",cursor:"pointer",border:"1px solid #C8BFB0"}}>
+                      <input type="checkbox" checked={shareSelectAll} onChange={e=>{setShareSelectAll(e.target.checked);setShareSelected(e.target.checked?messages.map((_,i)=>i):[]);}} style={{width:"15px",height:"15px",accentColor:"#1A1209"}}/>
+                      <span style={{fontSize:12,fontWeight:600,color:"#2A1E10"}}>Select all messages</span>
+                    </label>
+                    {messages.map((msg,i)=>(
+                      <label key={i} style={{display:"flex",alignItems:"flex-start",gap:"10px",padding:"8px 12px",background:shareSelected.includes(i)?"#EDE8DF":"transparent",borderRadius:"8px",cursor:"pointer",transition:"background 0.1s"}}
+                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
+                        onMouseLeave={e=>e.currentTarget.style.background=shareSelected.includes(i)?"#EDE8DF":"transparent"}>
+                        <input type="checkbox" checked={shareSelected.includes(i)} onChange={e=>{setShareSelected(prev=>e.target.checked?[...prev,i]:prev.filter(x=>x!==i));setShareSelectAll(false);}} style={{width:"15px",height:"15px",marginTop:"2px",accentColor:"#1A1209",flexShrink:0}}/>
+                        <div style={{minWidth:0}}>
+                          <div style={{fontSize:10,fontWeight:700,color:"#BF0A30",marginBottom:"2px",textTransform:"uppercase",letterSpacing:"0.5px"}}>{msg.role==="user"?"You":"ARK Law AI"}</div>
+                          <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"340px"}}>{msg.content?.substring(0,100)}{msg.content?.length>100?"...":""}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  <button onClick={async()=>{
+                    if(shareSelected.length===0) return;
+                    setShareLoading(true);
+                    try{
+                      const selectedMsgs=messages.filter((_,i)=>shareSelected.includes(i));
+                      const session=allSessions.find(s=>s.id===activeChatId);
+                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:selectedMsgs,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
+                      const data=await res.json();
+                      if(data.shareUrl) setShareLink(data.shareUrl);
+                      else arkAlert("Failed to create share link. Please try again.","Share Error","[ERR]");
+                    }catch(e){arkAlert("Failed to create share link.","Share Error","[ERR]");}
+                    setShareLoading(false);
+                  }} disabled={shareSelected.length===0||shareLoading}
+                    style={{width:"100%",padding:"11px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"9px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:14,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+                    {shareLoading
+                      ?<><div style={{width:14,height:14,border:"2px solid rgba(255,255,255,0.4)",borderTopColor:"white",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/> Creating link...</>
+                      :<><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Create shareable link</>
+                    }
+                  </button>
+                </>
+              ) : (
+                <div style={{animation:"fadeSlideUp 0.2s ease"}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"#1A1209",marginBottom:12}}>Shareable link created!</div>
+                  <div style={{display:"flex",gap:8,marginBottom:16}}>
+                    <div style={{flex:1,padding:"9px 12px",background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:"8px",fontSize:12,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                      {shareLink}
+                    </div>
+                    <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied to clipboard!","Copied!","[OK]");}}
+                      style={{padding:"9px 14px",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:700,flexShrink:0,display:"flex",alignItems:"center",gap:6}}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Copy
+                    </button>
+                  </div>
+                  <div style={{fontSize:11,color:"#7A6A55",fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.8px"}}>Share on</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16}}>
+                    <a href={"https://twitter.com/intent/tweet?text=Check+out+this+ARK+LAW+AI+legal+chat:&url="+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
+                      style={{background:"#000",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
+                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>X</span>
+                    </a>
+                    <a href={"https://www.linkedin.com/sharing/share-offsite/?url="+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
+                      style={{background:"#0A66C2",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
+                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>LinkedIn</span>
+                    </a>
+                    <a href={"https://wa.me/?text=Check+out+this+ARK+LAW+AI+legal+chat:+"+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
+                      style={{background:"#25D366",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
+                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>WhatsApp</span>
+                    </a>
+                    <a href={"https://reddit.com/submit?url="+encodeURIComponent(shareLink)+"&title=ARK+LAW+AI+Legal+Chat"} target="_blank" rel="noopener noreferrer"
+                      style={{background:"#FF4500",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
+                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>Reddit</span>
+                    </a>
+                  </div>
+                  <button onClick={()=>setShareLink("")} style={{width:"100%",padding:"9px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>
+                    &larr; Change selection
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+
       {/* ── ARK Modal ── */}
       {arkModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
