@@ -1596,103 +1596,114 @@ export default function AppUSA() {
         </div>
       )}
 
-      {/* ── Share Popup ── ChatGPT-style with real shareable link */}
+      {/* ── Share Popup ── ChatGPT style ── */}
       {showSharePopup && (
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>{setShowSharePopup(false);setShareLink("");}}>
-          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"90%",maxWidth:"480px",border:"1px solid #C8BFB0",boxShadow:"0 20px 60px rgba(0,0,0,0.2)",overflow:"hidden"}}>
-            <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:28,height:28,objectFit:"contain"}}/>
-                <div style={{fontFamily:"Georgia,serif",fontSize:16,fontWeight:700,color:"#1A1209"}}>Share conversation</div>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000}} onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"92%",maxWidth:"440px",boxShadow:"0 24px 64px rgba(0,0,0,0.22)",overflow:"hidden",border:"1px solid #E4DDD0"}}>
+
+            {/* Header — chat title */}
+            <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:11,fontWeight:700,color:"#BF0A30",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:4}}>ARK LAW AI USA</div>
+                <div style={{fontSize:16,fontWeight:700,color:"#1A1209",fontFamily:"Georgia,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                  {allSessions.find(s=>s.id===activeChatId)?.title || "Legal Chat"}
+                </div>
+                <div style={{fontSize:11,color:"#8A7A65",marginTop:3}}>{messages.filter(m=>m.role==="user").length} questions &middot; {messages.length} messages</div>
               </div>
-              <button onClick={()=>{setShowSharePopup(false);setShareLink("");}} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:20,lineHeight:1}}>&#x2715;</button>
+              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",fontSize:22,lineHeight:1,flexShrink:0,marginTop:-2}}>&#x2715;</button>
             </div>
-            <div style={{padding:"20px"}}>
+
+            {/* Chat preview */}
+            <div style={{padding:"14px 20px",background:"#FAF8F4",borderBottom:"1px solid #EDE8DF",maxHeight:"160px",overflowY:"auto"}}>
+              {messages.filter(m=>m.role==="user"||m.role==="assistant").slice(0,4).map((msg,i)=>(
+                <div key={i} style={{display:"flex",gap:8,marginBottom:10,alignItems:"flex-start"}}>
+                  <div style={{width:22,height:22,borderRadius:"50%",background:msg.role==="assistant"?"#BF0A30":"linear-gradient(135deg,#667eea,#764ba2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
+                    {msg.role==="assistant"
+                      ?<img src="/ark-logo-us.png" style={{width:14,height:14,objectFit:"contain"}}/>
+                      :<span style={{fontSize:9,fontWeight:800,color:"white"}}>{(user?.name||"U").charAt(0).toUpperCase()}</span>}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:10,fontWeight:700,color:msg.role==="assistant"?"#BF0A30":"#5A4A35",marginBottom:2}}>{msg.role==="assistant"?"ARK Law AI":"You"}</div>
+                    <div style={{fontSize:11.5,color:"#3A2A18",lineHeight:1.55,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{msg.content?.substring(0,90)}{msg.content?.length>90?"...":""}</div>
+                  </div>
+                </div>
+              ))}
+              {messages.length>4 && <div style={{fontSize:10,color:"#8A7A65",textAlign:"center",paddingTop:4}}>+{messages.length-4} more messages included</div>}
+            </div>
+
+            <div style={{padding:"16px 20px"}}>
               {!shareLink ? (
-                <>
-                  <div style={{fontSize:12,color:"#7A6A55",marginBottom:"10px",fontWeight:600}}>Select messages to share:</div>
-                  <div style={{display:"flex",flexDirection:"column",gap:"5px",maxHeight:"240px",overflowY:"auto",marginBottom:16}}>
-                    <label style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 12px",background:"#F5F0E8",borderRadius:"8px",cursor:"pointer",border:"1px solid #C8BFB0"}}>
-                      <input type="checkbox" checked={shareSelectAll} onChange={e=>{setShareSelectAll(e.target.checked);setShareSelected(e.target.checked?messages.map((_,i)=>i):[]);}} style={{width:"15px",height:"15px",accentColor:"#1A1209"}}/>
-                      <span style={{fontSize:12,fontWeight:600,color:"#2A1E10"}}>Select all messages</span>
-                    </label>
-                    {messages.map((msg,i)=>(
-                      <label key={i} style={{display:"flex",alignItems:"flex-start",gap:"10px",padding:"8px 12px",background:shareSelected.includes(i)?"#EDE8DF":"transparent",borderRadius:"8px",cursor:"pointer",transition:"background 0.1s"}}
-                        onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                        onMouseLeave={e=>e.currentTarget.style.background=shareSelected.includes(i)?"#EDE8DF":"transparent"}>
-                        <input type="checkbox" checked={shareSelected.includes(i)} onChange={e=>{setShareSelected(prev=>e.target.checked?[...prev,i]:prev.filter(x=>x!==i));setShareSelectAll(false);}} style={{width:"15px",height:"15px",marginTop:"2px",accentColor:"#1A1209",flexShrink:0}}/>
-                        <div style={{minWidth:0}}>
-                          <div style={{fontSize:10,fontWeight:700,color:"#BF0A30",marginBottom:"2px",textTransform:"uppercase",letterSpacing:"0.5px"}}>{msg.role==="user"?"You":"ARK Law AI"}</div>
-                          <div style={{fontSize:12,color:"#2A1E10",lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"340px"}}>{msg.content?.substring(0,100)}{msg.content?.length>100?"...":""}</div>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                  <button onClick={async()=>{
-                    if(shareSelected.length===0) return;
-                    setShareLoading(true);
-                    try{
-                      const selectedMsgs=messages.filter((_,i)=>shareSelected.includes(i));
-                      const session=allSessions.find(s=>s.id===activeChatId);
-                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:selectedMsgs,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
-                      const data=await res.json();
-                      if(data.shareUrl) setShareLink(data.shareUrl);
-                      else arkAlert("Failed to create share link. Please try again.","Share Error","[ERR]");
-                    }catch(e){arkAlert("Failed to create share link.","Share Error","[ERR]");}
-                    setShareLoading(false);
-                  }} disabled={shareSelected.length===0||shareLoading}
-                    style={{width:"100%",padding:"11px",background:shareSelected.length>0?"#1A1209":"#C8BFB0",color:"white",border:"none",borderRadius:"9px",cursor:shareSelected.length>0?"pointer":"not-allowed",fontSize:14,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-                    {shareLoading
-                      ?<><div style={{width:14,height:14,border:"2px solid rgba(255,255,255,0.4)",borderTopColor:"white",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/> Creating link...</>
-                      :<><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Create shareable link</>
-                    }
-                  </button>
-                </>
+                /* Generate link button */
+                <button onClick={async()=>{
+                  setShareLoading(true);
+                  try{
+                    const session=allSessions.find(s=>s.id===activeChatId);
+                    const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
+                    const data=await res.json();
+                    if(data.shareUrl){setShareLink(data.shareUrl);}
+                    else{setShowSharePopup(false);arkAlert("Could not create link. Run shared_chats_table.sql in Supabase first.","Share Error","[ERR]");}
+                  }catch(e){setShowSharePopup(false);arkAlert("Network error. Please try again.","Share Error","[ERR]");}
+                  setShareLoading(false);
+                }}
+                  style={{width:"100%",padding:"12px",background:"#1A1209",color:"white",border:"none",borderRadius:"10px",cursor:"pointer",fontSize:14,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:9,marginBottom:10}}>
+                  {shareLoading
+                    ?<><div style={{width:15,height:15,border:"2px solid rgba(255,255,255,0.35)",borderTopColor:"white",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/> Generating link...</>
+                    :<><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Get shareable link</>
+                  }
+                </button>
               ) : (
+                /* Link box + social buttons */
                 <div style={{animation:"fadeSlideUp 0.2s ease"}}>
-                  <div style={{fontSize:13,fontWeight:700,color:"#1A1209",marginBottom:12}}>Shareable link created!</div>
-                  <div style={{display:"flex",gap:8,marginBottom:16}}>
-                    <div style={{flex:1,padding:"9px 12px",background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:"8px",fontSize:12,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                      {shareLink}
-                    </div>
-                    <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied to clipboard!","Copied!","[OK]");}}
-                      style={{padding:"9px 14px",background:"#1A1209",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontSize:12,fontWeight:700,flexShrink:0,display:"flex",alignItems:"center",gap:6}}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                      Copy
-                    </button>
+                  {/* Link row */}
+                  <div style={{display:"flex",gap:7,marginBottom:16,background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:9,padding:"8px 10px",alignItems:"center"}}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2" strokeLinecap="round" style={{flexShrink:0}}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    <span style={{flex:1,fontSize:11.5,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{shareLink}</span>
+                    <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}}
+                      style={{padding:"5px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
                   </div>
-                  <div style={{fontSize:11,color:"#7A6A55",fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.8px"}}>Share on</div>
-                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16}}>
-                    <a href={"https://twitter.com/intent/tweet?text=Check+out+this+ARK+LAW+AI+legal+chat:&url="+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
-                      style={{background:"#000",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
-                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>X</span>
-                    </a>
-                    <a href={"https://www.linkedin.com/sharing/share-offsite/?url="+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
-                      style={{background:"#0A66C2",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
-                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>LinkedIn</span>
-                    </a>
-                    <a href={"https://wa.me/?text=Check+out+this+ARK+LAW+AI+legal+chat:+"+encodeURIComponent(shareLink)} target="_blank" rel="noopener noreferrer"
-                      style={{background:"#25D366",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
-                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
-                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>WhatsApp</span>
-                    </a>
-                    <a href={"https://reddit.com/submit?url="+encodeURIComponent(shareLink)+"&title=ARK+LAW+AI+Legal+Chat"} target="_blank" rel="noopener noreferrer"
-                      style={{background:"#FF4500",borderRadius:9,padding:"10px 0",display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none"}}
-                      onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                      <span style={{fontSize:9,fontWeight:700,color:"white"}}>Reddit</span>
-                    </a>
-                  </div>
-                  <button onClick={()=>setShareLink("")} style={{width:"100%",padding:"9px",background:"transparent",color:"#7A6A55",border:"1px solid #C0B49A",borderRadius:"8px",cursor:"pointer",fontSize:12}}>
-                    &larr; Change selection
-                  </button>
                 </div>
               )}
+
+              {/* Social share buttons — always visible once link is generated */}
+              {shareLink && (
+                <div>
+                  <div style={{fontSize:10,color:"#8A7A65",fontWeight:700,textTransform:"uppercase",letterSpacing:"1px",marginBottom:12,textAlign:"center"}}>Share on</div>
+                  <div style={{display:"flex",justifyContent:"center",gap:14,flexWrap:"wrap"}}>
+                    {[
+                      {label:"Copy link",bg:"#1A1209",href:null,onClick:()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");},icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>},
+                      {label:"X",bg:"#000",href:"https://twitter.com/intent/tweet?text=Check+out+this+ARK+LAW+AI+legal+chat:&url="+encodeURIComponent(shareLink),icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>},
+                      {label:"WhatsApp",bg:"#25D366",href:"https://wa.me/?text=Check+out+this+ARK+LAW+AI+legal+chat:+"+encodeURIComponent(shareLink),icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>},
+                      {label:"LinkedIn",bg:"#0A66C2",href:"https://www.linkedin.com/sharing/share-offsite/?url="+encodeURIComponent(shareLink),icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>},
+                      {label:"Facebook",bg:"#1877F2",href:"https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(shareLink),icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>},
+                      {label:"Reddit",bg:"#FF4500",href:"https://reddit.com/submit?url="+encodeURIComponent(shareLink)+"&title=ARK+LAW+AI+Legal+Chat",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>},
+                    ].map(({label,bg,href,onClick,icon})=>(
+                      <div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+                        {href ? (
+                          <a href={href} target="_blank" rel="noopener noreferrer"
+                            style={{width:50,height:50,background:bg,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",textDecoration:"none",boxShadow:"0 2px 8px rgba(0,0,0,0.15)",transition:"transform 0.15s,box-shadow 0.15s"}}
+                            onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.08)";e.currentTarget.style.boxShadow="0 4px 16px rgba(0,0,0,0.22)";}}
+                            onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.15)";}}>
+                            {icon}
+                          </a>
+                        ) : (
+                          <button onClick={onClick}
+                            style={{width:50,height:50,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.15)",transition:"transform 0.15s,box-shadow 0.15s"}}
+                            onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.08)";e.currentTarget.style.boxShadow="0 4px 16px rgba(0,0,0,0.22)";}}
+                            onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.15)";}}>
+                            {icon}
+                          </button>
+                        )}
+                        <span style={{fontSize:10,color:"#7A6A55",fontWeight:500}}>{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Disclaimer */}
+              <div style={{marginTop:16,fontSize:10,color:"#9A8A75",textAlign:"center",lineHeight:1.5}}>
+                Anyone with this link can view this conversation. Link expires in 30 days.
+              </div>
             </div>
           </div>
         </div>
