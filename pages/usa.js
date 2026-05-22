@@ -381,6 +381,36 @@ export default function AppUSA() {
     setNameAsked(true);
   }, []);
 
+  // Load shared chat from URL ?share=xxx
+  useEffect(() => {
+    const shareId = router.query?.share;
+    if (!shareId) return;
+    fetch("/api/share?id="+shareId)
+      .then(r=>r.json())
+      .then(data=>{
+        if(!data.chat) return;
+        try{
+          const chat = data.chat;
+          const msgs = typeof chat.messages==="string" ? JSON.parse(chat.messages) : chat.messages;
+          const sessionTitle = chat.title || "Shared Chat";
+          const sharedId = Date.now();
+          const sharedSession = {
+            id: sharedId,
+            title: sessionTitle,
+            messages: msgs,
+            isShared: true,
+          };
+          setAllSessions(prev=>[sharedSession,...prev]);
+          setActiveChatId(sharedId);
+          setMessages(msgs);
+          // Remove ?share= from URL without reload
+          router.replace("/usa", undefined, {shallow:true});
+          arkAlert("Shared conversation loaded! You can continue this chat below.", "Shared Chat Loaded", "✅");
+        }catch(e){console.error("Failed to load shared chat",e);}
+      })
+      .catch(()=>{});
+  }, [router.query?.share]);
+
   useEffect(() => {
     const savedUser = localStorage.getItem("arklaw_user");
     if (savedUser) {
