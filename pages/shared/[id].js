@@ -254,3 +254,8 @@ export default function SharedChat() {
     </>
   );
 }
+
+// Required for dynamic routes in Next.js pages router
+export async function getServerSideProps(context) {
+  return { props: {} };
+}
