@@ -72,7 +72,17 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "DB error: " + err });
       }
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://arklaw.ai";
-      return res.status(200).json({ shareId, shareUrl: `${siteUrl}/shared/${shareId}` });
+      // Route to the correct country page so chat loads in-app
+      const countryRoutes = {
+        "United States": "/usa",
+        "USA": "/usa",
+        "Pakistan": "/pakistan",
+        "India": "/india",
+        "Bangladesh": "/bangladesh",
+      };
+      const page = countryRoutes[country] || "/usa";
+      const shareUrl = `${siteUrl}${page}?share=${shareId}`;
+      return res.status(200).json({ shareId, shareUrl });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
