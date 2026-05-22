@@ -1721,7 +1721,6 @@ export default function AppUSA() {
                     try{
                       const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
                       const session=allSessions.find(s=>s.id===activeChatId);
-                      const supabaseUrl=process.env.NEXT_PUBLIC_SUPABASE_URL;
                       const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"United States",sharedBy:user?.name||"Anonymous"})});
                       const data=await res.json();
                       if(data.shareUrl){
