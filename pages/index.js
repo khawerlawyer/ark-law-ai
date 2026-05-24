@@ -165,24 +165,6 @@ export default function Landing() {
 
       </div>
 
-      {/* ── Training Banner ── */}
-      <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:1000,background:"linear-gradient(135deg,#021A4A,#0D1B2A)",borderTop:"2px solid #C9A84C",padding:"10px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",boxShadow:"0 -4px 24px rgba(201,168,76,0.2)"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"12px",flex:1,minWidth:0}}>
-          <img src="/ark-logo-us.png" style={{width:36,height:36,objectFit:"contain",flexShrink:0,filter:"brightness(1.1) drop-shadow(0 0 8px rgba(201,168,76,0.4))"}} alt="ARK"/>
-          <div style={{minWidth:0}}>
-            <div style={{fontSize:11,fontWeight:800,color:"#C9A84C",letterSpacing:"1px",textTransform:"uppercase"}}>FREE Live Webinar — AI for Lawyers</div>
-            <div style={{fontSize:10,color:"rgba(255,255,255,0.65)",marginTop:"1px"}}>Friday, June 13, 2026 &nbsp;·&nbsp; 12:00–2:00 PM PKT &nbsp;·&nbsp; Zoom &nbsp;·&nbsp; 100% Free</div>
-          </div>
-        </div>
-        <a href="https://forms.gle/n1unvjgw672rX5j19" target="_blank"
-          style={{padding:"8px 20px",background:"linear-gradient(135deg,#C9A84C,#E8C96A)",color:"#021A4A",fontWeight:800,fontSize:12,borderRadius:7,textDecoration:"none",whiteSpace:"nowrap",flexShrink:0,boxShadow:"0 3px 14px rgba(201,168,76,0.45)"}}>
-          Register Free &rarr;
-        </a>
-        <a href="/training-flyer" target="_blank"
-          style={{padding:"8px 16px",background:"rgba(201,168,76,0.12)",color:"#C9A84C",fontWeight:700,fontSize:11,borderRadius:7,textDecoration:"none",border:"1px solid rgba(201,168,76,0.35)",whiteSpace:"nowrap",flexShrink:0}}>
-          View Flyer
-        </a>
-      </div>
     </>
   );
 }
