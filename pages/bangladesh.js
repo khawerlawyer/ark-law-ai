@@ -659,7 +659,7 @@ export default function AppBD() {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Bangla. You MUST respond entirely in Bangla (Bengali). All your answers, explanations, disclaimers, and suggestions must be in Bangla. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Bangladesh, an expert legal assistant specializing EXCLUSIVELY in Bangladesh law  -  Constitution, IPC, CPC, and all applicable Bangladesh statutes. You ONLY answer questions about Bangladesh law. If asked about other countries, politely decline. Always title disclaimers "Professional Disclaimer by ARK LAW AI Bangladesh". Reference relevant Bangladesh statutes and case law. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Bangladesh, an expert legal assistant specializing in Bangladeshi law — Constitution, applicable statutes and legal procedures. You primarily answer questions about Bangladeshi law. ARK LAW AI specializes in Pakistani, United States, Indian and Bangladeshi law across its versions. If asked about other countries outside these four, politely redirect. Always title disclaimers "Professional Disclaimer by ARK LAW AI Bangladesh". Reference relevant Bangladesh statutes and case law. ${langInstruction}]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -854,7 +854,7 @@ export default function AppBD() {
     <>
       <Head>
         <title>ARK LAW AI Bangladesh - Legal Assistant</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for Bangladesh law." />
+        <meta name="description" content="ARK Law AI: AI legal assistant specializing in Pakistani, US, Indian and Bangladeshi law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
@@ -1182,7 +1182,7 @@ export default function AppBD() {
                   {isUrdu ? "How can I help you today?" : "How can I help you today?"}
                 </h2>
                 <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>
-                  {isUrdu ? "ARK Law AI Bangladesh" : "ARK Law AI Bangladesh  -  your expert legal assistant"}
+                  {isUrdu ? "ARK Law AI Bangladesh" : "ARK Law AI Bangladesh — specializing in Bangladeshi law"}
                 </p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? BD_LOCAL_QUERIES : QUICK_QUERIES_BD).slice(0,4).map((q,i)=>(
