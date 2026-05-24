@@ -672,7 +672,7 @@ export default function AppIN() {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Hindi. You MUST respond entirely in Hindi (हिंदी). All answers must be in Hindi. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI India, an expert legal assistant specializing EXCLUSIVELY in India law  -  Constitution, IPC, CPC, and all applicable India statutes. You ONLY answer questions about India law. If asked about other countries, politely decline. Always title disclaimers "Professional Disclaimer by ARK LAW AI India". Reference relevant India statutes and case law. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI India, an expert legal assistant specializing in Indian law — Constitution, IPC, CPC, and all applicable Indian statutes. You primarily answer questions about Indian law. ARK LAW AI specializes in Pakistani, United States, Indian and Bangladeshi law across its versions. If asked about other countries outside these four, politely redirect. Always title disclaimers "Professional Disclaimer by ARK LAW AI India". Reference relevant India statutes and case law. ${langInstruction}]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -867,7 +867,7 @@ export default function AppIN() {
     <>
       <Head>
         <title>ARK LAW AI India - Legal Assistant</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for India law." />
+        <meta name="description" content="ARK Law AI: AI legal assistant specializing in Pakistani, US, Indian and Bangladeshi law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
@@ -1192,7 +1192,7 @@ export default function AppIN() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI India — su asistente legal experto" : "ARK Law AI India — your expert Indian law assistant"}</p>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI India — su asistente legal experto" : "ARK Law AI India — specializing in Indian law"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? IN_LOCAL_QUERIES : QUICK_QUERIES_IN).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
