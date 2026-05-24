@@ -324,7 +324,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: "Welcome to ARK Law AI Pakistan.\n\nI specialize in Pakistani law. ARK LAW AI also covers US, Indian and Bangladeshi law.\n\nHow may I assist you today?" };
     // Try to restore previous sessions from localStorage
     try {
       const saved = JSON.parse(localStorage.getItem("arklaw_sessions_pk") || "[]");
@@ -417,7 +417,7 @@ export default function App() {
   const fetchNewsHeadlines = async () => { setNewsItems(newsDatabase.map(item => item.headline)); };
 
   const startNewChat = () => {
-    const greeting = { role: "assistant", content: "Welcome to ARK Law AI - Your trusted legal companion for Pakistani law.\n\nHow may I assist you today?" };
+    const greeting = { role: "assistant", content: "Welcome to ARK Law AI Pakistan.\n\nI specialize in Pakistani law. ARK LAW AI also covers US, Indian and Bangladeshi law.\n\nHow may I assist you today?" };
     const newSession = { id: Date.now(), title: "New Chat", messages: [greeting] };
     setAllSessions(prev => [newSession, ...prev]);
     setActiveChatId(newSession.id);
@@ -542,7 +542,7 @@ export default function App() {
     setStreamingIdx(streamingMessageIndex);
     setMessages([...updatedMessages, { role: "assistant", content: "" }]);
     try {
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI, expert Pakistani law assistant. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI Pakistan, an expert legal assistant specializing in Pakistani law. ARK LAW AI covers Pakistani, United States, Indian and Bangladeshi law across its versions. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI".]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -764,7 +764,7 @@ export default function App() {
     <>
       <Head>
         <title>ARK LAW AI Pakistan - My Learned Friend</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for Pakistani law." />
+        <meta name="description" content="ARK Law AI: AI legal assistant specializing in Pakistani, US, Indian and Bangladeshi law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
@@ -1106,7 +1106,7 @@ export default function App() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI Pakistan — su asistente legal experto" : "ARK Law AI Pakistan — your expert Pakistani law assistant"}</p>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI Pakistan — su asistente legal experto" : "ARK Law AI Pakistan — specializing in Pakistani law"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
@@ -1462,7 +1462,7 @@ export default function App() {
                 const localBackupUs=(()=>{try{return JSON.parse(localStorage.getItem("arklaw_sessions_pk")||"[]");}catch{return [];}})();
                 const serverHistoryUs=(data.user.chatHistory&&data.user.chatHistory.length>0)?data.user.chatHistory:localBackupUs;
                 if(serverHistoryUs.length>0){
-                  const greeting={role:"assistant",content:isUrdu?"خوش آمدید! ARK Law AI Pakistan میں  -  آپ کا قانونی مددگار۔\n\nآج میں آپ کی کیسے مدد کر سکتا ہوں؟":"Welcome to ARK Law AI Pakistan  -  Your trusted AI legal companion for Pakistani law.\n\nHow may I assist you today?"};
+                  const greeting={role:"assistant",content:isUrdu?"خوش آمدید! ARK Law AI Pakistan میں  -  آپ کا قانونی مددگار۔\n\nآج میں آپ کی کیسے مدد کر سکتا ہوں؟":"Welcome to ARK Law AI Pakistan.\n\nI specialize in Pakistani law. ARK LAW AI also covers US, Indian and Bangladeshi law.\n\nHow may I assist you today?"};
                   const restoredSessions=serverHistoryUs.map(s=>({...s,messages:s.messages||[greeting]}));
                   setAllSessions(restoredSessions.slice(0,50));
                   if(restoredSessions.length>0){setActiveChatId(restoredSessions[0].id);setMessages(restoredSessions[0].messages);}
