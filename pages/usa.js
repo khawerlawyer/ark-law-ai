@@ -575,7 +575,7 @@ export default function AppUSA() {
       const langInstruction = isUrdu
         ? "IMPORTANT: The user has selected Spanish. You MUST respond entirely in Spanish (Español). All your answers, explanations, disclaimers, and suggestions must be in Spanish. Do not switch to English unless the user explicitly asks."
         : "Respond in English.";
-      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing EXCLUSIVELY in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You ONLY answer questions about US law and legal matters. If a user asks about the law of any other country, politely decline and redirect them. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
+      const systemNote = `[System: Today is ${currentDate.current}. You are ARK Law AI USA, an expert legal assistant specializing in United States law — federal law, state law across all 50 states, US constitutional law, and US court procedures. You primarily answer questions about US law. ARK LAW AI specializes in Pakistani, United States, Indian and Bangladeshi law across its versions. If asked about other countries outside these four, politely redirect. Always title disclaimer sections "Professional Disclaimer by ARK LAW AI USA". Always reference relevant US statutes, federal regulations, or case law where applicable. ${langInstruction}]`;
       const conversationPairs = [];
       for (let i = 0; i < messages.length; i++) {
         const m = messages[i];
@@ -775,7 +775,7 @@ export default function AppUSA() {
     <>
       <Head>
         <title>ARK LAW AI USA - Your Trusted US Legal Assistant</title>
-        <meta name="description" content="ARK Law AI: Expert AI legal assistant for US law." />
+        <meta name="description" content="ARK Law AI: AI legal assistant specializing in Pakistani, US, Indian and Bangladeshi law." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
@@ -1117,7 +1117,7 @@ export default function AppUSA() {
               <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"16px 20px 8px",animation:"fadeSlideUp 0.4s ease"}}>
                 <img src="/ark-logo-us.png" alt="ARK" style={{width:"60px",height:"60px",objectFit:"contain",marginBottom:"10px",filter:"drop-shadow(0 0 20px rgba(191,10,48,0.25))"}}/>
                 <h2 style={{fontSize:"clamp(20px,3vw,30px)",fontWeight:600,color:"#1A1209",marginBottom:"8px",fontFamily:"Georgia,serif",textAlign:"center"}}>{isUrdu ? "¿en qué puedo ayudarle hoy?" : "How can I help you today?"}</h2>
-                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US — su asistente legal experto" : "ARK Law AI US — your expert US law assistant"}</p>
+                <p style={{fontSize:14,color:"#8A7A65",marginBottom:"16px",textAlign:"center"}}>{isUrdu ? "ARK Law AI US — su asistente legal experto" : "ARK Law AI USA — specializing in US law"}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:"8px",width:"100%",maxWidth:"560px"}}>
                   {(isUrdu ? UR.quickQueries : QUICK_QUERIES_PK).slice(0,4).map((q,i)=>(
                     <button key={i} className="qcard" onClick={()=>sendMessage(q,true)}>
