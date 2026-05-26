@@ -8,6 +8,26 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
+const ALGO    = "aes-256-gcm";
+const ENC_KEY = process.env.CHAT_ENCRYPTION_KEY || process.env.SUPABASE_SERVICE_KEY?.substring(0, 32).padEnd(32, "0");
+
+function decrypt(text) {
+  if (!text || !text.startsWith("enc:")) return text;
+  if (!ENC_KEY) return text;
+  try {
+    const key   = Buffer.from(ENC_KEY.substring(0, 32).padEnd(32, "0"), "utf8");
+    const parts = text.split(":");
+    const iv        = Buffer.from(parts[1], "hex");
+    const tag       = Buffer.from(parts[2], "hex");
+    const encrypted = parts.slice(3).join(":");
+    const decipher  = crypto.createDecipheriv(ALGO, key, iv);
+    decipher.setAuthTag(tag);
+    let decrypted = decipher.update(encrypted, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  } catch { return text; }
+}
+
 // ─── Supabase helpers ─────────────────────────────────────────────────────────
 
 async function supabaseRequest(endpoint, method = "GET", body = null) {
@@ -46,7 +66,7 @@ async function getUserByEmailSupabase(email) {
     tokens:        u.tokens ?? 500000,
     createdAt:     u.created_at,
     lastLogin:     u.last_login,
-    chatHistory:   (() => { try { return JSON.parse(u.chat_history || "[]"); } catch { return []; } })(),
+    chatHistory:   (() => { try { const raw = decrypt(u.chat_history || "[]"); return JSON.parse(raw); } catch { return []; } })(),
   };
 }
 
