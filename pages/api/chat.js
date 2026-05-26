@@ -1,141 +1,85 @@
+// pages/api/chat.js
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { messages } = req.body;
+  if (!messages || !messages.length) return res.status(400).json({ error: "No messages" });
 
-  if (!messages || messages.length === 0) {
-    return res.status(400).json({ error: "Messages are required" });
-  }
+  const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_KEY) return res.status(500).json({ error: "API key not configured in Vercel env vars" });
+
+  const firstMsg = messages[0];
+  const isSystemNote = firstMsg?.role === "user" && firstMsg?.content?.startsWith("[System:");
+
+  const conversation = isSystemNote ? messages.slice(1) : messages;
+  const trimmed = conversation.slice(-6);
+
+  const systemPrompt = isSystemNote
+    ? firstMsg.content.replace(/^\[System:\s*/, "").replace(/\]$/, "")
+    : "You are ARK Law AI, an expert legal assistant. Answer clearly and concisely.";
 
   try {
-    // Set headers for streaming
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "x-api-key":         ANTHROPIC_KEY,
         "anthropic-version": "2023-06-01",
+        "content-type":      "application/json",
       },
       body: JSON.stringify({
-        model: "claude-opus-4-20250514",
-        max_tokens: 3000,
-        stream: true, // Enable streaming
-        system: `You are ARK Law AI, a specialized legal assistant for Pakistani law.
-
-CRITICAL RULES:
-1. NEVER ask for the user's name
-2. Answer questions directly and comprehensively
-3. Use proper formatting with headers and bullet points
-
-FORMATTING REQUIREMENTS - STRICT:
-- Use ***bold italic*** for section headers only
-- Regular text should be normal weight (no bold)
-- Use bullet points (•) for lists
-- Always include a "Sources & References" section at the end
-
-Example format:
-
-***Legal Framework:***
-
-Tenants in Pakistan have several rights protected under law. The Punjab Tenancy Act, 1887 and Sindh Rented Premises Ordinance, 1979 provide comprehensive protections.
-
-***Key Points:***
-
-• Right to peaceful possession without arbitrary eviction
-• Protection from rent increases beyond legal limits
-• Right to proper notice before termination
-• Security of tenure as per rental agreement terms
-
-***Sources & References:***
-
-• Punjab Tenancy Act, 1887 - Sections 5, 7, 9
-• Sindh Rented Premises Ordinance, 1979 - Section 3, 4
-• Code of Civil Procedure, 1908 - Order XXI
-• Rent Restriction Ordinances - Provincial Laws
-
-***Professional Advice:***
-
-Please consult a qualified Pakistani lawyer for your specific situation.
-
-DOCUMENT DRAFTING:
-When user requests document drafting, ask for all required information step by step, then generate complete Pakistani legal documents.
-
-IMAGE SUGGESTIONS:
-When helpful, suggest visual aids:
-📊 [SUGGEST: Flowchart showing process]
-📅 [SUGGEST: Timeline diagram]
-📈 [SUGGEST: Comparison chart]
-
-ALWAYS include Sources & References section.
-NEVER ask for user's name.`,
-        messages: messages,
+        model:      "claude-haiku-4-5-20251001",
+        max_tokens: 1500,
+        stream:     true,
+        system:     systemPrompt,
+        messages:   trimmed,
       }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || "API request failed");
+      const err = await response.text();
+      console.error("Anthropic API error:", response.status, err);
+      return res.status(response.status).json({ 
+        error: `Anthropic API error ${response.status}: ${err}` 
+      });
     }
 
-    // Stream the response
-    const reader = response.body.getReader();
+    res.setHeader("Content-Type",      "text/event-stream");
+    res.setHeader("Cache-Control",     "no-cache");
+    res.setHeader("Connection",        "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+
+    const reader  = response.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) {
-        // Flush any remaining buffer
-        if (buffer) {
-          res.write(`data: ${JSON.stringify({ content: buffer })}\n\n`);
-        }
-        res.write('data: [DONE]\n\n');
-        res.end();
-        break;
-      }
+      if (done) break;
 
-      const chunk = decoder.decode(value);
-      const lines = chunk.split('\n');
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.slice(6));
-            
-            // Handle different event types
-            if (data.type === 'content_block_delta') {
-              if (data.delta?.text) {
-                // Buffer chunks and send in batches for 70% faster streaming
-                buffer += data.delta.text;
-                
-                // Send every 3-5 characters instead of every character (70% faster)
-                if (buffer.length >= 3) {
-                  res.write(`data: ${JSON.stringify({ content: buffer })}\n\n`);
-                  buffer = '';
-                }
-              }
-            }
-          } catch (e) {
-            // Skip invalid JSON
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6).trim();
+        if (data === "[DONE]") { res.write("data: [DONE]\n\n"); continue; }
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === "content_block_delta" && evt.delta?.type === "text_delta") {
+            res.write(`data: ${JSON.stringify({ content: evt.delta.text })}\n\n`);
           }
-        }
+          if (evt.type === "message_stop") {
+            res.write("data: [DONE]\n\n");
+          }
+        } catch {}
       }
     }
-  } catch (error) {
-    console.error("Error calling Anthropic API:", error);
-    
-    // If headers haven't been sent yet, send error as JSON
-    if (!res.headersSent) {
-      return res.status(500).json({
-        error: "Failed to get response from AI. Please try again.",
-        details: error.message,
-      });
-    }
+    res.end();
+  } catch (err) {
+    console.error("Chat API error:", err.message);
+    if (!res.headersSent) res.status(500).json({ error: err.message });
+    else res.end();
   }
 }
