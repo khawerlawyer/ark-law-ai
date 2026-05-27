@@ -205,6 +205,13 @@ export default function App() {
   const [sidebarOpen,        setSidebarOpen]        = useState(true);
   const [showSharePopup,     setShowSharePopup]     = useState(false);
   const [shareLink,          setShareLink]          = useState("");
+  const [showToolsMenu,      setShowToolsMenu]      = useState(false);
+  const [activeTool,         setActiveTool]         = useState(null);
+  const [toolInput,          setToolInput]          = useState("");
+  const [toolSecondary,      setToolSecondary]      = useState("");
+  const [toolResult,         setToolResult]         = useState("");
+  const [toolLoading,        setToolLoading]        = useState(false);
+  const [toolError,          setToolError]          = useState("");
   const [shareLoading,       setShareLoading]       = useState(false);
   const [shareMsgIdx,        setShareMsgIdx]        = useState(null);
   const [shareSelected,      setShareSelected]      = useState([]);
@@ -893,15 +900,38 @@ export default function App() {
           </div>
 
           {/* Sessions list */}
-          <div style={{padding:"6px 10px 4px",flexShrink:0}}>
-            <a href="/pakistan-tools" target="_blank"
-              style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"8px 10px",borderRadius:8,border:"none",cursor:"pointer",background:"transparent",color:"#4A3A28",fontSize:13,fontWeight:600,transition:"all 0.15s",textDecoration:"none"}}
+          {/* ── Legal Tools Dropdown ── */}
+          <div style={{padding:"6px 10px 4px",flexShrink:0,position:"relative"}}>
+            <button onClick={()=>setShowToolsMenu(o=>!o)}
+              style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"8px 10px",borderRadius:8,border:"none",cursor:"pointer",background:showToolsMenu?"#D8D0C4":"transparent",color:"#4A3A28",fontSize:13,fontWeight:600,transition:"all 0.15s",textAlign:"left",fontFamily:"inherit"}}
               onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
-              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              onMouseLeave={e=>{if(!showToolsMenu)e.currentTarget.style.background="transparent";}}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              Legal Tools
-              <span style={{marginLeft:"auto",fontSize:9,background:"#2E7D32",color:"white",padding:"1px 6px",borderRadius:8,fontWeight:700}}>NEW</span>
-            </a>
+              <span style={{flex:1}}>Legal Tools</span>
+              <span style={{fontSize:9,background:"#2E7D32",color:"white",padding:"1px 6px",borderRadius:8,fontWeight:700,marginRight:4}}>NEW</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{transition:"transform 0.2s",transform:showToolsMenu?"rotate(180deg)":"rotate(0deg)"}}><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            {showToolsMenu&&(
+              <div style={{position:"absolute",left:10,right:10,top:"100%",background:"white",border:"1px solid #C8BFB0",borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,overflow:"hidden",marginTop:2}}>
+                {[
+                  {id:"summarize", icon:"📋", label:"Judgment Summary",    desc:"Summarize any court judgment"},
+                  {id:"redline",   icon:"📝", label:"Contract Redlining",  desc:"Risk-flag every clause"},
+                  {id:"compliance",icon:"⚠️", label:"Compliance Check",    desc:"Check Pakistani regulations"},
+                  {id:"clauses",   icon:"📚", label:"Clause Library",       desc:"Standard clause variations"},
+                ].map(t=>(
+                  <button key={t.id} onClick={()=>{setActiveTool(t.id);setShowToolsMenu(false);setToolInput("");setToolSecondary("");setToolResult("");setToolError("");}}
+                    style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"transparent",border:"none",borderBottom:"1px solid #F0EBE0",cursor:"pointer",textAlign:"left",transition:"background 0.1s",fontFamily:"inherit"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
+                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                    <span style={{fontSize:18,flexShrink:0}}>{t.icon}</span>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>{t.label}</div>
+                      <div style={{fontSize:10,color:"#7A6A55",marginTop:1}}>{t.desc}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
             {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
@@ -1661,6 +1691,190 @@ export default function App() {
           </div>
         </div>
       )}
+      {/* ── Legal Tools Popup ── */}
+      {activeTool && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:5000,backdropFilter:"blur(3px)"}}
+          onClick={()=>{if(!toolLoading){setActiveTool(null);setToolResult("");setToolError("");}}}>
+          <div onClick={e=>e.stopPropagation()}
+            style={{background:"#FFFFFF",borderRadius:"18px",width:"94%",maxWidth:"660px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"1px solid #C8BFB0",boxShadow:"0 32px 80px rgba(0,0,0,0.25)",overflow:"hidden"}}>
+
+            {/* Popup header */}
+            <div style={{padding:"16px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",alignItems:"center",gap:12,flexShrink:0,background:"linear-gradient(135deg,#021A4A,#0D1B2A)"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:30,height:30,objectFit:"contain",filter:"brightness(1.2)"}}/>
+              <div style={{flex:1}}>
+                <div style={{fontSize:15,fontWeight:800,color:"white",fontFamily:"DM Sans,sans-serif"}}>
+                  {activeTool==="summarize"?"📋 Judgment Summary":activeTool==="redline"?"📝 Contract Redlining":activeTool==="compliance"?"⚠️ Compliance Check":"📚 Clause Library"}
+                </div>
+                <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:1}}>ARK LAW AI — Pakistan Law</div>
+              </div>
+              <button onClick={()=>{if(!toolLoading){setActiveTool(null);setToolResult("");setToolError("");}}}
+                style={{background:"rgba(255,255,255,0.1)",border:"none",cursor:"pointer",color:"rgba(255,255,255,0.7)",width:28,height:28,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}
+                onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.2)"}
+                onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.1)"}>
+                &#x2715;
+              </button>
+            </div>
+
+            {/* Popup body */}
+            <div style={{flex:1,overflowY:"auto",padding:"20px"}}>
+
+              {/* ── JUDGMENT SUMMARY ── */}
+              {activeTool==="summarize"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:14,lineHeight:1.6}}>Paste a court judgment below. ARK will produce a structured summary with parties, facts, held, ratio decidendi, and legal significance.</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Paste the full text of the court judgment here..."
+                    style={{width:"100%",minHeight:180,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                  <div style={{fontSize:11,color:"#9A8A75",marginTop:4}}>Even very long judgments work — ARK extracts the key parts.</div>
+                </div>
+              )}
+
+              {/* ── CONTRACT REDLINING ── */}
+              {activeTool==="redline"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:14,lineHeight:1.6}}>Paste your contract text. ARK will flag every clause as HIGH / MEDIUM / LOW risk and suggest improved language under Pakistani law.</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Paste contract text here — employment agreement, sale deed, lease, service contract, etc."
+                    style={{width:"100%",minHeight:200,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                </div>
+              )}
+
+              {/* ── COMPLIANCE CHECK ── */}
+              {activeTool==="compliance"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:12,lineHeight:1.6}}>Select your business type and describe your situation to get a Pakistani regulatory compliance assessment.</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Business Type</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
+                    {["Technology Startup","E-commerce","Law Firm","Real Estate","Financial Services","NGO / Non-Profit","Manufacturing","Healthcare","Import / Export","Employment Matter"].map(s=>(
+                      <button key={s} onClick={()=>setToolSecondary(s)}
+                        style={{padding:"5px 11px",background:toolSecondary===s?"#2E7D32":"#F5F0E8",color:toolSecondary===s?"white":"#3A2A18",border:"1px solid "+(toolSecondary===s?"#2E7D32":"#C8BFB0"),borderRadius:20,fontSize:11,cursor:"pointer",fontWeight:500,transition:"all 0.15s",fontFamily:"inherit"}}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Describe Your Situation</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Describe your business activities, location, employee count, products or services, any specific compliance concerns..."
+                    style={{width:"100%",minHeight:120,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                </div>
+              )}
+
+              {/* ── CLAUSE LIBRARY ── */}
+              {activeTool==="clauses"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:12,lineHeight:1.6}}>Select a clause type or type your own. ARK will provide 3 variations (balanced, client-protective, counterparty-protective) with Pakistani law context.</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Common Clause Types</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
+                    {["Force Majeure","Arbitration","Confidentiality / NDA","Indemnification","Limitation of Liability","Termination","Governing Law","Intellectual Property","Non-Compete","Payment Terms","Warranty Disclaimer","Dispute Resolution","Liquidated Damages","Assignment","Severability"].map(s=>(
+                      <button key={s} onClick={()=>setToolSecondary(s)}
+                        style={{padding:"5px 11px",background:toolSecondary===s?"#2E7D32":"#F5F0E8",color:toolSecondary===s?"white":"#3A2A18",border:"1px solid "+(toolSecondary===s?"#2E7D32":"#C8BFB0"),borderRadius:20,fontSize:11,cursor:"pointer",fontWeight:500,transition:"all 0.15s",fontFamily:"inherit"}}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Or Type Custom Clause</div>
+                  <input value={toolSecondary} onChange={e=>setToolSecondary(e.target.value)}
+                    onKeyDown={e=>{if(e.key==="Enter"&&toolSecondary.trim())document.getElementById("pk-tool-run").click();}}
+                    placeholder="e.g. step-in rights, liquidated damages, force majeure..."
+                    style={{width:"100%",padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",outline:"none",fontFamily:"inherit"}}/>
+                </div>
+              )}
+
+              {/* ── ERROR ── */}
+              {toolError&&(
+                <div style={{padding:"10px 14px",background:"#FEF2F2",border:"1px solid #F0B8C0",borderRadius:8,fontSize:13,color:"#DC2626",marginTop:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span>{toolError}</span>
+                  <button onClick={()=>setToolError("")} style={{background:"none",border:"none",cursor:"pointer",color:"#DC2626",fontSize:16}}>&#x2715;</button>
+                </div>
+              )}
+
+              {/* ── RESULT ── */}
+              {toolResult&&(
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,paddingBottom:10,borderBottom:"1px solid #EDE8DF"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/>
+                      <span style={{fontSize:12,fontWeight:700,color:"#2E7D32"}}>ARK Law AI Result</span>
+                    </div>
+                    <div style={{display:"flex",gap:7}}>
+                      <button onClick={()=>navigator.clipboard.writeText(toolResult).then(()=>arkAlert("Copied to clipboard!","Copied","✅"))}
+                        style={{padding:"5px 12px",background:"#F5F0E8",color:"#1A1209",border:"1px solid #C8BFB0",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy
+                      </button>
+                      <button onClick={()=>{
+                        const toolName={summarize:"Judgment Summary",redline:"Contract Redlining",compliance:"Compliance Check",clauses:"Clause Library"}[activeTool]||"Legal Tool";
+                        const q=activeTool==="clauses"?toolSecondary:toolInput;
+                        const updatedSessions=allSessions.map(s=>s.id===activeChatId?{...s,messages:[...s.messages,{role:"user",content:q||toolName},{role:"assistant",content:"**"+toolName+" Result**"+toolResult}]}:s);
+                        setAllSessions(updatedSessions);
+                        setMessages(updatedSessions.find(s=>s.id===activeChatId)?.messages||[]);
+                        setActiveTool(null);setToolResult("");
+                        saveHistory(updatedSessions,userTokens);
+                      }} style={{padding:"5px 12px",background:"#2E7D32",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Send to Chat
+                      </button>
+                      <button onClick={()=>{setToolResult("");setToolInput("");setToolSecondary("");setToolError("");}}
+                        style={{padding:"5px 12px",background:"transparent",color:"#7A6A55",border:"1px solid #C8BFB0",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}}>
+                        New
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{fontSize:13,color:"#1A1209",lineHeight:1.8}}>
+                    {toolResult.split("\n").map((line,i)=>{
+                      if(line.startsWith("## "))return<div key={i} style={{fontSize:15,fontWeight:800,color:"#1A1209",marginTop:18,marginBottom:7,paddingBottom:5,borderBottom:"2px solid #EDE8DF"}}>{line.slice(3)}</div>;
+                      if(line.startsWith("### "))return<div key={i} style={{fontSize:13,fontWeight:700,color:"#2E7D32",marginTop:12,marginBottom:5}}>{line.slice(4)}</div>;
+                      if(line.startsWith("**")&&line.endsWith("**")&&line.length>4)return<div key={i} style={{fontWeight:700,color:"#1A1209",marginBottom:3}}>{line.slice(2,-2)}</div>;
+                      if(/HIGH RISK/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#FEF2F2",borderLeft:"3px solid #DC2626",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(/MEDIUM RISK/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#FFFBEB",borderLeft:"3px solid #F59E0B",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(/LOW RISK|SAFE/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#F0FAF4",borderLeft:"3px solid #2E7D32",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(line.startsWith("- ")||line.startsWith("* "))return<div key={i} style={{display:"flex",gap:7,marginBottom:3}}><span style={{color:"#2E7D32",flexShrink:0}}>•</span><span style={{fontSize:12}}>{line.slice(2)}</span></div>;
+                      if(/^\d+\./.test(line))return<div key={i} style={{display:"flex",gap:7,marginBottom:3}}><span style={{color:"#2E7D32",fontWeight:700,flexShrink:0,fontSize:12}}>{line.match(/^\d+/)[0]}.</span><span style={{fontSize:12}}>{line.replace(/^\d+\.\s*/,"")}</span></div>;
+                      if(line.trim()==="---")return<hr key={i} style={{border:"none",borderTop:"1px solid #EDE8DF",margin:"10px 0"}}/>;
+                      if(!line.trim())return<div key={i} style={{height:5}}/>;
+                      return<div key={i} style={{fontSize:12,marginBottom:2,lineHeight:1.7}}>{line}</div>;
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Popup footer — run button */}
+            {!toolResult&&(
+              <div style={{padding:"14px 20px",borderTop:"1px solid #EDE8DF",flexShrink:0,background:"#FAF8F4",display:"flex",gap:10,alignItems:"center"}}>
+                {toolLoading&&(<div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#2E7D32",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><span style={{fontSize:12,color:"#7A6A55"}}>Processing...</span></div>)}
+                <button id="pk-tool-run" onClick={async()=>{
+                  const q=activeTool==="clauses"?toolSecondary:toolInput;
+                  if(!q.trim()){setToolError(activeTool==="clauses"?"Please select or type a clause type.":activeTool==="compliance"?"Please describe your situation.":"Please paste your text.");return;}
+                  setToolLoading(true);setToolResult("");setToolError("");
+                  const prompts={
+                    summarize:"You are ARK Law AI, a Pakistani law expert. Summarize the judgment using: ## Case Name & Citation, ## Court & Bench, ## Parties, ## Facts (5-8 bullets), ## Legal Issues (numbered), ## Held, ## Ratio Decidendi, ## Obiter Dicta, ## Legal Significance, ## Professional Disclaimer by ARK LAW AI.",
+                    redline:"You are ARK Law AI, a Pakistani contract law specialist. Analyze clause by clause: for each give ### Clause: [name], Risk Level (HIGH RISK/MEDIUM RISK/LOW RISK/SAFE), Issue, Under Pakistani Law, Suggested Rewrite. End with ## Overall Risk Assessment, ## Top 3 Priority Changes, ## Professional Disclaimer by ARK LAW AI.",
+                    compliance:"You are ARK Law AI, a Pakistani compliance expert. Provide: ## Compliance Risk Assessment - Pakistan, ## Applicable Regulatory Framework, ## HIGH RISK Issues, ## MEDIUM RISK Issues, ## LOW RISK Advisory, ## Required Registrations & Licenses, ## Required Actions (numbered), ## Penalties for Non-Compliance, ## Professional Disclaimer by ARK LAW AI.",
+                    clauses:"You are ARK Law AI, a Pakistani contract drafting specialist. For the requested clause provide: ## Clause: [name] (Jurisdiction: Pakistan). Then ### Version 1 - Standard (Balanced), ### Version 2 - Client-Protective, ### Version 3 - Counterparty-Protective — each with Risk Level, Best used when, and full Clause Text. Then ## Negotiation Notes, ## Pakistani Law Context, ## Common Mistakes to Avoid.",
+                  };
+                  const userMsgs={
+                    summarize:"Summarize this judgment:\n\n"+toolInput.substring(0,8000),
+                    redline:"Redline this contract:\n\n"+toolInput.substring(0,7000),
+                    compliance:"Assess compliance for:\n\nBusiness type: "+toolSecondary+"\n\n"+toolInput,
+                    clauses:"Provide clause library entry for: "+toolSecondary+" clause under Pakistani law",
+                  };
+                  try{
+                    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:"[System: "+prompts[activeTool]+"]"},{role:"user",content:userMsgs[activeTool]}]})});
+                    const reader=res.body.getReader();const dec=new TextDecoder();let out="";
+                    while(true){const{done,value}=await reader.read();if(done)break;dec.decode(value,{stream:true}).split("\n").forEach(line=>{if(line.startsWith("data: ")){const d=line.slice(6).trim();if(d==="[DONE]")return;try{const p=JSON.parse(d);if(p.content){out+=p.content;setToolResult(out);}}catch{}}});}
+                  }catch(e){setToolError("Error: "+e.message);}
+                  setToolLoading(false);
+                }} disabled={toolLoading}
+                  style={{padding:"10px 28px",background:toolLoading?"#C8BFB0":"#2E7D32",color:"white",border:"none",borderRadius:9,cursor:toolLoading?"not-allowed":"pointer",fontSize:14,fontWeight:700,fontFamily:"inherit",marginLeft:"auto"}}>
+                  {toolLoading?"Processing...":{summarize:"📋 Summarize",redline:"📝 Redline",compliance:"⚠️ Check Compliance",clauses:"📚 Get Clauses"}[activeTool]}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── ARK Modal ── */}
       {arkModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
