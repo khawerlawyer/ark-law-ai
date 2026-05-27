@@ -1924,7 +1924,7 @@ export default function App() {
                     clauses:"Provide full clause library entry for: "+toolSecondary+" clause under Pakistani law",
                   };
                   try{
-                    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:"[System: "+prompts[activeTool]+"]"},{role:"user",content:userMsgs[activeTool]}]})});
+                    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:"[System: "+prompts[activeTool]+"]"+userMsgs[activeTool]}]})});
                     if(!res.ok){const e=await res.text();setToolError("API error: "+e);setToolLoading(false);return;}
                     const reader=res.body.getReader();const dec=new TextDecoder();let out="";
                     while(true){
