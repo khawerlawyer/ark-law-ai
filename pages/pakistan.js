@@ -204,11 +204,11 @@ export default function App() {
   const [nameAsked,          setNameAsked]          = useState(false);
   const [sidebarOpen,        setSidebarOpen]        = useState(true);
   const [showSharePopup,     setShowSharePopup]     = useState(false);
-  const [shareSelected,      setShareSelected]      = useState([]);
-  const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [shareLink,          setShareLink]          = useState("");
   const [shareLoading,       setShareLoading]       = useState(false);
   const [shareMsgIdx,        setShareMsgIdx]        = useState(null);
+  const [shareSelected,      setShareSelected]      = useState([]);
+  const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
   const [sessionMenu,       setSessionMenu]       = useState(null);
   const [searchQuery,       setSearchQuery]       = useState("");
@@ -343,7 +343,6 @@ export default function App() {
     setNameAsked(true);
   }, []);
 
-  // Load shared chat from URL ?share=xxx
   useEffect(() => {
     const shareId = router.query?.share;
     if (!shareId) return;
@@ -352,24 +351,16 @@ export default function App() {
       .then(data=>{
         if(!data.chat) return;
         try{
-          const chat = data.chat;
-          const msgs = typeof chat.messages==="string" ? JSON.parse(chat.messages) : chat.messages;
-          const sharedId = Date.now();
-          const sharedSession = {
-            id: sharedId,
-            title: chat.title || "Shared Chat",
-            messages: msgs,
-            isShared: true,
-          };
-          setAllSessions(prev=>[sharedSession,...prev]);
-          setActiveChatId(sharedId);
-          setMessages(msgs);
-          router.replace("/pakistan", undefined, {shallow:true});
-          arkAlert("Shared conversation loaded! You can continue this chat below.", "Shared Chat Loaded", "✅");
-        }catch(e){console.error("Failed to load shared chat",e);}
-      })
-      .catch(()=>{});
-  }, [router.query?.share]);
+          const chat=data.chat;
+          const msgs=typeof chat.messages==="string"?JSON.parse(chat.messages):chat.messages;
+          const sid=Date.now();
+          setAllSessions(prev=>[{id:sid,title:chat.title||"Shared Chat",messages:msgs,isShared:true},...prev]);
+          setActiveChatId(sid);setMessages(msgs);
+          router.replace("/pakistan",undefined,{shallow:true});
+          arkAlert("Shared conversation loaded! You can continue below.","Shared Chat","✅");
+        }catch(e){console.error(e);}
+      }).catch(()=>{});
+  },[router.query?.share]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("arklaw_user");
@@ -902,6 +893,16 @@ export default function App() {
           </div>
 
           {/* Sessions list */}
+          <div style={{padding:"6px 10px 4px",flexShrink:0}}>
+            <a href="/pakistan-tools" target="_blank"
+              style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"8px 10px",borderRadius:8,border:"none",cursor:"pointer",background:"transparent",color:"#4A3A28",fontSize:13,fontWeight:600,transition:"all 0.15s",textDecoration:"none"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              Legal Tools
+              <span style={{marginLeft:"auto",fontSize:9,background:"#2E7D32",color:"white",padding:"1px 6px",borderRadius:8,fontWeight:700}}>NEW</span>
+            </a>
+          </div>
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
             {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
               <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>{searchQuery?"No results found":"No conversations yet"}</div>
@@ -1170,7 +1171,6 @@ export default function App() {
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
-                            {/* Share button */}
                             <button onClick={e=>{e.stopPropagation();setShareMsgIdx(i);setShareSelected(messages.map((_,j)=>j<=i?j:-1).filter(x=>x>=0));setShareSelectAll(false);setShareLink("");setShowSharePopup(true);}}
                               style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
@@ -1618,32 +1618,20 @@ export default function App() {
         </div>
       )}
 
-          {/* ── Share Popup ── */}
+      {/* ── Share Popup ── */}
       {showSharePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000,backdropFilter:"blur(2px)"}}
           onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"92%",maxWidth:"460px",border:"1px solid #C8BFB0",boxShadow:"0 20px 60px rgba(0,0,0,0.18)",overflow:"hidden"}}>
             <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
               <div style={{flex:1,minWidth:0,paddingRight:12}}>
-                <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#1A1209",marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                  {allSessions.find(s=>s.id===activeChatId)?.title || "Legal Chat"}
-                </div>
-                <div style={{fontSize:11,color:"#8A7A65"}}>
-                  {shareMsgIdx!==null?(shareMsgIdx+1):messages.length} messages &middot; ARK Law AI
-                </div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#1A1209",marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{allSessions.find(s=>s.id===activeChatId)?.title||"Legal Chat"}</div>
+                <div style={{fontSize:11,color:"#8A7A65"}}>{shareMsgIdx!==null?(shareMsgIdx+1):messages.length} messages &middot; ARK Law AI Pakistan</div>
               </div>
-              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}}
-                style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",width:30,height:30,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}
-                onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                onMouseLeave={e=>e.currentTarget.style.background="none"}>
-                &#x2715;
-              </button>
+              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",width:30,height:30,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"} onMouseLeave={e=>e.currentTarget.style.background="none"}>&#x2715;</button>
             </div>
             <div style={{margin:"14px 20px",background:"#F9F7F4",border:"1px solid #E8E0D5",borderRadius:"10px",padding:"13px 15px",maxHeight:130,overflowY:"auto"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/>
-                <span style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>ARK Law AI</span>
-              </div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/><span style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>ARK Law AI Pakistan</span></div>
               {(shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages).slice(0,3).map((msg,i)=>(
                 <div key={i} style={{marginBottom:5}}>
                   <span style={{fontSize:10,fontWeight:700,color:msg.role==="assistant"?"#2E7D32":"#5A7A4A",marginRight:5,textTransform:"uppercase"}}>{msg.role==="assistant"?"ARK":"You"}</span>
@@ -1657,84 +1645,16 @@ export default function App() {
                 <div style={{display:"flex",gap:8,background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:9,padding:"8px 11px",alignItems:"center",marginBottom:14}}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2" strokeLinecap="round" style={{flexShrink:0}}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   <span style={{flex:1,fontSize:11.5,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{shareLink}</span>
-                  <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}}
-                    style={{padding:"4px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
+                  <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}} style={{padding:"4px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
                 </div>
               )}
-              {shareLoading&&(
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"10px 0",marginBottom:8}}>
-                  <div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#1A1209",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-                  <span style={{fontSize:12,color:"#7A6A55"}}>Generating link...</span>
-                </div>
-              )}
-              <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",opacity:shareLoading?0.5:1,transition:"opacity 0.2s"}}>
-                {[
-                  {label:"Copy link",bg:"#1A1209",platform:null},
-                  {label:"WhatsApp", bg:"#25D366",platform:"whatsapp"},
-                  {label:"Email",    bg:"#5A4A35",platform:"email"},
-                  {label:"Facebook", bg:"#1877F2",platform:"facebook"},
-                  {label:"X",        bg:"#000000",platform:"twitter"},
-                  {label:"Gmail",    bg:"#EA4335",platform:"gmail"},
-                ].map(({label,bg,platform})=>{
-                  const getUrl=(link)=>{
-                    const enc=encodeURIComponent(link);
-                    const txt=encodeURIComponent("Check out this legal chat on ARK LAW AI:");
-                    if(platform==="whatsapp") return "https://wa.me/?text="+txt+"%20"+enc;
-                    if(platform==="email")    return "mailto:?subject="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;
-                    if(platform==="gmail")    return "https://mail.google.com/mail/?view=cm&su="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;
-                    if(platform==="facebook") return "https://www.facebook.com/sharer/sharer.php?u="+enc;
-                    if(platform==="twitter")  return "https://twitter.com/intent/tweet?text="+txt+"&url="+enc;
-                    return null;
-                  };
-                  const icons={
-                    "Copy link":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
-                    "WhatsApp":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>,
-                    "Email":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-                    "Facebook":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
-                    "X":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
-                    "Gmail":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.907 1.528-1.148C21.69 2.28 24 3.434 24 5.457z"/></svg>,
-                  };
-                  const handleClick=async()=>{
-                    if(shareLoading) return;
-                    if(shareLink){
-                      if(!platform){navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");return;}
-                      const w=window.open("about:blank","_blank");
-                      if(w) w.location.href=getUrl(shareLink);
-                      return;
-                    }
-                    const newWin=(!platform||platform==="email"||platform==="gmail")?null:window.open("about:blank","_blank");
-                    setShareLoading(true);
-                    try{
-                      const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
-                      const session=allSessions.find(s=>s.id===activeChatId);
-                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"Pakistan",sharedBy:user?.name||"Anonymous"})});
-                      const data=await res.json();
-                      if(data.shareUrl){
-                        setShareLink(data.shareUrl);
-                        if(!platform){navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}
-                        else if(platform==="email"||platform==="gmail"){window.location.href=getUrl(data.shareUrl);}
-                        else if(newWin){newWin.location.href=getUrl(data.shareUrl);}
-                      }else{
-                        if(newWin) newWin.close();
-                        arkAlert(data.error||"Could not create link.","Share Error","[ERR]");
-                      }
-                    }catch(e){
-                      if(newWin) newWin.close();
-                      arkAlert("Network error.","Share Error","[ERR]");
-                    }
-                    setShareLoading(false);
-                  };
-                  return(
-                    <div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
-                      <button onClick={handleClick} disabled={shareLoading}
-                        style={{width:50,height:50,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:shareLoading?"wait":"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.14)",transition:"transform 0.15s,box-shadow 0.15s"}}
-                        onMouseEnter={e=>{if(!shareLoading){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 6px 18px rgba(0,0,0,0.2)";}}}
-                        onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.14)";}}>
-                        {icons[label]}
-                      </button>
-                      <span style={{fontSize:10,color:"#5A4A35",fontWeight:500}}>{label}</span>
-                    </div>
-                  );
+              {shareLoading&&(<div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"10px 0",marginBottom:8}}><div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#1A1209",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><span style={{fontSize:12,color:"#7A6A55"}}>Generating link...</span></div>)}
+              <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",opacity:shareLoading?0.5:1}}>
+                {[{label:"Copy link",bg:"#1A1209",platform:null},{label:"WhatsApp",bg:"#25D366",platform:"whatsapp"},{label:"Email",bg:"#5A4A35",platform:"email"},{label:"Facebook",bg:"#1877F2",platform:"facebook"},{label:"X",bg:"#000000",platform:"twitter"},{label:"Gmail",bg:"#EA4335",platform:"gmail"}].map(({label,bg,platform})=>{
+                  const getUrl=(link)=>{const enc=encodeURIComponent(link);const txt=encodeURIComponent("Check out this legal chat on ARK LAW AI:");if(platform==="whatsapp")return "https://wa.me/?text="+txt+"%20"+enc;if(platform==="email")return "mailto:?subject="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;if(platform==="gmail")return "https://mail.google.com/mail/?view=cm&su="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;if(platform==="facebook")return "https://www.facebook.com/sharer/sharer.php?u="+enc;if(platform==="twitter")return "https://twitter.com/intent/tweet?text="+txt+"&url="+enc;return null;};
+                  const icons={"Copy link":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,"WhatsApp":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>,"Email":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,"Facebook":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,"X":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,"Gmail":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.907 1.528-1.148C21.69 2.28 24 3.434 24 5.457z"/></svg>};
+                  const handleClick=async()=>{if(shareLoading)return;if(shareLink){if(!platform){navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");return;}const w=window.open("about:blank","_blank");if(w)w.location.href=getUrl(shareLink);return;}const newWin=(!platform||platform==="email"||platform==="gmail")?null:window.open("about:blank","_blank");setShareLoading(true);try{const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;const session=allSessions.find(s=>s.id===activeChatId);const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"Pakistan",sharedBy:user?.name||"Anonymous"})});const data=await res.json();if(data.shareUrl){setShareLink(data.shareUrl);if(!platform){navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}else if(platform==="email"||platform==="gmail"){window.location.href=getUrl(data.shareUrl);}else if(newWin){newWin.location.href=getUrl(data.shareUrl);}}else{if(newWin)newWin.close();arkAlert(data.error||"Could not create link.","Share Error","[ERR]");}}catch(e){if(newWin)newWin.close();arkAlert("Network error.","Share Error","[ERR]");}setShareLoading(false);};
+                  return(<div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7}}><button onClick={handleClick} disabled={shareLoading} style={{width:50,height:50,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:shareLoading?"wait":"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.14)",transition:"transform 0.15s,box-shadow 0.15s"}} onMouseEnter={e=>{if(!shareLoading){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 6px 18px rgba(0,0,0,0.2)";}}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.14)"}}>{icons[label]}</button><span style={{fontSize:10,color:"#5A4A35",fontWeight:500}}>{label}</span></div>);
                 })}
               </div>
             </div>
