@@ -204,11 +204,18 @@ export default function App() {
   const [nameAsked,          setNameAsked]          = useState(false);
   const [sidebarOpen,        setSidebarOpen]        = useState(true);
   const [showSharePopup,     setShowSharePopup]     = useState(false);
-  const [shareSelected,      setShareSelected]      = useState([]);
-  const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [shareLink,          setShareLink]          = useState("");
+  const [showToolsMenu,      setShowToolsMenu]      = useState(false);
+  const [activeTool,         setActiveTool]         = useState(null);
+  const [toolInput,          setToolInput]          = useState("");
+  const [toolSecondary,      setToolSecondary]      = useState("");
+  const [toolResult,         setToolResult]         = useState("");
+  const [toolLoading,        setToolLoading]        = useState(false);
+  const [toolError,          setToolError]          = useState("");
   const [shareLoading,       setShareLoading]       = useState(false);
   const [shareMsgIdx,        setShareMsgIdx]        = useState(null);
+  const [shareSelected,      setShareSelected]      = useState([]);
+  const [shareSelectAll,     setShareSelectAll]     = useState(false);
   const [showChatMenu,       setShowChatMenu]       = useState(false);
   const [sessionMenu,       setSessionMenu]       = useState(null);
   const [searchQuery,       setSearchQuery]       = useState("");
@@ -343,7 +350,6 @@ export default function App() {
     setNameAsked(true);
   }, []);
 
-  // Load shared chat from URL ?share=xxx
   useEffect(() => {
     const shareId = router.query?.share;
     if (!shareId) return;
@@ -352,24 +358,16 @@ export default function App() {
       .then(data=>{
         if(!data.chat) return;
         try{
-          const chat = data.chat;
-          const msgs = typeof chat.messages==="string" ? JSON.parse(chat.messages) : chat.messages;
-          const sharedId = Date.now();
-          const sharedSession = {
-            id: sharedId,
-            title: chat.title || "Shared Chat",
-            messages: msgs,
-            isShared: true,
-          };
-          setAllSessions(prev=>[sharedSession,...prev]);
-          setActiveChatId(sharedId);
-          setMessages(msgs);
-          router.replace("/pakistan", undefined, {shallow:true});
-          arkAlert("Shared conversation loaded! You can continue this chat below.", "Shared Chat Loaded", "✅");
-        }catch(e){console.error("Failed to load shared chat",e);}
-      })
-      .catch(()=>{});
-  }, [router.query?.share]);
+          const chat=data.chat;
+          const msgs=typeof chat.messages==="string"?JSON.parse(chat.messages):chat.messages;
+          const sid=Date.now();
+          setAllSessions(prev=>[{id:sid,title:chat.title||"Shared Chat",messages:msgs,isShared:true},...prev]);
+          setActiveChatId(sid);setMessages(msgs);
+          router.replace("/pakistan",undefined,{shallow:true});
+          arkAlert("Shared conversation loaded! You can continue below.","Shared Chat","✅");
+        }catch(e){console.error(e);}
+      }).catch(()=>{});
+  },[router.query?.share]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("arklaw_user");
@@ -902,6 +900,48 @@ export default function App() {
           </div>
 
           {/* Sessions list */}
+          {/* ── Legal Tools Dropdown ── */}
+          <div style={{padding:"4px 10px 2px",flexShrink:0}}>
+            <a href="/blog" target="_blank"
+              style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"7px 10px",borderRadius:8,color:"#4A3A28",fontSize:12,fontWeight:600,transition:"all 0.15s",textDecoration:"none"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
+              onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Blog
+            </a>
+          </div>
+          <div style={{padding:"6px 10px 4px",flexShrink:0,position:"relative"}}>
+            <button onClick={()=>setShowToolsMenu(o=>!o)}
+              style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"8px 10px",borderRadius:8,border:"none",cursor:"pointer",background:showToolsMenu?"#D8D0C4":"transparent",color:"#4A3A28",fontSize:13,fontWeight:600,transition:"all 0.15s",textAlign:"left",fontFamily:"inherit"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
+              onMouseLeave={e=>{if(!showToolsMenu)e.currentTarget.style.background="transparent";}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              <span style={{flex:1}}>Legal Tools</span>
+              <span style={{fontSize:9,background:"#2E7D32",color:"white",padding:"1px 6px",borderRadius:8,fontWeight:700,marginRight:4}}>NEW</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{transition:"transform 0.2s",transform:showToolsMenu?"rotate(180deg)":"rotate(0deg)"}}><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            {showToolsMenu&&(
+              <div style={{position:"absolute",left:10,right:10,top:"100%",background:"white",border:"1px solid #C8BFB0",borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.12)",zIndex:200,overflow:"hidden",marginTop:2}}>
+                {[
+                  {id:"summarize", icon:"📋", label:"Judgment Summary",    desc:"Summarize any court judgment"},
+                  {id:"redline",   icon:"📝", label:"Contract Redlining",  desc:"Risk-flag every clause"},
+                  {id:"compliance",icon:"⚠️", label:"Compliance Check",    desc:"Check Pakistani regulations"},
+                  {id:"clauses",   icon:"📚", label:"Clause Library",       desc:"Standard clause variations"},
+                ].map(t=>(
+                  <button key={t.id} onClick={()=>{setActiveTool(t.id);setShowToolsMenu(false);setToolInput("");setToolSecondary("");setToolResult("");setToolError("");}}
+                    style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"transparent",border:"none",borderBottom:"1px solid #F0EBE0",cursor:"pointer",textAlign:"left",transition:"background 0.1s",fontFamily:"inherit"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#F5F0E8"}
+                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                    <span style={{fontSize:18,flexShrink:0}}>{t.icon}</span>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>{t.label}</div>
+                      <div style={{fontSize:10,color:"#7A6A55",marginTop:1}}>{t.desc}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <div style={{flex:1,overflowY:"auto",padding:"0 6px"}} onClick={()=>setSessionMenu(null)}>
             {[...allSessions.filter(s=>!s.archived)].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).length===0 ? (
               <div style={{padding:"16px 12px",color:"#7A6A55",fontSize:13,textAlign:"center"}}>{searchQuery?"No results found":"No conversations yet"}</div>
@@ -1170,7 +1210,6 @@ export default function App() {
                               onMouseEnter={e=>e.currentTarget.style.borderColor="#555"} onMouseLeave={e=>e.currentTarget.style.borderColor="#333"}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill={reactions[i]?.dislike?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                             </button>
-                            {/* Share button */}
                             <button onClick={e=>{e.stopPropagation();setShareMsgIdx(i);setShareSelected(messages.map((_,j)=>j<=i?j:-1).filter(x=>x>=0));setShareSelectAll(false);setShareLink("");setShowSharePopup(true);}}
                               style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#ececec";}}
@@ -1618,32 +1657,20 @@ export default function App() {
         </div>
       )}
 
-          {/* ── Share Popup ── */}
+      {/* ── Share Popup ── */}
       {showSharePopup && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:4000,backdropFilter:"blur(2px)"}}
           onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}}>
           <div onClick={e=>e.stopPropagation()} style={{background:"#FFFFFF",borderRadius:"16px",width:"92%",maxWidth:"460px",border:"1px solid #C8BFB0",boxShadow:"0 20px 60px rgba(0,0,0,0.18)",overflow:"hidden"}}>
             <div style={{padding:"18px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
               <div style={{flex:1,minWidth:0,paddingRight:12}}>
-                <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#1A1209",marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                  {allSessions.find(s=>s.id===activeChatId)?.title || "Legal Chat"}
-                </div>
-                <div style={{fontSize:11,color:"#8A7A65"}}>
-                  {shareMsgIdx!==null?(shareMsgIdx+1):messages.length} messages &middot; ARK Law AI
-                </div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:17,fontWeight:700,color:"#1A1209",marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{allSessions.find(s=>s.id===activeChatId)?.title||"Legal Chat"}</div>
+                <div style={{fontSize:11,color:"#8A7A65"}}>{shareMsgIdx!==null?(shareMsgIdx+1):messages.length} messages &middot; ARK Law AI Pakistan</div>
               </div>
-              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}}
-                style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",width:30,height:30,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}
-                onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"}
-                onMouseLeave={e=>e.currentTarget.style.background="none"}>
-                &#x2715;
-              </button>
+              <button onClick={()=>{setShowSharePopup(false);setShareLink("");setShareLoading(false);}} style={{background:"none",border:"none",cursor:"pointer",color:"#8A7A65",width:30,height:30,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.background="#F0EBE0"} onMouseLeave={e=>e.currentTarget.style.background="none"}>&#x2715;</button>
             </div>
             <div style={{margin:"14px 20px",background:"#F9F7F4",border:"1px solid #E8E0D5",borderRadius:"10px",padding:"13px 15px",maxHeight:130,overflowY:"auto"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                <img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/>
-                <span style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>ARK Law AI</span>
-              </div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/><span style={{fontSize:12,fontWeight:700,color:"#1A1209"}}>ARK Law AI Pakistan</span></div>
               {(shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages).slice(0,3).map((msg,i)=>(
                 <div key={i} style={{marginBottom:5}}>
                   <span style={{fontSize:10,fontWeight:700,color:msg.role==="assistant"?"#2E7D32":"#5A7A4A",marginRight:5,textTransform:"uppercase"}}>{msg.role==="assistant"?"ARK":"You"}</span>
@@ -1657,90 +1684,281 @@ export default function App() {
                 <div style={{display:"flex",gap:8,background:"#F5F0E8",border:"1px solid #C8BFB0",borderRadius:9,padding:"8px 11px",alignItems:"center",marginBottom:14}}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A7A65" strokeWidth="2" strokeLinecap="round" style={{flexShrink:0}}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   <span style={{flex:1,fontSize:11.5,color:"#5A4A35",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{shareLink}</span>
-                  <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}}
-                    style={{padding:"4px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
+                  <button onClick={()=>{navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");}} style={{padding:"4px 12px",background:"#1A1209",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:700,flexShrink:0}}>Copy</button>
                 </div>
               )}
-              {shareLoading&&(
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"10px 0",marginBottom:8}}>
-                  <div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#1A1209",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-                  <span style={{fontSize:12,color:"#7A6A55"}}>Generating link...</span>
-                </div>
-              )}
-              <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",opacity:shareLoading?0.5:1,transition:"opacity 0.2s"}}>
-                {[
-                  {label:"Copy link",bg:"#1A1209",platform:null},
-                  {label:"WhatsApp", bg:"#25D366",platform:"whatsapp"},
-                  {label:"Email",    bg:"#5A4A35",platform:"email"},
-                  {label:"Facebook", bg:"#1877F2",platform:"facebook"},
-                  {label:"X",        bg:"#000000",platform:"twitter"},
-                  {label:"Gmail",    bg:"#EA4335",platform:"gmail"},
-                ].map(({label,bg,platform})=>{
-                  const getUrl=(link)=>{
-                    const enc=encodeURIComponent(link);
-                    const txt=encodeURIComponent("Check out this legal chat on ARK LAW AI:");
-                    if(platform==="whatsapp") return "https://wa.me/?text="+txt+"%20"+enc;
-                    if(platform==="email")    return "mailto:?subject="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;
-                    if(platform==="gmail")    return "https://mail.google.com/mail/?view=cm&su="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;
-                    if(platform==="facebook") return "https://www.facebook.com/sharer/sharer.php?u="+enc;
-                    if(platform==="twitter")  return "https://twitter.com/intent/tweet?text="+txt+"&url="+enc;
-                    return null;
-                  };
-                  const icons={
-                    "Copy link":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
-                    "WhatsApp":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>,
-                    "Email":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-                    "Facebook":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
-                    "X":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
-                    "Gmail":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.907 1.528-1.148C21.69 2.28 24 3.434 24 5.457z"/></svg>,
-                  };
-                  const handleClick=async()=>{
-                    if(shareLoading) return;
-                    if(shareLink){
-                      if(!platform){navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");return;}
-                      const w=window.open("about:blank","_blank");
-                      if(w) w.location.href=getUrl(shareLink);
-                      return;
-                    }
-                    const newWin=(!platform||platform==="email"||platform==="gmail")?null:window.open("about:blank","_blank");
-                    setShareLoading(true);
-                    try{
-                      const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;
-                      const session=allSessions.find(s=>s.id===activeChatId);
-                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"Pakistan",sharedBy:user?.name||"Anonymous"})});
-                      const data=await res.json();
-                      if(data.shareUrl){
-                        setShareLink(data.shareUrl);
-                        if(!platform){navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}
-                        else if(platform==="email"||platform==="gmail"){window.location.href=getUrl(data.shareUrl);}
-                        else if(newWin){newWin.location.href=getUrl(data.shareUrl);}
-                      }else{
-                        if(newWin) newWin.close();
-                        arkAlert(data.error||"Could not create link.","Share Error","[ERR]");
-                      }
-                    }catch(e){
-                      if(newWin) newWin.close();
-                      arkAlert("Network error.","Share Error","[ERR]");
-                    }
-                    setShareLoading(false);
-                  };
-                  return(
-                    <div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
-                      <button onClick={handleClick} disabled={shareLoading}
-                        style={{width:50,height:50,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:shareLoading?"wait":"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.14)",transition:"transform 0.15s,box-shadow 0.15s"}}
-                        onMouseEnter={e=>{if(!shareLoading){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 6px 18px rgba(0,0,0,0.2)";}}}
-                        onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.14)";}}>
-                        {icons[label]}
-                      </button>
-                      <span style={{fontSize:10,color:"#5A4A35",fontWeight:500}}>{label}</span>
-                    </div>
-                  );
+              {shareLoading&&(<div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"10px 0",marginBottom:8}}><div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#1A1209",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><span style={{fontSize:12,color:"#7A6A55"}}>Generating link...</span></div>)}
+              <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",opacity:shareLoading?0.5:1}}>
+                {[{label:"Copy link",bg:"#1A1209",platform:null},{label:"WhatsApp",bg:"#25D366",platform:"whatsapp"},{label:"Email",bg:"#5A4A35",platform:"email"},{label:"Facebook",bg:"#1877F2",platform:"facebook"},{label:"X",bg:"#000000",platform:"twitter"},{label:"Gmail",bg:"#EA4335",platform:"gmail"}].map(({label,bg,platform})=>{
+                  const getUrl=(link)=>{const enc=encodeURIComponent(link);const txt=encodeURIComponent("Check out this legal chat on ARK LAW AI:");if(platform==="whatsapp")return "https://wa.me/?text="+txt+"%20"+enc;if(platform==="email")return "mailto:?subject="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;if(platform==="gmail")return "https://mail.google.com/mail/?view=cm&su="+encodeURIComponent("ARK Law AI Chat")+"&body="+txt+"%20"+enc;if(platform==="facebook")return "https://www.facebook.com/sharer/sharer.php?u="+enc;if(platform==="twitter")return "https://twitter.com/intent/tweet?text="+txt+"&url="+enc;return null;};
+                  const icons={"Copy link":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,"WhatsApp":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.528 5.845L0 24l6.335-1.508A11.946 11.946 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 0 1-5.017-1.37l-.36-.214-3.727.977.995-3.635-.235-.374A9.865 9.865 0 0 1 2.118 12C2.118 6.534 6.534 2.118 12 2.118S21.882 6.534 21.882 12 17.466 21.882 12 21.882z"/></svg>,"Email":<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,"Facebook":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,"X":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,"Gmail":<svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.907 1.528-1.148C21.69 2.28 24 3.434 24 5.457z"/></svg>};
+                  const handleClick=async()=>{if(shareLoading)return;if(shareLink){if(!platform){navigator.clipboard.writeText(shareLink);arkAlert("Link copied!","Copied!","[OK]");return;}const w=window.open("about:blank","_blank");if(w)w.location.href=getUrl(shareLink);return;}const newWin=(!platform||platform==="email"||platform==="gmail")?null:window.open("about:blank","_blank");setShareLoading(true);try{const msgsToShare=shareMsgIdx!==null?messages.slice(0,shareMsgIdx+1):messages;const session=allSessions.find(s=>s.id===activeChatId);const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgsToShare,title:session?.title||"ARK Law AI Chat",country:"Pakistan",sharedBy:user?.name||"Anonymous"})});const data=await res.json();if(data.shareUrl){setShareLink(data.shareUrl);if(!platform){navigator.clipboard.writeText(data.shareUrl);arkAlert("Link copied!","Copied!","[OK]");}else if(platform==="email"||platform==="gmail"){window.location.href=getUrl(data.shareUrl);}else if(newWin){newWin.location.href=getUrl(data.shareUrl);}}else{if(newWin)newWin.close();arkAlert(data.error||"Could not create link.","Share Error","[ERR]");}}catch(e){if(newWin)newWin.close();arkAlert("Network error.","Share Error","[ERR]");}setShareLoading(false);};
+                  return(<div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7}}><button onClick={handleClick} disabled={shareLoading} style={{width:50,height:50,background:bg,border:"none",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:shareLoading?"wait":"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.14)",transition:"transform 0.15s,box-shadow 0.15s"}} onMouseEnter={e=>{if(!shareLoading){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 6px 18px rgba(0,0,0,0.2)";}}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.14)"}}>{icons[label]}</button><span style={{fontSize:10,color:"#5A4A35",fontWeight:500}}>{label}</span></div>);
                 })}
               </div>
             </div>
           </div>
         </div>
       )}
+      {/* ── Legal Tools Popup ── */}
+      {activeTool && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:5000,backdropFilter:"blur(3px)"}}
+          onClick={()=>{if(!toolLoading){setActiveTool(null);setToolResult("");setToolError("");}}}>
+          <div onClick={e=>e.stopPropagation()}
+            style={{background:"#FFFFFF",borderRadius:"18px",width:"94%",maxWidth:"660px",maxHeight:"88vh",display:"flex",flexDirection:"column",border:"1px solid #C8BFB0",boxShadow:"0 32px 80px rgba(0,0,0,0.25)",overflow:"hidden"}}>
+
+            {/* Popup header */}
+            <div style={{padding:"16px 20px 14px",borderBottom:"1px solid #EDE8DF",display:"flex",alignItems:"center",gap:12,flexShrink:0,background:"linear-gradient(135deg,#021A4A,#0D1B2A)"}}>
+              <img src="/ark-logo-us.png" alt="ARK" style={{width:30,height:30,objectFit:"contain",filter:"brightness(1.2)"}}/>
+              <div style={{flex:1}}>
+                <div style={{fontSize:15,fontWeight:800,color:"white",fontFamily:"DM Sans,sans-serif"}}>
+                  {activeTool==="summarize"?"📋 Judgment Summary":activeTool==="redline"?"📝 Contract Redlining":activeTool==="compliance"?"⚠️ Compliance Check":"📚 Clause Library"}
+                </div>
+                <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:1}}>ARK LAW AI — Pakistan Law</div>
+              </div>
+              <button onClick={()=>{if(!toolLoading){setActiveTool(null);setToolResult("");setToolError("");}}}
+                style={{background:"rgba(255,255,255,0.1)",border:"none",cursor:"pointer",color:"rgba(255,255,255,0.7)",width:28,height:28,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}
+                onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.2)"}
+                onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.1)"}>
+                &#x2715;
+              </button>
+            </div>
+
+            {/* Popup body */}
+            <div style={{flex:1,overflowY:"auto",padding:"20px"}}>
+
+              {/* ── JUDGMENT SUMMARY ── */}
+              {activeTool==="summarize"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:14,lineHeight:1.6}}>Paste a court judgment below. ARK will produce a structured summary with parties, facts, held, ratio decidendi, and legal significance.</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Paste the full text of the court judgment here..."
+                    style={{width:"100%",minHeight:180,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                  <div style={{fontSize:11,color:"#9A8A75",marginTop:4}}>Even very long judgments work — ARK extracts the key parts.</div>
+                </div>
+              )}
+
+              {/* ── CONTRACT REDLINING ── */}
+              {activeTool==="redline"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:14,lineHeight:1.6}}>Paste your contract text. ARK will flag every clause as HIGH / MEDIUM / LOW risk and suggest improved language under Pakistani law.</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Paste contract text here — employment agreement, sale deed, lease, service contract, etc."
+                    style={{width:"100%",minHeight:200,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                </div>
+              )}
+
+              {/* ── COMPLIANCE CHECK ── */}
+              {activeTool==="compliance"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:12,lineHeight:1.6}}>Select your business type and describe your situation to get a Pakistani regulatory compliance assessment.</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Business Type</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
+                    {["Technology Startup","E-commerce","Law Firm","Real Estate","Financial Services","NGO / Non-Profit","Manufacturing","Healthcare","Import / Export","Employment Matter"].map(s=>(
+                      <button key={s} onClick={()=>setToolSecondary(s)}
+                        style={{padding:"5px 11px",background:toolSecondary===s?"#2E7D32":"#F5F0E8",color:toolSecondary===s?"white":"#3A2A18",border:"1px solid "+(toolSecondary===s?"#2E7D32":"#C8BFB0"),borderRadius:20,fontSize:11,cursor:"pointer",fontWeight:500,transition:"all 0.15s",fontFamily:"inherit"}}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Describe Your Situation</div>
+                  <textarea value={toolInput} onChange={e=>setToolInput(e.target.value)}
+                    placeholder="Describe your business activities, location, employee count, products or services, any specific compliance concerns..."
+                    style={{width:"100%",minHeight:120,padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",resize:"vertical",outline:"none",fontFamily:"inherit",lineHeight:1.6}}/>
+                </div>
+              )}
+
+              {/* ── CLAUSE LIBRARY ── */}
+              {activeTool==="clauses"&&!toolResult&&(
+                <div>
+                  <div style={{fontSize:13,color:"#7A6A55",marginBottom:12,lineHeight:1.6}}>Select a clause type or type your own. ARK will provide 3 variations (balanced, client-protective, counterparty-protective) with Pakistani law context.</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Common Clause Types</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:14}}>
+                    {["Force Majeure","Arbitration","Confidentiality / NDA","Indemnification","Limitation of Liability","Termination","Governing Law","Intellectual Property","Non-Compete","Payment Terms","Warranty Disclaimer","Dispute Resolution","Liquidated Damages","Assignment","Severability"].map(s=>(
+                      <button key={s} onClick={()=>setToolSecondary(s)}
+                        style={{padding:"5px 11px",background:toolSecondary===s?"#2E7D32":"#F5F0E8",color:toolSecondary===s?"white":"#3A2A18",border:"1px solid "+(toolSecondary===s?"#2E7D32":"#C8BFB0"),borderRadius:20,fontSize:11,cursor:"pointer",fontWeight:500,transition:"all 0.15s",fontFamily:"inherit"}}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#2E7D32",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.6px"}}>Or Type Custom Clause</div>
+                  <input value={toolSecondary} onChange={e=>setToolSecondary(e.target.value)}
+                    onKeyDown={e=>{if(e.key==="Enter"&&toolSecondary.trim())document.getElementById("pk-tool-run").click();}}
+                    placeholder="e.g. step-in rights, liquidated damages, force majeure..."
+                    style={{width:"100%",padding:"10px 12px",background:"#FAF8F4",border:"1px solid #C8BFB0",borderRadius:8,fontSize:13,color:"#1A1209",outline:"none",fontFamily:"inherit"}}/>
+                </div>
+              )}
+
+              {/* ── ERROR ── */}
+              {toolError&&(
+                <div style={{padding:"10px 14px",background:"#FEF2F2",border:"1px solid #F0B8C0",borderRadius:8,fontSize:13,color:"#DC2626",marginTop:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span>{toolError}</span>
+                  <button onClick={()=>setToolError("")} style={{background:"none",border:"none",cursor:"pointer",color:"#DC2626",fontSize:16}}>&#x2715;</button>
+                </div>
+              )}
+
+              {/* ── RESULT ── */}
+              {toolResult&&(
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14,paddingBottom:10,borderBottom:"1px solid #EDE8DF"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <img src="/ark-logo-us.png" alt="ARK" style={{width:20,height:20,objectFit:"contain"}}/>
+                      <span style={{fontSize:12,fontWeight:700,color:"#2E7D32"}}>ARK Law AI Result</span>
+                    </div>
+                    <div style={{display:"flex",gap:7}}>
+                      <button onClick={()=>navigator.clipboard.writeText(toolResult).then(()=>arkAlert("Copied to clipboard!","Copied","✅"))}
+                        style={{padding:"5px 12px",background:"#F5F0E8",color:"#1A1209",border:"1px solid #C8BFB0",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy
+                      </button>
+                      <button onClick={()=>{
+                        const toolName={summarize:"Judgment Summary",redline:"Contract Redlining",compliance:"Compliance Check",clauses:"Clause Library"}[activeTool]||"Legal Tool";
+                        const q=activeTool==="clauses"?toolSecondary:toolInput;
+                        const updatedSessions=allSessions.map(s=>s.id===activeChatId?{...s,messages:[...s.messages,{role:"user",content:q||toolName},{role:"assistant",content:"**"+toolName+" Result**"+toolResult}]}:s);
+                        setAllSessions(updatedSessions);
+                        setMessages(updatedSessions.find(s=>s.id===activeChatId)?.messages||[]);
+                        setActiveTool(null);setToolResult("");
+                        saveHistory(updatedSessions,userTokens);
+                      }} style={{padding:"5px 12px",background:"#2E7D32",color:"white",border:"none",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Send to Chat
+                      </button>
+                      <button onClick={()=>{setToolResult("");setToolInput("");setToolSecondary("");setToolError("");}}
+                        style={{padding:"5px 12px",background:"transparent",color:"#7A6A55",border:"1px solid #C8BFB0",borderRadius:6,cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}}>
+                        New
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{fontSize:13,color:"#1A1209",lineHeight:1.8}}>
+                    {toolResult.split("\n").map((line,i)=>{
+                      if(line.startsWith("## "))return<div key={i} style={{fontSize:15,fontWeight:800,color:"#1A1209",marginTop:18,marginBottom:7,paddingBottom:5,borderBottom:"2px solid #EDE8DF"}}>{line.slice(3)}</div>;
+                      if(line.startsWith("### "))return<div key={i} style={{fontSize:13,fontWeight:700,color:"#2E7D32",marginTop:12,marginBottom:5}}>{line.slice(4)}</div>;
+                      if(line.startsWith("**")&&line.endsWith("**")&&line.length>4)return<div key={i} style={{fontWeight:700,color:"#1A1209",marginBottom:3}}>{line.slice(2,-2)}</div>;
+                      if(/HIGH RISK/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#FEF2F2",borderLeft:"3px solid #DC2626",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(/MEDIUM RISK/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#FFFBEB",borderLeft:"3px solid #F59E0B",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(/LOW RISK|SAFE/.test(line))return<div key={i} style={{padding:"5px 10px",background:"#F0FAF4",borderLeft:"3px solid #2E7D32",borderRadius:"0 6px 6px 0",marginBottom:5,fontSize:12}}>{line}</div>;
+                      if(line.startsWith("- ")||line.startsWith("* "))return<div key={i} style={{display:"flex",gap:7,marginBottom:3}}><span style={{color:"#2E7D32",flexShrink:0}}>•</span><span style={{fontSize:12}}>{line.slice(2)}</span></div>;
+                      if(/^\d+\./.test(line))return<div key={i} style={{display:"flex",gap:7,marginBottom:3}}><span style={{color:"#2E7D32",fontWeight:700,flexShrink:0,fontSize:12}}>{line.match(/^\d+/)[0]}.</span><span style={{fontSize:12}}>{line.replace(/^\d+\.\s*/,"")}</span></div>;
+                      if(line.trim()==="---")return<hr key={i} style={{border:"none",borderTop:"1px solid #EDE8DF",margin:"10px 0"}}/>;
+                      if(!line.trim())return<div key={i} style={{height:5}}/>;
+                      return<div key={i} style={{fontSize:12,marginBottom:2,lineHeight:1.7}}>{line}</div>;
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Popup footer — run button */}
+            {/* Footer — always visible */}
+            <div style={{padding:"12px 20px",borderTop:"1px solid #EDE8DF",flexShrink:0,background:"#FAF8F4",display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+              {toolLoading&&(
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:14,height:14,border:"2px solid #C8BFB0",borderTopColor:"#2E7D32",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
+                  <span style={{fontSize:12,color:"#7A6A55"}}>Generating — please wait...</span>
+                </div>
+              )}
+              {toolResult&&!toolLoading&&(
+                <>
+                  {/* Download PDF */}
+                  <button onClick={()=>{
+                    const title={summarize:"Judgment Summary",redline:"Contract Redlining",compliance:"Compliance Check",clauses:"Clause Library"}[activeTool]||"Legal Tool";
+                    const html="<!DOCTYPE html><html><head><meta charset='UTF-8'/><title>"+title+"</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 24px;color:#1A1209;line-height:1.8;}h1{color:#021A4A;font-size:22px;border-bottom:2px solid #2E7D32;padding-bottom:8px;margin-bottom:20px;}h2{color:#1A1209;font-size:17px;margin-top:24px;border-bottom:1px solid #EDE8DF;padding-bottom:4px;}h3{color:#2E7D32;font-size:14px;margin-top:16px;}.high{background:#FEF2F2;border-left:3px solid #DC2626;padding:6px 10px;margin:6px 0;}.medium{background:#FFFBEB;border-left:3px solid #F59E0B;padding:6px 10px;margin:6px 0;}.low{background:#F0FAF4;border-left:3px solid #2E7D32;padding:6px 10px;margin:6px 0;}p{margin-bottom:8px;}hr{border:none;border-top:1px solid #EDE8DF;margin:16px 0;}.footer{margin-top:40px;padding-top:12px;border-top:1px solid #EDE8DF;font-size:11px;color:#7A6A55;}</style></head><body><h1>"+title+"</h1><div class='footer'>Generated by ARK LAW AI &mdash; "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})+"</div>"+toolResult.split("\n").map(line=>{if(line.startsWith("## "))return"<h2>"+line.slice(3)+"</h2>";if(line.startsWith("### "))return"<h3>"+line.slice(4)+"</h3>";if(line.startsWith("**")&&line.endsWith("**")&&line.length>4)return"<p><strong>"+line.slice(2,-2)+"</strong></p>";if(/HIGH RISK/.test(line))return"<div class='high'>"+line+"</div>";if(/MEDIUM RISK/.test(line))return"<div class='medium'>"+line+"</div>";if(/LOW RISK|SAFE/.test(line))return"<div class='low'>"+line+"</div>";if(line.startsWith("- ")||line.startsWith("* "))return"<p>• "+line.slice(2)+"</p>";if(line.trim()==="---")return"<hr/>";if(!line.trim())return"<br/>";return"<p>"+line+"</p>";}).join("")+"</body></html>";
+                    const blob=new Blob([html],{type:"text/html"});
+                    const url=URL.createObjectURL(blob);
+                    const a=document.createElement("a");a.href=url;a.download=title.replace(/ /g,"_")+"_ARK.html";a.click();
+                    URL.revokeObjectURL(url);
+                  }} style={{padding:"7px 14px",background:"#EDE8DF",color:"#1A1209",border:"1px solid #C8BFB0",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#D8D0C4"}
+                    onMouseLeave={e=>e.currentTarget.style.background="#EDE8DF"}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
+                  </button>
+                  {/* Share */}
+                  <button onClick={async()=>{
+                    try{
+                      const title={summarize:"Judgment Summary",redline:"Contract Redlining",compliance:"Compliance Check",clauses:"Clause Library"}[activeTool]||"Legal Tool";
+                      const msgs=[{role:"user",content:activeTool==="clauses"?toolSecondary:toolInput},{role:"assistant",content:"**"+title+"**"+toolResult}];
+                      const newWin=window.open("about:blank","_blank");
+                      const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,title:title+" — "+((activeTool==="clauses"?toolSecondary:toolInput)||"").substring(0,60),country:"Pakistan",sharedBy:user?.name||"Anonymous"})});
+                      const data=await res.json();
+                      if(data.shareUrl){
+                        const enc=encodeURIComponent(data.shareUrl);
+                        if(newWin) newWin.location.href="https://wa.me/?text="+encodeURIComponent("Check out this ARK LAW AI result: ")+enc;
+                        navigator.clipboard.writeText(data.shareUrl);
+                        arkAlert("Link copied! Also opening WhatsApp.","Shared!","✅");
+                      }else{if(newWin)newWin.close();arkAlert(data.error||"Could not create link.","Share Error","[ERR]");}
+                    }catch(e){arkAlert("Error: "+e.message,"Share Error","[ERR]");}
+                  }} style={{padding:"7px 14px",background:"#25D366",color:"white",border:"none",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    Share
+                  </button>
+                  {/* Send to Chat */}
+                  <button onClick={()=>{
+                    const toolName={summarize:"Judgment Summary",redline:"Contract Redlining",compliance:"Compliance Check",clauses:"Clause Library"}[activeTool]||"Legal Tool";
+                    const q=activeTool==="clauses"?toolSecondary:toolInput;
+                    const updatedSessions=allSessions.map(s=>s.id===activeChatId?{...s,messages:[...s.messages,{role:"user",content:q||toolName},{role:"assistant",content:"**"+toolName+"**"+toolResult}]}:s);
+                    setAllSessions(updatedSessions);
+                    setMessages(updatedSessions.find(s=>s.id===activeChatId)?.messages||[]);
+                    setActiveTool(null);setToolResult("");
+                    saveHistory(updatedSessions,userTokens);
+                  }} style={{padding:"7px 14px",background:"#2E7D32",color:"white",border:"none",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,display:"flex",alignItems:"center",gap:5,fontFamily:"inherit"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#1B5E20"}
+                    onMouseLeave={e=>e.currentTarget.style.background="#2E7D32"}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Send to Chat
+                  </button>
+                  <button onClick={()=>{setToolResult("");setToolInput("");setToolSecondary("");setToolError("");}}
+                    style={{padding:"7px 14px",background:"transparent",color:"#7A6A55",border:"1px solid #C8BFB0",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}}>
+                    New
+                  </button>
+                </>
+              )}
+              {/* Run button — only when no result yet */}
+              {!toolResult&&(
+                <button id="pk-tool-run" onClick={async()=>{
+                  const q=activeTool==="clauses"?toolSecondary:toolInput;
+                  if(!q.trim()){setToolError(activeTool==="clauses"?"Please select or type a clause type.":activeTool==="compliance"?"Please describe your situation.":"Please paste your text.");return;}
+                  setToolLoading(true);setToolResult("");setToolError("");
+                  const COUNTRY="Pakistan";
+                  const prompts={
+                    summarize:"You are ARK Law AI, a "+COUNTRY+" law expert. You have deep knowledge of Pakistani courts including the Supreme Court of Pakistan, High Courts, and subordinate courts, and Pakistani statutes including the Constitution 1973, PPC, CrPC, CPC, Qanun-e-Shahadat Order, Muslim Family Laws Ordinance, and all relevant Pakistani legislation. Produce a comprehensive structured summary of the provided judgment using EXACTLY these sections: ## Case Name & Citation, ## Court & Bench, ## Parties (with full names and roles), ## Background Facts (numbered 1-8), ## Legal Issues Raised (numbered), ## Arguments of Parties (Appellant then Respondent), ## Held (the court decision on each issue), ## Ratio Decidendi (the binding legal principle established), ## Obiter Dicta (any non-binding observations), ## Legal Significance (why this case matters under Pakistani law), ## Professional Disclaimer by ARK LAW AI. Be thorough and precise. If any section is not applicable write N/A.",
+                    redline:"You are ARK Law AI, a "+COUNTRY+" contract law specialist. You have expert knowledge of the Contract Act 1872, Specific Relief Act, Transfer of Property Act, and all applicable Pakistani contract legislation. Analyze the provided contract clause by clause. For each clause: ### Clause: [clause name or number], Risk Level: HIGH RISK / MEDIUM RISK / LOW RISK / SAFE, Issue: [what is legally problematic under Pakistani law], Under Pakistani Law: [relevant statute or principle], Suggested Rewrite: [improved clause text]. End with ## Overall Risk Assessment, ## Top 3 Priority Changes, ## Professional Disclaimer by ARK LAW AI.",
+                    compliance:"You are ARK Law AI, a "+COUNTRY+" regulatory compliance expert with knowledge of SECP regulations, SBP regulations, FBR tax requirements, PECA, PEMRA, PTA, and all applicable Pakistani regulatory frameworks. Provide: ## Compliance Risk Assessment - Pakistan, ## Applicable Regulatory Framework, ## HIGH RISK Issues, ## MEDIUM RISK Issues, ## LOW RISK Advisory, ## Required Registrations & Licenses, ## Required Actions (numbered priority), ## Penalties for Non-Compliance, ## Professional Disclaimer by ARK LAW AI.",
+                    clauses:"You are ARK Law AI, a "+COUNTRY+" contract drafting specialist. For the requested clause provide under Pakistani law: ## Clause: [name] (Jurisdiction: Pakistan, Governed by: [law]). ### Version 1 - Standard (Balanced) with Risk Level, Best used when, Clause Text. ### Version 2 - Client-Protective with same subsections. ### Version 3 - Counterparty-Protective (caution) with same subsections. ## Negotiation Notes, ## Pakistani Law Context, ## Common Mistakes to Avoid.",
+                  };
+                  const userMsgs={
+                    summarize:"Please produce a full structured summary of this Pakistani court judgment:\n\n"+toolInput.substring(0,8000),
+                    redline:"Please redline this contract under Pakistani law:\n\n"+toolInput.substring(0,7000),
+                    compliance:"Assess compliance risks under Pakistani law for:\n\nBusiness type: "+toolSecondary+"\n\n"+toolInput,
+                    clauses:"Provide full clause library entry for: "+toolSecondary+" clause under Pakistani law",
+                  };
+                  try{
+                    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:"[System: "+prompts[activeTool]+"]"+userMsgs[activeTool]}]})});
+                    if(!res.ok){const e=await res.text();setToolError("API error: "+e);setToolLoading(false);return;}
+                    const reader=res.body.getReader();const dec=new TextDecoder();let out="";
+                    while(true){
+                      const{done,value}=await reader.read();if(done)break;
+                      dec.decode(value,{stream:true}).split("\n").forEach(line=>{
+                        if(!line.startsWith("data: "))return;
+                        const d=line.slice(6).trim();if(d==="[DONE]")return;
+                        try{const p=JSON.parse(d);if(p.content){out+=p.content;setToolResult(out);}}catch{}
+                      });
+                    }
+                  }catch(e){setToolError("Network error: "+e.message);}
+                  setToolLoading(false);
+                }} disabled={toolLoading}
+                  style={{padding:"10px 28px",background:toolLoading?"#C8BFB0":"#2E7D32",color:"white",border:"none",borderRadius:9,cursor:toolLoading?"not-allowed":"pointer",fontSize:14,fontWeight:700,fontFamily:"inherit",marginLeft:"auto",display:"flex",alignItems:"center",gap:8}}>
+                  {toolLoading
+                    ?<><div style={{width:14,height:14,border:"2px solid rgba(255,255,255,0.4)",borderTopColor:"white",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>Processing...</>
+                    :{summarize:"📋 Summarize",redline:"📝 Redline",compliance:"⚠️ Check Compliance",clauses:"📚 Get Clauses"}[activeTool]
+                  }
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── ARK Modal ── */}
       {arkModal && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.35)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,animation:"fadeSlideUp 0.15s ease"}}>
