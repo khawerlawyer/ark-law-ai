@@ -725,7 +725,7 @@ export default function AppUSA() {
     setTimeout(() => printWindow.print(), 500);
   };
 
-  const renderMessageContent = (content) => {
+  const renderMessageBody = (content) => {
     if (!content) return null;
     const lines = content.split("\n");
     const elements = [];
@@ -767,6 +767,85 @@ export default function AppUSA() {
     });
     if (currentParagraph.length > 0) elements.push(<p key="p-final" style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>);
     return <div style={{ whiteSpace: "normal" }}>{elements}</div>;
+  };
+
+  // ── ARK Citation Check: side card ─────────────────────────────────────────
+  const CITE_ICON_RE = /^(\u2705|\u26A0\uFE0F?|\u274C|\u2796|\u2754)\s*/;
+  const citeTone = (ic) => {
+    if (ic === "\u2705") return { bg:"#ECF7EF", fg:"#1E6B34", bd:"#B7DFC2", label:"Verified" };
+    if (ic && ic.indexOf("\u26A0") === 0) return { bg:"#FFF6E3", fg:"#8A5A00", bd:"#F1D8A0", label:"Review" };
+    if (ic === "\u274C") return { bg:"#FDECEC", fg:"#A11D1D", bd:"#F2BDBD", label:"Not found" };
+    if (ic === "\u2796") return { bg:"#F1EEE8", fg:"#6A5D4C", bd:"#DDD4C6", label:"Statute" };
+    return { bg:"#F1EEE8", fg:"#6A5D4C", bd:"#DDD4C6", label:"Unchecked" };
+  };
+  const citeRich = (s) => (s || "").split(/\*([^*]+)\*/).map((p, k) => (k % 2 ? <em key={k}>{p}</em> : p));
+
+  const renderCitationCard = (section) => {
+    const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
+    const entries = [];
+    let footer = "";
+    lines.forEach(l => {
+      const t = l.match(/^\*\*(\d+)\.\s*(.+?)\*\*\s*(?:[\u2014-]\s*(.+))?$/);
+      if (t) { entries.push({ n:t[1], name:t[2], cite:t[3] || "", icon:"", status:"", link:"" }); return; }
+      const cur = entries[entries.length - 1];
+      if (/^Source:\s*/i.test(l)) { if (cur) cur.link = l.replace(/^Source:\s*/i, ""); return; }
+      if (/^\*[^*].*\*$/.test(l)) { footer = l.replace(/^\*|\*$/g, ""); return; }
+      if (cur && !cur.status) { const ic = l.match(CITE_ICON_RE); cur.icon = ic ? ic[1] : ""; cur.status = ic ? l.slice(ic[0].length) : l; }
+    });
+    if (!entries.length) return null;
+    const counts = {};
+    entries.forEach(e => { const lb = citeTone(e.icon).label; counts[lb] = (counts[lb] || 0) + 1; });
+    return (
+      <div style={{border:"1px solid #D8CDB8",borderRadius:"14px",background:"#FFFDF8",boxShadow:"0 6px 22px rgba(2,26,74,0.08)",overflow:"hidden",fontSize:13,lineHeight:1.5}}>
+        <div style={{background:"linear-gradient(135deg,#021A4A,#0D2B66)",padding:"12px 14px",display:"flex",alignItems:"center",gap:"10px",borderBottom:"2px solid #C9A84C"}}>
+          <div style={{width:30,height:30,borderRadius:"8px",background:"rgba(201,168,76,0.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{color:"#FFFFFF",fontWeight:800,fontSize:13,letterSpacing:"0.5px"}}>ARK Citation Check</div>
+            <div style={{color:"rgba(255,255,255,0.6)",fontSize:10.5}}>{entries.length} {entries.length === 1 ? "authority" : "authorities"} checked</div>
+          </div>
+        </div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:"6px",padding:"10px 14px",background:"#F7F2E8",borderBottom:"1px solid #EFE8DC"}}>
+          {Object.keys(counts).map(lb => { const tn = citeTone(lb === "Verified" ? "\u2705" : lb === "Review" ? "\u26A0" : lb === "Not found" ? "\u274C" : lb === "Statute" ? "\u2796" : ""); return (
+            <span key={lb} style={{fontSize:10.5,fontWeight:700,color:tn.fg,background:tn.bg,border:"1px solid "+tn.bd,borderRadius:"20px",padding:"2px 9px"}}>{counts[lb]} {lb}</span>
+          ); })}
+        </div>
+        {entries.map((e, k) => { const tn = citeTone(e.icon); return (
+          <div key={k} style={{padding:"12px 14px",borderTop:k ? "1px solid #EFE8DC" : "none"}}>
+            <div style={{display:"flex",gap:"9px",alignItems:"flex-start"}}>
+              <div style={{width:20,height:20,borderRadius:"50%",border:"1.5px solid #C9A84C",color:"#021A4A",fontSize:10.5,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:"1px"}}>{e.n}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:13.5,color:"#1A1209",wordBreak:"break-word"}}>{citeRich(e.name)}</div>
+                {e.cite && <div style={{fontSize:11.5,color:"#7A6A55",marginTop:"1px",wordBreak:"break-word"}}>{e.cite}</div>}
+                <div style={{marginTop:"7px",display:"inline-block",fontSize:10,fontWeight:800,letterSpacing:"0.6px",textTransform:"uppercase",color:tn.fg,background:tn.bg,border:"1px solid "+tn.bd,borderRadius:"5px",padding:"2px 7px"}}>{tn.label}</div>
+                {e.status && <div style={{fontSize:12,color:"#3A2E20",marginTop:"6px",wordBreak:"break-word"}}>{citeRich(e.status)}</div>}
+                {/^https:\/\//.test(e.link) && (
+                  <a href={e.link} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"4px",marginTop:"7px",fontSize:11.5,fontWeight:700,color:"#8A6A1E",textDecoration:"none"}}>View judgment &rarr;</a>
+                )}
+              </div>
+            </div>
+          </div>
+        ); })}
+        {footer && <div style={{padding:"10px 14px",background:"#F7F2E8",borderTop:"1px solid #EFE8DC",fontSize:10.5,fontStyle:"italic",color:"#7A6A55",lineHeight:1.5}}>{footer}</div>}
+      </div>
+    );
+  };
+
+  const renderMessageContent = (content) => {
+    if (!content) return null;
+    const marker = "## ARK Citation Check";
+    const idx = content.indexOf(marker);
+    if (idx === -1) return renderMessageBody(content);
+    const answer = content.slice(0, idx).replace(/\n\s*-{3,}\s*$/, "").replace(/\s+$/, "");
+    const card = renderCitationCard(content.slice(idx + marker.length));
+    if (!card) return renderMessageBody(content);
+    return (
+      <div style={{display:"flex",flexDirection:isMobile ? "column" : "row",flexWrap:"wrap",gap:"18px",alignItems:"flex-start"}}>
+        <div style={{flex:"1 1 380px",minWidth:0}}>{renderMessageBody(answer)}</div>
+        <div style={{flex:isMobile ? "1 1 auto" : "0 1 300px",width:isMobile ? "100%" : "300px",minWidth:isMobile ? 0 : "260px",maxWidth:"100%",position:isMobile ? "static" : "sticky",top:"12px"}}>{card}</div>
+      </div>
+    );
   };
 
   const popupInp = { width: "100%", padding: "9px 12px", background: CREAM, border: `1px solid ${GOLD}50`, borderRadius: "7px", color: NAVY, fontSize: 13, boxSizing: "border-box", outline: "none" };
