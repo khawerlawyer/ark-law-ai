@@ -1,278 +1,176 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-const GOLD = "#C9A84C";
-const NAVY = "#0D1B2A";
-const NAVY_MID = "#162032";
-const NAVY_SURFACE = "#1E2D40";
-const NAVY_BORDER = "#2B3F57";
-const TEXT_PRIMARY = "#FAF6EE";
-const TEXT_SECONDARY = "#B8C4D0";
-const TEXT_MUTED = "#6E8099";
-const ACCENT_PK = "#3EB489";
-const ACCENT_US = "#5B8DD9";
+const GOLD  = "#C9A84C";
+const CREAM = "#F5F0E8";
 
-function ArkLogo({ size }) {
-  var s = size || 44;
-  return (
-    <svg width={s} height={s} viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="sc2">
-          <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" />
-        </clipPath>
-      </defs>
-      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="#0D1B2A" />
-      <rect x="25" y="8" width="75" height="200" fill="#01411C" clipPath="url(#sc2)" />
-      <rect x="100" y="8" width="75" height="200" fill="#B22234" clipPath="url(#sc2)" />
-      <rect x="100" y="32" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="52" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="72" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="92" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="112" width="75" height="10" fill="white" opacity="0.85" clipPath="url(#sc2)" />
-      <rect x="100" y="8" width="38" height="48" fill="#3C3B6E" clipPath="url(#sc2)" />
-      <circle cx="108" cy="20" r="2.5" fill="white" />
-      <circle cx="120" cy="20" r="2.5" fill="white" />
-      <circle cx="132" cy="20" r="2.5" fill="white" />
-      <circle cx="108" cy="34" r="2.5" fill="white" />
-      <circle cx="120" cy="34" r="2.5" fill="white" />
-      <circle cx="132" cy="34" r="2.5" fill="white" />
-      <circle cx="62" cy="108" r="22" fill="none" stroke="white" strokeWidth="2" clipPath="url(#sc2)" />
-      <circle cx="70" cy="108" r="16" fill="#01411C" clipPath="url(#sc2)" />
-      <polygon points="78,95 80,103 89,103 82,108 85,117 78,112 71,117 74,108 67,103 76,103" fill="white" clipPath="url(#sc2)" />
-      <line x1="100" y1="9" x2="100" y2="203" stroke="#C9A84C" strokeWidth="1.2" opacity="0.9" />
-      <g transform="translate(100,118)">
-        <line x1="-32" y1="0" x2="32" y2="0" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
-        <line x1="0" y1="-22" x2="0" y2="12" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="0" cy="-25" r="3" fill="#C9A84C" />
-        <line x1="-32" y1="0" x2="-27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="-32" y1="0" x2="-37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="-39" y1="14" x2="-25" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
-        <line x1="32" y1="0" x2="27" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="32" y1="0" x2="37" y2="14" stroke="#C9A84C" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="25" y1="14" x2="39" y2="14" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
-      <path d="M100 8 L175 32 L175 105 C175 158 140 188 100 205 C60 188 25 158 25 105 L25 32 Z" fill="none" stroke="#C9A84C" strokeWidth="2" />
-      <text x="100" y="218" textAnchor="middle" fontFamily="Georgia,serif" fontSize="14" fontWeight="700" fill="#C9A84C" letterSpacing="4">ARK</text>
-    </svg>
-  );
-}
-
-var AREAS_EN = [
-  { id: "general", label: "General Legal", icon: "⚖️" },
-  { id: "criminal", label: "Criminal Law", icon: "🔒" },
-  { id: "corporate", label: "Corporate & Business", icon: "🏢" },
-  { id: "family", label: "Family & Matrimonial", icon: "👨‍👩‍👧" },
-  { id: "property", label: "Property & Real Estate", icon: "🏠" },
-  { id: "labour", label: "Labour & Employment", icon: "👷" },
-  { id: "constitutional", label: "Constitutional Law", icon: "📜" },
-  { id: "ip", label: "IP & Technology", icon: "💡" },
-  { id: "immigration", label: "Immigration", icon: "✈️" },
+const JURISDICTIONS = [
+  { id:"pk", label:"Pakistan",      sub:"Pakistani Law & Statutes",   flag:"https://flagcdn.com/w40/pk.png", route:"/pakistan",   accent:"#2E7D32", light:"#EAF5EE", border:"#A8D5B5", detail:"All Provinces · Federal Courts · Supreme Court" },
+  { id:"us", label:"United States", sub:"US Federal & State Law",     flag:"https://flagcdn.com/w40/us.png", route:"/usa",        accent:"#BF0A30", light:"#FCEEF0", border:"#F0B8C0", detail:"All 50 States · Federal Courts · Supreme Court",  passcode:"1939USA" },
+  { id:"in", label:"India",         sub:"Indian Law & Statutes",      flag:"https://flagcdn.com/w40/in.png", route:"/india",      accent:"#B35400", light:"#FEF3E6", border:"#F5C89A", detail:"All States · High Courts · Supreme Court",          passcode:"1939Roorkee" },
+  { id:"bd", label:"Bangladesh",    sub:"Bangladesh Law & Statutes",  flag:"https://flagcdn.com/w40/bd.png", route:"/bangladesh", accent:"#006A4E", light:"#E6F5EF", border:"#98D5B8", detail:"All Divisions · High Court · Supreme Court",        passcode:"1939BANGLA" },
 ];
 
-var AREAS_UR = [
-  { id: "general", label: "عمومی قانون", icon: "⚖️" },
-  { id: "criminal", label: "فوجداری قانون", icon: "🔒" },
-  { id: "corporate", label: "کارپوریٹ و کاروبار", icon: "🏢" },
-  { id: "family", label: "خاندانی قانون", icon: "👨‍👩‍👧" },
-  { id: "property", label: "جائیداد و رئیل اسٹیٹ", icon: "🏠" },
-  { id: "labour", label: "محنت و روزگار", icon: "👷" },
-  { id: "constitutional", label: "آئینی قانون", icon: "📜" },
-  { id: "ip", label: "دانشورانہ ملکیت", icon: "💡" },
-  { id: "immigration", label: "امیگریشن", icon: "✈️" },
-];
+export default function Landing() {
+  const router         = useRouter();
+  const [mounted,      setMounted]      = useState(false);
+  useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
 
-var QUICK_EN = [
-  "Criminal procedure differences: Pakistan vs USA?",
-  "Bail laws: Pakistan CrPC vs US federal law?",
-  "Divorce grounds: Pakistan vs USA?",
-  "Draft an NDA clause valid in both Pakistan and USA.",
-  "IP registration: IPO-Pakistan vs USPTO?",
-  "Rights of accused: Article 10-A vs US 5th and 6th Amendments?",
-];
+  // Track landing page visitors
+  useEffect(()=>{
+    try {
+      const v={page:window.location.pathname,time:new Date().toISOString(),ua:navigator.userAgent.substring(0,80)};
+      const arr=JSON.parse(localStorage.getItem("arklaw_visitors")||"[]");
+      arr.push(v);
+      if(arr.length>500) arr.shift();
+      localStorage.setItem("arklaw_visitors",JSON.stringify(arr));
+    } catch(e){}
+  },[]);
 
-var QUICK_UR = [
-  "پاکستان اور امریکہ میں فوجداری طریقہ کار کا فرق؟",
-  "پاکستانی ضابطہ فوجداری اور امریکی وفاقی ضمانت قوانین؟",
-  "پاکستانی اور امریکی خاندانی قانون میں طلاق کی بنیادیں؟",
-  "پاکستان اور امریکہ دونوں میں NDA شق تیار کریں۔",
-  "IPO پاکستان بمقابلہ USPTO رجسٹریشن؟",
-  "آرٹیکل 10-A بمقابلہ 5th اور 6th ترمیم — ملزم کے حقوق؟",
-];
-
-var AREA_LABELS_EN = {
-  general: "general legal matters",
-  criminal: "criminal law and criminal procedure",
-  corporate: "corporate, business, and commercial law",
-  family: "family law, matrimonial law, and succession",
-  property: "property law, real estate, and land acquisition",
-  labour: "labour law and employment law",
-  constitutional: "constitutional law and fundamental rights",
-  ip: "intellectual property and technology law",
-  immigration: "immigration and nationality law",
-};
-
-var AREA_LABELS_UR = {
-  general: "عمومی قانونی معاملات",
-  criminal: "فوجداری قانون اور طریقہ کار",
-  corporate: "کارپوریٹ، کاروبار اور تجارتی قانون",
-  family: "خاندانی قانون، ازدواجی قانون اور جانشینی",
-  property: "جائیداد کا قانون، رئیل اسٹیٹ اور زمین کا حصول",
-  labour: "محنت کا قانون اور روزگار کا قانون",
-  constitutional: "آئینی قانون اور بنیادی حقوق",
-  ip: "دانشورانہ ملکیت اور ٹیکنالوجی کا قانون",
-  immigration: "امیگریشن اور شہریت کا قانون",
-};
-
-function buildSystem(area, jur, lang) {
-  var areaLabel = lang === "ur" ? AREA_LABELS_UR[area] : AREA_LABELS_EN[area];
-  var jurMap = {
-    pk: "You are answering ONLY under Pakistani law. Cite Pakistani legislation (PPC, CrPC, CPC, MFLO 1961, Companies Act 2017, Constitution 1973) and court precedents.",
-    us: "You are answering ONLY under US law. Cite federal legislation, FRCP, FRCRP, UCC, US Constitution and court precedents.",
-    both: "You are answering under BOTH Pakistani and US law with clear sections for each jurisdiction and comparative analysis.",
-  };
-  var langText = lang === "ur" ? "IMPORTANT: Respond entirely in Urdu. Use formal legal Urdu terminology." : "Respond in English.";
-  return "You are ARK Law AI, a warm and professional AI legal assistant specializing in " + areaLabel + ". " + jurMap[jur] + "\n\n" + langText + "\n\nCONVERSATION RULES:\n1. FIRST MESSAGE: On the very first user message, greet warmly and ask their name before anything else.\n2. PERSONALIZATION: Once you know the name, address the user by name in every reply.\n3. NO LONG ANSWERS: Never give a long answer immediately. Ask ONE short follow-up question to find exactly what is needed.\n4. ONE QUESTION ONLY: Never ask more than one question at a time. Keep follow-up questions to one line.\n5. FOCUSED ANSWERS: Only give a detailed answer once you understand the specific need. Cite specific statutes and case law.\n6. WARM TONE: Be warm and natural like a knowledgeable legal advisor.\n7. DISCLAIMER: End every detailed answer with: This is for research only and not a substitute for legal counsel.";
-}
-
-function fmt(text) {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\*\*(.+?)\*\*/g, "<strong style=\"color:#C9A84C\">$1</strong>")
-    .replace(/^#{1,3} (.+)$/gm, "<div style=\"color:#C9A84C;font-weight:600;margin:10px 0 5px\">$1</div>")
-    .replace(/^- (.+)$/gm, "<div style=\"display:flex;gap:8px;margin:3px 0\"><span style=\"color:#C9A84C\">&#8226;</span><span>$1</span></div>")
-    .replace(/\n\n/g, "<br/>")
-    .replace(/\n/g, "<br/>");
-}
-
-export default function App() {
-  var langState = useState("en");
-  var lang = langState[0]; var setLang = langState[1];
-  var jurState = useState("both");
-  var jur = jurState[0]; var setJur = jurState[1];
-  var areaState = useState("general");
-  var area = areaState[0]; var setArea = areaState[1];
-  var msgState = useState([]);
-  var messages = msgState[0]; var setMessages = msgState[1];
-  var inputState = useState("");
-  var input = inputState[0]; var setInput = inputState[1];
-  var loadingState = useState(false);
-  var loading = loadingState[0]; var setLoading = loadingState[1];
-  var sidebarState = useState(false);
-  var sidebarOpen = sidebarState[0]; var setSidebarOpen = sidebarState[1];
-  var greetedState = useState(false);
-  var greeted = greetedState[0]; var setGreeted = greetedState[1];
-  var messagesEnd = useRef(null);
-  var history = useRef([]);
-
-  var isUrdu = lang === "ur";
-  var areas = isUrdu ? AREAS_UR : AREAS_EN;
-  var quick = isUrdu ? QUICK_UR : QUICK_EN;
-
-  var jurConfig = {
-    pk: { color: ACCENT_PK, bg: "rgba(62,180,137,0.08)", banner: isUrdu ? "پاکستانی قانون کے تحت جواب" : "Answering under Pakistani law" },
-    us: { color: ACCENT_US, bg: "rgba(91,141,217,0.08)", banner: isUrdu ? "امریکی قانون کے تحت جواب" : "Answering under US law" },
-    both: { color: GOLD, bg: "rgba(201,168,76,0.08)", banner: isUrdu ? "پاکستانی اور امریکی دونوں قوانین کے تحت جواب" : "Answering under both Pakistani and US law" },
-  };
-
-  useEffect(function() {
-    if (messagesEnd.current) messagesEnd.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  useEffect(function() {
-    if (!greeted) {
-      setGreeted(true);
-      var greeting = "Welcome to ARK Law AI! Before we begin, may I know your name?";
-      history.current = [{ role: "assistant", content: greeting }];
-      setMessages([{ type: "ai", text: greeting, jur: "both" }]);
-    }
-  }, []);
-
-  function send(text) {
-    var msg = (text || input).trim();
-    if (!msg || loading) return;
-    setInput("");
-    history.current = history.current.concat([{ role: "user", content: msg }]);
-    setMessages(function(prev) { return prev.concat([{ type: "user", text: msg }]); });
-    setLoading(true);
-    fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ system: buildSystem(area, jur, lang), messages: history.current }),
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.error) throw new Error(data.error);
-        history.current = history.current.concat([{ role: "assistant", content: data.reply }]);
-        setMessages(function(prev) { return prev.concat([{ type: "ai", text: data.reply, jur: jur }]); });
-      })
-      .catch(function(err) {
-        history.current = history.current.slice(0, -1);
-        setMessages(function(prev) { return prev.concat([{ type: "error", text: "Error: " + err.message }]); });
-      })
-      .finally(function() { setLoading(false); });
-  }
 
   return (
     <>
-      <style>{[
-        "* { box-sizing: border-box; margin: 0; padding: 0; }",
-        "body { background: #0D1B2A; }",
-        "@keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }",
-        "::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:#2B3F57;border-radius:3px}",
-        "input::placeholder { color: #6E8099; }",
-        ".qbtn:hover { border-color: #C9A84C !important; color: #C9A84C !important; }",
-        ".abtn:hover { background: #1E2D40 !important; color: #C9A84C !important; }",
-      ].join(" ")}</style>
+      <Head>
+        <title>ARK LAW AI - Choose Your Jurisdiction</title>
+        <meta name="description" content="ARK Law AI: AI-powered legal assistant for Pakistan, USA, India and Bangladesh." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-512.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512.png" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+      </Head>
 
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: NAVY, color: TEXT_PRIMARY, fontFamily: isUrdu ? "serif" : "'Segoe UI', sans-serif", direction: isUrdu ? "rtl" : "ltr" }}>
+      <style>{`
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        html,body{height:100%;overflow:hidden;background:#F5F0E8;font-family:"DM Sans",sans-serif;}
+        #__next{height:100%;}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+        @keyframes floatBg{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 10px))}}
+        @keyframes bgPulse{0%,100%{opacity:0.045}50%{opacity:0.08}}
+        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #D8D0C4;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;}
+        .jcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1);border-color:#C9A84C!important;}
+        .jcard .acc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;transition:opacity 0.2s;}
+        .enter-btn{width:100%;padding:12px 0;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"DM Sans",sans-serif;}
+        .enter-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.14);}
+        @media(max-width:480px){.grid2{grid-template-columns:1fr !important;}}
+      `}</style>
 
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem", height: 58, borderBottom: "1px solid " + NAVY_BORDER, background: NAVY_MID, flexShrink: 0, gap: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button onClick={function() { setSidebarOpen(function(v) { return !v; }); }} style={{ background: "transparent", border: "none", color: GOLD, fontSize: 20, cursor: "pointer", padding: "4px 6px" }}>☰</button>
-            <ArkLogo size={42} />
-            <div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 700, color: GOLD }}>{isUrdu ? "اے آر کے لاء اے آئی" : "ARK Law AI"}</div>
-              <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: ".1em" }}>{isUrdu ? "قانونی ذہانت کا پلیٹ فارم" : "Legal Intelligence Platform"}</div>
-            </div>
+      {/* Watermark background */}
+      <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
+
+        {/* Main logo watermark */}
+        <img src="/ark-logo-us.png" alt="" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"380px",height:"380px",objectFit:"cover",opacity:0.045,animation:"floatBg 9s ease-in-out infinite"}}/>
+
+        {/* Scales of Justice - top left */}
+        <svg width="200" height="200" viewBox="0 0 100 100" style={{position:"absolute",top:"5%",left:"4%",opacity:0.045,animation:"bgPulse 7s ease-in-out infinite"}}>
+          <line x1="50" y1="10" x2="50" y2="82" stroke="#8A7A55" strokeWidth="2.5"/>
+          <line x1="18" y1="30" x2="82" y2="30" stroke="#8A7A55" strokeWidth="2"/>
+          <line x1="18" y1="30" x2="23" y2="56" stroke="#8A7A55" strokeWidth="1.8"/>
+          <line x1="82" y1="30" x2="77" y2="56" stroke="#8A7A55" strokeWidth="1.8"/>
+          <ellipse cx="20.5" cy="58" rx="11" ry="4.5" fill="none" stroke="#8A7A55" strokeWidth="1.8"/>
+          <ellipse cx="79.5" cy="58" rx="11" ry="4.5" fill="none" stroke="#8A7A55" strokeWidth="1.8"/>
+          <rect x="37" y="80" width="26" height="3.5" rx="1.75" fill="#8A7A55"/>
+          <circle cx="50" cy="27" r="3.5" fill="#8A7A55"/>
+        </svg>
+
+        {/* Gavel - bottom right */}
+        <svg width="190" height="190" viewBox="0 0 100 100" style={{position:"absolute",bottom:"6%",right:"5%",opacity:0.04,transform:"rotate(-30deg)",animation:"bgPulse 8s ease-in-out 1.5s infinite"}}>
+          <rect x="48" y="8" width="32" height="18" rx="5" fill="#8A7A55" transform="rotate(45 64 17)"/>
+          <rect x="8" y="58" width="45" height="11" rx="5" fill="#8A7A55" transform="rotate(45 30 63)"/>
+          <rect x="56" y="52" width="20" height="10" rx="4" fill="#C9A84C" transform="rotate(45 66 57)"/>
+        </svg>
+
+        {/* AI circuit nodes - top right */}
+        <svg width="170" height="170" viewBox="0 0 80 80" style={{position:"absolute",top:"5%",right:"4%",opacity:0.04,animation:"bgPulse 6s ease-in-out 2s infinite"}}>
+          <circle cx="15" cy="15" r="3" fill="#C9A84C"/><circle cx="40" cy="15" r="3" fill="#C9A84C"/><circle cx="65" cy="15" r="3" fill="#C9A84C"/>
+          <circle cx="15" cy="40" r="3" fill="#C9A84C"/><circle cx="40" cy="40" r="3.5" fill="#C9A84C"/><circle cx="65" cy="40" r="3" fill="#C9A84C"/>
+          <circle cx="15" cy="65" r="3" fill="#C9A84C"/><circle cx="40" cy="65" r="3" fill="#C9A84C"/><circle cx="65" cy="65" r="3" fill="#C9A84C"/>
+          <line x1="15" y1="15" x2="40" y2="15" stroke="#C9A84C" strokeWidth="1"/><line x1="40" y1="15" x2="65" y2="15" stroke="#C9A84C" strokeWidth="1"/>
+          <line x1="15" y1="40" x2="40" y2="40" stroke="#C9A84C" strokeWidth="1"/><line x1="40" y1="40" x2="65" y2="40" stroke="#C9A84C" strokeWidth="1"/>
+          <line x1="15" y1="65" x2="40" y2="65" stroke="#C9A84C" strokeWidth="1"/><line x1="40" y1="65" x2="65" y2="65" stroke="#C9A84C" strokeWidth="1"/>
+          <line x1="15" y1="15" x2="15" y2="40" stroke="#C9A84C" strokeWidth="1"/><line x1="40" y1="15" x2="40" y2="40" stroke="#C9A84C" strokeWidth="1"/>
+          <line x1="65" y1="15" x2="65" y2="40" stroke="#C9A84C" strokeWidth="1"/><line x1="15" y1="40" x2="15" y2="65" stroke="#C9A84C" strokeWidth="1"/>
+          <line x1="40" y1="40" x2="40" y2="65" stroke="#C9A84C" strokeWidth="1"/><line x1="65" y1="40" x2="65" y2="65" stroke="#C9A84C" strokeWidth="1"/>
+        </svg>
+
+        {/* Open book - bottom left */}
+        <svg width="155" height="155" viewBox="0 0 100 100" style={{position:"absolute",bottom:"7%",left:"4%",opacity:0.04,animation:"bgPulse 10s ease-in-out 0.5s infinite"}}>
+          <path d="M50 22 Q28 20 13 28 L13 82 Q28 74 50 77 Q72 74 87 82 L87 28 Q72 20 50 22Z" fill="none" stroke="#8A7A55" strokeWidth="2.2"/>
+          <line x1="50" y1="22" x2="50" y2="77" stroke="#8A7A55" strokeWidth="1.8"/>
+          <line x1="18" y1="40" x2="46" y2="37" stroke="#8A7A55" strokeWidth="1.1"/><line x1="18" y1="49" x2="46" y2="46" stroke="#8A7A55" strokeWidth="1.1"/>
+          <line x1="18" y1="58" x2="46" y2="55" stroke="#8A7A55" strokeWidth="1.1"/><line x1="18" y1="67" x2="46" y2="64" stroke="#8A7A55" strokeWidth="1.1"/>
+          <line x1="54" y1="37" x2="82" y2="40" stroke="#8A7A55" strokeWidth="1.1"/><line x1="54" y1="46" x2="82" y2="49" stroke="#8A7A55" strokeWidth="1.1"/>
+          <line x1="54" y1="55" x2="82" y2="58" stroke="#8A7A55" strokeWidth="1.1"/><line x1="54" y1="64" x2="82" y2="67" stroke="#8A7A55" strokeWidth="1.1"/>
+        </svg>
+
+        {/* Column pillar - center right edge */}
+        <svg width="80" height="220" viewBox="0 0 30 80" style={{position:"absolute",top:"25%",right:"0%",opacity:0.035,animation:"bgPulse 11s ease-in-out 3s infinite"}}>
+          <rect x="2" y="2" width="26" height="5" rx="1.5" fill="#8A7A55"/>
+          <rect x="6" y="7" width="18" height="56" rx="2" fill="none" stroke="#8A7A55" strokeWidth="1.5"/>
+          <line x1="11" y1="7" x2="11" y2="63" stroke="#8A7A55" strokeWidth="0.7"/>
+          <line x1="15" y1="7" x2="15" y2="63" stroke="#8A7A55" strokeWidth="0.7"/>
+          <line x1="19" y1="7" x2="19" y2="63" stroke="#8A7A55" strokeWidth="0.7"/>
+          <rect x="2" y="63" width="26" height="5" rx="1.5" fill="#8A7A55"/>
+          <rect x="0" y="68" width="30" height="4" rx="1.5" fill="#8A7A55"/>
+        </svg>
+
+        {/* Warm radial glows */}
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 20% 35%, rgba(201,168,76,0.07) 0%, transparent 55%)"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 78% 68%, rgba(180,140,60,0.05) 0%, transparent 50%)"}}/>
+      </div>
+
+      {/* Main content */}
+      <div style={{position:"relative",zIndex:1,height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 20px",opacity:mounted?1:0,transition:"opacity 0.5s ease"}}>
+
+        {/* Logo + brand */}
+        <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
+          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",objectFit:"contain",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(120deg,#021A4A 0%,#021A4A 30%,#2E6BC4 45%,#6BA3E8 50%,#2E6BC4 55%,#021A4A 70%,#021A4A 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 4s linear infinite"}}>
+            ARK LAW AI
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              {["en", "ur"].map(function(l) {
-                return (
-                  <button key={l} onClick={function() { setLang(l); }} style={{ border: "none", borderRadius: 30, padding: "3px 10px", fontSize: 11, cursor: "pointer", background: lang === l ? "rgba(201,168,76,0.2)" : "transparent", color: lang === l ? GOLD : TEXT_MUTED, fontFamily: "inherit", fontWeight: 500 }}>
-                    {l === "en" ? "EN" : "اردو"}
-                  </button>
-                );
-              })}
-            </div>
-            <div style={{ display: "flex", gap: 2, background: NAVY, border: "1px solid " + NAVY_BORDER, borderRadius: 30, padding: 3 }}>
-              {[["pk", "🇵🇰 PK"], ["both", "⚖ Both"], ["us", "🇺🇸 US"]].map(function(item) {
-                var j = item[0]; var lbl = item[1];
-                return (
-                  <button key={j} onClick={function() { setJur(j); }} style={{ border: "none", borderRadius: 30, padding: "3px 10px", fontSize: 11, cursor: "pointer", background: jur === j ? (j === "pk" ? "rgba(62,180,137,0.15)" : j === "us" ? "rgba(91,141,217,0.15)" : "rgba(201,168,76,0.15)") : "transparent", color: jur === j ? jurConfig[j].color : TEXT_MUTED, fontFamily: "inherit", fontWeight: 500 }}>
-                    {lbl}
-                  </button>
-                );
-              })}
-            </div>
+          <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
+            Your Trusted Legal Intelligence Engine
           </div>
-        </header>
+          <div style={{fontSize:"12.5px",color:"#5A4A35",marginTop:"10px",maxWidth:"440px",marginLeft:"auto",marginRight:"auto",lineHeight:1.6,fontFamily:"'DM Sans',sans-serif"}}>
+            Jurisdiction-specific legal intelligence built for legal professionals.
+          </div>
+          <div style={{fontSize:"11px",color:"#021A4A",marginTop:"6px",fontWeight:700,letterSpacing:"1.6px",textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif"}}>
+            Research &middot; Verify &middot; Draft &middot; Analyze
+          </div>
+        </div>
 
-        <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
-          {sidebarOpen && <div onClick={function() { setSidebarOpen(false); }} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 10 }} />}
+        {/* Selector card */}
+        <div style={{width:"100%",maxWidth:"420px",background:"rgba(255,253,248,0.94)",border:"1px solid #D8D0C4",borderRadius:"18px",padding:"20px 20px 16px",boxShadow:"0 10px 40px rgba(180,160,100,0.13),0 2px 8px rgba(0,0,0,0.05)",backdropFilter:"blur(8px)",animation:"fadeUp 0.7s ease 0.1s both"}}>
 
-          <aside style={{ position: "absolute", top: 0, left: 0, bottom: 0, zIndex: 20, width: 230, background: NAVY_MID, borderRight: "1px solid " + NAVY_BORDER, display: "flex", flexDirection: "column", overflowY: "auto", transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform .25s" }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "14px 12px 6px" }}>{isUrdu ? "پریکٹس ایریاز" : "PRACTICE AREAS"}</div>
-            {areas.map(function(a) {
-              return (
-                <button key={a.id} className="abtn" onClick={function() { setArea(a.id); setSidebarOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", border: "none", textAlign: "left", background: area === a.id ? NAVY_SURFACE : "transparent", color: area === a.id ? GOLD : TEXT_SECONDARY, fontFamily: "inherit", fontSize: 13, padding: "7px 10px", borderRadius: 7, cursor: "pointer", fontWeight: area === a.id ? 600 : 400 }}>
-                  <span>{a.icon}</span>{a.label}
-                </button>
-              );
-            })}
-            <div style={{ height: 1, background: NAVY_BORDER, margin: "8px 10px" }} />
-            <div style={{ fontSize: 10, fontWeight: 600, color: TEXT_MUTED, letterSpacing: ".1em", textTransform: "uppercase", margin: "6px 12px" }}>{isUrdu ? "فوری سوالات" : "QUICK QUERIES"}</div>
-            {quick.map(function(q, i) {
-              return (
-                <button key={i} className="qbtn" onClick={function() { send(q); setSidebarOpen(false); }} style={{ display: "block", width: "calc(100% - 16px)", margin: "0 8px 4px", background: "transparent", border: "1px solid " + NAVY_BORDER, color: TEXT_MUTED, fontFamily: "inherit", fontSize: 11, padding: "6px 8px", borderRadius: 7, cursor: "pointer", textAlign: "left", lineHeight: 1.6 }}>{
+          <div style={{fontSize:"11px",fontWeight:700,color:"#8A7A65",letterSpacing:"0.9px",textTransform:"uppercase",marginBottom:"11px"}}>
+            Select your jurisdiction
+          </div>
+
+          <div className="grid2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"14px"}}>
+            {JURISDICTIONS.map(j => (
+              <div key={j.id} className="jcard"
+                onClick={()=>router.push(j.route)}>
+                <img className="flag" src={j.flag} alt={j.label} style={{width:"30px",height:"21px",objectFit:"cover",borderRadius:"3px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.12)"}}/>
+                <div style={{minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"#1A1209",lineHeight:1.2}}>{j.label}</div>
+                  <div style={{fontSize:10,color:"#9A8A75",marginTop:"2px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div style={{marginTop:"18px",fontSize:"11px",color:"#B0A080",textAlign:"center",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px",animation:"fadeUp 0.8s ease 0.3s both"}}>
+          Powered by ARK Lex AI LLC &middot; &copy; 2026 &middot; <span style={{color:"#C9A84C"}}>arklaw.ai</span>
+        </div>
+
+      </div>
+
+    </>
+  );
+}
