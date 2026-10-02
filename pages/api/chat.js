@@ -290,8 +290,8 @@ export default async function handler(req, res) {
   }
 
   const avail = {
-    US: process.env.COURTLISTENER_API_TOKEN || "",
-    IN: process.env.INDIANKANOON_API_TOKEN || "",
+    US: (process.env.COURTLISTENER_API_TOKEN || "").trim(),
+    IN: (process.env.INDIANKANOON_API_TOKEN || "").trim(),
   };
   const checkable = [avail.US && "United States", avail.IN && "India"].filter(Boolean);
   const verifyNote = checkable.length
@@ -359,7 +359,11 @@ export default async function handler(req, res) {
     if ((avail.US || avail.IN) && /\*\*Citation:?\*\*/i.test(fullText)) {
       try {
         const report = await buildCitationReport(fullText, avail);
-        if (report) res.write("data: " + JSON.stringify({ content: report }) + "\n\n");
+        if (report) {
+          for (let i = 0; i < report.length; i += 200) {
+            res.write("data: " + JSON.stringify({ content: report.slice(i, i + 200) }) + "\n\n");
+          }
+        }
       } catch (e) {
         console.error("Citation check error:", e.message);
       }
