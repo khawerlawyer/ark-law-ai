@@ -134,6 +134,12 @@ export default function Landing() {
           <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
             Your Trusted Legal Intelligence Engine
           </div>
+          <div style={{fontSize:"12.5px",color:"#5A4A35",marginTop:"10px",maxWidth:"440px",marginLeft:"auto",marginRight:"auto",lineHeight:1.6,fontFamily:"'DM Sans',sans-serif"}}>
+            Jurisdiction-specific legal intelligence built for legal professionals.
+          </div>
+          <div style={{fontSize:"11px",color:"#021A4A",marginTop:"6px",fontWeight:700,letterSpacing:"1.6px",textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif"}}>
+            Research &middot; Verify &middot; Draft &middot; Analyze
+          </div>
         </div>
 
         {/* Selector card */}
