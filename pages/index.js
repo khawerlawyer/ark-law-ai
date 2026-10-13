@@ -287,9 +287,16 @@ export default function Landing() {
         </main>
 
         {/* Footer */}
-        <footer className="wrap" style={{width:"100%",padding:"26px 28px 24px",fontSize:"12px",color:"#A89878",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px",display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
-          <span>Powered by ARK Lex AI LLC &middot; &copy; 2026 &middot; <span style={{color:"#C9A84C"}}>arklaw.ai</span></span>
-          <span>Pakistan &middot; United States &middot; India &middot; Bangladesh</span>
+        <footer className="wrap" style={{width:"100%",padding:"26px 28px 24px",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:16,flexWrap:"wrap"}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-start",gap:6}}>
+            <a href="https://www.arkgroup.info" target="_blank" rel="noopener noreferrer" aria-label="ARK Group">
+              <img src="/ark-group-logo.png" alt="ARK Group" style={{height:"44px",width:"auto",display:"block"}}/>
+            </a>
+            <div style={{fontSize:"12px",color:"#A89878",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px"}}>
+              Powered by ARK GROUP &middot; &copy; 2026-2027 &middot; <a href="https://www.arkgroup.info" target="_blank" rel="noopener noreferrer" style={{color:"#C9A84C",textDecoration:"none"}}>www.arkgroup.info</a>
+            </div>
+          </div>
+          <span style={{fontSize:"12px",color:"#A89878",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px"}}>Pakistan &middot; United States &middot; India &middot; Bangladesh</span>
         </footer>
 
       </div>
