@@ -44,8 +44,8 @@ export default function Landing() {
 
       <style>{`
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-        html,body{height:100%;overflow:hidden;background:#F5F0E8;font-family:"DM Sans",sans-serif;}
-        #__next{height:100%;}
+        html,body{min-height:100%;overflow-x:hidden;overflow-y:auto;background:#F5F0E8;font-family:"DM Sans",sans-serif;}
+        #__next{min-height:100%;}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes floatBg{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 10px))}}
@@ -56,6 +56,14 @@ export default function Landing() {
         .enter-btn{width:100%;padding:12px 0;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"DM Sans",sans-serif;}
         .enter-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.14);}
         @media(max-width:480px){.grid2{grid-template-columns:1fr !important;}}
+        .pm-wrap{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:40px;align-items:center;}
+        .pm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+        .pm-tile{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;background:#FFFFFF;border:1px solid #E3D9C6;border-radius:12px;transition:transform 0.18s,box-shadow 0.18s;}
+        .pm-tile:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(2,26,74,0.08);}
+        .pm-cta:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(2,26,74,0.25);}
+        .pm-soon{display:flex;flex-wrap:wrap;gap:7px;}
+        @media(max-width:860px){.pm-wrap{grid-template-columns:1fr;gap:26px;}}
+        @media(max-width:520px){.pm-grid{grid-template-columns:1fr;}}
       `}</style>
 
       {/* Watermark background */}
@@ -123,7 +131,7 @@ export default function Landing() {
       </div>
 
       {/* Main content */}
-      <div style={{position:"relative",zIndex:1,height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 20px",opacity:mounted?1:0,transition:"opacity 0.5s ease"}}>
+      <div style={{position:"relative",zIndex:1,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 20px",opacity:mounted?1:0,transition:"opacity 0.5s ease"}}>
 
         {/* Logo + brand */}
         <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
@@ -162,14 +170,85 @@ export default function Landing() {
             ))}
           </div>
 
+          <a href="/practice" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:11,background:"linear-gradient(135deg,#021A4A,#0B2A63)",textDecoration:"none",border:"1px solid #021A4A"}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:12.5,fontWeight:800,color:"#FFFFFF",letterSpacing:"0.3px"}}>ARK Practice <span style={{fontSize:9,fontWeight:800,color:"#021A4A",background:"#C9A84C",borderRadius:5,padding:"1px 5px",marginLeft:4,verticalAlign:"middle"}}>NEW</span></div>
+              <div style={{fontSize:10.5,color:"rgba(255,255,255,0.65)",marginTop:1}}>Matters, calendar, time &amp; billing for law firms</div>
+            </div>
+            <span style={{color:"#C9A84C",fontWeight:800,fontSize:15}}>&rarr;</span>
+          </a>
+
         </div>
+
+        <a href="#practice" style={{marginTop:"16px",fontSize:"11.5px",color:"#7A6A55",textDecoration:"none",fontWeight:700,letterSpacing:"0.4px",display:"flex",alignItems:"center",gap:6}}>
+          Practice management for law firms
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </a>
 
         {/* Footer */}
         <div style={{marginTop:"18px",fontSize:"11px",color:"#B0A080",textAlign:"center",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px",animation:"fadeUp 0.8s ease 0.3s both"}}>
           Powered by ARK Lex AI LLC &middot; &copy; 2026 &middot; <span style={{color:"#C9A84C"}}>arklaw.ai</span>
         </div>
 
-      </div>
+            </div>
+
+      {/* ── ARK Practice section ── */}
+      <section id="practice" style={{position:"relative",zIndex:1,padding:"72px 20px 80px",background:"linear-gradient(180deg,rgba(245,240,232,0) 0%,#F5F0E8 12%,#EFE8DA 100%)"}}>
+        <div className="pm-wrap" style={{maxWidth:"1080px",margin:"0 auto"}}>
+          <div>
+            <div style={{display:"inline-flex",alignItems:"center",gap:7,fontSize:"11px",fontWeight:800,letterSpacing:"1.4px",textTransform:"uppercase",color:"#8A6A1E",background:"rgba(201,168,76,0.14)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:999,padding:"5px 12px"}}>
+              New &middot; ARK Practice
+            </div>
+            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"clamp(30px,4.2vw,44px)",lineHeight:1.12,color:"#021A4A",margin:"14px 0 14px"}}>
+              Run your whole practice from one place.
+            </h2>
+            <p style={{fontSize:"15px",lineHeight:1.7,color:"#4A3A28",marginBottom:"14px"}}>
+              ARK Practice keeps every matter, client, hearing, hour and invoice in one secure record, built for firms in Pakistan, India, Bangladesh and the United States.
+            </p>
+            <p style={{fontSize:"14px",lineHeight:1.7,color:"#7A6A55",marginBottom:"24px"}}>
+              Open a matter, run a conflict check, track time with a live timer, and turn unbilled work into a tax-ready invoice in your currency.
+            </p>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
+              <a href="/practice" className="pm-cta" style={{display:"inline-flex",alignItems:"center",gap:8,padding:"13px 22px",background:"#021A4A",color:"#FFFFFF",borderRadius:11,textDecoration:"none",fontWeight:800,fontSize:"14px",borderBottom:"2px solid #C9A84C",transition:"all 0.18s"}}>
+                Open ARK Practice <span style={{color:"#C9A84C"}}>&rarr;</span>
+              </a>
+              <span style={{fontSize:"12.5px",color:"#7A6A55"}}>Sign in with your ARK LAW AI account</span>
+            </div>
+          </div>
+
+          <div>
+            <div className="pm-grid">
+              {[
+                ["Matter management","Every case with its court, parties, notes, tasks, hearings and billing in one record.","M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"],
+                ["Clients & conflict check","Client and contact records, with an instant conflict search across parties.","M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"],
+                ["Court calendar","Hearings, meetings and filing deadlines on a monthly view and agenda.","M3 9.5h18M8 2.5v4M16 2.5v4M5 4.5h14a2 2 0 0 1 2 2v12.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2z"],
+                ["Tasks","Assign due dates and priorities, and see what is overdue at a glance.","M8 12l3 3 5-6M5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13A2.5 2.5 0 0 1 5.5 3z"],
+                ["Time & expenses","A live timer that keeps running across pages, plus expense logging.","M12 9v4l2.5 2.5M9.5 2.5h5M20 13a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"],
+                ["Billing & payments","Invoices with tax, print-ready PDFs, and part-payment tracking.","M6 2.5h9l3.5 3.5V21.5H6zM9.5 10h6M9.5 14h6M9.5 18h3"],
+              ].map(([t, d, icon]) => (
+                <div key={t} className="pm-tile">
+                  <div style={{width:34,height:34,borderRadius:9,background:"#021A4A",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={icon}/></svg>
+                  </div>
+                  <div style={{minWidth:0}}>
+                    <div style={{fontSize:"13.5px",fontWeight:800,color:"#1A1209",display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>{t}<span style={{fontSize:"9px",fontWeight:800,letterSpacing:"0.6px",color:"#1E6B34",background:"#ECF7EF",border:"1px solid #B7DFC2",borderRadius:5,padding:"1px 5px"}}>LIVE</span></div>
+                    <div style={{fontSize:"12.5px",color:"#7A6A55",lineHeight:1.55,marginTop:3}}>{d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:16,padding:"14px 16px",background:"rgba(2,26,74,0.04)",border:"1px dashed #C8BFB0",borderRadius:12}}>
+              <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"#7A6A55",marginBottom:9}}>Coming next</div>
+              <div className="pm-soon">
+                {["Trust / client account ledgers","Documents & templates","Client portal","E-signatures","Online payments","Intake forms","Court-rule deadlines","ARK AI inside matters","Outlook & Google sync","Accounting export"].map(x => (
+                  <span key={x} style={{fontSize:"12px",color:"#4A3A28",background:"#FFFFFF",border:"1px solid #E3D9C6",borderRadius:999,padding:"4px 10px"}}>{x}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </>
   );
