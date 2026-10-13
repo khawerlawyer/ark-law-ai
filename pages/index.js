@@ -270,7 +270,7 @@ export default function Landing() {
 
               <div style={{display:"flex",gap:14,alignItems:"center",flexWrap:"wrap",position:"relative"}}>
                 <a href="/practice" className="pcta">Open ARK Practice <span aria-hidden="true">&rarr;</span></a>
-                <span style={{fontSize:"12.5px",color:"rgba(255,255,255,0.6)"}}>Uses your ARK LAW AI account</span>
+                <span style={{fontSize:"12.5px",color:"rgba(255,255,255,0.6)"}}>New here? Create an account in a minute</span>
               </div>
 
               <div className="spacer"/>
