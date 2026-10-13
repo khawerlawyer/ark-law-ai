@@ -1,4 +1,4 @@
-// pages/api/practice.js — ARK Practice (Phase 1) API
+// pages/api/practice.js — ARK Practice
 //
 // Auth: every request must send  Authorization: Bearer <sessionToken>
 //       (the token is issued by /api/auth/login and stored with arklaw_user).
