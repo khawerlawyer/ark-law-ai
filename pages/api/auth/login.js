@@ -140,6 +140,16 @@ function verifyPassword(password, storedHash) {
   } catch { return false; }
 }
 
+// ─── Session token (used by ARK Practice) ─────────────────────────────────────
+// Format: base64url({uid,exp}).hmac   Signed with SESSION_SECRET (fallback: service key)
+function signSession(uid) {
+  const secret = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_KEY || "";
+  if (!secret || !uid) return "";
+  const payload = Buffer.from(JSON.stringify({ uid, exp: Date.now() + 30 * 24 * 60 * 60 * 1000 })).toString("base64url");
+  const sig = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+  return payload + "." + sig;
+}
+
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
@@ -162,7 +172,7 @@ export default async function handler(req, res) {
 
       await updateLastLoginSupabase(normalizedEmail);
 
-      const { passwordHash: _, ...safeUser } = { ...user, lastLogin: new Date().toISOString() };
+      const { passwordHash: _, ...safeUser } = { ...user, lastLogin: new Date().toISOString(), sessionToken: signSession(user.id) };
       return res.status(200).json({ message: "Login successful", user: safeUser });
     }
 
