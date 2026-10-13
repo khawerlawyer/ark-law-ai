@@ -422,6 +422,7 @@ export default function Practice() {
 function SignIn({ onDone }) {
   const [email, setEmail] = useState(""), [password, setPassword] = useState("");
   const [err, setErr] = useState(""), [busy, setBusy] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setErr(""); setBusy(true);
     try {
@@ -447,11 +448,62 @@ function SignIn({ onDone }) {
           <div><label style={labelStyle}>Email</label><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} autoComplete="email" /></div>
           <div><label style={labelStyle}>Password</label><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} autoComplete="current-password" /></div>
           {err && <div style={{ fontSize: 13, color: BAD, background: "#FDECEC", border: "1px solid #F2BDBD", borderRadius: 8, padding: "8px 10px" }}>{err}</div>}
-          <Btn type="submit" disabled={busy} style={{ justifyContent: "center", padding: "11px 16px" }}>{busy ? "Signing in..." : "Sign in with your ARK LAW AI account"}</Btn>
-          <div style={{ fontSize: 12.5, color: MUTED, textAlign: "center" }}>No account yet? <a href="/" style={{ color: NAVY, fontWeight: 700 }}>Create one on ARK LAW AI</a></div>
+          <Btn type="submit" disabled={busy} style={{ justifyContent: "center", padding: "11px 16px" }}>{busy ? "Signing in..." : "Sign in"}</Btn>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, color: MUTED, fontSize: 12 }}><span style={{ flex: 1, height: 1, background: LINE }} />New here?<span style={{ flex: 1, height: 1, background: LINE }} /></div>
+          <Btn kind="ghost" onClick={() => setShowSignup(true)} style={{ justifyContent: "center", padding: "11px 16px" }}>Create a free account</Btn>
         </div>
       </form>
+      {showSignup && <SignUp onClose={() => setShowSignup(false)} onDone={onDone} prefillEmail={email} />}
     </div>
+  );
+}
+
+// ── Sign up (popup) ────────────────────────────────────────────────────────
+const REGION_LABEL = { Pakistan: "Province", India: "State", "United States": "State", Bangladesh: "Division" };
+const PROFESSIONS = ["Advocate / Lawyer", "Barrister", "Solicitor", "Legal consultant", "Corporate counsel", "Paralegal", "Law firm manager", "Judge", "Law student", "Other"];
+
+function SignUp({ onClose, onDone, prefillEmail }) {
+  const [v, setV] = useState({ name: "", email: prefillEmail || "", password: "", confirm: "", profession: "", barOfPractice: "", country: "", province: "", city: "" });
+  const [err, setErr] = useState(""), [busy, setBusy] = useState(false);
+  const set = (k, val) => setV((p) => ({ ...p, [k]: val }));
+  const submit = async () => {
+    setErr("");
+    if (!v.name.trim() || !v.email.trim() || !v.password || !v.profession || !v.country || !v.province.trim() || !v.city.trim()) return setErr("Please fill in all required fields.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) return setErr("Please enter a valid email address.");
+    if (v.password.length < 8) return setErr("Use a password of at least 8 characters.");
+    if (v.password !== v.confirm) return setErr("The two passwords do not match.");
+    setBusy(true);
+    try {
+      const body = { name: v.name.trim(), email: v.email.trim().toLowerCase(), password: v.password, profession: v.profession, barOfPractice: v.barOfPractice.trim(), country: v.country, province: v.province.trim(), city: v.city.trim() };
+      const r = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || "Could not create your account");
+      const l = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: body.email, password: v.password }) });
+      const lj = await l.json().catch(() => ({}));
+      if (!l.ok || !lj.user || !lj.user.sessionToken) throw new Error("Your account was created. Please sign in with your new email and password.");
+      try { localStorage.setItem("arklaw_user", JSON.stringify(lj.user)); } catch {}
+      onDone(lj.user);
+    } catch (e) { setErr(e.message); setBusy(false); }
+  };
+  const region = REGION_LABEL[v.country] || "Province / state";
+  return (
+    <Modal title="Create your ARK account" onClose={onClose}
+      footer={<><Btn kind="ghost" onClick={onClose}>Cancel</Btn><Btn onClick={submit} disabled={busy}>{busy ? "Creating account..." : "Create account"}</Btn></>}>
+      <div style={{ fontSize: 13.5, color: MUTED, marginBottom: 14, lineHeight: 1.6 }}>One account gives you ARK Practice and the ARK LAW AI legal assistant.</div>
+      <form onSubmit={(e) => { e.preventDefault(); submit(); }} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 13 }}>
+        <Field f={{ label: "Full name", required: true, full: true }} value={v.name} onChange={(x) => set("name", x)} />
+        <Field f={{ label: "Email", type: "email", required: true, full: true }} value={v.email} onChange={(x) => set("email", x)} />
+        <Field f={{ label: "Password", type: "password", required: true, hint: "At least 8 characters" }} value={v.password} onChange={(x) => set("password", x)} />
+        <Field f={{ label: "Confirm password", type: "password", required: true }} value={v.confirm} onChange={(x) => set("confirm", x)} />
+        <Field f={{ label: "Profession", type: "select", required: true, options: PROFESSIONS.map((p) => ({ value: p, label: p })) }} value={v.profession} onChange={(x) => set("profession", x)} />
+        <Field f={{ label: "Bar of practice", placeholder: "Optional, e.g. Lahore High Court Bar" }} value={v.barOfPractice} onChange={(x) => set("barOfPractice", x)} />
+        <Field f={{ label: "Country", type: "select", required: true, options: ["Pakistan", "India", "Bangladesh", "United States"].map((p) => ({ value: p, label: p })) }} value={v.country} onChange={(x) => set("country", x)} />
+        <Field f={{ label: region, required: true }} value={v.province} onChange={(x) => set("province", x)} />
+        <Field f={{ label: "City", required: true }} value={v.city} onChange={(x) => set("city", x)} />
+        <button type="submit" style={{ display: "none" }} aria-hidden="true" tabIndex={-1} />
+      </form>
+      {err && <div style={{ marginTop: 12, fontSize: 13, color: BAD, background: "#FDECEC", border: "1px solid #F2BDBD", borderRadius: 8, padding: "8px 10px" }}>{err}</div>}
+    </Modal>
   );
 }
 
