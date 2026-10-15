@@ -44,56 +44,24 @@ export default function Landing() {
 
       <style>{`
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-        html,body{min-height:100%;overflow-x:hidden;background:#F5F0E8;font-family:"DM Sans",sans-serif;color:#1A1209;}
-        #__next{min-height:100%;}
-        a{color:inherit;}
+        html,body{min-height:100%;background:#F5F0E8;font-family:"DM Sans",sans-serif;}
+        body{overflow-x:hidden;}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes floatBg{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 10px))}}
         @keyframes bgPulse{0%,100%{opacity:0.045}50%{opacity:0.08}}
-        @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-        @keyframes logoGlow{0%,100%{filter:drop-shadow(0 8px 22px rgba(201,168,76,0.30))}50%{filter:drop-shadow(0 10px 30px rgba(201,168,76,0.55))}}
-        .wordmark{font-family:"DM Sans",sans-serif;font-weight:800;letter-spacing:1px;line-height:1;background:linear-gradient(120deg,#021A4A 0%,#021A4A 30%,#2E6BC4 45%,#6BA3E8 50%,#2E6BC4 55%,#021A4A 70%,#021A4A 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite;}
-        .brand-logo{width:112px;height:112px;object-fit:contain;border-radius:24px;background:#FFFFFF;box-shadow:0 0 0 1px rgba(201,168,76,0.35),0 10px 30px rgba(150,120,60,0.18);animation:logoFloat 6s ease-in-out infinite, logoGlow 4s ease-in-out infinite;flex-shrink:0;}
-        .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
-        .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:26px;}
-        .nav{display:flex;align-items:center;gap:6px;}
-        .nav a{font-size:13.5px;font-weight:700;color:#4A3A28;text-decoration:none;padding:8px 13px;border-radius:9px;transition:background 0.15s;}
-        .nav a:hover{background:rgba(201,168,76,0.14);}
-        .nav a.cta{background:#021A4A;color:#FFFFFF;border-bottom:2px solid #C9A84C;}
-        .nav a.cta:hover{background:#0B2A63;}
-        .intro{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin:38px 0 24px;}
-        .panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:stretch;}
-        .panel{border-radius:22px;padding:28px;display:flex;flex-direction:column;}
-        .panel-light{background:rgba(255,253,248,0.94);border:1px solid #DDD3C2;box-shadow:0 18px 50px rgba(150,120,60,0.12),0 2px 8px rgba(0,0,0,0.04);backdrop-filter:blur(8px);}
-        .panel-dark{background:linear-gradient(155deg,#021A4A 0%,#0B2A63 60%,#04173F 100%);color:#FFFFFF;box-shadow:0 22px 60px rgba(2,26,74,0.35);position:relative;overflow:hidden;border:1px solid #0E2D66;}
-        .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;border-radius:999px;padding:5px 12px;align-self:flex-start;}
-        .ptitle{font-family:"Playfair Display",Georgia,serif;font-size:clamp(25px,2.6vw,31px);line-height:1.15;margin:14px 0 8px;}
-        .pdesc{font-size:14px;line-height:1.65;margin-bottom:20px;}
-        .jgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;}
-        .jcard{display:flex;align-items:center;gap:12px;padding:15px 15px 15px 18px;border-radius:14px;cursor:pointer;border:1.5px solid #E1D8C8;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;text-align:left;font-family:inherit;width:100%;}
-        .jcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,0.09);border-color:#C9A84C;}
-        .jcard:focus-visible,.pcta:focus-visible,.nav a:focus-visible{outline:2px solid #C9A84C;outline-offset:2px;}
-        .jcard .acc{position:absolute;left:0;top:0;bottom:0;width:4px;}
-        .jcard .go{margin-left:auto;color:#B8AC98;font-size:17px;transition:transform 0.18s,color 0.18s;}
-        .jcard:hover .go{transform:translateX(3px);color:#C9A84C;}
-        .chips{display:flex;flex-wrap:wrap;gap:7px;}
-        .chip{font-size:11.5px;border-radius:999px;padding:4px 10px;}
-        .pfeat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin-bottom:22px;}
-        .pfi{display:flex;gap:10px;align-items:flex-start;}
-        .pcta{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;background:#C9A84C;color:#021A4A;border-radius:12px;text-decoration:none;font-weight:800;font-size:14.5px;transition:transform 0.18s,box-shadow 0.18s;}
-        .pcta:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(201,168,76,0.35);}
-        .spacer{flex:1;min-height:18px;}
-        @media(max-width:900px){.panels{grid-template-columns:1fr;}.intro{margin:28px 0 20px;}}
-        @media(max-width:640px){
-          .wrap{padding:0 16px;}.topbar{padding-top:16px;}
-          .brand-logo{width:68px;height:68px;border-radius:16px;}
-          .nav{display:none;}
-          .panel{padding:22px 18px;border-radius:18px;}
-          .jgrid{grid-template-columns:1fr;}
-          .pfeat{grid-template-columns:1fr;}
-        }
-        @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+        .jcard{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:11px;cursor:pointer;border:1.5px solid #D8D0C4;background:#FFFFFF;transition:all 0.18s ease;position:relative;overflow:hidden;user-select:none;}
+        .jcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1);border-color:#C9A84C!important;}
+        .jcard .acc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;transition:opacity 0.2s;}
+        .enter-btn{width:100%;padding:12px 0;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"DM Sans",sans-serif;}
+        .enter-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.14);}
+        .pm-btn{width:100%;max-width:420px;display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;text-decoration:none;background:linear-gradient(135deg,#021A4A 0%,#0B2D6B 100%);border:1px solid rgba(201,168,76,0.55);box-shadow:0 8px 28px rgba(2,26,74,0.22);transition:all 0.2s ease;}
+        .pm-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(2,26,74,0.32);border-color:#C9A84C;}
+        .pm-btn:focus-visible{outline:2px solid #C9A84C;outline-offset:3px;}
+        .ark-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:14px 24px 18px;}
+        .ark-foot a{text-decoration:none;}
+        .ark-foot-brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
+        @media(max-width:480px){.grid2{grid-template-columns:1fr !important;}.ark-foot{flex-direction:column;align-items:center;text-align:center;}.ark-foot-brand{align-items:center;}}
       `}</style>
 
       {/* Watermark background */}
@@ -162,144 +130,73 @@ export default function Landing() {
 
       {/* Main content */}
       <div style={{position:"relative",zIndex:1,minHeight:"100vh",display:"flex",flexDirection:"column",opacity:mounted?1:0,transition:"opacity 0.5s ease"}}>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 20px"}}>
 
-        {/* ── Top bar: brand on the left ── */}
-        <header className="wrap topbar" style={{width:"100%",animation:"fadeUp 0.6s ease both"}}>
-          <a href="/" style={{display:"flex",alignItems:"center",gap:18,textDecoration:"none",minWidth:0}} aria-label="ARK LAW AI home">
-            <img src="/ark-logo-us.png" alt="ARK LAW AI" className="brand-logo"/>
-            <div style={{minWidth:0}}>
-              <div className="wordmark" style={{fontSize:"clamp(28px,4.2vw,46px)"}}>ARK LAW AI</div>
-              <div style={{fontSize:"14px",color:"#8A7A65",marginTop:"7px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.4px"}}>Your Trusted Legal Intelligence Engine</div>
-            </div>
-          </a>
-          <nav className="nav" aria-label="Main">
-            <a href="/blog">Blog</a>
-            <a href="#practice">Practice</a>
-            <a href="/practice" className="cta">Sign in to Practice</a>
-          </nav>
-        </header>
+        {/* Logo + brand */}
+        <div style={{textAlign:"center",marginBottom:"24px",animation:"fadeUp 0.6s ease both"}}>
+          <img src="/ark-logo-us.png" alt="ARK Law AI" style={{width:"200px",height:"200px",objectFit:"contain",marginBottom:"14px",filter:"drop-shadow(0 8px 24px rgba(201,168,76,0.35))"}}/>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:"clamp(36px,6vw,54px)",fontWeight:800,letterSpacing:"1px",background:"linear-gradient(120deg,#021A4A 0%,#021A4A 30%,#2E6BC4 45%,#6BA3E8 50%,#2E6BC4 55%,#021A4A 70%,#021A4A 100%)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"shimmer 4s linear infinite"}}>
+            ARK LAW AI
+          </div>
+          <div style={{fontSize:"12px",color:"#8A7A65",marginTop:"3px",fontFamily:"'Crimson Pro',serif",fontStyle:"italic",letterSpacing:"0.5px"}}>
+            Your Trusted Legal Intelligence Engine
+          </div>
+          <div style={{fontSize:"12.5px",color:"#5A4A35",marginTop:"10px",maxWidth:"440px",marginLeft:"auto",marginRight:"auto",lineHeight:1.6,fontFamily:"'DM Sans',sans-serif"}}>
+            Jurisdiction-specific legal intelligence built for legal professionals.
+          </div>
+          <div style={{fontSize:"11px",color:"#021A4A",marginTop:"6px",fontWeight:700,letterSpacing:"1.6px",textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif"}}>
+            Research &middot; Verify &middot; Draft &middot; Analyze
+          </div>
+        </div>
 
-        <main className="wrap" style={{width:"100%",flex:1}}>
+        {/* Selector card */}
+        <div style={{width:"100%",maxWidth:"420px",background:"rgba(255,253,248,0.94)",border:"1px solid #D8D0C4",borderRadius:"18px",padding:"20px 20px 16px",boxShadow:"0 10px 40px rgba(180,160,100,0.13),0 2px 8px rgba(0,0,0,0.05)",backdropFilter:"blur(8px)",animation:"fadeUp 0.7s ease 0.1s both"}}>
 
-          {/* ── Intro line ── */}
-          <div className="intro" style={{animation:"fadeUp 0.7s ease 0.08s both"}}>
-            <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"clamp(24px,3vw,34px)",lineHeight:1.2,color:"#021A4A",maxWidth:"640px",fontWeight:700}}>
-              Jurisdiction-specific legal intelligence built for legal professionals.
-            </h1>
-            <div style={{fontSize:"12px",color:"#021A4A",fontWeight:800,letterSpacing:"2px",textTransform:"uppercase",paddingBottom:"6px"}}>
-              Research &middot; Verify &middot; Draft &middot; Analyze
-            </div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"#8A7A65",letterSpacing:"0.9px",textTransform:"uppercase",marginBottom:"11px"}}>
+            Select your jurisdiction
           </div>
 
-          {/* ── Two panels ── */}
-          <div className="panels">
-
-            {/* Left: AI legal intelligence + jurisdiction */}
-            <section className="panel panel-light" aria-labelledby="ai-title" style={{animation:"fadeUp 0.7s ease 0.15s both"}}>
-              <span className="eyebrow" style={{color:"#021A4A",background:"rgba(2,26,74,0.06)",border:"1px solid rgba(2,26,74,0.14)"}}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M5 7h14M5 7l-3 7a4 4 0 0 0 6 0zM19 7l-3 7a4 4 0 0 0 6 0z"/></svg>
-                AI Legal Assistant
-              </span>
-              <h2 id="ai-title" className="ptitle" style={{color:"#021A4A"}}>Choose your jurisdiction</h2>
-              <p className="pdesc" style={{color:"#5A4A35"}}>Ask questions, research statutes and case law, summarise judgments and review contracts under the law of your country.</p>
-
-              <div className="jgrid">
-                {JURISDICTIONS.map(j => (
-                  <button key={j.id} type="button" className="jcard" onClick={()=>router.push(j.route)} aria-label={"Open ARK LAW AI " + j.label}>
-                    <span className="acc" style={{background:j.accent}}/>
-                    <img src={j.flag} alt="" style={{width:"34px",height:"24px",objectFit:"cover",borderRadius:"4px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}/>
-                    <span style={{minWidth:0,display:"block"}}>
-                      <span style={{display:"block",fontSize:"14.5px",fontWeight:800,color:"#1A1209",lineHeight:1.2}}>{j.label}</span>
-                      <span style={{display:"block",fontSize:"11.5px",color:"#8A7A65",marginTop:"3px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.sub}</span>
-                    </span>
-                    <span className="go" aria-hidden="true">&rarr;</span>
-                  </button>
-                ))}
-              </div>
-
-              <div style={{marginTop:"16px",padding:"14px 16px",borderRadius:"14px",background:"#F7F2E8",border:"1px dashed #D8CDB8",display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                <span style={{width:30,height:30,borderRadius:8,background:"#021A4A",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </span>
-                <span style={{minWidth:0}}>
-                  <span style={{display:"block",fontSize:"10.5px",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"#8A7A65"}}>Try asking</span>
-                  <span style={{display:"block",fontSize:"13.5px",color:"#1A1209",marginTop:"4px",lineHeight:1.5,fontStyle:"italic"}}>&ldquo;What are the grounds for bail in a non-bailable offence? Cite the governing statute and leading cases.&rdquo;</span>
-                </span>
-              </div>
-
-              <div className="spacer"/>
-              <div style={{borderTop:"1px solid #EAE2D3",paddingTop:"16px",marginTop:"6px"}}>
-                <div style={{fontSize:"10.5px",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"#8A7A65",marginBottom:"9px"}}>Included in every version</div>
-                <div className="chips">
-                  {["Legal research","Judgment summaries","Contract redlining","Compliance checks","Clause library","Citation check"].map(x => (
-                    <span key={x} className="chip" style={{color:"#4A3A28",background:"#FFFFFF",border:"1px solid #E3D9C6"}}>{x}</span>
-                  ))}
+          <div className="grid2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"14px"}}>
+            {JURISDICTIONS.map(j => (
+              <div key={j.id} className="jcard"
+                onClick={()=>router.push(j.route)}>
+                <img className="flag" src={j.flag} alt={j.label} style={{width:"30px",height:"21px",objectFit:"cover",borderRadius:"3px",flexShrink:0,boxShadow:"0 1px 4px rgba(0,0,0,0.12)"}}/>
+                <div style={{minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"#1A1209",lineHeight:1.2}}>{j.label}</div>
+                  <div style={{fontSize:10,color:"#9A8A75",marginTop:"2px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.sub}</div>
                 </div>
               </div>
-            </section>
-
-            {/* Right: ARK Practice */}
-            <section id="practice" className="panel panel-dark" aria-labelledby="pm-title" style={{animation:"fadeUp 0.7s ease 0.22s both",scrollMarginTop:"20px"}}>
-              <div aria-hidden="true" style={{position:"absolute",right:"-120px",top:"-120px",width:"340px",height:"340px",borderRadius:"50%",background:"radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0) 65%)",pointerEvents:"none"}}/>
-              <span className="eyebrow" style={{color:"#C9A84C",background:"rgba(201,168,76,0.12)",border:"1px solid rgba(201,168,76,0.4)"}}>
-                New &middot; ARK Practice
-              </span>
-              <h2 id="pm-title" className="ptitle" style={{color:"#FFFFFF"}}>Legal practice management</h2>
-              <p className="pdesc" style={{color:"rgba(255,255,255,0.72)"}}>Every matter, client, hearing, hour and invoice in one secure record, for firms in Pakistan, India, Bangladesh and the United States.</p>
-
-              <div className="pfeat">
-                {[
-                  ["Matters","Court, parties, tasks and billing per case","M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"],
-                  ["Conflict check","Search clients and opposing parties","M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"],
-                  ["Court calendar","Hearings, meetings and deadlines","M3 9.5h18M8 2.5v4M16 2.5v4M5 4.5h14a2 2 0 0 1 2 2v12.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2z"],
-                  ["Tasks","Due dates, priorities, overdue alerts","M8 12l3 3 5-6M5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13A2.5 2.5 0 0 1 5.5 3z"],
-                  ["Time tracking","Live timer and expense logging","M12 9v4l2.5 2.5M9.5 2.5h5M20 13a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"],
-                  ["Billing","Tax invoices, PDFs, payment tracking","M6 2.5h9l3.5 3.5V21.5H6zM9.5 10h6M9.5 14h6M9.5 18h3"],
-                ].map(([t, d, icon]) => (
-                  <div key={t} className="pfi">
-                    <span style={{width:32,height:32,borderRadius:9,background:"rgba(201,168,76,0.14)",border:"1px solid rgba(201,168,76,0.3)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={icon}/></svg>
-                    </span>
-                    <span style={{minWidth:0}}>
-                      <span style={{display:"block",fontSize:"13.5px",fontWeight:800,color:"#FFFFFF"}}>{t}</span>
-                      <span style={{display:"block",fontSize:"12px",color:"rgba(255,255,255,0.6)",lineHeight:1.45,marginTop:"2px"}}>{d}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{display:"flex",gap:14,alignItems:"center",flexWrap:"wrap",position:"relative"}}>
-                <a href="/practice" className="pcta">Open ARK Practice <span aria-hidden="true">&rarr;</span></a>
-                <span style={{fontSize:"12.5px",color:"rgba(255,255,255,0.6)"}}>New here? Create an account in a minute</span>
-              </div>
-
-              <div className="spacer"/>
-              <div style={{borderTop:"1px solid rgba(255,255,255,0.12)",paddingTop:"16px",marginTop:"6px",position:"relative"}}>
-                <div style={{fontSize:"10.5px",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:"9px"}}>Coming next</div>
-                <div className="chips">
-                  {["Trust accounts","Documents & templates","Client portal","E-signatures","Online payments","ARK AI in matters"].map(x => (
-                    <span key={x} className="chip" style={{color:"rgba(255,255,255,0.8)",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.14)"}}>{x}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
+            ))}
           </div>
-        </main>
+
+        </div>
+
+        {/* ARK Legal Practice - opens in a new window */}
+        <a className="pm-btn" href="/practice" target="_blank" rel="noopener noreferrer" style={{marginTop:"14px",animation:"fadeUp 0.75s ease 0.2s both"}}>
+          <span style={{width:"40px",height:"40px",borderRadius:"10px",background:"rgba(201,168,76,0.16)",border:"1px solid rgba(201,168,76,0.45)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+          </span>
+          <span style={{flex:1,minWidth:0,textAlign:"left"}}>
+            <span style={{display:"block",fontSize:"15px",fontWeight:800,color:"#FFFFFF",letterSpacing:"0.3px"}}>ARK Legal Practice</span>
+            <span style={{display:"block",fontSize:"11.5px",color:"#D9C690",marginTop:"2px"}}>Practice management for law firms</span>
+          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+        </a>
+
+      </div>
 
         {/* Footer */}
-        <footer className="wrap" style={{width:"100%",padding:"26px 28px 24px",display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:16,flexWrap:"wrap"}}>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-start",gap:6}}>
-            <a href="https://www.arkgroup.info" target="_blank" rel="noopener noreferrer" aria-label="ARK Group">
-              <img src="/ark-group-logo.png" alt="ARK Group" style={{height:"44px",width:"auto",display:"block"}}/>
-            </a>
-            <div style={{fontSize:"12px",color:"#A89878",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px"}}>
-              Powered by ARK GROUP &middot; &copy; 2026-2027 &middot; <a href="https://www.arkgroup.info" target="_blank" rel="noopener noreferrer" style={{color:"#C9A84C",textDecoration:"none"}}>www.arkgroup.info</a>
-            </div>
-          </div>
-          <span style={{fontSize:"12px",color:"#A89878",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px"}}>Pakistan &middot; United States &middot; India &middot; Bangladesh</span>
+        <footer className="ark-foot" style={{animation:"fadeUp 0.8s ease 0.3s both"}}>
+          <a className="ark-foot-brand" href="https://www.arkgroup.info" target="_blank" rel="noopener noreferrer">
+            <img src="/ark-group-logo.png" alt="ARK Group" style={{height:"44px",width:"auto",objectFit:"contain"}}/>
+            <span style={{fontSize:"11px",color:"#8A7A65",fontFamily:"'Crimson Pro',serif",letterSpacing:"0.5px"}}>
+              Powered by ARK GROUP &middot; &copy; 2026-2027 &middot; <span style={{color:"#C9A84C"}}>www.arkgroup.info</span>
+            </span>
+          </a>
         </footer>
 
       </div>
+
     </>
   );
 }
