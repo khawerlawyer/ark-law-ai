@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import ArkMarkdown from "../lib/ArkMarkdown";
 
 // ── Downloads (PDF / Word) ──────────────────────────────────────────────────
 // When a user asks for a file, ARK ends its answer with [[ARK_FILE:pdf]], [[ARK_FILE:docx]] or both.
@@ -727,48 +728,11 @@ export default function AppUSA() {
     exportAnswer(head + comparisonResult, "pdf", "compare", { title: "Document Comparison Report" });
   };
 
+  // Answers are shown by the shared formatter (lib/ArkMarkdown.js): headings, lists, tables,
+  // authority cards, links, images and diagrams.
   const renderMessageBody = (content) => {
     if (!content) return null;
-    const lines = content.split("\n");
-    const elements = [];
-    let currentParagraph = [];
-    const parseMarkdown = (text) => {
-      const parts = []; let remaining = text; let key = 0;
-      while (remaining.length > 0) {
-        const boldItalicMatch = remaining.match(/^\*\*\*(.+?)\*\*\*/);
-        if (boldItalicMatch) { parts.push(<strong key={key++} style={{ fontStyle: "italic" }}>{boldItalicMatch[1]}</strong>); remaining = remaining.slice(boldItalicMatch[0].length); continue; }
-        const boldMatch = remaining.match(/^\*\*(.+?)\*\*/);
-        if (boldMatch) { parts.push(<strong key={key++}>{boldMatch[1]}</strong>); remaining = remaining.slice(boldMatch[0].length); continue; }
-        const italicMatch = remaining.match(/^\*(.+?)\*/);
-        if (italicMatch) { parts.push(<em key={key++}>{italicMatch[1]}</em>); remaining = remaining.slice(italicMatch[0].length); continue; }
-        const nextSpecial = remaining.search(/\*/);
-        if (nextSpecial === -1) { parts.push(remaining); break; }
-        else if (nextSpecial > 0) { parts.push(remaining.slice(0, nextSpecial)); remaining = remaining.slice(nextSpecial); }
-        else { parts.push(remaining[0]); remaining = remaining.slice(1); }
-      }
-      return parts;
-    };
-    lines.forEach((line, index) => {
-      const trimmedLine = line.trim();
-      const imageMatch  = trimmedLine.match(/!\[([^\]]*)\]\(([^)]+)\)/);
-      const urlMatch    = trimmedLine.match(/^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp))$/i);
-      if (imageMatch || urlMatch) {
-        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        const imgUrl = imageMatch ? imageMatch[2] : urlMatch[1];
-        const imgAlt = imageMatch ? imageMatch[1] : "Image";
-        elements.push(<div key={`img-${index}`} style={{ marginBottom: "16px", marginTop: "16px" }}><img src={imgUrl} alt={imgAlt} style={{ maxWidth: "100%", height: "auto", borderRadius: "8px", border: `2px solid ${GOLD}`, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }} onError={(e) => { e.target.style.display = "none"; }} /></div>);
-      } else if (trimmedLine.startsWith("•") || trimmedLine.startsWith("-")) {
-        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<div key={`bullet-${index}`} style={{ display: "flex", gap: "8px", marginBottom: "8px", lineHeight: "1.6" }}><span style={{ color: GOLD, fontWeight: "bold", flexShrink: 0 }}>•</span><span>{parseMarkdown(trimmedLine.substring(1).trim())}</span></div>);
-      } else if (trimmedLine.length > 0 && ((trimmedLine.startsWith("***") && trimmedLine.endsWith("***")) || (trimmedLine.endsWith(":") && trimmedLine.length < 60))) {
-        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-        elements.push(<h3 key={`h-${index}`} style={{ fontWeight: "bold", fontStyle: "italic", color: "#0D1B2A", marginTop: "16px", marginBottom: "8px", fontSize: "15px" }}>{trimmedLine.replace(/^\*\*\*|\*\*\*$/g, "")}</h3>);
-      } else if (trimmedLine.length === 0) {
-        if (currentParagraph.length > 0) { elements.push(<p key={`p-${index}`} style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>); currentParagraph = []; }
-      } else { currentParagraph.push(trimmedLine); }
-    });
-    if (currentParagraph.length > 0) elements.push(<p key="p-final" style={{ marginBottom: "12px", lineHeight: "1.6" }}>{parseMarkdown(currentParagraph.join(" "))}</p>);
-    return <div style={{ whiteSpace: "normal" }}>{elements}</div>;
+    return <ArkMarkdown text={content} accent="#BF0A30" />;
   };
 
   // ── ARK Citation Check: side card ─────────────────────────────────────────
@@ -836,6 +800,18 @@ export default function AppUSA() {
 
   // Builds and downloads a real PDF or Word file (see lib/arkExport.js)
   const [exporting, setExporting] = useState(null);
+  // File title: the answer's own opening heading if it has one, otherwise the user's question
+  const titleFor = (i, content) => {
+    if (/^\s*#{1,3}\s+\S/.test(stripFileMarker(content))) return undefined;
+    const q = messages.slice(0, i).reverse().find((m) => m.role === "user");
+    let t = typeof q?.content === "string" ? q.content : "";
+    t = t.replace(/^\s*\[System:[\s\S]*?\]\s*/, "").split("\n")[0];
+    t = t.replace(/[,.;]?\s*(and\s+)?(please\s+)?(also\s+)?(give|send|make|create|share|provide|export|download|prepare)\b[^.?!]*?\b(pdf|word|docx|doc|file|document)s?\b[^.?!]*[.?!]?/gi, "");
+    t = t.replace(/\s+/g, " ").trim().replace(/[\s,;:]+$/, "");
+    if (t.length < 6) return undefined;
+    if (t.length > 80) t = t.slice(0, 77).replace(/\s+\S*$/, "") + "...";
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  };
   const exportAnswer = async (content, format, key, opts = {}) => {
     if (exporting) return;
     setExporting(key + ":" + format);
@@ -1333,14 +1309,14 @@ export default function AppUSA() {
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                               <span>Share</span>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();exportAnswer(msg.content,"pdf","m"+i);}} disabled={!!exporting} title="Download this answer as a PDF file"
+                            <button onClick={e=>{e.stopPropagation();exportAnswer(msg.content,"pdf","m"+i,{title:titleFor(i,msg.content)});}} disabled={!!exporting} title="Download this answer as a PDF file"
                               style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:exporting?"wait":"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#1A1209";}}
                               onMouseLeave={e=>{e.currentTarget.style.borderColor="#C8BFB0";e.currentTarget.style.color="#666";}}>
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={DL_ICON}/></svg>
                               <span>{exporting==="m"+i+":pdf"?"Preparing...":"PDF"}</span>
                             </button>
-                            <button onClick={e=>{e.stopPropagation();exportAnswer(msg.content,"docx","m"+i);}} disabled={!!exporting} title="Download this answer as a Word file"
+                            <button onClick={e=>{e.stopPropagation();exportAnswer(msg.content,"docx","m"+i,{title:titleFor(i,msg.content)});}} disabled={!!exporting} title="Download this answer as a Word file"
                               style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"transparent",color:"#666",border:"1px solid #C8BFB0",borderRadius:"6px",cursor:exporting?"wait":"pointer",fontSize:12,transition:"all 0.15s"}}
                               onMouseEnter={e=>{e.currentTarget.style.borderColor="#555";e.currentTarget.style.color="#1A1209";}}
                               onMouseLeave={e=>{e.currentTarget.style.borderColor="#C8BFB0";e.currentTarget.style.color="#666";}}>
@@ -1360,7 +1336,7 @@ export default function AppUSA() {
                               <div style={{fontSize:12,color:"#8A7A65"}}>Download it to edit, print or send.</div>
                             </div>
                             {fileFormatsOf(msg.content).map(f=>(
-                              <button key={f} onClick={()=>exportAnswer(msg.content,f,"m"+i)} disabled={!!exporting}
+                              <button key={f} onClick={()=>exportAnswer(msg.content,f,"m"+i,{title:titleFor(i,msg.content)})} disabled={!!exporting}
                                 style={{padding:"8px 14px",background:f==="pdf"?"#021A4A":"#FFFFFF",color:f==="pdf"?"#FFFFFF":"#021A4A",border:"1px solid #021A4A",borderRadius:"8px",cursor:exporting?"wait":"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit",display:"flex",alignItems:"center",gap:"6px"}}>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={DL_ICON}/></svg>
                                 {exporting==="m"+i+":"+f?"Preparing...":(f==="pdf"?"Download PDF":"Download Word")}
