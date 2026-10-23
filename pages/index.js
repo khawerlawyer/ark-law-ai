@@ -32,7 +32,7 @@ export default function Landing() {
   return (
     <>
       <Head>
-        <title>ARK LAW AI - Choose Your Jurisdiction</title>
+           <title>ARK LAW AI - Your Trusted Legal Intelligence Engine</title>
         <meta name="description" content="ARK Law AI: AI-powered legal assistant for Pakistan, USA, India and Bangladesh." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
